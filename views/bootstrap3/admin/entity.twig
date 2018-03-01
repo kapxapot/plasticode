@@ -1,0 +1,493 @@
+{% extends 'admin/layout.twig' %}
+
+{% import 'admin/macros.twig' as m %}
+
+{% set can_create = can(alias, 'create') %}
+{% set can_edit = can(alias, 'edit_own') %}
+{% set can_delete = can(alias, 'delete_own') %}
+
+{% set actions = can_edit or can_delete %}
+
+{% block head_appendix %}
+	{# SimpleMDE #}
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+	<script src="//cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+	
+	{# DataTables #}
+	<script charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+	<script src="//cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css">
+	<script src="https://cdn.datatables.net/responsive/2.1.1/js/dataTables.responsive.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.1.1/js/responsive.bootstrap.min.js"></script>
+	
+	{# croppie #}
+	<link rel="stylesheet" type="text/css" href="{{ folders.global }}croppie/croppie.css" />
+{% endblock %}
+
+{% block title_appendix %}
+	{% if can_create %}
+		<button type="button" class="btn btn-success button-create btn-pad" ng-click="createItem()">
+			<span class="glyphicon glyphicon-plus" title="Создать"></span>
+		</button>
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+	{% include 'admin/modals/entity.twig' %}
+	{% include 'admin/includes/datatables.twig' %}
+{% endblock %}
+
+{% set angular_filters %}
+	app.filter('getById', function() {
+		return function(input, id) {
+			var i=0, len= (input != null) ? input.length : 0;
+			for (; i<len; i++) {
+				if (+input[i].id == +id) {
+					return input[i];
+				}
+			}
+
+			return null;
+		}
+	});
+{% endset %}
+
+{% set more_angular %}
+	{% if mde %}
+		$scope.mdes = [];
+		
+		$scope.killMdes = function() {
+			while ($scope.mdes.length > 0) {
+				var mde = $scope.mdes.shift();
+				mde.toTextArea();
+				mde = null;
+			}
+		};
+	{% endif %}
+
+	$('#entityView').on('shown.bs.modal', function() {
+		$('#entityView').find('textarea').scrollTop(0);
+
+		var initMdes = function() {
+			{% if mde %}
+				$('#entityView').find('textarea').each(function() {
+					{# remove required #}
+					$(this).attr('required', false);
+					
+					var options = {
+				        element: this,
+				        spellChecker: false,
+				        toolbar: [ {#"bold", "italic", "strikethrough", #}"heading-2", "heading-3", "|", {#"quote", #}"unordered-list", "ordered-list", "|", {#"link", "image", "table", "|", "preview", "side-by-side", #}"fullscreen" ],
+				        status: false,
+				        forceSync: true
+				    };
+				    
+				    if ($scope.itemId == 0) {
+				        options.autosave = {
+					        enabled: true,
+					        uniqueId: '{{ alias }}',{# + ($scope.itemId > 0 ? $scope.itemId : ''),#}
+					        delay: 1000,
+					    };
+				    }
+				    
+				    var mde = new SimpleMDE(options);
+	
+					mde.codemirror.on('refresh', function() {
+					    if (mde.isFullscreenActive()) {
+					        $('body').addClass('simplemde-fullscreen');
+					    } else {
+					        $('body').removeClass('simplemde-fullscreen');
+					    }
+					});	
+	
+					$scope.mdes.push(mde);
+				});
+			{% endif %}
+		};
+		
+		var initCroppie = function() {
+			if ($scope.croppie) {
+				var i = $scope.item;
+				if (i && i.picture) {
+	            	//setTimeout(function() {
+	            		var obj = {
+			                url: i.picture,
+	            		};
+	            		
+	            		if (i.points) {
+			                obj['points'] = i.points;
+	            		}
+	            		
+			            $('#croppie-upload').croppie('bind', obj).then(function() {
+				        	$scope.croppieLoading(false);
+
+			            	$scope.croppieShow();
+			            	$('#croppie-upload').croppie('bind');
+			            });
+					//}, 2000);
+				}
+			}
+		};
+		
+		var init = function() {
+			initMdes();
+			initCroppie();
+		};
+		
+		{% block modal_shown %}
+			init();
+		{% endblock %}
+	});
+
+	{% if mde %}
+		$('#entityView').on('hidden.bs.modal', $scope.killMdes);
+	{% endif %}
+
+	{# loading dictionaries #}
+	var promises = [];
+	
+	{% for col, value in columns if value.entity %}
+		promises.push(new Promise(function(resolve, reject) {
+			$http.get('{{ api }}{{ value.entity }}')
+				.success(function(data) {
+					$scope.{{ value.entity }} = data;
+					resolve(data);
+				});
+		}));
+	{% endfor %}
+	
+	{# croppie #}
+	{% for col, value in columns if value.type == 'thumb' %}
+	    $scope.readFile = function(input) {
+	        if (input.files && input.files[0]) {
+	            var reader = new FileReader();
+	            
+	            reader.onload = function(e) {
+	            	$scope.originalPicture = e.target.result;
+
+	            	$scope.croppieShow();
+	            	
+	                $('#croppie-upload').croppie('bind', {
+	                    url: e.target.result
+	                }).then(function() {
+	                	// ..
+	                });
+	            }
+	            
+	            reader.readAsDataURL(input.files[0]);
+	        }
+	    };
+
+		$scope.croppieInit = function() {
+			$scope.croppie = true;
+	
+		    $('#croppie-upload').croppie({
+		        viewport: {
+		            width: 200,
+		            height: 200
+		        },
+		    });
+
+		    $('#upload').on('change', function () {
+		    	$scope.readFile(this);
+		    });
+		};
+		
+		$scope.croppieHide = function() {
+            $('.croppie-upload').removeClass('ready');
+		};
+		
+		$scope.croppieShow = function() {
+			$('.croppie-upload').addClass('ready');
+		};
+		
+		$scope.croppieLoading = function(loading) {
+            if (loading) {
+            	$('.croppie-upload').addClass('loading');
+            }
+            else {
+            	$('.croppie-upload').removeClass('loading');
+            }
+
+        	$scope.loading = loading;
+
+		    $timeout(function() {
+				$scope.$apply();
+			});
+		};
+		
+		$scope.croppieReset = function() {
+			$scope.croppieHide();
+			
+            $('#upload').val('');
+
+			$('#croppie-upload').croppie('bind', {
+                url: ''
+            });
+            
+            $scope.originalPicture = null;
+		};
+		
+		$scope.croppieGetThumb = function(onComplete) {
+		    $('#croppie-upload').croppie('result', {
+		    	size: 'viewport'
+		    }).then(function(resp) {
+		    	onComplete(resp);
+		    });
+		};
+
+		$scope.croppieInit();
+	{% endfor %}
+
+	$scope.initTable = function() {
+		// data tables
+		$scope.table = $('#{{ alias }}-table').DataTable({
+			dom: "<'row'<'col-sm-12'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'l>><'row'<'col-sm-12'p>>", //'ftrilp',
+			language: {
+				url: '{{ folders.global }}datatables/ru.json'
+			},
+			{% if tables[alias].sort_index %}
+				order: [[ {{ tables[alias].sort_index }}, '{{ tables[alias].reverse ? 'desc' : 'asc' }}' ]],
+			{% endif %}
+			ajax: '{{ api }}{{ source ?? alias }}?format=dt',
+			rowId: 'id',
+			initComplete: $scope.tableInitComplete,
+			columns: [
+				{% block table_columns %}
+					{% for col, value in columns if value.hidden is null %}
+						{
+							{% if value.no_sort %}
+								orderable: false,
+							{% endif %}
+							data: function(row, type, val, meta) {
+								{% set type = value.display_type ?? value.type %}
+								{% if value.template %}
+									{{ m.column_template(value.template) }}
+								{% elseif value.entity %}
+									{{ m.column_entity(_context, col) }}
+								{% elseif type == 'bool' %}
+									{{ m.column_bool(col) }}
+								{% elseif type == 'img' %}
+									{{ m.column_img(col) }}
+								{% elseif type == 'date' %}
+									{{ m.column_date(col) }}
+								{% else %}
+									{{ m.column(col) }}
+								{% endif %}
+							}
+						},
+					{% endfor %}
+				{% endblock %}
+
+				{% if actions %}
+					{
+						orderable: false,
+						data: function(row, type, val, meta) {
+							var actions = [];
+							
+							{% if can_edit %}
+								if (row.access.edit) {
+									actions.push('<button type="button" class="btn btn-primary btn-pad" data-id="' + row.id + '" data-action="edit"><span class="glyphicon glyphicon-pencil" title="Редактировать"></span></button>');
+								}
+							{% endif %}
+							{% if can_delete %}
+								if (row.access.delete) {
+									actions.push('<button type="button" class="btn btn-danger btn-pad" data-id="' + row.id + '" data-action="delete"><span class="glyphicon glyphicon-remove" title="Удалить"></span></button>');
+								}
+							{% endif %}
+							
+							return actions.join(' ');
+						}
+					},
+				{% endif %}
+	        ]
+		});
+		
+		{% if actions %}
+			$('#{{ alias }}-table tbody').on('click', 'button', function() {
+				var tr = $(this).parents('tr');
+				// hack for responsive view
+				if (tr.hasClass('child')) {
+					tr = tr.prev();
+				}
+				
+    			var data = $scope.table.row(tr).data();
+
+    			switch (this.dataset.action) {
+    				case 'edit':
+    					$scope.editItem(data);
+    					break;
+
+    				case 'delete':
+    					$scope.deleteItem(data);
+    					break;
+    			}
+			});
+		{% endif %}
+	};
+	
+	$scope.setItem = function(i) {
+		$scope.itemId = (i != null) ? i.id : 0;
+		$scope.item = i;
+		
+		$scope.itemEditLabel = ($scope.item != null) ? 'Редактирование' : 'Создание';
+
+	    $timeout(function() {
+			$scope.$apply();
+		});
+	};
+	
+	$scope.createItem = function() {
+		$('#entityForm')[0].reset();
+		
+		$scope.setItem(null);
+
+		{% for col, value in columns %}
+			{% if value.default is not null %}
+				$('#entityForm').find('#{{ col }}').val({{ value.default }});
+			{% elseif value.nullable %}
+				$('#entityForm').find('#{{ col }}').val(null);
+			{% endif %}
+		{% endfor %}
+
+		{#% if filter %}
+			{% set col = columns[filter.column] %}
+			{% set e = col.entity %}
+			var {{ e }}Id = $('#filter_{{ e }}').val();
+			if ({{ e }}Id > 0) {
+				$('#entityForm').find('#{{ filter.column }}').val({{ e }}Id);
+			}
+		{% endif %#}
+		
+		if ($scope.croppie) {
+			$scope.croppieReset();
+		}
+
+		showModal('entity');
+	};
+	
+	$scope.editItem = function(i) {
+		$scope.setItem(i);
+
+		{% for col, value in columns %}
+			{% if value.readonly is null %}
+				{% if value.type == 'bool' %}
+					$('#entityForm').find('#{{ col }}').prop('checked', i.{{ col }} == 1);
+				{% elseif value.type == 'date' or value.type == 'datetime-local' %}
+					var date = parseDate(i.{{ col }});
+					var dateStr = dateToString(date{% if value.type == 'datetime-local' %}, true{% endif %});
+
+					$('#entityForm').find('#{{ col }}').val(dateStr);
+				{% else %}
+					$('#entityForm').find('#{{ col }}').val(i.{{ col }});
+				{% endif %}
+			{% elseif value.on_form == true %}{# для пароля, например #}
+				$('#entityForm').find('#{{ col }}').val(null);
+			{% endif %}
+		{% endfor %}
+		
+		if ($scope.croppie) {
+			$scope.croppieReset();
+
+			if (i.picture) {
+            	$scope.originalPicture = -1;
+
+		        $scope.croppieLoading(true);
+			}
+		}
+
+		showModal('entity');
+	};
+	
+	$scope.refresh = function(data) {
+		$scope.setItem(data);
+		$scope.table.ajax.reload(null, false);
+	};
+	
+	$scope.deleteItem = function(i) {
+		if (confirm('Действительно удалить {{ name_accus }}{{ delete_extra_message|raw }}?')) {
+			$scope.ajax({
+				method: 'delete',
+				url: '{{ api }}{{ alias }}/' + i.id,
+				onSuccess: $scope.refresh,
+				message: 'Запись успешно удалена.'
+			});
+		}
+	};
+	
+	$scope.submitData = function(obj, persist) {
+		//console.log(obj);
+
+		$scope.ajax({
+			method: ($scope.itemId == 0) ? 'post' : 'put',
+			url: '{{ api }}{{ alias }}' + (($scope.itemId == 0) ? '' : '/' + $scope.itemId),
+			data: obj,
+			view: 'entity',
+			onSuccess: $scope.refresh,
+			persist: persist
+		});
+	};
+	
+	$('#entityForm').submit(function(e) {
+		$scope.prePost(e);
+
+		var obj = {};
+		
+		{% for col, value in columns if ((value.readonly is null or value.on_form == true) and can(alias, value.access)) %}
+			{% if value.type == 'bool' %}
+				obj['{{ col }}'] = $('#entityForm').find('#{{ col }}').is(':checked') ? 1 : 0;
+			{% elseif value.nullable %}
+				var {{ col }}Val = $('#entityForm').find('#{{ col }}').val();
+				obj['{{ col }}'] = ({{ col }}Val) ? {{ col }}Val : null;
+			{% else %}
+				obj['{{ col }}'] = $('#entityForm').find('#{{ col }}').val();
+			{% endif %}
+		{% endfor %}
+
+		{% for col in hidden|keys %}
+			obj['{{ col }}'] = $('#entityForm').find('#{{ col }}').val();
+		{% endfor %}
+		
+		var persist = $('#entityForm').find('#persist').is(':checked');
+		
+		if ($scope.croppie) {
+			$scope.croppieGetThumb(function(thumb) {
+				if ($scope.originalPicture != -1) { 
+					obj['picture'] = $scope.originalPicture;
+				}
+				
+				obj['thumb'] = thumb;
+				
+				var croppieInfo = $('#croppie-upload').croppie('get');
+		    	obj['points'] = croppieInfo.points;
+
+				$scope.submitData(obj, persist);
+			});
+		}
+		else {
+			$scope.submitData(obj, persist);
+		}
+    });
+    
+    $scope.tableInitComplete = function(settings, json) {
+	    {% if can_create and create_onload %}
+	    	$scope.createItem();
+	    {% elseif can_edit and edit_onload > 0 %}
+	    	var rowData = $scope.table.row('#{{ edit_onload }}').data();
+	    	if (rowData) {
+				$scope.editItem(rowData);
+	    	}
+	    {% endif %}
+	};
+
+	Promise.all(promises).then(function(results) {
+		$scope.initTable();
+	});
+{% endset %}
+
+{% block js_appendix %}
+	{# croppie #}
+	<script src="{{ folders.global }}croppie/croppie.js"></script>
+{% endblock %}

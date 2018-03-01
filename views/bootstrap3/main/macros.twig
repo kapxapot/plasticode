@@ -1,0 +1,27 @@
+{% macro edit_button(entity_type, entity) %}
+	{% import 'macros.twig' as m %}
+	{% if entity.access.edit %}
+		<a class="btn btn-default btn-pad pull-right" href="{{ path_for('admin.entities.' ~ entity_type) ~ '?edit=' ~ entity.id }}" role="button" title="Редактировать">{{ m.gi('pencil') }}</a>
+	{% endif %}
+{% endmacro %}
+
+{% macro breadcrumbs(context, items, title) %}
+  	<div class="panel-body breadcrumbs">
+  		<ol class="breadcrumb">
+  			<li><a href="{{ path_for('main.index') }}">{{ context.site_name }}</a></li>
+  			{% if items %}
+	  			{% for i in items %}
+	  				<li><a{% if i.class %} class="{{ i.class }}"{% endif %}{% if i.title %} title="{{ i.title }}"{% endif %} href="{{ i.url }}">{{ i.text }}</a></li>
+	  			{% endfor %}
+  			{% endif %}
+  			<li class="active">{{ title }}</li>
+		</ol>
+	</div>
+{% endmacro %}
+
+{% macro tab(id, title, isActive = false, label = null) %}
+	{% set label = label ?? title %}
+	<li role="presentation"{% if isActive %} class="active"{% endif %} title="{{ title }}">
+		<a href="#{{ id }}" aria-controls="{{ id }}" role="tab" data-toggle="tab">{{ label|raw }}</a>
+	</li>
+{% endmacro %}

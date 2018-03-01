@@ -1,0 +1,14 @@
+{#<div>#}
+	<table id="{{ alias }}-table" class="display responsive table table-striped">
+		<thead>
+			<tr>
+				{% for col, value in columns if value.hidden is null %}
+					<th>{{ value.name }}</th>
+				{% endfor %}
+				{% if actions %}
+					<th>Действия</th>
+				{% endif %}
+			</tr>
+		</thead>
+	</table>
+{#</div>#}

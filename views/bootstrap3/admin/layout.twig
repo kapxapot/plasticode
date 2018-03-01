@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		{% set year = 'now'|date('Y') %}
+		{% set year_from = admin_copyright_from ?? year %}
+		{% set years_str %}{% if year > year_from %}{{ year_from }}—{% endif %}{{ year }}{% endset %}
+		{% set admin_title = admin_title ?? 'Админ' %}
+
+		{% block head %}
+			<meta charset="utf-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+			<title>{% if title %}{{ title }} - {% endif %}{{ admin_title }} - {{ site_name }}</title>
+
+			<!-- coded by Sergey Atroshchenko (kapxapot) / gmail / com (c) {{ years_str }} -->
+		
+			<base href="{{ base }}/">
+		
+			<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+
+	    	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+			<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+			
+			{% block head_appendix %}{% endblock %}
+
+			{# local CSS in the end to override all #}
+		    <link href="{{ folders.global }}css/bootstrap3/common.css" rel="stylesheet" />
+			<link href="{{ folders.global }}css/bootstrap3/admin.css" rel="stylesheet">
+		{% endblock %}
+	</head>
+
+	{% set angular_app = 'pcApp' %}
+	{% set angular_ctrl = 'pcCtrl' %}
+
+	<body ng-app="{{ angular_app }}" ng-controller="{{ angular_ctrl }}">
+		<div class="container">
+			{% include 'admin/includes/nav.twig' %}
+
+			{% if title %}
+				<h4>
+					{{ title }}
+					{% block title_appendix %}{% endblock %}
+				</h4>
+			{% endif %}
+
+			{% if breadcrumbs %}
+  				<ol class="breadcrumb">
+					{% for bc in breadcrumbs %}
+						<li>{% if bc.link %}<a href="{{ bc.link }}">{{ bc.text }}</a>{% else %}{{ bc.text }}{% endif %}</li>
+					{% endfor %}
+				</ol>
+			{% endif %}
+
+			<div class="alert alert-success alert-dismissable fade in" ng-cloak>
+				<a href="javascript:void()" class="close" data-hide="alert" aria-label="close">&times;</a>
+				{{ '{{alertSuccess}}' }}
+			</div>
+			
+			{% if auth.user %}
+				{% include 'modals/auth/password/change.twig' %}
+			{% else %}
+				{% include 'modals/auth/signup.twig' %}
+				{% include 'modals/auth/signin.twig' %}
+			{% endif %}
+
+			<div class="row">
+				<div class="col-xs-12">
+					{% block content %}{% endblock %}
+				</div>
+			</div>
+
+			{% set signin_onload = 1 %}
+			
+			{% include 'angular.twig' %}
+
+			<div class="footer">
+				<div>&copy; {{ years_str }} <a href="mailto:{{ contact_email }}">{{ site_name }}</a></div>
+				<div>Сайт построен на <a href="https://github.com/kapxapot/plasticode">Plasticode</a></div>
+			</div>
+		</div>
+
+		{% block js %}
+    		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    		{% block js_appendix %}{% endblock %}
+    		
+		    <script src="{{ folders.global }}js/common.js"></script>
+		    <script src="{{ folders.global }}js/admin.js"></script>
+
+			{% if auth_token_key %}
+				<script>
+					authTokenKey = '{{ auth_token_key }}';
+				</script>
+			{% endif %}
+		{% endblock %}
+	</body>
+</html>

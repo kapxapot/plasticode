@@ -1,0 +1,15 @@
+{% macro tree(items) %}
+    {% import _self as m %}
+	{% if items %}
+		<ul>
+		    {% for i in items %}
+		        <li>
+		            <a href="{{ i.url }}">{{ i.title }}</a>
+	                {{ m.tree(i.items) }}
+		        </li>
+		    {% endfor %}
+    	</ul>
+    {% endif %}
+{% endmacro %}
+
+{% macro gi(name, title = null) %}<i class="glyphicon glyphicon-{{ name }}" aria-hidden="true"{% if title %} title="{{ title }}"{% endif %}></i>{% endmacro %}

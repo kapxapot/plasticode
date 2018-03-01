@@ -1,0 +1,123 @@
+{# form fields #}
+{% macro col_name(col) %}{{ col.form_name ?? col.name }}{% endmacro %}
+
+{% macro tooltip(col) %}
+	{% if col.tooltip %}<span class="help-block">{{ col.tooltip|raw }}</span>{% endif %}
+{% endmacro %}
+
+{% macro input(context, name, type = 'text', focus = false) %}
+	{% import _self as m %}
+	{% set col = context.columns[name] %}
+	<div class="form-group{% if not col.nullable %} required{% endif %}">
+		<label for="{{ name }}">{{ m.col_name(col) }}</label>
+		<input type="{{ type }}" name="{{ name }}" id="{{ name }}" class="form-control"{% if focus %} data-modalfocus{% endif %}{% if not col.nullable %} required{% endif %} />
+		{{ m.tooltip(col) }}
+	</div>
+{% endmacro %}
+
+{% macro site_url(context, name, focus = false) %}
+	{% import _self as m %}
+	{% set col = context.columns[name] %}
+	<div class="form-group{% if not col.nullable %} required{% endif %}">
+		<label for="{{ name }}">{{ m.col_name(col) }}</label>
+		<div class="input-group">
+			<span class="input-group-addon" id="{{ name }}-addon">{{ context.site_url }}</span>
+			<input type="text" name="{{ name }}" id="{{ name }}" class="form-control" aria-describedby="{{ name }}-addon"{% if focus %} data-modalfocus{% endif %}{% if not col.nullable %} required{% endif %} />
+		</div>
+		{{ m.tooltip(col) }}
+	</div>
+{% endmacro %}
+
+{#{% macro entity_set(col) %}{{ col.entity_set ?? (col.entity ~ 's') }}{% endmacro %}#}
+{% macro entity_field(context, col) %}{{ context.tables[col.entity].name_field ?? 'name' }}{% endmacro %}
+
+{% macro entity(context, name, focus = false) %}
+	{% import _self as m %}
+	{% set col = context.columns[name] %}
+	{% set name_field = col.entity ~ '_item.' ~ m.entity_field(context, col) %}
+	<div class="form-group{% if not col.nullable %} required{% endif %}">
+		<label for="{{ name }}">{{ m.col_name(col) }}</label>
+		<select class="form-control" name="{{ name }}" id="{{ name }}"{% if focus %} data-modalfocus{% endif %}{% if not col.nullable %} required{% endif %}>
+			{% if col.nullable %}<option value="null">&lt;пусто&gt;</option>{% endif %}
+			<option ng-repeat="{{ col.entity }}_item in {{ col.entity }}" value="{{ '{{' ~ col.entity ~ '_item.id}}' }}">{% if col.dropdown_template %}{{ col.dropdown_template|replace({'%item%': col.entity ~ '_item', '%name%': name_field}) }}{% else %}{{ '{{' ~ name_field ~ '}}' }}{% endif %}</option>
+		</select>
+		{{ m.tooltip(col) }}
+	</div>
+{% endmacro %}
+
+{% macro textarea(context, name, focus = false) %}
+	{% import _self as m %}
+	{% set col = context.columns[name] %}
+	<div class="form-group{% if not col.nullable %} required{% endif %}">
+		<label for="{{ name }}">{{ m.col_name(col) }}</label>
+		<textarea class="form-control" name="{{ name }}" id="{{ name }}"{% if focus %} data-modalfocus{% endif %}{% if not col.nullable %} required{% endif %}></textarea>
+		{{ m.tooltip(col) }}
+	</div>
+{% endmacro %}
+
+{% macro checkbox(context, name, focus = false) %}
+	{% import _self as m %}
+	{% set col = context.columns[name] %}
+	<div class="checkbox">
+		<label><input type="checkbox" name="{{ name }}" id="{{ name }}"{% if focus %} data-modalfocus{% endif %}>{{ m.col_name(col) }}</label>
+	</div>
+	{{ m.tooltip(col) }}
+{% endmacro %}
+
+{% macro thumb(context, name, focus = false) %}
+	{% import _self as m %}
+	{% set col = context.columns[name] %}
+	<div class="form-group{% if not col.nullable %} required{% endif %}">
+		<label for="{{ name }}">{{ m.col_name(col) }}</label>
+        <div class="croppie-upload">
+	        <label class="btn btn-primary btn-file">
+	    		Выбрать... <input type="file" name="{{ name }}" id="upload" accept="{{ context.image_types ?? 'image/*' }}" />
+			</label>
+            <div class="loading">Идет загрузка картинки...</div>
+            <div class="croppie-upload-wrap">
+                <div id="croppie-upload"></div>
+            </div>
+			{{ m.tooltip(col) }}
+        </div>
+	</div>
+{% endmacro %}
+
+{% macro hidden(name, value) %}
+	<input type="hidden" name="{{ name }}" id="{{ name }}" value="{{ value }}" />
+{% endmacro %}
+
+{# table columns #}
+{% macro column(name) %}
+	{#<td>{{ '{{i.' ~ name ~ '}}' }}</td>#}
+	return row.{{ name }};
+{% endmacro %}
+
+{% macro column_bool(name) %}
+	{#<td>{{ '{{i.' ~ name ~ " == 1 ? 'Да' : 'Нет'}}" }}</td>#}
+	{#<td><span class="glyphicon glyphicon-ok" ng-show="{{ '{{i.' ~ name ~ '}}' }}" title="Да"></span></td>#}
+	return row.{{ name }} == 1 ? '<span class="glyphicon glyphicon-ok" title="Да"></span>' : null;
+{% endmacro %}
+
+{% macro column_img(name) %}
+	{#{% set item = '{{i.' ~ name ~ '}}' %}
+	<td><img src="{{ item }}" title="{{ item }}" /></td>#}
+	return '<img src="' + row.{{ name }} + '" title="' + row.{{ name }} + '" />';
+{% endmacro %}
+
+{% macro column_date(name) %}
+	{#<td>{{ '{{i.' ~ name ~ "|date:'dd.MM.yyyy'}}" }}</td>#}
+	return row.{{ name }};
+{% endmacro %}
+
+{% macro column_entity(context, name) %}
+	{% import _self as m %}
+	{% set col = context.columns[name] %}
+	{#<td>{{ '{{(' ~ col.entity ~ '|getById:i.' ~ name ~ ').' ~ m.entity_field(context, col) ~ '}}' }}</td>#}
+	var entity = getById($scope.{{ col.entity }}, row.{{ name }});
+	return entity ? entity.{{ m.entity_field(context, col) }} : null;
+{% endmacro %}
+
+{% macro column_template(template) %}
+	{#<td>{{ template|raw }}</td>#}
+	return {{ template|raw }};
+{% endmacro %}

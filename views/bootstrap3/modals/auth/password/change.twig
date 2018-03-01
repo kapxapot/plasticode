@@ -1,0 +1,15 @@
+{% extends 'modals/narrow.twig' %}
+
+{% set modal_name = 'passwordChange' %}
+{% set modal_title = 'Смена пароля' %}
+
+{% block modal_body %}
+	<div class="form-group required">
+		<label for="pc_password_old">Текущий пароль</label>
+		<input type="password" name="pc_password_old" id="pc_password_old" class="form-control" data-modalfocus required />
+	</div>
+	<div class="form-group required">
+		<label for="pc_password">Пароль</label>
+		<input type="password" name="pc_password" id="pc_password" class="form-control" required />
+	</div>
+{% endblock %}

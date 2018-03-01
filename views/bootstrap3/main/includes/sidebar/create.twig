@@ -1,0 +1,13 @@
+{% if sidebar.actions.create %}
+	{% for entity in sidebar.actions.create|keys %} 
+		<div class="create-block">
+			{% set target_url = path_for('admin.entities.' ~ entity) ~ '?create=true' %}
+			{% set label = user_actions.create[entity] %}
+			{% if auth.user %}
+				<a class="btn btn-lg btn-default btn-block" href="{{ target_url }}" role="button">{{ label }} &raquo;&raquo;</a>
+			{% else %}
+				<button type="button" class="btn btn-lg btn-default btn-block" ng-click="signIn('{{ target_url }}')">{{ label }} &raquo;&raquo;</button>
+			{% endif %}
+		</div>
+	{% endfor %}
+{% endif %}

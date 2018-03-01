@@ -1,0 +1,30 @@
+<div id="{{ modal_name }}View" class="modal fade" role="dialog" data-backdrop="static">
+	<div class="modal-dialog{% if modal_narrow %} modal-dialog-narrow{% endif %}">
+	    <div class="modal-content">
+			<form id="{{ modal_name }}Form" method="post">
+		    	<div class="modal-header">
+		        	<button type="button" class="close" ng-disabled="loading" data-dismiss="modal">&times;</button>
+		        	<h4 class="modal-title">{{ modal_title }}</h4>
+		      	</div>
+		      	<div class="modal-body">
+		      		{% block modal_body %}{% endblock %}
+					<div class="alert alert-danger alert-dismissable fade in">
+						<a href="javascript:void()" class="close" data-hide="alert" aria-label="close">&times;</a>
+						<div ng-bind-html="alertError|rawHtml"></div>
+					</div>
+              	</div>
+		      	<div class="modal-footer">
+		      		<div>
+			        	<button type="button" class="btn btn-default" ng-disabled="loading" data-dismiss="modal">Отмена</button>
+			        	<button type="submit" class="btn btn-primary" ng-disabled="loading">{{ modal_save_label ?? 'Сохранить' }}</button>
+		      		</div>
+			      	{% if modal_persist %}
+						<div class="checkbox">
+							<label><input type="checkbox" name="persist" id="persist">Не закрывать окно</label>
+						</div>
+			      	{% endif  %}
+		      	</div>
+			</form>
+	    </div>
+	</div>
+</div>

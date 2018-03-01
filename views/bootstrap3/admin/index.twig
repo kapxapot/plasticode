@@ -1,0 +1,9 @@
+{% extends 'admin/layout.twig' %}
+
+{% block content %}
+	{% if auth.user %}
+		<p>Добро пожаловать, <b>{{ auth.user.name }}</b>!</p>
+	{% else %}
+		<p>Пожалуйста, <a href="javascript:void(0);" ng-click="signIn()">войдите</a> или <a href="javascript:void(0);" ng-click="signUp()">зарегистрируйтесь</a>.</p>
+	{% endif %}
+{% endblock %}

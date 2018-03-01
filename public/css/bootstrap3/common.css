@@ -1,0 +1,105 @@
+.no-under {
+	text-decoration: none;
+}
+
+.form-control {
+	margin: 0;
+}
+
+.error {
+	color: red;
+}
+
+.msg, .lbl {
+	margin: 5px 0;
+}
+
+.lbl {
+	font-weight: bolder;
+}
+
+.button-create {
+	/*margin: 5px 0 15px 0;*/
+	margin-left: 5px;
+}
+
+.btn-pad {
+	padding: 4px 7px 3px 8px;
+}
+
+textarea.form-control {
+	height: 150px;
+}
+
+.form-group.required label:after {
+	content: " *";
+	color: red;
+}
+
+.form-group.required label.btn-file:after {
+	content: "";
+}
+
+.form-group {
+	word-break: break-all;
+}
+
+.captcha {
+	word-break: break-all;
+	font-weight: bolder;
+	color: darkgreen;
+	margin-bottom: 10px;
+	font-size: 90%;
+}
+
+.captcha button {
+	margin-right: 5px;
+}
+
+.help-block {
+	font-size: 85%;
+	word-break: break-word;
+}
+
+.ng-binding ul {
+	padding-left: 20px;
+}
+
+.ng-binding ul:last-child {
+	margin-bottom: 0;
+}
+
+.alert:last-child {
+	margin-bottom: 0;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #e7e7e7;
+}
+
+/* SimpleMDE */
+.CodeMirror {
+    height: 310px;
+}
+
+.simplemde-fullscreen .modal-dialog {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+}
+
+/* modals */
+@media (min-width: 768px) {
+	.modal-dialog-narrow {
+	    width: 400px;
+	}
+}
+
+.modal-body {
+	background-color: #eee;
+}
