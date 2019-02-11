@@ -6,10 +6,12 @@ use Respect\Validation\Rules\AbstractRule;
 
 use Plasticode\Exceptions\ApplicationException;
 
-abstract class ContainerRule extends AbstractRule {
+abstract class ContainerRule extends AbstractRule
+{
 	protected $container;
 
-	public function setContainer($container) {
+	public function setContainer($container)
+	{
 		$this->container = $container;
 	}
 	

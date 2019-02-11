@@ -143,3 +143,19 @@ div.dataTables_wrapper div.dataTables_paginate {
     width: 300px;
     z-index: 1100;
 }
+
+/* SimpleMDE / Codemirror disabled state */
+
+textarea:disabled + .editor-toolbar {
+	display: none;
+}
+
+textarea:disabled + .editor-toolbar + .CodeMirror-wrap {
+	background-color: #ddd;
+}
+
+.CodeMirror-hints {
+	font-family: sans-serif;
+	z-index: 1060; /* bootstrap modal is 1050 */
+}
+

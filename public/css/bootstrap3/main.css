@@ -731,6 +731,10 @@ fieldset[disabled] .btn-primary.focus {
 	white-space: nowrap;
 }
 
+a.important {
+    font-weight: bolder;
+}
+
 /* cards */
 
 .card {

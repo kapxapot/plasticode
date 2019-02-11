@@ -120,7 +120,6 @@ class Db extends Contained
 		$e = $this->create($table, $data);
 		$e->save();
 		
-		$provider->updateTags($e);
 		$provider->afterSave($e, $original);
 
 		$this->logger->info("Created {$table}: {$e->id}");
@@ -152,7 +151,6 @@ class Db extends Contained
 		$e->set($data);
 		$e->save();
 		
-		$provider->updateTags($e);
 		$provider->afterSave($e, $original);
 		
 		$this->logger->info("Updated {$table}: {$e->id}");
@@ -178,7 +176,6 @@ class Db extends Contained
 
 		$e->delete();
 		
-		$provider->deleteTags($e);
 		$provider->afterDelete($e);
 
 		$this->logger->info("Deleted {$table}: {$e->id}");
@@ -210,12 +207,16 @@ class Db extends Contained
 		return new TableRights($this->container, $table);
 	}
 	
-	protected function can($table, $rights, $item = null)
+	public function can($table, $rights, $item = null)
+	{
+        $access = $this->getRights($table, $item);
+		return $access[$rights];
+	}
+	
+	public function getRights($table, $item = null)
 	{
 		$tableRights = $this->getTableRights($table);
-		$access = $tableRights->get($item);
-
-		return $access[$rights];
+		return $tableRights->get($item);
 	}
 	
 	protected function enrichRights($table, $item)
@@ -241,12 +242,12 @@ class Db extends Contained
 	private function addUserNames($item)
 	{
 		if (isset($item['created_by'])) {
-			$created = $this->getUser($item['created_by']);
+			$created = $this->userRepository->get($item['created_by']);
 			$item['created_by_name'] = $created['login'] ?? $item['created_by'];
 		}
 
 		if (isset($item['updated_by'])) {
-			$updated = $this->getUser($item['updated_by']);
+			$updated = $this->userRepository->get($item['updated_by']);
 			$item['updated_by_name'] = $updated['login'] ?? $item['updated_by'];
 		}
 		
@@ -342,12 +343,17 @@ class Db extends Contained
 		return $this->enrichRights($table, $item);
 	}
 	
-	public function getObj($table, $id)
+	public function getObj($table, $id, $where = null)
 	{
-		return $this
+		$query = $this
 			->forTable($table)
-			->where('id', $id)
-			->findOne();
+			->where('id', $id);
+			
+		if ($where) {
+		    $query = $where($query);
+		}
+		
+		return $query->findOne();
 	}
     
 	protected function getBy($table, $where)
@@ -358,40 +364,12 @@ class Db extends Contained
 		return $this->enrichRights($table, $item);
 	}
 	
-	protected function getObjBy($table, $where)
+	public function getObjBy($table, $where)
 	{
 		$query = $this->forTable($table);
 		return $where($query)->findOne();
 	}
 
-	protected function getProtected($table, $id, $where = null)
-	{
-		$editor = $this->can($table, 'edit');
-		
-		$where = $where ?? function($q) use ($id) {
-			return $q->where('id', $id);
-		};
-
-		return $this->getBy($table, function($q) use ($where, $editor) {
-			$q = $where($q);
-
-			if (!$editor) {
-				$user = $this->auth->getUser();
-				
-				$published = "(published = 1 and published_at < now())";
-
-				if ($user) {
-					$q = $q->whereRaw("({$published} or created_by = ?)", [ $user->id ]);
-				}
-				else {
-					$q = $q->whereRaw($published);
-				}
-			}
-			
-			return $q;
-		});
-	}
-	
 	public function isPublished($item) {
 		return isset($item['published_at']) && Date::happened($item['published_at']);
 	}
@@ -413,17 +391,15 @@ class Db extends Contained
 		return $result ? array_values($result) : null;
 	}
 	
-	protected function getMany($table, $where = null)
+	public function getMany($table, $where = null)
 	{
-		$query = $this
-			->getManyBaseQuery($table, $where);
-		
+		$query = $this->getManyBaseQuery($table, $where);
 		$items = $this->getArray($query);
 		
 		return $this->enrichRightsMany($table, $items);
 	}
-	
-	protected function getManyObj($table, $where = null)
+
+	public function getManyObj($table, $where = null)
 	{
 		return $this
 			->getManyBaseQuery($table, $where)
@@ -432,12 +408,30 @@ class Db extends Contained
 	
 	protected function getManyByField($table, $field, $value)
 	{
-		return $this->getMany($table, function($q) use ($field, $value) {
+		return $this->getMany($table, function ($q) use ($field, $value) {
 			return $q->where($field, $value);
 		});
 	}
+	
+	public function getManyObjByField($table, $field, $value, $where = null)
+	{
+		return $this->getManyObj($table, function ($q) use ($field, $value, $where) {
+			$q = $q->where($field, $value);
+			
+			if ($where) {
+			    $q = $where($q);
+			}
+			
+			return $q;
+		});
+	}
+	
+	public function getCount($table, $where = null)
+	{
+		return $this->getManyBaseQuery($table, $where)->count();
+	}
     
-	protected function getObjByField($table, $field, $value, $where = null)
+	public function getObjByField($table, $field, $value, $where = null)
 	{
 		$query = $this
 			->forTable($table)
@@ -538,105 +532,20 @@ class Db extends Contained
 	    return $recursive;
 	}
 	
-	// getters
-	public function getUsers()
+	public function deleteBy($table, callable $where)
 	{
-		return $this->getMany(Tables::USERS);
+	    $q = $this->forTable($table);
+	    $q = $where($q);
+	    
+	    $q->delete_many();
 	}
 	
-	public function getUser($id)
+	public function getQueryCount()
 	{
-		return $this->get(Tables::USERS, $id);
-	}
-    
-	public function getMenus()
-	{
-		return $this->getMany(Tables::MENUS, function($q) {
-			return $q
-				->orderByAsc('position');
-		});
-	}
-	
-	public function getMenu($id)
-	{
-		return $this->get(Tables::MENUS, $id);
-	}
-    
-	public function getMenuItems($menuId)
-	{
-		return $this->getMany(Tables::MENU_ITEMS, function($q) use ($menuId) {
-			return $q
-				->where('menu_id', $menuId)
-				->orderByAsc('position')
-				->orderByAsc('text');
-		});
-	}
-
-	public function saveTags($entityType, $entityId, $tags) {
-		if (!($entityId > 0)) {
-			throw new \InvalidArgumentException('Entity id must be positive');
-		}
-		
-		$this->deleteTags($entityType, $entityId);
-
-    	foreach ($tags as $tag) {
-    		if (strlen($tag) > 0) {
-    			$this->saveTag($entityType, $entityId, $tag);
-    		}
-    	}
-	}
-
-	public function deleteTags($entityType, $entityId) {
-		$this->forTable(Tables::TAGS)
-    		->where('entity_type', $entityType)
-    		->where('entity_id', $entityId)
-    		->delete_many();
-	}
-	
-	public function saveTag($entityType, $entityId, $tag) {
-		$t = $this->forTable(Tables::TAGS)->create();
-
-		$t->entity_type = $entityType;
-        $t->entity_id = $entityId;
-        $t->tag = $tag;
-
-		$t->save();
-	}
-	
-	private function getIdsByTag($entityType, $tag) {
-		$entities = $this->getMany(Tables::TAGS, function($q) use ($entityType, $tag) {
-			return $q
-				->where('entity_type', $entityType)
-				->where('tag', $tag);
-		});
-		
-		return $entities ? array_column($entities, 'entity_id') : null;
-	}
-	
-	protected function getByTag($table, $taggable, $tag, $where = null)
-	{
-		$tag = Strings::normalize($tag);
-		$ids = $this->getIdsByTag($taggable, $tag);
-		
-		if (!$ids) {
-			return null;
-		}
-		
-		$query = $this
-			->forTable($table)
-			->where('published', 1)
-   			->whereRaw('(published_at < now())')
-   			->whereIn('id', $ids);
-   		
-   		if (!$where) {
-			$query = $query
-			    ->orderByDesc('published_at')
-				->orderByDesc('id');
-   		}
-   		else {
-   			$query = $where($query);
-   		}
-
-		return $this->getArray($query);
+	    $questions = \ORM::forTable(null)
+            ->rawQuery('SHOW STATUS LIKE ?', [ 'Questions' ])
+            ->findOne()['Value'];
+        
+        return $questions;
 	}
 }

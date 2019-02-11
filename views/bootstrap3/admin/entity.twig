@@ -39,8 +39,6 @@
 	{% include 'admin/includes/datatables.twig' %}
 {% endblock %}
 
-{% set angular_modules %}'angular-bootstrap-select', 'angular-bootstrap-select.extra'{% endset %}
-
 {% set angular_filters %}
 	app.filter('getById', function() {
 		return function(input, id) {
@@ -59,8 +57,10 @@
 {% set more_angular %}
 	{% if mde %}
 		$scope.mdes = [];
+		var mdEditorService = $injector.get('mdEditorService'); //not good
+		var plDataService = $injector.get('plDataService');
 
-		$scope.killMdes = function() {
+		/*$scope.killMdes = function() {
 			while ($scope.mdes.length > 0) {
 				var mde = $scope.mdes.shift();
 				
@@ -73,66 +73,71 @@
 				mde.toTextArea();
 				mde = null;
 			}
-		};
+		}; */
 
-        $scope.parse = function(editor) {
-            var fullscreen = getMdeVar(editor, 'fullscreen', false);
-            if (fullscreen) {
-                $scope.ajax({
-        			method: 'post',
-        			url: '{{ api }}parser/parse',
-        			data: {
-        		        'text': editor.value()
-        		    },
-        		    noSuccessMessage: true,
-        			onSuccess: function(data) {
-        			    setMdeResult(editor, data.text);
-        			    updateUI();
-        			}
+        $scope.parse = function(text) {
+            $scope.ajax({
+        		method: 'post',
+        		url: '{{ api }}parser/parse',
+        		data: {
+        		      'text': text
+        		},
+        		noSuccessMessage: true,
+        		onSuccess: function(data) {
+        			$scope.item.preview = data.text;
+        		}
         		});
-            }
         };
 	{% endif %}
 
 	var formControls = $('#entityForm').find('.form-control');
-
+	
 	$('#entityView').on('shown.bs.modal', function() {
-    	formControls.trigger('change');
+		formControls.trigger('change');
+	})
+
+	$('#entityView').on('show.bs.modal', function() {
 	    
-		$('#entityView').find('textarea').scrollTop(0);
+		//$('#entityView').find('textarea').scrollTop(0);
 
 		var initMdes = function() {
 			{% if mde %}
 				$('#entityView').find('textarea').each(function() {
 					{# remove required #}
-					$(this).attr('required', false);
+					/* $(this).attr('required', false);
 
-                    var buttons = mdeButtons();
+                    var buttons = mdeButtons(); */
+                    var buttons = angular.copy(mdEditorService.defaultButtons);
                     
                     var previewButton = {
                         name: 'previewSideBySide',
                         action: function(editor) {
-                            toggleMdeFullscreen(editor);
-                            cm.refresh();
+                        	editor.options.plasticode.preview = !editor.options.plasticode.preview;
+                        	editor.codemirror.refresh();
+                            /* toggleMdeFullscreen(editor);
 
                             toggleMdeVar(editor, 'fullscreen');
-                            $scope.parse(editor);
+                            $scope.parse(editor); */
                         },
                         className: 'fa fa-arrows-alt hidden-xs',
                         title: 'Превью'
                     };
                     
-                    {% include 'admin/includes/mde_buttons.twig' %}
+                    var options = {
+                    	toolbar: buttons
+                    }
+                    
+                     {% include 'admin/includes/mde_buttons.twig' %}
 
-					var options = {
+					/* var options = {
 				        element: this,
 				        spellChecker: false,
 				        toolbar: buttons,
 				        status: false,
 				        forceSync: true
-				    };
+				    }; */
                     
-				    if ($scope.itemId == 0) {
+				     if ($scope.itemId == 0) {
 				        options.autosave = {
 					        enabled: true,
 					        uniqueId: '{{ alias }}',{# + ($scope.itemId > 0 ? $scope.itemId : ''),#}
@@ -140,7 +145,9 @@
 					    };
 				    }
 				    
-				    var mde = new SimpleMDE(options);
+				    $scope.editorOpts = options;
+				    
+				    /*var mde = new SimpleMDE(options);
 				    var cm = mde.codemirror;
 	
 					cm.on('refresh', function() {
@@ -157,7 +164,7 @@
                         }, 1000);
                     });
 
-					$scope.mdes.push(mde);
+					$scope.mdes.push(mde); */
 				});
 			{% endif %}
 		};
@@ -194,10 +201,12 @@
 		{% block modal_shown %}
 			init();
 		{% endblock %}
+		
+		$(this).focus();
 	});
 
 	{% if mde %}
-		$('#entityView').on('hidden.bs.modal', $scope.killMdes);
+		//$('#entityView').on('hidden.bs.modal', $scope.killMdes);
 	{% endif %}
 
 	{# loading dictionaries #}
@@ -388,9 +397,10 @@
 	
 	$scope.setItem = function(i) {
 		$scope.itemId = (i && i.id > 0) ? i.id : 0;
-		$scope.item = (i && i.id > 0) ? i : null;
+		$scope.item = i;
+		//console.log($scope.item);
 		
-		$scope.itemEditLabel = ($scope.item != null) ? 'Редактирование' : 'Создание';
+		$scope.itemEditLabel = ($scope.item && $scope.item.id > 0) ? 'Редактирование' : 'Создание';
 
 	    $timeout(function() {
 			$scope.$apply();
@@ -413,20 +423,25 @@
 	    resetForm('entity');
 		//$('#entityForm')[0].reset();
 		
-		$scope.setItem(null);
+		var newItem = {};
 
 		{% for col, value in columns %}
 		    {% set default_value = tables[value.entity].default ?? value.default %}
 			{% if value.nullable %}
 			    $('#entityForm').find('#{{ col }}').val(null);
+			    newItem.{{col}} = null;
 		    {% elseif default_value %}
 				{% if value.type == 'bool' %}
 					$('#entityForm').find('#{{ col }}').prop('checked', {{ default_value }} == 1);
+					newItem.{{col}} = {{ default_value }} == 1;
                 {% else %}
 				    $('#entityForm').find('#{{ col }}').val({{ default_value }});
+				    newItem.{{col}} = {{ default_value }};
 				{% endif %}
 			{% endif %}
 		{% endfor %}
+		
+		$scope.setItem(newItem);
 
 		if ($scope.croppie) {
 			$scope.croppieReset();
@@ -436,6 +451,7 @@
 	};
 	
 	$scope.fillEntityForm = function(i) {
+		//console.log(i);
 		{% for col, value in columns %}
 			{% if value.readonly is null %}
 				{% if value.type == 'bool' %}
@@ -501,12 +517,34 @@
         //}, 100000);
 	};
 	
+	$scope.isPreview = false;
+	$scope.textSync = function(text, col) {
+		$scope.item[col] = text;
+		//console.log($scope.item[col]);
+		if($scope.isPreview) {
+			delay(function() {
+                $scope.parse(text);
+            }, 1000);
+		}
+	}
+	
+    $scope.togglePreview = function(isPreview, editor) {
+        if(isPreview !== $scope.isPreview) {
+        	$scope.isPreview = isPreview;
+        	$scope.parse($scope.item.text);
+        }
+    }
+    
+    $scope.search = function(text) {
+    	return plDataService.getMdeSearchHints(text).then(function (results) { return results });
+    }
+	
 	$('#entityForm').submit(function(e) {
 		$scope.prePost(e);
 
 		var obj = {};
 		
-		if ($scope.item) {
+		if ($scope.item && $scope.item.id > 0) {
 		    obj.updated_at = $scope.item.updated_at;
 		}
 		
@@ -524,6 +562,13 @@
 		{% for col in hidden|keys %}
 			obj['{{ col }}'] = $('#entityForm').find('#{{ col }}').val();
 		{% endfor %}
+		
+		/*if($scope.item && $scope.item.text) {
+			obj['text'] = $scope.item.text;
+		}
+		if($scope.item && $scope.item.description) {
+			obj['description'] = $scope.item.description;
+		}*/
 		
 		var persist = $('#entityForm').find('#persist').is(':checked');
 		

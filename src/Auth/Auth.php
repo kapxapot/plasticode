@@ -4,7 +4,6 @@ namespace Plasticode\Auth;
 
 use Plasticode\Contained;
 use Plasticode\Core\Security;
-use Plasticode\Data\Tables;
 use Plasticode\Exceptions\AuthenticationException;
 use Plasticode\Util\Date;
 
@@ -28,7 +27,7 @@ class Auth extends Contained {
 	}
 	
 	private function setToken($token) {
-		$this->setUserId($token->user_id);
+		$this->setUser($token->user());
 		$this->setTokenId($token->id);
 	}
 	
@@ -41,12 +40,7 @@ class Auth extends Contained {
 			$id = $this->session->get('user');
 
 			if ($id != null) {
-				$user = $this->db->getObj(Tables::USERS, $id);
-				/*if (empty($user->name)) {
-					$user->name = $user->login;
-				}*/
-			
-				$this->user = $user;
+				$this->user = $this->userRepository->get($id);
 			}
 		}
 		
@@ -56,9 +50,9 @@ class Auth extends Contained {
 	public function getRole() {
 		if (!$this->role) {
 			$user = $this->getUser();
+			
 			if ($user) {
-				$id = $user->role_id;
-				$this->role = $this->db->getObj(Tables::ROLES, $id);
+				$this->role = $user->role();
 			}
 		}
 		
@@ -70,7 +64,7 @@ class Auth extends Contained {
 			$id = $this->session->get('token');
 
 			if ($id != null) {
-				$this->token = $this->db->getObj(Tables::AUTH_TOKENS, $id);
+				$this->token = $this->authTokenRepository->get($id);
 			}
 		}
 		
@@ -87,23 +81,17 @@ class Auth extends Contained {
 	public function tokenString() {
 		$token = $this->getToken();
 		return ($token != null)
-			? "{$token->token}, expires at {$token->expires_at}"
+			? "{$token->token}, expires at {$token->expiresAt}"
 			: null;
 	}
 
 	public function check() {
-		return $this->getUser();
+		return $this->getUser() !== null;
 	}
 	
 	public function attempt($login, $password) {
-		$user = $this->db
-			->forTable(Tables::USERS)
-			->whereAnyIs([
-                [ 'login' => $login ],
-                [ 'email' => $login ],
-            ])
-			->findOne();
-		
+	    $user = $this->userRepository->getByLogin($login);
+
 		$ok = false;
 
 		if ($user) {
@@ -113,10 +101,11 @@ class Auth extends Contained {
 					$user->save();
 				}
 				
-				$token = $this->db->forTable(Tables::AUTH_TOKENS)->create();
-				$token->user_id = $user->id;
+				$token = $this->authTokenRepository->create();
+
+				$token->userId = $user->id;
 				$token->token = Security::generateToken();
-				$token->expires_at = $this->generateExpirationTime();
+				$token->expiresAt = $this->generateExpirationTime();
 				
 				$token->save();
 
@@ -151,19 +140,17 @@ class Auth extends Contained {
 	public function validateToken($tokenStr, $ignoreExpiration = false) {
 		$token = $this->getToken();
 		if (!$token || $token->token != $tokenStr) {
-			$token = $this->db->forTable(Tables::AUTH_TOKENS)
-				->where('token', $tokenStr)
-				->findOne();
+			$token = $this->authTokenRepository->getByToken($tokenStr);
 			
 			if ($token == null) {
 				throw new AuthenticationException('Incorrect security token.');
 			}
-			elseif (!$ignoreExpiration && strtotime($token['expires_at']) < time()) {
+			elseif (!$ignoreExpiration && strtotime($token->expiresAt) < time()) {
 				throw new AuthenticationException('Security token expired.');
 			}
 		}
 			
-		$token->expires_at = $this->generateExpirationTime();
+		$token->expiresAt = $this->generateExpirationTime();
 		
 		$token->save();
 

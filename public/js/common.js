@@ -231,3 +231,27 @@ function removeClass(selector, className) {
         return classNames.replace(className, '');
     });
 }
+
+function momentDiff(start, end, unknownEnd, format = null, shortFormat = null) {
+    format = format || 'D MMMM Y';
+    shortFormat = shortFormat || 'D MMMM';
+    let startMoment = moment(start);
+    let startStr = startMoment.format(format);
+    
+    let result = '';
+
+    if (!end) {
+        result = unknownEnd
+            ? startStr + ' — ?'
+            : startStr;
+    } else {
+        let endMoment = moment(end);
+        let endStr = endMoment.format(format);
+
+        result = (startMoment.year() == endMoment.year() && startMoment.month() == endMoment.month())
+            ? (startMoment.date() == endMoment.date() ? startStr : startMoment.date() + '–' + endStr) 
+            : (startMoment.year() == endMoment.year() ? startMoment.format(shortFormat) : startStr) + ' — ' + endStr;
+    }
+
+    return result;
+}

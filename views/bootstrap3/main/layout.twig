@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ lang ?? 'ru' }}">
+{% set lang = lang ?? 'ru' %}
+<html lang="{{ lang }}">
 	<head>
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -40,7 +41,7 @@
 		{% endif %}
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
 		
 		{% if with_datatables %}
 			<script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
@@ -53,7 +54,7 @@
 		{% endif %}
 
 		<!-- Moment.js -->
-		<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"></script>
 		
 		{% if with_charts %}
 			<!-- Chart.js -->
@@ -144,7 +145,7 @@
             	    </div>
 		        </div>
 
-				{% include 'angular.twig' with { 'with_auth': with_auth } %}
+				{% include 'angular.twig' with { 'with_auth': with_auth, 'lang': lang } %}
 				
 				<!-- SIDEBAR -->
         		<div id="sidebar" class="{% if not one_column %}col-md-3 {% endif %}col-xs-12">

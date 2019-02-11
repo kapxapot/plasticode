@@ -6,7 +6,7 @@ class Localization
 {
     public function get($lang)
     {
-        if (!$lang) {
+        if (!$lang || $lang == 'en') {
             return null;
         }
         
@@ -68,6 +68,10 @@ class Localization
             'comment' => 'Заголовок',
             'title' => 'Название',
             'stream_id' => 'Код',
+            
+            // 404
+            'Page not found or moved somewhere we don\'t know where.' => 'Страница не найдена или перемещена.',
+            'Error 404' => 'Ошибка 404',
         ];
     }
 }

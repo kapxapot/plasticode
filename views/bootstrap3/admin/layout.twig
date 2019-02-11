@@ -8,6 +8,9 @@
 
 	{% set angular_app = 'pcApp' %}
 	{% set angular_ctrl = 'pcCtrl' %}
+	{% set angular_admin_app = angular.adminApp ?? 'plasticodeAdmin' %}
+	{% set angular_admin_app_kebab = angular.adminAppKebab ?? 'plasticode-admin' %}
+	{% set angular_modules %}'angular-bootstrap-select', 'angular-bootstrap-select.extra', '{{angular_admin_app}}'{% endset %}
 
 	{% set signin_onload = true %}
 	{% set with_auth = true %}
@@ -31,13 +34,8 @@
     		{% endif %}
 
 	    	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-			<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-
-            {% if with_mde %}
-            	{# SimpleMDE #}
-            	<link rel="stylesheet" href="//cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-            	<script src="//cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-        	{% endif %}
+			<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+			<script src="{{ angular.adminApp ? folders.local : folders.global }}js/{{angular_admin_app_kebab}}/dist/{{angular_admin_app_kebab}}.min.js"></script>
         	
         	{# Font Awesome #}
             <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
@@ -50,6 +48,7 @@
 			{% block head_appendix %}{% endblock %}
 
 			{# local CSS in the end to override all #}
+			<link href="{{ angular.adminApp ? folders.local : folders.global }}js/{{angular_admin_app_kebab}}/dist/main.css" rel="stylesheet" />
 		    <link href="{{ folders.global }}css/bootstrap3/common.css" rel="stylesheet" />
 			<link href="{{ folders.global }}css/bootstrap3/admin.css" rel="stylesheet">
 		
@@ -117,7 +116,7 @@
     		{% endif %}
 
     		{% block js_appendix %}{% endblock %}
-    		
+    	
 		    <script src="{{ folders.global }}js/common.js"></script>
 		    <script src="{{ folders.global }}js/admin.js"></script>
 

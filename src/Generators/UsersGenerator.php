@@ -8,8 +8,10 @@ class UsersGenerator extends EntityGenerator
 	{
 	    $rules = parent::getRules($data, $id);
 	    
-		$rules['login'] = $this->rule('login')->loginAvailable($id);
-		$rules['email'] = $this->rule('url')->email()->emailAvailable($id);
+	    $table = $this->userRepository->getTable();
+	    
+		$rules['login'] = $this->rule('login')->loginAvailable($table, $id);
+		$rules['email'] = $this->rule('url')->email()->emailAvailable($table, $id);
 		$rules['password'] = $this->rule('password', $id);
 		
 		return $rules;

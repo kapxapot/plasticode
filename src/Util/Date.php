@@ -88,6 +88,11 @@ class Date
     {
         return self::toTimeZone($utc, date_default_timezone_get());
     }
+    
+    public static function iso($date = null)
+    {
+        return self::formatIso(self::dt($date));
+    }
 	
 	public static function interval($interval)
 	{

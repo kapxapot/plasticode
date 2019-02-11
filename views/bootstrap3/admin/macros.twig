@@ -75,6 +75,22 @@
 	</div>
 {% endmacro %}
 
+{% macro mdearea(context, name, focus = false) %}
+	{% import _self as m %}
+	{% set col = context.columns[name] %}
+	<div class="form-group{% if not col.nullable %} required{% endif %} short" ng-class="{'short': isPreview}">
+		<label for="{{ name }}">{{ m.col_name(col) }}</label>
+        <div class="row mde-group" ng-class="{'mde-group-fullscreen': isPreview}">
+        	<div class="mde-editor" ng-class="isPreview ? 'col-sm-6' : 'col-xs-12'">
+        		<pl-md-editor value="item.{{name}}" name="{{name}}" is-disabled="loading" on-change="textSync(value, '{{name}}')" mde-config="editorOpts" on-preview="togglePreview(isPreview, editor)" on-search="search(text)" {% if focus %} data-modalfocus{% endif %}></pl-md-editor>
+        	</div>
+        	<div class="mde-result col-sm-6 article hidden-xs" ng-bind-html="item.preview | rawHtml" ng-if="isPreview"></div>
+        </div>
+        <pl-entity-autosave value="item.{{name}}" entity-type="item.type" entity-id="item.id" entity-updated-at="item.updated_at" on-load="textSync(text, '{{name}}')"></pl-entity-autosave>
+		{{ m.tooltip(col) }}
+	</div>
+{% endmacro %}
+
 {% macro checkbox(context, name, focus = false) %}
 	{% import _self as m %}
 	{% set col = context.columns[name] %}

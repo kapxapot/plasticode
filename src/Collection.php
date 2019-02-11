@@ -13,19 +13,47 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         $this->data = $data;
     }
     
-    public static function make($data)
+    public static function make(array $data = null)
     {
-        return new Collection($data);
+        return new Collection($data ?? []);
     }
     
+    public static function makeEmpty()
+    {
+        return self::make();
+    }
+    
+    public function add($item)
+    {
+        $col = self::make([ $item ]);
+        return $this->concat($col);
+    }
+    
+    public function concat(Collection $other)
+    {
+        $data = array_merge($this->data, $other->toArray());
+        return self::make($data);
+    }
+    
+    public static function merge(...$collections)
+    {
+        $merged = self::makeEmpty();
+        
+        foreach ($collections as $collection) {
+            $merged = $merged->concat($collection);
+        }
+        
+        return $merged;
+    }
+
     /**
      * Returns distinct values grouped by selector ('id' by default).
      * 
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      */
-    public function distinct($by = 'id')
+    public function distinct($by = null)
     {
-        $data = Arrays::distinctBy($this->data, $by);
+        $data = Arrays::distinctBy($this->data, $by ?? 'id');
         return self::make($data);
     }
     
@@ -35,9 +63,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
      * 
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      */
-    public function toAssoc($by = 'id')
+    public function toAssoc($by = null)
     {
-        return Arrays::toAssocBy($this->data, $by);
+        return Arrays::toAssocBy($this->data, $by ?? 'id');
     }
     
     public function toArray()
@@ -51,15 +79,42 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      * @return Returns associative array of collections.
      */
-    public function group($by = 'id')
+    public function group($by = null)
     {
-        $groups = Arrays::groupBy($this->data, $by);
+        $groups = Arrays::groupBy($this->data, $by ?? 'id');
         
         foreach ($groups as $key => $group) {
             $result[$key] = self::make($group);
         }
         
         return $result;
+    }
+    
+    /**
+     * Skips $offset elements from the start and returns the remaining collection.
+     */
+    public function skip($offset)
+    {
+        $data = array_slice($this->data, $offset);
+        return self::make($data);
+    }
+    
+    /**
+     * Returns first $limit elements
+     */
+    public function take($limit)
+    {
+        $data = array_slice($this->data, 0, $limit);
+        return self::make($data);
+    }
+    
+    /**
+     * Skips $offset elements and takes $limit elements
+     */
+    public function slice($offset, $limit)
+    {
+        $data = array_slice($this->data, $offset, $limit);
+        return self::make($data);
     }
 
     /**
@@ -87,6 +142,11 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     public function empty()
     {
         return $this->count() == 0;
+    }
+    
+    public function contains($value)
+    {
+        return in_array($value, $this->data);
     }
 
     /**
@@ -128,20 +188,48 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         return self::make($data);
     }
     
-    public function asc($column)
+    public function map($func)
     {
-        return $this->orderBy($column);
+        $data = array_map($func, $this->data);
+        return self::make($data);
     }
     
-    public function desc($column)
+    public function apply($func)
     {
-        $data = Arrays::orderByDesc($this->data, $column, $dir);
+        array_walk($this->data, $func);
+    }
+    
+    public function asc($column, $type = null)
+    {
+        return $this->orderBy($column, null, $type);
+    }
+    
+    public function desc($column, $type = null)
+    {
+        $data = Arrays::orderByDesc($this->data, $column, $type);
         return self::make($data);
     }
 
-    public function orderBy($column, $dir = null)
+    public function orderBy($column, $dir = null, $type = null)
     {
-        $data = Arrays::orderBy($this->data, $column, $dir);
+        $data = Arrays::orderBy($this->data, $column, $dir, $type);
+        return self::make($data);
+    }
+    
+    public function ascStr($column)
+    {
+        return $this->orderByStr($column);
+    }
+    
+    public function descStr($column)
+    {
+        $data = Arrays::orderByStrDesc($this->data, $column);
+        return self::make($data);
+    }
+
+    public function orderByStr($column, $dir = null)
+    {
+        $data = Arrays::orderByStr($this->data, $column, $dir);
         return self::make($data);
     }
     
@@ -149,6 +237,19 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     {
         $data = Arrays::multiSort($this->data, $sorts);
         return self::make($data);
+    }
+    
+    public function reverse()
+    {
+        $data = array_reverse($this->data);
+        return self::make($data);
+    }
+
+    public function serialize()
+    {
+        return $this->map(function ($item) {
+            return $item->serialize();
+        });
     }
 	
 	// ArrayAccess

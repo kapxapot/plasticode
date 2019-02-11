@@ -772,6 +772,36 @@ h3:first-child, h4:first-child {
     margin-right: 2rem;
 }
 
+.grey-3,
+.gray-3 {
+    color: #333;
+}
+
+.grey-4,
+.gray-4 {
+    color: #444;
+}
+
+.grey-5,
+.gray-5 {
+    color: #555;
+}
+
+.grey-6,
+.gray-6 {
+    color: #666;
+}
+
+.grey-7,
+.gray-7 {
+    color: #777;
+}
+
+.grey-9,
+.gray-9 {
+    color: #999;
+}
+
 .red {
     color: red;
 }
@@ -786,4 +816,16 @@ h3:first-child, h4:first-child {
 
 .bg-white {
     background-color: white;
+}
+
+.b {
+    font-weight: bolder;
+}
+
+.lh-12 {
+    line-height: 1.2em;
+}
+
+.font-150 {
+    font-size: 150%;
 }

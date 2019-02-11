@@ -11,6 +11,19 @@ use Plasticode\Util\Text;
 
 class Parser extends Contained
 {
+    private $config;
+    
+    public function __construct($container, $config)
+    {
+        parent::__construct($container);
+        $this->config = $config;
+    }
+    
+    protected function render($componentName, $data = null)
+    {
+		return $this->renderer->component($componentName, $data);
+    }
+    
     protected function getBBContainerPattern($name)
     {
         return "/\[{$name}([^\[]*)\](.*)\[\/{$name}\]/Uis";
@@ -51,13 +64,13 @@ class Parser extends Contained
 			        $data = $enrich($data);
 			    }
 
-				return $this->decorator->component($componentName, $data);
+				return $this->render($componentName, $data);
 			},
 			$text
 		);
 	}
 	
-	public function parseCut($text, $url, $full = false)
+	public function parseCut($text, $url = null, $full = true)
 	{
 		$cut = '[cut]';
 		$cutpos = strpos($text, $cut);
@@ -66,8 +79,12 @@ class Parser extends Contained
 			if ($full === false) {
 				$text = substr($text, 0, $cutpos);
 				$text = Text::trimBrs($text);
+				
+				if (strlen($url) == 0) {
+				    throw new \InvalidArgumentException('Non-empty url required for parseCut() in short mode.');
+				}
 
-				$text .= $this->decorator->component('read_more', [ 'url' => $url, 'label' => $label ]);
+				$text .= $this->render('read_more', [ 'url' => $url, 'label' => $label ]);
 			}
 			else {
 				$text = str_replace($cut, '', $text);
@@ -102,19 +119,7 @@ class Parser extends Contained
 	
 	private function cleanMarkup($text)
 	{
-		$replaces = [
-		    '</p><br/>' => '</p><p>',
-			'(<p>)+<p' => '<p',
-			'(</p>)+' => '</p>',
-			'<p><div' => '<div',
-			'</div></p>' => '</div>',
-            '<br/><div' => '<div',
-            '</div><br/>' => '</div>',
-			'<p><ul>' => '<ul>',
-			'</ul></p>' => '</ul>',
-			'<p><figure' => '<figure',
-			'</figure></p>' => '</figure>',
-		];
+		$replaces = $this->config->getCleanupReplaces();
 
 		foreach ($replaces as $key => $value) {
 			$text = preg_replace('#(' . $key . ')#', $value, $text);
@@ -154,7 +159,7 @@ class Parser extends Contained
 		
 		$text = $result['text'];
 
-		// db replaces
+		// config replaces
 		$text = $this->replaces($text);
 
 		// extend this
@@ -243,7 +248,7 @@ class Parser extends Contained
 								$contents[] = $subtitle;
 							}
 	
-							return $this->decorator->component('subtitle', $subtitle);
+							return $this->render('subtitle', $subtitle);
 						},
 						$line
 					);
@@ -266,33 +271,9 @@ class Parser extends Contained
 		];
 	}
 	
-	protected function getReplaces()
-	{
-	    return [
-            '[center]' => '<div class="center">',
-            '[/center]' => '</div>',
-            '[b]' => '<b>',
-            '[/b]' => '</b>',
-            '[right]' => '<div class="right">',
-            '[/right]' => '</div>',
-            '[i]' => '<i>',
-            '[/i]' => '</i>',
-            '[s]' => '<strike>',
-            '[/s]' => '</strike>',
-            '[u]' => '<u>',
-            '[/u]' => '</u>',
-            '[rightblock]' => '<div class="pull-right">',
-            '[/rightblock]' => '</div>',
-            '[leftblock]' => '<div class="pull-left">',
-            '[/leftblock]' => '</div>',
-            '[clear]' => '<div class="clearfix"></div>',
-            ' -- ' => ' — ',
-	    ];
-	}
-
 	protected function replaces($text)
 	{
-		$replaces = $this->getReplaces();
+		$replaces = $this->config->getReplaces();
 
 		foreach ($replaces as $from => $to) {
 			$text = str_replace($from, $to, $text);
@@ -517,7 +498,7 @@ class Parser extends Contained
     	            $node['text'] = $this->renderBBContainerTree($node['content']);
     	            $parts[] = $this->renderBBContainer($node);
     	        } else {
-    	            $parts[] = $this->decorator->textBlock($node);
+    	            $parts[] = $this->renderer->text($node);
     	        }
     	    }
         }
@@ -527,7 +508,7 @@ class Parser extends Contained
 	
 	protected function renderBBNode($componentName, $node, callable $map)
 	{
-        return $this->decorator->component($componentName, $map($node['text'], $node['attributes']));
+        return $this->render($componentName, $map($node['text'], $node['attributes']));
 	}
 	
 	protected function renderBBContainer($node)
@@ -660,7 +641,7 @@ class Parser extends Contained
 
 			$flush = function () use (&$list, &$ordered, &$results) {
 				if (count($list) > 0) {
-    				$results[] = $this->decorator->component('list', [ 'ordered' => $ordered, 'items' => $list ]);
+    				$results[] = $this->render('list', [ 'ordered' => $ordered, 'items' => $list ]);
 					$list = [];
 					$ordered = null;
 				}

@@ -13,12 +13,17 @@
 	
 	{{ angular_filters }}
 
-	app.controller('{{ angular_ctrl }}', ['$scope', '$http', '$timeout', function($scope, $http, $timeout) {
+	app.controller('{{ angular_ctrl }}', ['$scope', '$http', '$timeout', '$injector', function($scope, $http, $timeout, $injector) {
     	$scope.views = {};
     	$scope.forms = {};
     	
     	if (typeof moment !== 'undefined') {
         	$scope.moment = moment;
+        	$scope.moment.locale('{{ lang }}');
+        	
+        	$scope.momentDiff = function (start, end, unknownEnd, format = null) {
+        	    return momentDiff(start, end, unknownEnd, format);
+        	}
     	}
 
 		$scope.loading = false;

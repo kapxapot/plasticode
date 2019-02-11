@@ -2,6 +2,8 @@
 
 namespace Plasticode\Generators;
 
+use Plasticode\Util\Pluralizer;
+
 class ChildEntityGenerator extends EntityGenerator
 {
     protected $parentName;
@@ -23,7 +25,7 @@ class ChildEntityGenerator extends EntityGenerator
 
     protected function plural($word)
     {
-        return $word . 's';
+        return Pluralizer::plural($word);
     }
     
     protected function parents()

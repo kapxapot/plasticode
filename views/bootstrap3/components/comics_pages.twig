@@ -3,8 +3,8 @@
 		{% for p in pages %}
 			<div class="flex-item flex-item-shaded overlay-wrapper comic-image">
 				<a href="{{ p.page_url }}">
-					<img src="{{ p.thumb }}" class="card-image" />
-					<span class="overlay">{{ p.number_str ?? p.title }}</span>
+					<img src="{{ p.thumb_url }}" class="card-image" />
+					<span class="overlay">{{ p.number_str }}</span>
 				</a>
 			</div>
 		{% endfor %}

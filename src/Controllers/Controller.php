@@ -5,6 +5,7 @@ namespace Plasticode\Controllers;
 use Illuminate\Support\Arr;
 
 use Plasticode\Contained;
+use Plasticode\Models\Menu;
 
 /**
  * Base controller for controllers showing views.
@@ -56,7 +57,7 @@ class Controller extends Contained
 	
 	protected function buildMenu($settings)
 	{
-		return $this->builder->buildMenu();
+		return Menu::getAll();
 	}
 	
 	protected function buildSidebar($settings)
@@ -98,5 +99,16 @@ class Controller extends Contained
 	protected function translate($message)
 	{
 	    return $this->translator->translate($message);
+	}
+	
+	public function render($response, $template, $params, $logQueryCount = false)
+	{
+	    $rendered = $this->view->render($response, $template, $params);
+		
+		if ($logQueryCount) {
+		    $this->logger->info("Query count: " . $this->db->getQueryCount());
+		}
+		
+		return $rendered;
 	}
 }

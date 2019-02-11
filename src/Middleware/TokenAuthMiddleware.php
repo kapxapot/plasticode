@@ -10,7 +10,7 @@ class TokenAuthMiddleware extends Middleware {
         $lineParts = explode(' ', $tokenLine);
         
         if (count($lineParts) < 2) {
-			throw new AuthenticationException('Invalid authorization header format. Expected "Bearer <token>".');
+			throw new AuthenticationException('Invalid authorization header format. Expected "Basic <token>".');
         }
         
         $token = $lineParts[1];

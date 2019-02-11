@@ -41,6 +41,16 @@ class Strings
 		return str_replace('_', '', ucwords($str, '_'));
 	}
 	
+	public static function toCamelCase($str)
+	{
+	    return lcfirst(self::toPascalCase($str));
+	}
+	
+	public static function toSnakeCase($str)
+	{
+	    return ltrim(mb_strtolower(preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '_$0', $str)), '_');
+	}
+	
 	public static function normalize($str)
 	{
 		$str = trim($str);
@@ -64,29 +74,44 @@ class Strings
 	    if (!$str) {
 	        return null;
 	    }
-	    else {
-    	    return array_map(function($chunk) {
-                return trim($chunk);
-            }, explode($delimiter, $str));
-	    }
+
+	    return array_map(function($chunk) {
+            return trim($chunk);
+        }, explode($delimiter, $str));
+	}
+	
+	public static function lastChunk($str, $delimiter)
+	{
+	    $chunks = explode($delimiter, $str);
+	    
+	    return Arrays::last($chunks);
 	}
 	
 	/**
-	 * Truncates string to (limit) Unicode characters and strips html tags (by default)
+	 * Truncates string to (limit) Unicode characters
 	 * 
 	 * @param string $str String to truncate
 	 * @param int $limit Desired string length
-	 * @param bool $stripTags Set to false if you don't want to strip html tags
 	 *
 	 * @return string Truncated string
 	 */
 	public static function trunc($str, $limit, $stripTags = true)
 	{
-		if ($stripTags === true) {
-			$str = strip_tags($str);
-		}
-		
 		return mb_substr($str, 0, $limit);
+	}
+	
+	/**
+	 * Truncates string to (limit) Unicode characters and strips html tags
+	 * 
+	 * @param string $str String to truncate
+	 * @param int $limit Desired string length
+	 *
+	 * @return string Truncated string
+	 */
+	public static function stripTrunc($str, $limit)
+	{
+		$str = strip_tags($str);
+	    return self::trunc($str, $limit);
 	}
 	
 	/**
@@ -95,6 +120,14 @@ class Strings
 	public static function first($str)
 	{
 	    return mb_substr($str, 0, 1);
+	}
+	
+	/**
+	 * Returns last char.
+	 */
+	public static function last($str)
+	{
+	    return mb_substr($str, -1);
 	}
 	
 	/**
@@ -148,5 +181,18 @@ class Strings
     public static function startsWith($str, $mask)
     {
         return strpos($str, $mask) === 0;
+    }
+    
+    /**
+     * Checks if a string ends with a given mask.
+     * 
+     * @param string $str String to test
+     * @param string $mask String mask
+     * 
+     * $return bool True, if matches
+     */
+    public static function endsWith($str, $mask)
+    {
+        return mb_substr($str, -strlen($mask)) == $mask;
     }
 }

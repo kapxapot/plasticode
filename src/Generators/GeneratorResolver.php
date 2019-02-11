@@ -10,7 +10,7 @@ class GeneratorResolver extends Contained {
 	protected $namespaces;
 	
 	/**
-	 * Create GeneratorResolver.
+	 * Creates GeneratorResolver.
 	 * 
 	 * @param ContainerInterface $container
 	 * @param string[] $namespaces Namespaces to search generators

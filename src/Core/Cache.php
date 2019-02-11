@@ -20,4 +20,16 @@ class Cache
 	{
 		$this->cache[$path] = $value;
 	}
+	
+	public function exists($path)
+	{
+	    return array_key_exists($path, $this->cache);
+	}
+	
+	public function delete($path)
+	{
+	    if ($this->exists($path)) {
+	        unset($this->cache[$path]);
+	    }
+	}
 }

@@ -14,6 +14,14 @@
 
 {% macro gi(name, title = null) %}<i class="glyphicon glyphicon-{{ name }}" aria-hidden="true"{% if title %} title="{{ title }}"{% endif %}></i>{% endmacro %}
 
-{% macro moment(date_iso, format = 'DD.MM.Y HH:mm') %}{{ "{{moment('" ~ date_iso ~ "').format('" ~ format ~ "')}}" }}{% endmacro %}
+{% macro moment(date, format = 'DD.MM.Y HH:mm') %}{{ "{{moment('" ~ date ~ "').format('" ~ format ~ "')}}" }}{% endmacro %}
 
-{% macro moment_from_now(date_iso) %}{{ "{{moment('" ~ date_iso ~ "').fromNow()}}" }}{% endmacro %}
+{% macro moment_local(date) %}{% import _self as m %}{{ m.moment(date, 'D MMMM Y, HH:mm') }}{% endmacro %}
+
+{% macro moment_local_short(date) %}{% import _self as m %}{{ m.moment(date, 'D MMMM Y') }}{% endmacro %}
+
+{% macro moment_smart(date) %}{% import _self as m %}{{ date.has_time ? m.moment_local(date.iso) : m.moment_local_short(date) }}{% endmacro %}
+
+{% macro moment_from_now(date_iso) %}{% if date_iso %}{{ "{{moment('" ~ date_iso ~ "').fromNow()}}" }}{% else %}неизвестно когда{% endif %}{% endmacro %}
+
+{% macro moment_diff(start, end, unknown_end, format = 'D MMMM Y', short_format = 'D MMMM') %}{{ "{{momentDiff('" ~ (start.has_time ? start.iso : start) ~ "', " ~ (end ? "'" ~ (end.has_time ? end.iso : end) ~ "'" : "null") ~ ", " ~ unknown_end ~ (format ? ", '" ~ format ~ "'" : "") ~ (short_format ? ", '" ~ short_format ~ "'" : "") ~ ")}}" }}{% endmacro %}

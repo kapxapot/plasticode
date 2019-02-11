@@ -2,11 +2,26 @@
 
 namespace Plasticode\Core;
 
+use Respect\Validation\Validator as v;
+
 use Plasticode\Exceptions\IApiException;
 use Plasticode\Exceptions\ValidationException;
+use Plasticode\Models\Model;
 use Plasticode\Util\Text;
 
 class Core {
+    public static function bootstrap($container, $settings)
+    {
+        foreach ($settings as $key => $setting) {
+            $container[$key] = $setting;
+        }
+            
+        v::with('Plasticode\\Validation\\Rules\\');
+        v::with('App\\Validation\\Rules\\'); // refactor this, this shouldn't be here
+        
+        Model::init($container);
+    }
+    
 	public static function json($response, $e, $options = []) {
 		$result = is_array($e) ? $e : $e->asArray();
 		

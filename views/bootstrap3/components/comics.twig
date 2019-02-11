@@ -3,9 +3,8 @@
     	{% for c in comics %}
     		<div class="flex-item flex-item-shaded overlay-wrapper comic-image">
     			<a href="{{ c.page_url }}">
-    				<img src="{{ c.img_url ?? c.cover_url }}" class="card-image" />
-    				{% set final_title = c.title ?? c.name_ru %}
-    				<span class="overlay overlay-full">{{ final_title|raw }}</span>
+    				<img src="{{ c.cover.thumb_url }}" class="card-image" />
+    				<span class="overlay overlay-full">{{ c.name|raw }}</span>
     			</a>
     		</div>
     	{% endfor %}

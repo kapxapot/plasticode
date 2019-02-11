@@ -6,15 +6,12 @@ use Respect\Validation\Validator as v;
 
 use Plasticode\Contained;
 use Plasticode\Exceptions\ValidationException;
-use Plasticode\Util\Strings;
 use Plasticode\Validation\ValidationRules;
 
 class EntityGenerator extends Contained
 {
 	protected $entity;
 	protected $rules;
-	protected $taggable;
-	protected $tagsField = 'tags';
 
 	public function __construct($container, $entity)
 	{
@@ -84,22 +81,6 @@ class EntityGenerator extends Contained
 		$params['base'] = $this->router->pathFor('admin.index');
 
 		return $params;
-	}
-	
-	public function updateTags($item)
-	{
-		if ($this->taggable) {
-			$tags = Strings::toTags($item->{$this->tagsField});
-	
-			$this->db->saveTags($this->taggable, $item->id, $tags);
-		}
-	}
-
-	public function deleteTags($item)
-	{
-		if ($this->taggable) {
-			$this->db->deleteTags($this->taggable, $item->id);
-		}
 	}
 
 	public function generateAPIRoutes($app, $access)

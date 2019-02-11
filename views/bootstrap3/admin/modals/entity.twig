@@ -16,7 +16,7 @@
 		{% elseif value.type == 'site_url' %}
 			{{ m.site_url(_context, col, loop.first) }}
 		{% elseif value.type == 'html' %}
-			{{ m.textarea(_context, col, loop.first) }}
+			 {{ m.mdearea(_context, col, loop.first) }}
 		{% elseif value.type == 'bool' %}
 			{{ m.checkbox(_context, col, loop.first) }}
 		{% elseif value.type == 'thumb' %}

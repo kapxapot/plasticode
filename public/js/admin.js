@@ -1,4 +1,4 @@
-function wrap(editor, pre, post, text = null) {
+/*function wrap(editor, pre, post, text = null) {
     var cm = editor.codemirror;
     var output = '';
     var selectedText = cm.getSelection();
@@ -71,14 +71,14 @@ function mdeButtons() {
     //"link", "image", "table",
 
     return buttons;
-}
+}*/
 
-function setMdeResult(editor, value) {
+/*function setMdeResult(editor, value) {
     var result = $(editor.element).closest('.mde-group').find('.mde-result');
     result.html(value);
-}
+}*/
 
-function toggleMdeFullscreen(editor) {
+/*function toggleMdeFullscreen(editor) {
     var elem = $(editor.element);
     elem.closest('.modal-dialog').toggleClass('modal-dialog-fullscreen');
     elem.closest('.form-group').toggleClass('short');
@@ -89,9 +89,9 @@ function toggleMdeFullscreen(editor) {
     
     var mdeResult = mdeGroup.find('.mde-result');
     mdeResult.toggleClass('hidden');
-}
+}*/
 
-function getMdeVars(editor) {
+/*function getMdeVars(editor) {
     var opts = editor.options;
     if (opts.plasticode === undefined) {
         opts.plasticode = {};
@@ -113,4 +113,4 @@ function setMdeVar(editor, name, val) {
 function toggleMdeVar(editor, name) {
     var val = getMdeVar(editor, name, false);
     setMdeVar(editor, name, !val);
-}
+}*/

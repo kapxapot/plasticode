@@ -57,6 +57,7 @@ class Cases
 		'час' => [ 'base' => 'час', 'index' => 'стрим', 'gender' => self::MAS ],
 		'минута' => [ 'base' => 'минут', 'gender' => self::FEM ],
 		'копия' => [ 'base' => 'копи', 'gender' => self::FEM ],
+		'зритель' => [ 'base' => 'зрител', 'index' => 'пользователь', 'gender' => self::MAS ],
 	];
 	
 	private $futureConjugationTemplates = [ [ 'буду', 'будем' ], [ 'будешь', 'будете' ], [ 'будет', 'будут' ] ];

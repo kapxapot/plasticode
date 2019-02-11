@@ -1,5 +1,5 @@
 {% for m in menu %}
-	{% if m.items %}
+	{% if m.items|length > 0 %}
 		<li class="dropdown">
 			<a class="dropdown-toggle" data-toggle="dropdown" href="{{ root }}{{ m.link }}">{{ m.text }}<b class="caret"></b></a>
 			<ul class="dropdown-menu">

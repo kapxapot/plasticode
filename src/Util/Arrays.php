@@ -5,31 +5,22 @@ namespace Plasticode\Util;
 class Arrays
 {
     /**
-     * Groups array by column or callable.
+     * Returns distinct values from array grouped by selector ('id' by default).
      * 
      * @param array $array
-     * @param mixed $by Column name or callable, returning generated column name. Default = 'id'.
+     * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      */
-    public static function groupBy($array, $by = 'id')
+    public static function distinctBy($array, $by = 'id')
     {
-        $result = [];
-        foreach ($array as $element) {
-            $key = is_callable($by)
-                ? $by($element)
-                : $element[$by];
-            
-            $result[$key][] = $element;
-        }
-        
-        return $result;
+        return array_values(self::toAssocBy($array, $by));
     }
-
+    
     /**
-     * Converts array to associative array by column or callable.
+     * Converts array to associative array by column/property or callable.
      * Selector must be unique, otherwise only first element is taken, others are discarded.
      * 
      * @param array $array
-     * @param mixed $by Column name or callable, returning generated column name. Default = 'id'.
+     * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      */
     public static function toAssocBy($array, $by = 'id')
     {
@@ -43,32 +34,28 @@ class Arrays
     }
     
     /**
-     * Returns distinct values from array grouped by selector ('id' by default).
+     * Groups array by column/property or callable.
      * 
      * @param array $array
-     * @param mixed $by Column name or callable, returning generated column name. Default = 'id'.
+     * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      */
-    public static function distinctBy($array, $by = 'id')
+    public static function groupBy($array, $by = 'id')
     {
-        return array_values(self::toAssocBy($array, $by));
-    }
-    
-    /**
-     * Extracts non-null column values from array.
-     */
-    public static function extract($array, $column)
-    {
-        if ($array === null) {
-            return null;
+        $result = [];
+
+        foreach ($array as $element) {
+            $key = is_callable($by)
+                ? $by($element)
+                : self::getProperty($element, $by);
+            
+            $result[$key][] = $element;
         }
         
-        return array_filter(array_column($array, $column), function ($item) {
-            return $item !== null;
-        });
+        return $result;
     }
-    
+
     /**
-     * Extracts non-null 'id' column values.
+     * Extracts non-null 'id' column/property values.
      */
     public static function extractIds($array)
     {
@@ -76,7 +63,50 @@ class Arrays
     }
     
     /**
-     * Filters array by column value or callable.
+     * Extracts non-null column/property values from array.
+     */
+    public static function extract($array, $column)
+    {
+        if ($array === null) {
+            return null;
+        }
+        
+        $values = array_map(function ($item) use ($column) {
+            return self::getProperty($item, $column);
+        }, $array);
+        
+        return array_filter(array_unique($values), function ($item) {
+            return $item !== null;
+        });
+    }
+    
+    private static function getProperty($obj, $property)
+    {
+        return is_array($obj)
+            ? $obj[$property]
+            : $obj->{$property};
+    }
+    
+    /**
+     * Filters array by column/property value or callable, then returns first item or null.
+     */
+    public static function firstBy($array, $by, $value = null)
+    {
+        $filtered = self::filter($array, $by, $value);
+        return self::first($filtered);
+    }
+    
+    /**
+     * Filters array by column/property value or callable, then returns last item or null.
+     */
+    public static function lastBy($array, $by, $value = null)
+    {
+        $filtered = self::filter($array, $by, $value);
+        return self::last($filtered);
+    }
+    
+    /**
+     * Filters array by column/property value or callable.
      */
     public static function filter($array, $by, $value = null)
     {
@@ -87,8 +117,15 @@ class Arrays
         return array_filter($array, function ($item) use ($by, $value) {
             return is_callable($by)
                 ? $by($item)
-                : $item[$by] == $value;
+                : self::getProperty($item, $by) == $value;
         });
+    }
+    
+    public static function filterIn($array, $column, $values)
+    {
+	    return self::filter($array, function ($item) use ($column, $values) {
+	        return in_array(self::getProperty($item, $column), $values);
+	    });
     }
     
     /**
@@ -108,15 +145,6 @@ class Arrays
     }
     
     /**
-     * Filters array by column value or callable, then returns first item or null.
-     */
-    public static function firstBy($array, $by, $value = null)
-    {
-        $filtered = self::filter($array, $by, $value);
-        return self::first($filtered);
-    }
-    
-    /**
      * Filters associative array by provided key set.
      * If key is absent, it is ignored.
      */
@@ -131,5 +159,30 @@ class Arrays
         }
         
         return $result;
+    }
+    
+    public static function orderBy($array, $column, $dir = null, $type = null)
+    {
+        return Sort::by($array, $column, $dir, $type);
+    }
+    
+    public static function orderByDesc($array, $column, $type = null)
+    {
+        return Sort::desc($array, $column, $type);
+    }
+    
+    public static function orderByStr($array, $column, $dir = null)
+    {
+        return Sort::byStr($array, $column, $dir);
+    }
+    
+    public static function orderByStrDesc($array, $column)
+    {
+        return Sort::descStr($array, $column);
+    }
+    
+    public static function multiSort($array, $sorts)
+    {
+        return Sort::multi($array, $sorts);
     }
 }

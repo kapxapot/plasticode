@@ -1,6 +1,4 @@
 {% if tags|length > 0 %}
-	{% import 'macros.twig' as gm %}
-	
 	<div class="glyphicon-block" title="{{ title ?? 'Теги' }}">
 		<i class="fas fa-tags"></i>
 		{% for t in tags %}

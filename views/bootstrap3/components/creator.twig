@@ -1,0 +1,10 @@
+{% if entity.creator %}
+    <div class="glyphicon-block" title="Автор">
+    	<i class="fas fa-user-circle"></i>
+        {% if entity.creator.forum_member %}
+        	<b><a href="{{ entity.creator.forum_member.page_url }}">{{ entity.creator.display_name }}</a></b>
+        {% else %}
+        	<b>{{ entity.creator.display_name }}</b>
+        {% endif %}
+    </div>
+{% endif %}
