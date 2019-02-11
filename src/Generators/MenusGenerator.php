@@ -2,12 +2,16 @@
 
 namespace Plasticode\Generators;
 
-class MenusGenerator extends EntityGenerator {
-	public function getRules($data, $id = null) {
-		return [
-			'link' => $this->rule('url'),
-			'text' => $this->rule('text'),
-			'position' => $this->rule('posInt'),
-		];
+class MenusGenerator extends EntityGenerator
+{
+	public function getRules($data, $id = null)
+	{
+	    $rules = parent::getRules($data, $id);
+	    
+		$rules['link'] = $this->rule('url');
+		$rules['text'] = $this->rule('text');
+		$rules['position'] = $this->rule('posInt');
+		
+		return $rules;
 	}
 }

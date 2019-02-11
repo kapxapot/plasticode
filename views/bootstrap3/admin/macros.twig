@@ -5,12 +5,27 @@
 	{% if col.tooltip %}<span class="help-block">{{ col.tooltip|raw }}</span>{% endif %}
 {% endmacro %}
 
-{% macro input(context, name, type = 'text', focus = false) %}
+{% macro input(context, name, type = 'text', prefix = null, suffix = null, focus = false) %}
 	{% import _self as m %}
 	{% set col = context.columns[name] %}
 	<div class="form-group{% if not col.nullable %} required{% endif %}">
 		<label for="{{ name }}">{{ m.col_name(col) }}</label>
-		<input type="{{ type }}" name="{{ name }}" id="{{ name }}" class="form-control"{% if focus %} data-modalfocus{% endif %}{% if not col.nullable %} required{% endif %} />
+		{% set input %}
+			<input type="{{ type }}" name="{{ name }}" id="{{ name }}" class="form-control"{% if focus %} data-modalfocus{% endif %}{% if not col.nullable %} required{% endif %} ng-model="$parent.dummyModel_{{ name }}" />
+		{% endset %}
+		{% if prefix or suffix %}
+			<div class="input-group">
+				{% if prefix %}
+					<span class="input-group-addon" id="{{ name }}-addon">{{ prefix }}</span>
+				{% endif %}
+				{{ input }}
+				{% if suffix %}
+					<span class="input-group-addon" id="{{ name }}-addon">{{ suffix }}</span>
+				{% endif %}
+			</div>
+		{% else %}
+			{{ input }}
+		{% endif %}
 		{{ m.tooltip(col) }}
 	</div>
 {% endmacro %}
@@ -21,7 +36,7 @@
 	<div class="form-group{% if not col.nullable %} required{% endif %}">
 		<label for="{{ name }}">{{ m.col_name(col) }}</label>
 		<div class="input-group">
-			<span class="input-group-addon" id="{{ name }}-addon">{{ context.site_url }}</span>
+			<span class="input-group-addon" id="{{ name }}-addon">{{ context.cool_site_url ?? context.site_url }}</span>
 			<input type="text" name="{{ name }}" id="{{ name }}" class="form-control" aria-describedby="{{ name }}-addon"{% if focus %} data-modalfocus{% endif %}{% if not col.nullable %} required{% endif %} />
 		</div>
 		{{ m.tooltip(col) }}
@@ -37,9 +52,9 @@
 	{% set name_field = col.entity ~ '_item.' ~ m.entity_field(context, col) %}
 	<div class="form-group{% if not col.nullable %} required{% endif %}">
 		<label for="{{ name }}">{{ m.col_name(col) }}</label>
-		<select class="form-control" name="{{ name }}" id="{{ name }}"{% if focus %} data-modalfocus{% endif %}{% if not col.nullable %} required{% endif %}>
-			{% if col.nullable %}<option value="null">&lt;пусто&gt;</option>{% endif %}
-			<option ng-repeat="{{ col.entity }}_item in {{ col.entity }}" value="{{ '{{' ~ col.entity ~ '_item.id}}' }}">{% if col.dropdown_template %}{{ col.dropdown_template|replace({'%item%': col.entity ~ '_item', '%name%': name_field}) }}{% else %}{{ '{{' ~ name_field ~ '}}' }}{% endif %}</option>
+		<select class="form-control" selectpicker ng-model="$parent.dummyModel_{{ name }}" title="Выберите из списка..." data-live-search="true" name="{{ name }}" id="{{ name }}"{% if focus %} data-modalfocus{% endif %}{#% if not col.nullable %} required{% endif %#}>
+			{% if col.nullable %}<option value="">&lt;пусто&gt;</option>{% endif %}
+			<option{% if col.tokens %} data-tokens="{{ '{{' ~ col.entity ~ '_item.tokens}}' }}"{% endif %} ng-repeat="{{ col.entity }}_item in {{ col.entity }}" value="{{ '{{' ~ col.entity ~ '_item.id}}' }}">{% if col.dropdown_template %}{{ col.dropdown_template|replace({'%item%': col.entity ~ '_item', '%name%': name_field}) }}{% else %}{{ '{{' ~ name_field ~ '}}' }}{% endif %}</option>
 		</select>
 		{{ m.tooltip(col) }}
 	</div>
@@ -48,9 +63,14 @@
 {% macro textarea(context, name, focus = false) %}
 	{% import _self as m %}
 	{% set col = context.columns[name] %}
-	<div class="form-group{% if not col.nullable %} required{% endif %}">
+	<div class="form-group{% if not col.nullable %} required{% endif %} short">
 		<label for="{{ name }}">{{ m.col_name(col) }}</label>
-		<textarea class="form-control" name="{{ name }}" id="{{ name }}"{% if focus %} data-modalfocus{% endif %}{% if not col.nullable %} required{% endif %}></textarea>
+        <div class="row mde-group">
+        	<div class="mde-editor col-xs-12">
+		        <textarea class="form-control" name="{{ name }}" id="{{ name }}"{% if focus %} data-modalfocus{% endif %}{% if not col.nullable %} required{% endif %}></textarea>
+        	</div>
+        	<div class="mde-result col-sm-6 article hidden-xs hidden"></div>
+        </div>
 		{{ m.tooltip(col) }}
 	</div>
 {% endmacro %}

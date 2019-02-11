@@ -5,15 +5,17 @@
 		<div class="panel-heading panel-title">
 			<header>{{ title }}</header>
 		</div>
-	  	<div class="panel-body breadcrumbs">
-	  		<ol class="breadcrumb">
-	  			<li><a href="{{ root }}/">{{ site_name }}</a></li>
-	  			{% for b in breadcrumbs %}
-	  				<li>{{ link|raw }}</li>
-	  			{% endfor %}
-	  			<li class="active">{{ title }}</li>
-			</ol>
-		</div>
+		{% if not no_breadcrumbs %}
+    	  	<div class="panel-body breadcrumbs">
+    	  		<ol class="breadcrumb">
+    	  			<li><a href="{{ root }}/">{{ site_name }}</a></li>
+    	  			{% for b in breadcrumbs %}
+    	  				<li>{{ link|raw }}</li>
+    	  			{% endfor %}
+    	  			<li class="active">{{ title }}</li>
+    			</ol>
+    		</div>
+		{% endif %}
 	  	<div class="panel-body">
 	  		{{ text }}
 	    </div>

@@ -2,10 +2,12 @@
 
 namespace Plasticode\Core;
 
-class Session {
+class Session
+{
 	private $name;
 
-	public function __construct($name) {
+	public function __construct($name)
+	{
 		$this->name = $name;
 
 		if (!isset($_SESSION[$this->name])) {
@@ -13,19 +15,23 @@ class Session {
 		}
 	}
 	
-	public function get($key) {
+	public function get($key)
+	{
 		return $_SESSION[$this->name][$key];
 	}
 
-	public function set($key, $value) {
+	public function set($key, $value)
+	{
 		$_SESSION[$this->name][$key] = $value;
 	}
 	
-	public function delete($key) {
+	public function delete($key)
+	{
 		unset($_SESSION[$this->name][$key]);
 	}
 	
-	public function getAndDelete($key) {
+	public function getAndDelete($key)
+	{
 		$value = $this->get($key);
 		$this->delete($key);
 		

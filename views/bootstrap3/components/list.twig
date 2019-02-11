@@ -1,0 +1,9 @@
+{% if items|length > 0 %}
+    {% set tag = ordered ? 'ol' : 'ul' %}
+
+    <{{ tag }}>
+        {% for i in items %}
+            <li>{{ i|raw }}</li>
+        {% endfor %}
+    </{{ tag }}>
+{% endif %}

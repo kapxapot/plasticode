@@ -32,7 +32,12 @@ h4 .label {
     max-width: 200px;
 }
 
-.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead >tr > td, .table > thead > tr > th {
+.table > tbody > tr > td,
+.table > tbody > tr > th,
+.table > tfoot > tr > td,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > thead > tr > th {
 	padding: 4px;
 }
 
@@ -74,64 +79,6 @@ textarea.form-control {
 	text-align: center;
 }
 
-.form-group.required label:after {
-	content: " *";
-	color: red;
-}
-
-.form-group.required label.btn-file:after {
-	content: "";
-}
-
-.form-group {
-	word-break: break-all;
-}
-
-.captcha {
-	word-break: break-all;
-	font-weight: bolder;
-	color: darkgreen;
-	margin-bottom: 10px;
-	font-size: 90%;
-}
-
-.captcha button {
-	margin-right: 5px;
-}
-
-.help-block {
-	font-size: 85%;
-	word-break: break-word;
-}
-
-.ng-binding ul {
-	padding-left: 20px;
-}
-
-.ng-binding ul:last-child {
-	margin-bottom: 0;
-}
-
-.alert:last-child {
-	margin-bottom: 0;
-}
-
-/* SimpleMDE */
-/*.CodeMirror {
-    height: 310px;
-}
-
-.simplemde-fullscreen .modal-dialog {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-}*/
-
 /* croppie */
 input[type="file"] {
 	display: none;
@@ -161,14 +108,8 @@ input[type="file"] {
 	margin-top: 10px;
 }
 
-/* other */
-/*@media (min-width: 768px) {
-	.modal-dialog-narrow {
-	    width: 400px;
-	}
-}*/
-
 /* datatables */
+
 table.dataTable.dtr-inline.collapsed > tbody > tr > td:first-child:before,
 table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child:before {
 	top: inherit;
@@ -186,4 +127,19 @@ div.dataTables_wrapper div.dataTables_paginate {
 
 .modal-footer div:last-child {
 	margin-bottom: 0;
+}
+
+.dataTable td {
+    overflow: hidden;
+}
+
+/* alert */
+
+.alert-corner {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 10px;
+    width: 300px;
+    z-index: 1100;
 }

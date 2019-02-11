@@ -50,7 +50,7 @@ class AuthController extends Controller {
 		$token = $this->auth->getToken();
 		$response = $response->withStatus(201);
 
-		$msg = $this->translator->translateMessage('Registration successful.');
+		$msg = $this->translate('Registration successful.');
 
 		$response = Core::json($response, [ 'token' => $token->token, 'message' => $msg ]);
 
@@ -71,7 +71,7 @@ class AuthController extends Controller {
 		
 			$token = $this->auth->getToken();
 
-			$msg = $this->translator->translateMessage('Login successful.');
+			$msg = $this->translate('Login successful.');
 
 			$response = Core::json($response, [ 'token' => $token->token, 'message' => $msg ]);
 		}

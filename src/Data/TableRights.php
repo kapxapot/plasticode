@@ -3,9 +3,10 @@
 namespace Plasticode\Data;
 
 use Plasticode\Contained;
+use Plasticode\Exceptions\ApplicationException;
 
 class TableRights extends Contained {
-	private $table;
+	public $table;
 
 	public function __construct($c, $table) {
 		parent::__construct($c);
@@ -14,17 +15,25 @@ class TableRights extends Contained {
 	}
 	
 	public function get($item = null) {
-		$can = $this->access->getAllRights($this->table);
+		try {
+			$can = $this->access->getAllRights($this->table);
 		
-		if ($item) {
-			$item = is_array($item) ? $item : $item->asArray();
-			$own = $this->auth->isOwnerOf($item);
+			if ($item) {
+				$item = is_array($item) ? $item : $item->asArray();
 	
-			$can['read'] = $can['read'] || ($own && $can['read_own']);
-			$can['edit'] = $can['edit'] || ($own && $can['edit_own']);
-			$can['delete'] = $can['delete'] || ($own && $can['delete_own']);
-		}
+				$noOwner = !isset($item['created_by']);
+				$own = $this->auth->isOwnerOf($item);
 		
+				$can['read'] = $noOwner || $can['read'] || ($own && $can['read_own']);
+				$can['edit'] = $can['edit'] || ($own && $can['edit_own']);
+				$can['delete'] = $can['delete'] || ($own && $can['delete_own']);
+			}
+		}
+		catch (ApplicationException $ex) {
+			// some tables don't have rights
+			// that's ok HERE
+		}
+
 		return $can;
 	}
 	
@@ -32,8 +41,10 @@ class TableRights extends Contained {
 		if ($item) {
 			$rights = $this->get($item);
 	
-			$item['access']['edit'] = $rights['edit'];
-			$item['access']['delete'] = $rights['delete'];
+			if ($rights) {
+				$item['access']['edit'] = $rights['edit'];
+				$item['access']['delete'] = $rights['delete'];
+			}
 		}
 
 		return $item;

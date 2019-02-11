@@ -1,7 +1,7 @@
-<meta name="twitter:card" content="summary" />
+<meta name="twitter:card" content="{% if custom_card_image %}summary_large_image{% else %}summary{% endif %}" />
 <meta name="twitter:site" content="@{{ twitter_alias }}" />
 <meta name="twitter:title" content="{% if title %}{{ title }}{% else %}{{ site_name }}{% endif %}" />
-<meta name="twitter:description" content="{% if page_description %}{{ page_description }}{% else %}{{ sitedescription }}{% endif %}" />
+<meta name="twitter:description" content="{% if page_description %}{{ page_description }}{% else %}{{ site_description }}{% endif %}" />
 {% if twitter_card_image %}
-	<meta name="twitter:image" content="{{ twitter_card_image }}" />
+	<meta name="twitter:image" content="{{ custom_card_image ?? twitter_card_image }}" />
 {% endif %}

@@ -1,0 +1,3 @@
+{% if text %}
+    <p class="subtitle subtitle{{ level ?? 1 }}"{% if label %} id="{{ label }}"{% endif %}>{{ text|raw }}</p>
+{% endif %}

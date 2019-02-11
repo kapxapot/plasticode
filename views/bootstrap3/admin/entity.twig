@@ -1,18 +1,18 @@
 {% extends 'admin/layout.twig' %}
 
+{% import 'macros.twig' as gm %}
 {% import 'admin/macros.twig' as m %}
+
+{% set with_mde = true %}
 
 {% set can_create = can(alias, 'create') %}
 {% set can_edit = can(alias, 'edit_own') %}
 {% set can_delete = can(alias, 'delete_own') %}
+{% set can_upload = can(alias, 'upload') %}
 
 {% set actions = can_edit or can_delete %}
 
 {% block head_appendix %}
-	{# SimpleMDE #}
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-	<script src="//cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-	
 	{# DataTables #}
 	<script charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
 	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
@@ -29,7 +29,7 @@
 {% block title_appendix %}
 	{% if can_create %}
 		<button type="button" class="btn btn-success button-create btn-pad" ng-click="createItem()">
-			<span class="glyphicon glyphicon-plus" title="Создать"></span>
+			{{ gm.gi('plus', 'Создать') }}
 		</button>
 	{% endif %}
 {% endblock %}
@@ -38,6 +38,8 @@
 	{% include 'admin/modals/entity.twig' %}
 	{% include 'admin/includes/datatables.twig' %}
 {% endblock %}
+
+{% set angular_modules %}'angular-bootstrap-select', 'angular-bootstrap-select.extra'{% endset %}
 
 {% set angular_filters %}
 	app.filter('getById', function() {
@@ -57,17 +59,46 @@
 {% set more_angular %}
 	{% if mde %}
 		$scope.mdes = [];
-		
+
 		$scope.killMdes = function() {
 			while ($scope.mdes.length > 0) {
 				var mde = $scope.mdes.shift();
+				
+                var fullscreen = getMdeVar(mde, 'fullscreen', false);
+                if (fullscreen) {
+				    toggleMdeFullscreen(mde);
+				    setMdeResult(mde, '');
+				}
+				
 				mde.toTextArea();
 				mde = null;
 			}
 		};
+
+        $scope.parse = function(editor) {
+            var fullscreen = getMdeVar(editor, 'fullscreen', false);
+            if (fullscreen) {
+                $scope.ajax({
+        			method: 'post',
+        			url: '{{ api }}parser/parse',
+        			data: {
+        		        'text': editor.value()
+        		    },
+        		    noSuccessMessage: true,
+        			onSuccess: function(data) {
+        			    setMdeResult(editor, data.text);
+        			    updateUI();
+        			}
+        		});
+            }
+        };
 	{% endif %}
 
+	var formControls = $('#entityForm').find('.form-control');
+
 	$('#entityView').on('shown.bs.modal', function() {
+    	formControls.trigger('change');
+	    
 		$('#entityView').find('textarea').scrollTop(0);
 
 		var initMdes = function() {
@@ -75,15 +106,32 @@
 				$('#entityView').find('textarea').each(function() {
 					{# remove required #}
 					$(this).attr('required', false);
-					
+
+                    var buttons = mdeButtons();
+                    
+                    var previewButton = {
+                        name: 'previewSideBySide',
+                        action: function(editor) {
+                            toggleMdeFullscreen(editor);
+                            cm.refresh();
+
+                            toggleMdeVar(editor, 'fullscreen');
+                            $scope.parse(editor);
+                        },
+                        className: 'fa fa-arrows-alt hidden-xs',
+                        title: 'Превью'
+                    };
+                    
+                    {% include 'admin/includes/mde_buttons.twig' %}
+
 					var options = {
 				        element: this,
 				        spellChecker: false,
-				        toolbar: [ {#"bold", "italic", "strikethrough", #}"heading-2", "heading-3", "|", {#"quote", #}"unordered-list", "ordered-list", "|", {#"link", "image", "table", "|", "preview", "side-by-side", #}"fullscreen" ],
+				        toolbar: buttons,
 				        status: false,
 				        forceSync: true
 				    };
-				    
+                    
 				    if ($scope.itemId == 0) {
 				        options.autosave = {
 					        enabled: true,
@@ -93,15 +141,22 @@
 				    }
 				    
 				    var mde = new SimpleMDE(options);
+				    var cm = mde.codemirror;
 	
-					mde.codemirror.on('refresh', function() {
+					cm.on('refresh', function() {
 					    if (mde.isFullscreenActive()) {
 					        $('body').addClass('simplemde-fullscreen');
 					    } else {
 					        $('body').removeClass('simplemde-fullscreen');
 					    }
 					});	
-	
+
+                    cm.on("change", function() {
+                        delay(function() {
+                            $scope.parse(mde);
+                        }, 1000);
+                    });
+
 					$scope.mdes.push(mde);
 				});
 			{% endif %}
@@ -232,7 +287,8 @@
 		
 		$scope.croppieGetThumb = function(onComplete) {
 		    $('#croppie-upload').croppie('result', {
-		    	size: 'viewport'
+		    	size: 'viewport',
+		    	format: 'jpeg'
 		    }).then(function(resp) {
 		    	onComplete(resp);
 		    });
@@ -248,7 +304,7 @@
 			language: {
 				url: '{{ folders.global }}datatables/ru.json'
 			},
-			{% if tables[alias].sort_index %}
+			{% if tables[alias].sort_index >= 0 %}
 				order: [[ {{ tables[alias].sort_index }}, '{{ tables[alias].reverse ? 'desc' : 'asc' }}' ]],
 			{% endif %}
 			ajax: '{{ api }}{{ source ?? alias }}?format=dt',
@@ -289,12 +345,12 @@
 							
 							{% if can_edit %}
 								if (row.access.edit) {
-									actions.push('<button type="button" class="btn btn-primary btn-pad" data-id="' + row.id + '" data-action="edit"><span class="glyphicon glyphicon-pencil" title="Редактировать"></span></button>');
+									actions.push('<button type="button" class="btn btn-primary btn-pad mr-1" data-id="' + row.id + '" data-action="edit">{{ gm.gi('pencil', 'Редактировать') }}</button>');
 								}
 							{% endif %}
 							{% if can_delete %}
 								if (row.access.delete) {
-									actions.push('<button type="button" class="btn btn-danger btn-pad" data-id="' + row.id + '" data-action="delete"><span class="glyphicon glyphicon-remove" title="Удалить"></span></button>');
+									actions.push('<button type="button" class="btn btn-danger btn-pad" data-id="' + row.id + '" data-action="delete">{{ gm.gi('remove', 'Удалить') }}</button>');
 								}
 							{% endif %}
 							
@@ -323,44 +379,55 @@
     				case 'delete':
     					$scope.deleteItem(data);
     					break;
+    					
+    				{{ more_table_actions }}
     			}
 			});
 		{% endif %}
 	};
 	
 	$scope.setItem = function(i) {
-		$scope.itemId = (i != null) ? i.id : 0;
-		$scope.item = i;
+		$scope.itemId = (i && i.id > 0) ? i.id : 0;
+		$scope.item = (i && i.id > 0) ? i : null;
 		
 		$scope.itemEditLabel = ($scope.item != null) ? 'Редактирование' : 'Создание';
 
 	    $timeout(function() {
 			$scope.$apply();
 		});
+
+        if ($scope.item) {
+            $scope.fillEntityForm($scope.item);
+        }
+        
+		$scope.forms.entityForm.$setUntouched();
+	};
+
+	$scope.onChange = function() {
+	    {% include 'admin/includes/on_change.twig' %}
 	};
 	
+	formControls.change($scope.onChange);
+
 	$scope.createItem = function() {
-		$('#entityForm')[0].reset();
+	    resetForm('entity');
+		//$('#entityForm')[0].reset();
 		
 		$scope.setItem(null);
 
 		{% for col, value in columns %}
-			{% if value.default is not null %}
-				$('#entityForm').find('#{{ col }}').val({{ value.default }});
-			{% elseif value.nullable %}
-				$('#entityForm').find('#{{ col }}').val(null);
+		    {% set default_value = tables[value.entity].default ?? value.default %}
+			{% if value.nullable %}
+			    $('#entityForm').find('#{{ col }}').val(null);
+		    {% elseif default_value %}
+				{% if value.type == 'bool' %}
+					$('#entityForm').find('#{{ col }}').prop('checked', {{ default_value }} == 1);
+                {% else %}
+				    $('#entityForm').find('#{{ col }}').val({{ default_value }});
+				{% endif %}
 			{% endif %}
 		{% endfor %}
 
-		{#% if filter %}
-			{% set col = columns[filter.column] %}
-			{% set e = col.entity %}
-			var {{ e }}Id = $('#filter_{{ e }}').val();
-			if ({{ e }}Id > 0) {
-				$('#entityForm').find('#{{ filter.column }}').val({{ e }}Id);
-			}
-		{% endif %#}
-		
 		if ($scope.croppie) {
 			$scope.croppieReset();
 		}
@@ -368,9 +435,7 @@
 		showModal('entity');
 	};
 	
-	$scope.editItem = function(i) {
-		$scope.setItem(i);
-
+	$scope.fillEntityForm = function(i) {
 		{% for col, value in columns %}
 			{% if value.readonly is null %}
 				{% if value.type == 'bool' %}
@@ -387,7 +452,11 @@
 				$('#entityForm').find('#{{ col }}').val(null);
 			{% endif %}
 		{% endfor %}
-		
+	};
+	
+	$scope.editItem = function(i) {
+		$scope.setItem(i);
+
 		if ($scope.croppie) {
 			$scope.croppieReset();
 
@@ -419,7 +488,8 @@
 	
 	$scope.submitData = function(obj, persist) {
 		//console.log(obj);
-
+        
+        //delay(function() {
 		$scope.ajax({
 			method: ($scope.itemId == 0) ? 'post' : 'put',
 			url: '{{ api }}{{ alias }}' + (($scope.itemId == 0) ? '' : '/' + $scope.itemId),
@@ -428,12 +498,17 @@
 			onSuccess: $scope.refresh,
 			persist: persist
 		});
+        //}, 100000);
 	};
 	
 	$('#entityForm').submit(function(e) {
 		$scope.prePost(e);
 
 		var obj = {};
+		
+		if ($scope.item) {
+		    obj.updated_at = $scope.item.updated_at;
+		}
 		
 		{% for col, value in columns if ((value.readonly is null or value.on_form == true) and can(alias, value.access)) %}
 			{% if value.type == 'bool' %}
@@ -454,7 +529,7 @@
 		
 		if ($scope.croppie) {
 			$scope.croppieGetThumb(function(thumb) {
-				if ($scope.originalPicture != -1) { 
+				if ($scope.originalPicture != -1) {
 					obj['picture'] = $scope.originalPicture;
 				}
 				
@@ -472,19 +547,23 @@
     });
     
     $scope.tableInitComplete = function(settings, json) {
-	    {% if can_create and create_onload %}
-	    	$scope.createItem();
-	    {% elseif can_edit and edit_onload > 0 %}
-	    	var rowData = $scope.table.row('#{{ edit_onload }}').data();
-	    	if (rowData) {
-				$scope.editItem(rowData);
-	    	}
-	    {% endif %}
+        {% if action_onload %}
+            {% if action_onload.action == 'create' and can_create %}
+    	    	$scope.createItem();
+	        {% elseif action_onload.action == 'edit' and action_onload.id > 0 and can_edit %}
+	    	    var rowData = $scope.table.row('#{{ action_onload.id }}').data();
+	    	    if (rowData) {
+    				$scope.editItem(rowData);
+	    	    }
+            {% endif %}
+        {% endif %}
 	};
 
 	Promise.all(promises).then(function(results) {
 		$scope.initTable();
 	});
+	
+	{{ entity_more_angular }}
 {% endset %}
 
 {% block js_appendix %}

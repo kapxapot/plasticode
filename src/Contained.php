@@ -4,25 +4,29 @@ namespace Plasticode;
 
 use Illuminate\Support\Arr;
 
-class Contained {
+class Contained
+{
 	public $container;
 
 	/**
-	 * Creates new Contained instance
+	 * Creates new Contained instance.
 	 * 
 	 * @param ContainerInterface $container Slim container
 	 */
-	public function __construct($container) {
+	public function __construct($container)
+	{
 		$this->container = $container;
 	}
 	
-	public function __get($property) {
+	public function __get($property)
+	{
 		if ($this->container->{$property} || is_array($this->container->{$property})) {
 			return $this->container->{$property};
 		}
 	}
 	
-	public function getSettings($path = null) {
+	public function getSettings($path = null)
+	{
 		$result = $this->container->get('settings');
 		
 		if ($path) {

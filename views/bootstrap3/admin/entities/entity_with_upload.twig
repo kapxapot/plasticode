@@ -1,0 +1,66 @@
+{% extends 'admin/entity.twig' %}
+
+{% set more_modals %}
+	{% include 'modals/upload.twig' %}
+{% endset %}
+
+{% set more_table_actions %}
+	case 'upload':
+		$scope.upload(data);
+		break;
+{% endset %}
+
+{% set on_change %}
+    if (this.name == 'u_file') {
+        const cfn = $('#u_filename');
+        cfn.html(this.value);
+        cfn.removeClass('hidden');
+    
+        $scope.uploadFiles = this.files;
+    }
+{% endset %}
+
+{% set entity_more_angular %}
+	var uFormControls = $('#uploadForm').find('.form-control');
+	uFormControls.change($scope.onChange);
+
+	$scope.upload = function(data, refresh = false) {
+	    $scope.uploadContext = data || {};
+	    $scope.uploadContext.refresh = refresh;
+	    
+	    resetForm('upload');
+	    $('#u_filename').html('');
+	    
+		showModal('upload');
+	};
+
+	$('#uploadForm').submit(function(e) {
+		$scope.prePost(e);
+        
+    	const obj = $scope.uploadContext;
+        
+    	var formData = new FormData();
+        
+    	for (var i = 0; i < $scope.uploadFiles.length; i++) {
+            var file = $scope.uploadFiles[i];
+            formData.append('files[]', file, file.name);
+        }
+        
+        if (obj.context_field) {
+            formData.append('context[' + obj.context_field + ']', obj.id);
+        }
+        
+        let params = {
+    		url: '{{ path_for(args.upload_path) }}',
+            headers: { 'Content-Type': undefined },
+            data: formData,
+    		view: 'upload'
+    	};
+    	
+    	if (obj.refresh == true) {
+    	    params.onSuccess = $scope.refresh;
+        }
+
+    	$scope.ajax(params);
+    });
+{% endset %}

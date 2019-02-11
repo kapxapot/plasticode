@@ -13,12 +13,18 @@
 			<ul class="nav navbar-nav navbar-left">
 				{% include 'main/includes/menu.twig' %}
 			</ul>
-			<ul class="nav navbar-nav navbar-right">
-				<li id="search">
-					{% include 'main/includes/search.twig' %}
-				</li>
-				{% include 'usernav.twig' %}
-			</ul>
+			{% if not no_search or not no_usernav %}
+    			<ul class="nav navbar-nav navbar-right">
+    			    {% if not no_search %}
+    				<li id="search">
+    					{% include 'main/includes/search.twig' %}
+    				</li>
+    				{% endif %}
+    				{% if not no_usernav %}
+    				    {% include 'usernav.twig' %}
+    				{% endif %}
+    			</ul>
+			{% endif %}
 		</div>
 	</div>
 </div>

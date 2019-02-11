@@ -1,0 +1,15 @@
+{% if paging %}
+	<div class="paging{% if style %} {{ style }}{% endif %}">
+		<nav aria-label="{{ paging_title ?? 'Навигация по страницам' }}" class="center">
+            <ul class="pagination">
+                {% for page in paging.pages %}
+                	{% if page.current %}
+                		<li class="active"><span>{{ page.label }}</span></li>
+                	{% else %}
+                		<li><a href="{{ page.url }}" title="{{ page.title }}">{{ page.label|raw }}</a></li>
+                	{% endif %}
+                {% endfor %}
+            </ul>
+		</nav>			
+	</div>
+{% endif %}

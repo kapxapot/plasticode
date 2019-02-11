@@ -22,7 +22,7 @@
 		{% elseif value.type == 'thumb' %}
 			{{ m.thumb(_context, col, loop.first) }}
 		{% else %}
-			{{ m.input(_context, col, value.type, loop.first) }}
+			{{ m.input(_context, col, value.type, value.prefix, value.suffix, loop.first) }}
 		{% endif %}
 	{% endfor %}
 {% endblock %}

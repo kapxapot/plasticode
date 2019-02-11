@@ -6,7 +6,6 @@ class Tables {
 	const AUTH_TOKENS = 'auth_tokens';
 	const MENUS = 'menus';
 	const MENU_ITEMS = 'menu_items';
-	const REPLACES = 'replaces';
 	const ROLES = 'roles';
 	const TAGS = 'tags';
 	const USERS = 'users';

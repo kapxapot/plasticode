@@ -2,18 +2,25 @@
 
 namespace Plasticode\Controllers;
 
-use Plasticode\Contained;
 use Illuminate\Support\Arr;
 
-class Controller extends Contained {
+use Plasticode\Contained;
+
+/**
+ * Base controller for controllers showing views.
+ */
+class Controller extends Contained
+{
 	protected $autoOneColumn = true;
-	
-	protected function notFound($request, $response) {
+
+	protected function notFound($request, $response)
+	{
 		$handler = $this->notFoundHandler;
 		return $handler($request, $response);
 	}
 
-	protected function buildParams($settings) {
+	protected function buildParams($settings)
+	{
 		$params = [
 			'menu' => $this->buildMenu($settings),
 		];
@@ -29,15 +36,31 @@ class Controller extends Contained {
 		
 		$params['rel_prev'] = Arr::get($settings, 'params.paging.prev.url');
 		$params['rel_next'] = Arr::get($settings, 'params.paging.next.url');
+		
+		if (isset($settings['image'])) {
+		    $params['twitter_card_image'] = $settings['image'];
+		}
+		
+		if (isset($settings['large_image'])) {
+		    $params['custom_card_image'] = $settings['large_image'];
+		}
+		
+		if (strlen($settings['description']) > 0) {
+		    $params['page_description'] = strip_tags($settings['description']);
+		}
+		
+		$params['debug'] = $this->getSettings('debug');
 
 		return array_merge($params, $settings['params']);
 	}
 	
-	protected function buildMenu($settings) {
+	protected function buildMenu($settings)
+	{
 		return $this->builder->buildMenu();
 	}
 	
-	protected function buildSidebar($settings) {
+	protected function buildSidebar($settings)
+	{
 		$result = [];
 		
 		if (is_array($settings['sidebar'])) {
@@ -51,7 +74,8 @@ class Controller extends Contained {
 		return $result;
 	}
 	
-	protected function buildActionPart($result, $part) {
+	protected function buildActionPart($result, $part)
+	{
 		$bits = explode('.', $part);
 		if (count($bits) > 1) {
 			$action = $bits[0];
@@ -66,7 +90,13 @@ class Controller extends Contained {
 		return $result;
 	}
 	
-	protected function buildPart($settings, $result, $part) {
+	protected function buildPart($settings, $result, $part)
+	{
 		return null;
+	}
+	
+	protected function translate($message)
+	{
+	    return $this->translator->translate($message);
 	}
 }

@@ -64,13 +64,7 @@ class Auth extends Contained {
 		
 		return $this->role;
 	}
-	
-	public function isEditor() {
-		$role = $this->getRole();
-		
-		return ($role != null) && ($role->id == 1 || $role->id == 2);
-	}
-	
+
 	public function getToken() {
 		if (!$this->token) {
 			$id = $this->session->get('token');

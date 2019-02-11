@@ -2,23 +2,31 @@
 
 namespace Plasticode\Generators;
 
-class MenuItemsGenerator extends EntityGenerator {
-	public function getRules($data, $id = null) {
-		return [
-			'link' => $this->rule('url'),
-			'text' => $this->rule('text'),
-			'position' => $this->rule('posInt'),
-		];
+class MenuItemsGenerator extends EntityGenerator
+{
+	public function getRules($data, $id = null)
+	{
+	    $rules = parent::getRules($data, $id);
+	    
+	    $rules['link'] = $this->rule('url');
+		$rules['text'] = $this->rule('text');
+		$rules['position'] = $this->rule('posInt');
+		
+		return $rules;
 	}
 	
-	public function getOptions() {
-		return [
-			'uri' => 'menus/{id:\d+}/menu_items',
-			'filter' => 'menu_id',
-		];
+	public function getOptions()
+	{
+	    $options = parent::getOptions();
+	    
+	    $options['uri'] = 'menus/{id:\d+}/menu_items';
+		$options['filter'] = 'menu_id';
+		
+		return $options;
 	}
 	
-	public function getAdminParams($args) {
+	public function getAdminParams($args)
+	{
 		$params = parent::getAdminParams($args);
 
 		$menuId = $args['id'];

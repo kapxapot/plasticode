@@ -1,0 +1,8 @@
+<div id="vk_community_messages"></div>
+<script type="text/javascript">
+	$(function() {
+		loadScript('//vk.com/js/api/openapi.js?158', function() {
+            VK.Widgets.CommunityMessages("vk_community_messages", {{ vk_widget.group_id }}, {disableExpandChatSound: "1",disableNewMessagesSound: "1",tooltipButtonText: "Есть вопрос?"});
+		});
+	});
+</script>

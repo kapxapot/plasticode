@@ -5,12 +5,14 @@ namespace Plasticode\Auth;
 use Plasticode\Contained;
 use Plasticode\Exceptions\ApplicationException;
 
-class Access extends Contained {
-	private $actions;
-	private $templates;
+class Access extends Contained
+{
+    private $actions;
+    private $templates;
 	private $rights;
 	
-	public function __construct($container) {
+	public function __construct($container)
+	{
 		parent::__construct($container);
 		
 		$settings = $this->getSettings('access');
@@ -21,7 +23,8 @@ class Access extends Contained {
 		$this->rights = $settings['rights'];
 	}
 	
-	private function flattenActions($tree, $path = [], $flat = []) {
+	private function flattenActions($tree, $path = [], $flat = [])
+	{
 		$add = function($node) use ($path, &$flat) {
 			$path[] = $node;
 			$flat[$node] = $path;
@@ -36,8 +39,7 @@ class Access extends Contained {
 		
 					$flat = $this->flattenActions($nodeTree, $pathCopy, $flat);
 				}
-			}
-			else {
+			} else {
 				$add($node);
 			}
 		}
@@ -45,7 +47,8 @@ class Access extends Contained {
 		return $flat;
 	}
 
-	public function checkRights($entity, $action) {
+	public function checkRights($entity, $action)
+	{
 		if (!isset($this->actions[$action])) {
 			throw new \InvalidArgumentException('Unknown action: ' . $action);
 		}
@@ -63,6 +66,7 @@ class Access extends Contained {
 
 		foreach ($this->actions[$action] as $actionBit) {
 			$grantAccess = $this->checkRightsForExactAction($rights, $actionBit, $roleTag);
+			
 			if ($grantAccess) {
 				break;
 			}
@@ -71,7 +75,8 @@ class Access extends Contained {
 		return $grantAccess;
 	}
 	
-	private function checkRightsForExactAction($rights, $action, $roleTag) {
+	private function checkRightsForExactAction($rights, $action, $roleTag)
+	{
 		$grantAccess = false;
 
 		if (isset($rights['template'])) {
@@ -93,13 +98,15 @@ class Access extends Contained {
 		return $grantAccess;
 	}
 	
-	public function getAllRights($entity) {
+	public function getAllRights($entity)
+	{
 		$path = "access.{$entity}";
 		$can = $this->cache->get($path);
 
 		if ($can === null) {
 			$can = [];
 			$rights = array_keys($this->actions);
+			
 			foreach ($rights as $r) {
 				$can[$r] = $this->checkRights($entity, $r);
 			}

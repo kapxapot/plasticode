@@ -20,12 +20,12 @@ class Validator extends Contained {
 					}
 				}
 				
-				$name = $this->translator->translateField($field);
+				$name = $this->translator->translate($field);
 
 				$rule->setName($name)->assert($request->getParam($field));
 			}
 			catch (NestedValidationException $e) {
-				$e->setParam('translator', [ $this->translator, 'translateMessage' ]);
+				$e->setParam('translator', [ $this->translator, 'translate' ]);
 				$this->errors[$field] = $e->getMessages();
 			}
 		}

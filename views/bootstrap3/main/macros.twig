@@ -1,7 +1,16 @@
-{% macro edit_button(entity_type, entity) %}
+{% macro create_button(entity_type, label, path_args = {}) %}
+	{% set target_url = path_for('admin.entities.' ~ entity_type, path_args) ~ '?action=create' %}
+	{#% if can(entity_type, 'create') %#}
+		<a class="btn btn-lg btn-default btn-block" href="{{ target_url }}" role="button">{{ label }} &raquo;&raquo;</a>
+	{#% else %}
+		<button type="button" class="btn btn-lg btn-default btn-block" ng-click="signIn('{{ target_url }}')">{{ label }} &raquo;&raquo;</button>
+	{% endif %#}
+{% endmacro %}
+
+{% macro edit_button(entity_type, entity, path_args = {}) %}
 	{% import 'macros.twig' as m %}
 	{% if entity.access.edit %}
-		<a class="btn btn-default btn-pad pull-right" href="{{ path_for('admin.entities.' ~ entity_type) ~ '?edit=' ~ entity.id }}" role="button" title="Редактировать">{{ m.gi('pencil') }}</a>
+		<a class="btn btn-default btn-pad pull-right" href="{{ path_for('admin.entities.' ~ entity_type, path_args) ~ '?action=edit&id=' ~ entity.id }}" role="button" title="Редактировать">{{ m.gi('pencil') }}</a>
 	{% endif %}
 {% endmacro %}
 
@@ -14,14 +23,14 @@
 	  				<li><a{% if i.class %} class="{{ i.class }}"{% endif %}{% if i.title %} title="{{ i.title }}"{% endif %} href="{{ i.url }}">{{ i.text }}</a></li>
 	  			{% endfor %}
   			{% endif %}
-  			<li class="active">{{ title }}</li>
+  			<li class="active">{{ title|raw }}</li>
 		</ol>
 	</div>
 {% endmacro %}
 
-{% macro tab(id, title, isActive = false, label = null) %}
+{% macro tab(id, title, is_active = false, label = null) %}
 	{% set label = label ?? title %}
-	<li role="presentation"{% if isActive %} class="active"{% endif %} title="{{ title }}">
+	<li role="presentation"{% if is_active %} class="active"{% endif %} title="{{ title }}">
 		<a href="#{{ id }}" aria-controls="{{ id }}" role="tab" data-toggle="tab">{{ label|raw }}</a>
 	</li>
 {% endmacro %}

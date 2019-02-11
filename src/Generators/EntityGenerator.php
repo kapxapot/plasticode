@@ -2,78 +2,47 @@
 
 namespace Plasticode\Generators;
 
+use Respect\Validation\Validator as v;
+
 use Plasticode\Contained;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Util\Strings;
 use Plasticode\Validation\ValidationRules;
 
-class EntityGenerator extends Contained {
+class EntityGenerator extends Contained
+{
 	protected $entity;
 	protected $rules;
 	protected $taggable;
 	protected $tagsField = 'tags';
 
-	public function __construct($container, $entity) {
+	public function __construct($container, $entity)
+	{
 		parent::__construct($container);
 		
 		$this->entity = $entity;
 		$this->rules = new ValidationRules($container);
 	}
 	
-	protected function rule($name, $optional = false) {
+	protected function rule($name, $optional = false)
+	{
 		return $this->rules->get($name, $optional);
 	}
 	
-	protected function optional($name) {
+	protected function optional($name)
+	{
 		return $this->rule($name, true);
 	}
 
-	protected function getRules($data, $id = null) {
-		return [];
+	protected function getRules($data, $id = null)
+	{
+		return [
+			'updated_at' => v::unchanged($this->entity, $id)
+		];
 	}
 	
-	protected function getOptions() {
-		return [];
-	}
-	
-	public function afterLoad($item) {
-		return $item;
-	}
-	
-	public function beforeSave($data, $id = null) {
-		return $data;
-	}
-	
-	public function afterSave($item, $data) {
-	}
-	
-	public function afterDelete($item) {
-	}
-	
-	public function getAdminParams($args) {
-		$settings = $this->getSettings();
-		$params = $settings['entities'][$this->entity];
-		
-		$params['base'] = $this->router->pathFor('admin.index');
-
-		return $params;
-	}
-	
-	public function updateTags($item) {
-		if ($this->taggable) {
-			$tags = Strings::toTags($item->{$this->tagsField});
-	
-			$this->db->saveTags($this->taggable, $item->id, $tags);
-		}
-	}
-
-	public function deleteTags($item) {
-		if ($this->taggable) {
-			$this->db->deleteTags($this->taggable, $item->id);
-		}
-	}
-	
-	public function validate($request, $data, $id = null) {
+	public function validate($request, $data, $id = null)
+	{
 		$rules = $this->getRules($data, $id);
 		$validation = $this->validator->validate($request, $rules);
 		
@@ -82,7 +51,59 @@ class EntityGenerator extends Contained {
 		}
 	}
 	
-	public function generateAPIRoutes($app, $access) {
+	protected function getOptions()
+	{
+		return [];
+	}
+	
+	public function afterLoad($item)
+	{
+	    $item['type'] = $this->entity;
+	    
+		return $item;
+	}
+	
+	public function beforeSave($data, $id = null)
+	{
+		return $data;
+	}
+	
+	public function afterSave($item, $data)
+	{
+	}
+	
+	public function afterDelete($item)
+	{
+	}
+	
+	public function getAdminParams($args)
+	{
+		$settings = $this->getSettings();
+		$params = $settings['entities'][$this->entity];
+		
+		$params['base'] = $this->router->pathFor('admin.index');
+
+		return $params;
+	}
+	
+	public function updateTags($item)
+	{
+		if ($this->taggable) {
+			$tags = Strings::toTags($item->{$this->tagsField});
+	
+			$this->db->saveTags($this->taggable, $item->id, $tags);
+		}
+	}
+
+	public function deleteTags($item)
+	{
+		if ($this->taggable) {
+			$this->db->deleteTags($this->taggable, $item->id);
+		}
+	}
+
+	public function generateAPIRoutes($app, $access)
+	{
 		$this->generateGetAllRoute($app, $access);
 		
 		$api = $this->getSettings("tables.{$this->entity}.api");
@@ -94,24 +115,43 @@ class EntityGenerator extends Contained {
 		return $this;
 	}
 	
-	public function generateGetAllRoute($app, $access) {
+	public function generateGetAllRoute($app, $access)
+	{
 		$alias = $this->entity;
 		$provider = $this;
+		
 		$options = $this->getOptions();
+		
+		$noFilterOptions = $options;
+		if (isset($noFilterOptions['filter'])) {
+		    unset($noFilterOptions['filter']);
+		}
 
-		$uri = $options['uri'] ?? $alias;
+		$endPoints[] = [ 'uri' => $alias, 'options' => $noFilterOptions ];
+		
+		if (isset($options['uri'])) {
+		    $endPoints[] = [ 'uri' => $options['uri'], 'options' => $options ];
+		}
 
-		$app->get('/' . $uri, function($request, $response, $args) use ($alias, $provider, $options) {
-			$options['args'] = $args;
-			$options['params'] = $request->getParams();
-			
-			return $this->db->jsonMany($response, $alias, $provider, $options);
-		})->add($access($alias, 'api_read'));
+		//$uri = $options['uri'] ?? $alias;
+		
+		foreach ($endPoints as $endPoint) {
+		    $endPointUri = $endPoint['uri'];
+		    $endPointOptions = $endPoint['options'];
+
+    		$app->get('/' . $endPointUri, function($request, $response, $args) use ($alias, $provider, $endPointOptions) {
+    			$endPointOptions['args'] = $args;
+    			$endPointOptions['params'] = $request->getParams();
+    			
+    			return $this->db->jsonMany($response, $alias, $provider, $endPointOptions);
+    		})->add($access($alias, 'api_read'));
+		}
 		
 		return $this;
 	}
 	
-	public function generateCRUDRoutes($app, $access) {
+	public function generateCRUDRoutes($app, $access)
+	{
 		$alias = $this->entity;
 		$table = $this->entity;
 		$provider = $this;
@@ -145,22 +185,35 @@ class EntityGenerator extends Contained {
 		return $this;
 	}
 
-	public function generateAdminPageRoute($app, $access) {
+	public function generateAdminPageRoute($app, $access)
+	{
 		$alias = $this->entity;
 		$provider = $this;
 		$options = $this->getOptions();
 
 		$uri = $options['admin_uri'] ?? $options['uri'] ?? $alias;
+		$adminArgs = $options['admin_args'] ?? null;
 
-		$app->get('/' . $uri, function($request, $response, $args) use ($provider, $options) {
+		$app->get('/' . $uri, function($request, $response, $args) use ($provider, $options, $adminArgs) {
 			$templateName = isset($options['admin_template'])
 				? ('entities/' . $options['admin_template'])
 				: 'entity';
 
 			$params = $provider->getAdminParams($args);
 			
-			$params['create_onload'] = $request->getQueryParam('create', false);
-			$params['edit_onload'] = intval($request->getQueryParam('edit', 0));
+			$action = $request->getQueryParam('action', null);
+			$id = $request->getQueryParam('id', null);
+			
+			if ($action) {
+			    $params['action_onload'] = [
+			        'action' => $action,
+			        'id' => $id,
+                ];
+			}
+			
+			if ($adminArgs) {
+			    $params['args'] = $adminArgs;
+			}
 
 			return $this->view->render($response, 'admin/' . $templateName . '.twig', $params);
 		})->add($access($alias, 'read_own', 'admin.index'))->setName('admin.entities.' . $alias);

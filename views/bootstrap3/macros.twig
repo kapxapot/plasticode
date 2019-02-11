@@ -13,3 +13,7 @@
 {% endmacro %}
 
 {% macro gi(name, title = null) %}<i class="glyphicon glyphicon-{{ name }}" aria-hidden="true"{% if title %} title="{{ title }}"{% endif %}></i>{% endmacro %}
+
+{% macro moment(date_iso, format = 'DD.MM.Y HH:mm') %}{{ "{{moment('" ~ date_iso ~ "').format('" ~ format ~ "')}}" }}{% endmacro %}
+
+{% macro moment_from_now(date_iso) %}{{ "{{moment('" ~ date_iso ~ "').fromNow()}}" }}{% endmacro %}

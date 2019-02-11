@@ -3,7 +3,9 @@
 namespace Plasticode\Core;
 
 use Plasticode\Contained;
+use Plasticode\Exceptions\ApplicationException;
 use Plasticode\Util\Sort;
+use Plasticode\Util\Strings;
 
 class Builder extends Contained {
 	protected $sort;
@@ -34,6 +36,17 @@ class Builder extends Contained {
 		return $this->sort->multiSort($items, [
 			$field => [ 'dir' => 'desc' ],
 		]);
+	}
+	
+	protected function trunc($text, $limitVar)
+	{
+	    $limit = $this->getSettings($limitVar);
+	    
+	    if (!$limit) {
+	        throw new ApplicationException('No limit settings found: ' . $limitVar);
+	    }
+	    
+	    return Strings::trunc($text, $limit);
 	}
 	
 	protected function buildSubMenus($menus) {
@@ -147,6 +160,7 @@ class Builder extends Contained {
 				$pages[] = $next;
 			}
 			
+			$paging['page'] = $page;
 			$paging['pages'] = $pages;
 
 			return $paging;
@@ -159,5 +173,23 @@ class Builder extends Contained {
 		$user['name'] = $user['name'] ?? $user['login'];
 
 		return $user;
+	}
+	
+	// TAGS
+	
+	protected function tags($tags, $tab = null)
+	{
+		if (strlen($tags) > 0) {
+			$result = array_map(function($t) use ($tab) {
+				$tag = trim($t);
+				
+				return [
+					'text' => $tag,
+					'url' => $this->linker->tag($tag, $tab),
+				];
+			}, explode(',', $tags));
+		}
+		
+		return $result;
 	}
 }

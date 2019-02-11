@@ -1,0 +1,14 @@
+{% if text %}
+    {% if chunks|length > 0 %}
+        {% set chunks %}{% for c in chunks %}{{ c }}{% if not loop.last %}, {% endif %}{% endfor %}{% endset %}
+    {% endif %}
+
+    <div class="quote{% if style %} {{ style }}{% endif %}">
+        {% if author %}
+            <div class="quote--header"><span class="quote--author">{% if url %}<a href="{{ url }}">{{ author }}</a>{% else %}{{ author }}{% endif %}</span>{% if chunks %} [{{ chunks }}]{% endif %}:</div>
+        {% endif %}
+        <div class="quote--body">
+            {{ text|raw }}
+        </div>
+    </div>
+{% endif %}

@@ -2,14 +2,15 @@
 
 namespace Plasticode\Util;
 
-class Numbers {
-	private $digits = [
+class Numbers
+{
+	private static $digits = [
 		'm' => [ 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять' ],
 		'f' => [ 'одна', 'две' ],
 		'n' => [ 'одно' ]
 	];
 	
-	private $tens = [
+	private static $tens = [
 		'десять',
 		'один$',
 		'две$',
@@ -22,7 +23,7 @@ class Numbers {
 		'девят$',
 	];
 	
-	private $decades = [
+	private static $decades = [
 		'двадцать',
 		'тридцать',
 		'сорок',
@@ -33,7 +34,7 @@ class Numbers {
 		'девяносто',
 	];
 	
-	private $hundreds = [
+	private static $hundreds = [
 		'сто',
 		'двести',
 		'триста',
@@ -45,7 +46,7 @@ class Numbers {
 		'девятьсот',
 	];
 	
-	private $lions = [
+	private static $lions = [
 		'мил$',
 		'миллиард',
 		'трил$',
@@ -61,7 +62,8 @@ class Numbers {
 	/**
 	 * Отрицательное число приводится к модулю. Дробная часть числа отбрасывается.
 	 */
-	private function normalize($num) {
+	private static function normalize($num)
+	{
 		if (!is_numeric($num)) {
 			throw new \InvalidArgumentException("Number expected, got this: {$num}.");
 		}
@@ -72,7 +74,8 @@ class Numbers {
 	/**
 	 * Преобразует массив в число. [ 1, 2, 3, 4 ] => 1234.
 	 */
-	public function fromArray($a, $reverse = false) {
+	public static function fromArray($a, $reverse = false)
+	{
 		if ($reverse) {
 			$a = array_reverse($a);
 		}
@@ -89,8 +92,9 @@ class Numbers {
 	/**
 	 * Преобразует число в массив. 1234 => [ 4, 3, 2, 1 ].
 	 */
-	private function toArray($num, $reverse = false) {
-		$num = $this->normalize($num);
+	private static function toArray($num, $reverse = false)
+	{
+		$num = self::normalize($num);
 
 		$a = [];
 		
@@ -102,7 +106,7 @@ class Numbers {
 		return $reverse ? $a : array_reverse($a);
 	}
 	
-	private function chopTriad(&$num) {
+	/*private function chopTriad(&$num) {
 		if (is_array($num)) {
 			$triad = 0;
 			
@@ -120,10 +124,15 @@ class Numbers {
 		}
 		
 		return $triad;
-	}
+	}*/
 
-	public function toString($num) {
-		$num = $this->normalize($num);
+	public static function toString($num)
+	{
+		$num = self::normalize($num);
+		
+		if ($num == 0) {
+			return 'ноль';
+		}
 
 		$result = '';		
 		$offset = 0;
@@ -143,22 +152,22 @@ class Numbers {
 			$d3 = floor($d321 / 100);
 
 			if ($d3 > 0) {
-				$parts[] = $this->hundreds[$d3 - 1];
+				$parts[] = self::$hundreds[$d3 - 1];
 			}
 			
 			if ($d2 == 1) {
-				$parts[] = str_replace('$', 'надцать', $this->tens[$d21 - 10]);
+				$parts[] = str_replace('$', 'надцать', self::$tens[$d21 - 10]);
 			}
 			else {
 				if ($d2 >= 2) {
-					$parts[] = $this->decades[$d2 - 2];
+					$parts[] = self::$decades[$d2 - 2];
 				}
 	
 				if ($d1 > 0) {
-					$genderDigits = $this->digits[($offset == 3) ? 'f' : 'm'];
+					$genderDigits = self::$digits[($offset == 3) ? 'f' : 'm'];
 					$parts[] = isset($genderDigits[$d1 - 1])
 						? $genderDigits[$d1 - 1]
-						: $this->digits['m'][$d1 - 1];
+						: self::$digits['m'][$d1 - 1];
 				}
 			}
 
@@ -184,7 +193,7 @@ class Numbers {
 					}
 				}
 
-				$appendix = str_replace('$', 'лион', $this->lions[($offset / 3) - 2]) . $end;
+				$appendix = str_replace('$', 'лион', self::$lions[($offset / 3) - 2]) . $end;
 			}
 
 			if ($appendix) {
@@ -203,12 +212,13 @@ class Numbers {
 	/**
 	 * Generates random number.
 	 * 
-	 * @param int $digits Number of digits to generate. [1..]
+	 * @param int $digits Number of digits to generate. [1..16]
 	 * @param bool $zeroes Are zeroes allowed. Default = false.
 	 * 
 	 * @return int
 	 */
-	public function generate($digits, $zeroes = false) {
+	public static function generate($digits, $zeroes = false)
+	{
 		if ($digits < 1 || $digits > 16) {
 			throw new \OutOfRangeException('Number of digits must be from 1 to 16.');
 		}
@@ -221,6 +231,6 @@ class Numbers {
 			$a[] = mt_rand($min, 9);
 		}
 		
-		return $this->fromArray($a);
+		return self::fromArray($a);
 	}
 }

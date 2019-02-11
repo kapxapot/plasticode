@@ -1,25 +1,29 @@
 $(function() {
-	// colorbox
-	if (colorbox instanceof HTMLDivElement) {
-		$('.colorbox').colorbox({rel:'colorbox', transition:'none', maxWidth: '90%', scalePhotos: 'true'});
-	}
-	
 	$('.embed-responsive').parent().removeClass('center');
 
-	// tabs
-	$('.nav-tabs a').on('shown.bs.tab', function (e) {
+	// tabs / pills
+	const nav = function (e) {
 		var hash = e.target.hash.replace('#', '#/');
 	    if (history.pushState) {
 	        history.pushState(null, null, hash); 
 	    } else {
 	        window.location.hash = hash;
 	    }
-	});
+	};
+	
+	$('.nav-tabs a').on('shown.bs.tab', nav);
+	$('.nav-pills a').on('shown.bs.tab', nav);
 	
 	if (document.location.hash.match('#/')) {
 		var hash = document.location.hash.replace(/^#\//, '');
 	    $('.nav-tabs a[href="#' + hash + '"]').tab('show');
+	    $('.nav-pills a[href="#' + hash + '"]').tab('show');
 	}
+
+    $(".card").click(function() {
+        window.location = $(this).find("a").attr("href"); 
+        return false;
+    });
 });
 
 function search(site, curobj) {
@@ -27,8 +31,8 @@ function search(site, curobj) {
 }
 
 function switchElements(hideSelector, showSelector) {
-	$(hideSelector).addClass('hidden');
-	$(showSelector).removeClass('hidden');
+	$(hideSelector).toggleClass('hidden');
+	$(showSelector).toggleClass('hidden');
 }
 
 function loadScript(url, callback) {

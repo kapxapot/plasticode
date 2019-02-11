@@ -7,7 +7,6 @@ use Plasticode\Util\Date;
 use Plasticode\Util\Numbers;
 
 class Captcha extends Contained {
-	private $numbers;
 	private $ttl;
 	
 	/**
@@ -25,7 +24,6 @@ class Captcha extends Contained {
 	public function __construct($container, $replacements = [], $ttl = 10) {
 		parent::__construct($container);
 		
-		$this->numbers = new Numbers;
 		$this->ttl = $ttl;
 		$this->fuckUpReplacements = $replacements;
 	}
@@ -40,8 +38,8 @@ class Captcha extends Contained {
 	}
 
 	public function generate($length, $save = false) {
-		$num = $this->numbers->generate($length);
-		$string = $this->numbers->toString($num);
+		$num = Numbers::generate($length);
+		$string = Numbers::toString($num);
 		
 		$fuckedUpString = implode('', array_map(function($value) {
 		    return $this->fuckUp($value);

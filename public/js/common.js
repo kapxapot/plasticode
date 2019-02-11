@@ -1,10 +1,23 @@
+function updateUI() {
+	// colorbox
+	if (typeof colorbox !== 'undefined' && colorbox instanceof HTMLDivElement) {
+	    //console.log('colorbox detected');
+        $('.colorbox').colorbox({rel:'colorbox', maxWidth: '90%', scalePhotos: 'true'});
+	}
+    
+    $('[data-toggle="tooltip"]').tooltip();
+    $('.carousel').carousel();
+}
+
 $(function() {
 	focusOnModals();
     hideAlerts();
 
-    $("[data-hide]").on("click", function() {
-        $(this).closest("." + $(this).attr("data-hide")).hide();
+    $('[data-hide]').on('click', function() {
+        $(this).closest('.' + $(this).attr('data-hide')).hide();
     });
+    
+    updateUI();
 });
 
 function focusOnModals() {
@@ -17,7 +30,7 @@ function showAlert(selector, delay = null) {
 	$(selector).show();
 	
 	if (delay) {
-		$(selector).fadeTo(delay, 500).slideUp(500, function() {
+		$(selector).fadeTo(delay, 0.8).slideUp(500, function() {
 	        $(this).slideUp(500);
 	    });
 	}
@@ -55,6 +68,10 @@ function showModal(name) {
 
 function hideModal(name) {
 	$('#' + name + 'View').modal('hide');
+}
+
+function resetForm(name) {
+    $('#' + name + 'Form')[0].reset();
 }
 
 function signedIn(data, targetUrl, withCookie) {
@@ -193,4 +210,24 @@ function escapeHtml(html) {
     var div = document.createElement('div');
     div.appendChild(text);
     return div.innerHTML;
+}
+
+var delay = (function() {
+    var timer = 0;
+    return function(callback, ms) {
+        clearTimeout(timer);
+        timer = setTimeout(callback, ms);
+    };
+})();
+
+function addClass(selector, className) {
+    selector.attr('class', function(index, classNames) {
+        return classNames + ' ' + className;
+    });
+}
+
+function removeClass(selector, className) {
+    selector.attr('class', function(index, classNames) {
+        return classNames.replace(className, '');
+    });
 }

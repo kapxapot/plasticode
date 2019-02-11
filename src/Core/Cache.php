@@ -2,18 +2,22 @@
 
 namespace Plasticode\Core;
 
-class Cache {
+class Cache
+{
 	private $cache;
 	
-	public function __construct() {
+	public function __construct()
+	{
 		$this->cache = [];
 	}
 	
-	public function get($path) {
+	public function get($path)
+	{
 		return $this->cache[$path] ?? null;
 	}
 	
-	public function set($path, $value) {
+	public function set($path, $value)
+	{
 		$this->cache[$path] = $value;
 	}
 }

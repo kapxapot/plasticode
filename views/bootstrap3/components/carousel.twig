@@ -1,0 +1,27 @@
+{% if slides|length > 0 %}
+    {% set c_id = 'carousel-' ~ id %}
+
+    <div id="{{ c_id }}" class="carousel slide" data-interval="false">
+        <ol class="carousel-indicators">
+            {% for slide in slides %}
+                <li data-target="#{{ c_id }}" data-slide-to="{{ loop.index0 }}"{% if loop.first %} class="active"{% endif %}></li>
+            {% endfor %}
+        </ol>
+        <div class="carousel-inner" role="listbox">
+            {% for slide in slides %}
+                <div class="item{% if loop.first %} active{% endif %}">
+                    <img src="{{ slide.src }}" alt="{{ slide.caption }}">
+                    {% if slide.caption %}
+                        <div class="carousel-caption">{{ slide.caption }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <a class="left carousel-control" href="#{{ c_id }}" role="button" data-slide="prev">
+            {% include 'components/prev.twig' %}
+        </a>
+        <a class="right carousel-control" href="#{{ c_id }}" role="button" data-slide="next">
+            {% include 'components/next.twig' %}
+        </a>
+    </div>
+{% endif %}

@@ -2,7 +2,8 @@
 
 namespace Plasticode\Util;
 
-class Date {
+class Date
+{
 	const DATE_FORMAT = 'Y-m-d H:i:s';
 	const TIME_FORMAT_SHORT = 'H:i МСК';
 	const TIME_FORMAT = 'H:i:s';
@@ -53,42 +54,83 @@ class Date {
 	];
 	
 	// null = now()
-	static public function dt($date = null) {
+	public static function dt($date = null, $timeZone = null)
+	{
+	    if ($timeZone != null) {
+	        $tz = new \DateTimeZone($timeZone);
+	    }
+	    
 		return ($date instanceof \DateTime)
-			? $date
-			: new \DateTime($date);
+			? ($tz
+			    ? self::toTimeZone($date, $tz)
+			    : $date)
+			: new \DateTime($date, $tz);
 	}
 	
-	static public function interval($interval) {
+	public static function toTimeZone($date, $timeZone)
+	{
+	    if (!($timeZone instanceof \DateTimeZone)) {
+	        $timeZone = new \DateTimeZone($timeZone);
+	    }
+	    
+		$copy = clone self::dt($date);
+    	$copy->setTimezone($timeZone);
+    	
+    	return $copy;
+	}
+	
+	public static function utc($date = null)
+	{
+	    return self::dt($date, 'UTC');
+	}
+
+    public static function fromUtc($utc)
+    {
+        return self::toTimeZone($utc, date_default_timezone_get());
+    }
+	
+	public static function interval($interval)
+	{
 		return ($interval instanceof \DateInterval)
 			? $interval
 			: new \DateInterval($interval);
 	}
 
 	// deprecated, use dbNow
-	static public function now() {
+	public static function now()
+	{
 		return date(self::DATE_FORMAT);	
 	}
 	
-	static public function dbNow() {
+	public static function dbNow()
+	{
 		return self::formatDb(self::dt());
 	}
 	
 	// null = now()
-	static public function diff($start, $end = null) {
+	public static function diff($start, $end = null)
+	{
 		$startDate = self::dt($start);
 		$endDate = self::dt($end);
 
 		return $startDate->diff($endDate);
 	}
 	
-	static public function age($date) {
+	public static function age($date)
+	{
 		return self::diff($date);
 	}
 	
-	static public function exceedsInterval($start, $end, $interval) {
+	public static function exceedsInterval($start, $end, $interval)
+	{
 		$startDate = self::dt($start);
 		$endDate = self::dt($end);
+		
+		$first = mb_strtolower(Strings::first($interval));
+		
+		if ($first != 'p') {
+		    $interval = date_interval_create_from_date_string($interval);
+		}
 		
 		$interval = self::interval($interval);
 
@@ -97,7 +139,8 @@ class Date {
 		return $endDate >= $startWithInterval;
 	}
 	
-	static public function happened($date) {
+	public static function happened($date)
+	{
 		if (!$date) {
 			return false;
 		}
@@ -108,7 +151,8 @@ class Date {
 		return $now >= $dt;
 	}
 	
-	static public function to($date) {
+	public static function to($date)
+	{
 		if ($date) {
 			$now = self::dt();
 			$tomorrow = self::dt('tomorrow');
@@ -135,57 +179,97 @@ class Date {
 		return $str ?? 'неизвестно когда';
 	}
 	
-	static public function toAgo($date) {
+	public static function toAgo($date, $lang = null)
+	{
 		if ($date) {
 			$now = self::dt();
-			$today = self::dt('today');
-			$yesterday = self::dt('yesterday');		
+			
+			$dayAgo = clone $now;
+			$dayAgo->modify('-1 day');
+			
+			$hourAgo = clone $now;
+			$hourAgo->modify('-1 hour');
 
 			$dt = self::dt($date);
+			$age = self::diff($dt, $now);
+			
+			$cases = new Cases;
 	
-			if ($dt > $today) {
-				$str = 'сегодня';
+			if ($dt > $hourAgo) {
+			    $minutes = $age->i;
+				$str = $minutes . ' ' .
+				    (($lang == 'en')
+				        ? 'minute' . ($minutes > 1 ? 's' : '') . ' ago'
+				        : $cases->caseForNumber('минута', $minutes) . ' назад');
 			}
-			elseif ($dt > $yesterday) {
-				$str = 'вчера';
+			elseif ($dt > $dayAgo) {
+			    $hours = $age->h;
+				$str = $hours . ' ' .
+				    (($lang == 'en')
+				        ? 'hour' . ($hours > 1 ? 's' : '') . ' ago'
+				        : $cases->caseForNumber('час', $hours) . ' назад');
 			}
 			else {
-				$age = self::age($dt);
 				$days = $age->days;
-				
-				$cases = new Cases;
-				$str = $days . ' ' . $cases->caseForNumber('день', $days) . ' назад';
+				$str = $days . ' ' .
+				    (($lang == 'en')
+				        ? 'day' . ($days > 1 ? 's' : '') . ' ago'
+				        : $cases->caseForNumber('день', $days) . ' назад');
 			}
 		}
 		
-		return $str ?? 'неизвестно когда';
+		return $str ?? (($lang == 'en') ? 'never' : 'неизвестно когда');
 	}
 	
-	static public function startOfHour($date) {
+	public static function startOfHour($date)
+	{
 		$copy = clone self::dt($date);
-		$copy->setTime($copy->format('H'), 0, 0);
+		$hour = self::hour($copy);
+		$copy->setTime($hour, 0, 0);
 		
 		return $copy;
 	}
 	
-	static public function endOfDay($date) {
+	public static function stripTime($date)
+	{
+		$copy = clone self::dt($date);
+		$copy->setTime(0, 0, 0);
+		
+		return $copy;
+	}
+	
+	public static function startOfDay($date)
+	{
+	    return self::stripTime($date);
+	}
+
+	public static function endOfDay($date)
+	{
 		$copy = clone self::dt($date);
 		$copy->setTime(23, 59, 59);
 		
 		return $copy;
 	}
 	
-	static public function formatDb($date) {
+	public static function format($date, $format = null)
+	{
+		return self::dt($date)->format($format ?? self::DATE_FORMAT);
+	}
+	
+	public static function formatDb($date)
+	{
 		return self::dt($date)->format(self::DATE_FORMAT);
 	}
 	
-	static public function formatIso($date) {
+	public static function formatIso($date)
+	{
 		return ($date instanceof \DateTime)
 			? $date->format('c')
 			: strftime('%FT%T%z', $date);
 	}
 	
-	static public function generateExpirationTime($minutes = 60) {
+	public static function generateExpirationTime($minutes = 60)
+	{
 		return date(self::DATE_FORMAT, strtotime("+{$minutes} minutes"));
 	}
 	
@@ -203,7 +287,8 @@ class Date {
 	const MONTH_ON = 1;
 	const MONTH_NUM = 2;
 	
-	static public function formatIntervalUi($start, $end, $timeMode = self::TIME_OFF, $monthMode = self::MONTH_ON, $yearMode = self::YEAR_ON) {
+	public static function formatIntervalUi($start, $end, $timeMode = self::TIME_OFF, $monthMode = self::MONTH_ON, $yearMode = self::YEAR_ON)
+	{
 		if (!$start || !$end) {
 			return self::formatUi($start ?? $end, $timeMode, $monthMode, $yearMode);
 		}
@@ -242,11 +327,13 @@ class Date {
 		return $result;
 	}
 	
-	static public function formatDateUi($date, $monthMode = null, $yearMode = null) {
-		return self::formatUi($date, self::TIME_OFF, $monthMode, $yearMode);
+	public static function formatDateUi($date)
+	{
+		return self::formatUi($date, self::TIME_OFF);
 	}
 	
-	static public function formatUi($date, $timeMode = self::TIME_SOFT, $monthMode = self::MONTH_ON, $yearMode = self::YEAR_ON) {
+	public static function formatUi($date, $timeMode = self::TIME_SOFT, $monthMode = self::MONTH_ON, $yearMode = self::YEAR_ON)
+	{
 		$dt = self::dt($date);
 		
 		$parts = [ self::day($dt) ];
@@ -285,35 +372,48 @@ class Date {
 		return $result;
 	}
 	
-	static public function day($date) {
-		return intval(self::dt($date)->format('d'));
+	private static function part($date, $part)
+	{
+		return intval(self::dt($date)->format($part));
 	}
 	
-	static public function month($date) {
-		return intval(self::dt($date)->format('m'));
+	public static function day($date)
+	{
+		return self::part($date, 'd');
 	}
 	
-	static public function year($date) {
-		return intval(self::dt($date)->format('Y'));
+	public static function month($date)
+	{
+		return self::part($date, 'm');
 	}
 	
-	static public function hour($date) {
-		return intval(self::dt($date)->format('H'));
+	public static function year($date)
+	{
+		return self::part($date, 'Y');
 	}
 	
-	static public function minute($date) {
-		return intval(self::dt($date)->format('i'));
+	public static function hour($date)
+	{
+		return self::part($date, 'H');
 	}
 	
-	static public function second($date) {
-		return intval(self::dt($date)->format('s'));
+	public static function minute($date)
+	{
+		return self::part($date, 'i');
 	}
 	
-	static public function hasTime($date) {
+	public static function second($date)
+	{
+		return self::part($date, 's');
+	}
+	
+	public static function hasTime($date)
+	{
 		return self::hour($date) + self::minute($date) + self::second($date) > 0;
 	}
 		
-	static public function formatTime($date, $withSeconds = false) {
+	public static function formatTime($date, $withSeconds = false)
+	{
 		$format = $withSeconds
 			? self::TIME_FORMAT
 			: self::TIME_FORMAT_SHORT;

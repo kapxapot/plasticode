@@ -8,13 +8,44 @@ use Illuminate\Support\Arr;
 use Plasticode\IO\File;
 
 class Settings {
-	public static function load($path, callable $enrich = null, $entryPoint = 'general.yml') {
-		$settings = Yaml::parse(File::load($path . $entryPoint));
+    private static function loadFile($file)
+    {
+        $data = File::load($file);
+        $data = self::replaceEnvEntries($data);
+
+		return Yaml::parse($data);
+    }
+    
+    private static function replaceEnvEntries($data)
+    {
+        return preg_replace_callback(
+			'/\{(\w+)\}/',
+			function ($matches) {
+			    $var = $matches[1];
+			    $env = getenv($var);
+			    
+				return ($env !== false) ? $env : $var;
+			},
+			$data
+		);
+    }
+    
+	public static function load($path, callable $enrich = null, $entryPoint = null) {
+	    $entryPoint = $entryPoint ?? 'general.yml';
+	    
+	    $entryPointPath = File::combine($path, $entryPoint);
+		$settings = self::loadFile($entryPointPath);
 		
-		foreach ($settings['modules'] as $module) {
-			$file = File::load("{$path}{$module}.yml");
-			$settings[$module] = Yaml::parse($file);
-		}
+		$modulesPath = File::combine($path, '*.yml');
+		$moduleFiles = array_filter(glob($modulesPath), 'is_file');
+		
+		foreach ($moduleFiles as $file)
+        {
+            if ($file != $entryPoint) {
+                $module = File::getName($file);
+    			$settings[$module] = self::loadFile($file);
+            }
+        }
 		
 		if (array_key_exists('tables', $settings)) {
 			foreach ($settings['tables'] as $table => $tableSettings) {
@@ -64,13 +95,6 @@ class Settings {
 			$settings['auth_token_key'] = $rootSafe . '_auth_token';
 		}
 		
-		$settings['db'] = [
-			'host' => getenv('DB_HOST'),
-			'database' => getenv('DB_DATABASE'),
-			'user' => getenv('DB_USER'),
-			'password' => getenv('DB_PASSWORD'),
-		];
-
 		if ($enrich != null) {
 			$settings = $enrich($settings);
 		}

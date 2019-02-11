@@ -17,4 +17,4 @@ s.setAttribute('data-timestamp', +new Date());
 (d.head || d.body).appendChild(s);
 })();
 </script>
-<noscript>Включите JavaScript для просмотра <a href="https://disqus.com/?ref_noscript">комментариев Disqus</a>.</noscript>
+<noscript>{% if lang == 'en' %}Turn on JavaScript to view{% else %}Включите JavaScript для просмотра{% endif %} <a href="https://disqus.com/?ref_noscript">{% if lang == 'en' %}Disqus comments{% else %}комментариев Disqus{% endif %}</a>.</noscript>

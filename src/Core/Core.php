@@ -32,8 +32,8 @@ class Core {
 	 * @param object $response
 	 * @param \Exception $ex
 	 */
-	public static function error($c, $response, $ex) {
-		$status = 400;
+	public static function error($c, $response, $ex, $debug = false) {
+		$status = 500;
 
 		if ($ex instanceof IApiException) {
 			$status = $ex->GetErrorCode();
@@ -50,10 +50,14 @@ class Core {
 					$msg = $error[0];
 				}
 			}
-		}
-		else {
-			$msg = $ex->getMessage();
-			$msg = $c->translator->translateMessage($msg);
+		} else {
+		    //if ($debug) {
+			    $msg = $ex->getMessage();
+		    /*} else {
+		        $msg = "Server error.";
+		    }*/
+		    
+			$msg = $c->translator->translate($msg);
 		}
 		
 		$settings = $c->get('settings');
