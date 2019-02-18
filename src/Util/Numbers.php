@@ -233,4 +233,9 @@ class Numbers
 		
 		return self::fromArray($a);
 	}
+	
+	public static function parseFloat($str)
+	{
+	    return floatval(str_replace(',', '.', $str));
+	}
 }

@@ -86,7 +86,7 @@
         	</div>
         	<div class="mde-result col-sm-6 article hidden-xs" ng-bind-html="item.preview | rawHtml" ng-if="isPreview"></div>
         </div>
-        <pl-entity-autosave value="item.{{name}}" entity-type="item.type" entity-id="item.id" entity-updated-at="item.updated_at" on-load="textSync(text, '{{name}}')"></pl-entity-autosave>
+        <pl-entity-autosave value="item.{{name}}" entity-type="'{{ alias }}'" entity-id="item.id" entity-updated-at="item.updated_at" on-load="textSync(text, '{{name}}')"></pl-entity-autosave>
 		{{ m.tooltip(col) }}
 	</div>
 {% endmacro %}

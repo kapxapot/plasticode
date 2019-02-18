@@ -48,7 +48,7 @@ class Captcha extends Contained {
 		$result = [
 			'number' => $num,
 			'string' => $string,
-			'captcha' => $fuckedUpString
+			'captcha' => $fuckedUpString,
 		];
 		
 		if ($save) {

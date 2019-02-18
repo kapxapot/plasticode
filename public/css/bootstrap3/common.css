@@ -829,3 +829,11 @@ h3:first-child, h4:first-child {
 .font-150 {
     font-size: 150%;
 }
+
+.br-word {
+    word-break: break-word;
+}
+
+.br-all {
+    word-break: break-all;
+}

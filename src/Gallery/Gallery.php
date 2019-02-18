@@ -78,6 +78,7 @@ class Gallery extends Contained
 	protected function getUrl($folder, $item, $typeField)
 	{
 		$path = $this->getFolder($folder);
+		
 		$ext = Image::getExtension($item[$typeField]);
 		
 		return $path . $item['id'] . '.' . $ext;

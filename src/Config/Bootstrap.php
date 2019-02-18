@@ -70,6 +70,10 @@ class Bootstrap
                 return \Plasticode\Models\AuthToken::class;
             },
             
+            'menuClass' => function ($container) {
+                return \Plasticode\Models\Menu::class;
+            },
+            
             'menuItemClass' => function ($container) {
                 return \Plasticode\Models\MenuItem::class;
             },
@@ -84,6 +88,10 @@ class Bootstrap
             
             'authTokenRepository' => function ($container) {
                 return new \Plasticode\StaticProxy($container->authTokenClass);
+            },
+            
+            'menuRepository' => function ($container) {
+                return new \Plasticode\StaticProxy($container->menuClass);
             },
             
             'menuItemRepository' => function ($container) {
@@ -152,12 +160,14 @@ class Bootstrap
             	}
             
             	$view = new \Slim\Views\Twig($templatesPath, [
-            		'cache' => $cachePath
+            		'cache' => $cachePath,
+            		'debug' => $this->debug,
             	]);
             
             	$view->addExtension(new \Slim\Views\TwigExtension($container->router, $container->request->getUri()));
             	$view->addExtension(new \Plasticode\Twig\Extensions\AccessRightsExtension($container));
-            	
+            	$view->addExtension(new \Twig\Extension\DebugExtension);
+
             	// set globals
                 $globals = $this->settings['view_globals'];
             	foreach ($globals as $key => $value) {

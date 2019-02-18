@@ -177,10 +177,10 @@ function getById(items, id) {
 }
 
 function parseDate(input) {
-	if (input === null) {
+	if (input == null) {
 		return null;
 	}
-	
+
 	let mainParts = input.split(' ');
 	let datePart = mainParts[0];
 	let timePart = mainParts[1];

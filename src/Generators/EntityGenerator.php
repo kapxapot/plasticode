@@ -55,8 +55,6 @@ class EntityGenerator extends Contained
 	
 	public function afterLoad($item)
 	{
-	    $item['type'] = $this->entity;
-	    
 		return $item;
 	}
 	

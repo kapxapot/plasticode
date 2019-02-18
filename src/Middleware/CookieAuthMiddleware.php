@@ -2,10 +2,12 @@
 
 namespace Plasticode\Middleware;
 
-class CookieAuthMiddleware extends Middleware {
+class CookieAuthMiddleware extends Middleware
+{
 	private $tokenKey = 'auth_token';
 	
-	public function __construct($container, $tokenKey = null) {
+	public function __construct($container, $tokenKey = null)
+	{
 		parent::__construct($container);
 
 		if (strlen($tokenKey) > 0) {
@@ -13,7 +15,8 @@ class CookieAuthMiddleware extends Middleware {
 		}
 	}
 	
-	public function __invoke($request, $response, $next) {
+	public function __invoke($request, $response, $next)
+	{
         $token = $request->getCookieParam($this->tokenKey);
 
 		$this->auth->validateCookie($token);

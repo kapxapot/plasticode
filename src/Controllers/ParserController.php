@@ -13,8 +13,10 @@ class ParserController extends Contained
     	$text = strip_tags($data['text']);
     	
     	$text = $this->parser->justText($text);
-    	$text = $this->parser->parseCut($text, null, true);
+    	$text = $this->parser->parseCut($text);
 
-		return Core::json($response, [ 'text' => $text ]);
+		return Core::json($response, [
+		    'text' => $text,
+		]);
 	}
 }

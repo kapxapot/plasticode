@@ -88,11 +88,11 @@ class Access extends Contained
 			
 			$template = $this->templates[$tname];
 			
-			$grantAccess = isset($template[$roleTag]) && in_array($action, $template[$roleTag]);
+			$grantAccess = in_array($action, $template[$roleTag] ?? []);
 		}
 		
 		if (!$grantAccess) {
- 			$grantAccess = isset($rights[$roleTag]) && in_array($action, $rights[$roleTag]);
+ 			$grantAccess = in_array($action, $rights[$roleTag] ?? []);
  		}
 
 		return $grantAccess;

@@ -21,13 +21,11 @@ class TaggableEntityGenerator extends EntityGenerator
 
     	foreach ($tags as $tag) {
     		if (strlen($tag) > 0) {
-    			$t = Tag::create();
-                
-        		$t->entityType = $this->entity;
-                $t->entityId = $item->id;
-                $t->tag = $tag;
-                
-        		$t->save();
+    			Tag::store([
+            		'entity_type' => $this->entity,
+                    'entity_id' => $item->id,
+                    'tag' => $tag,
+    			]);
     		}
     	}
 	}

@@ -30,12 +30,13 @@ class MenuItemsGenerator extends EntityGenerator
 		$params = parent::getAdminParams($args);
 
 		$menuId = $args['id'];
-		$menu = $this->db->getEntityById('menus', $menuId);
+		
+		$menu = $this->menuRepository->get($menuId);
 
 		$params['source'] = "menus/{$menuId}/menu_items";
 		$params['breadcrumbs'] = [
 			[ 'text' => 'Menu', 'link' => $this->router->pathFor('admin.entities.menus') ],
-			[ 'text' => $menu['text'] ],
+			[ 'text' => $menu->text ],
 			[ 'text' => 'Menu Items' ],
 		];
 		

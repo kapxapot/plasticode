@@ -36,17 +36,58 @@ abstract class DbModel extends SerializableModel
         }
     }
     
+    /**
+     * Static alias for new()
+     */
+    public static function create($obj = null)
+    {
+        return new static($obj);
+    }
+    
+    public static function store($obj = null)
+    {
+        $model = static::create($obj);
+        return $model->save();
+    }
+    
+    private static function pluralClass()
+    {
+        $class = Strings::lastChunk(static::class, '\\');
+        return Pluralizer::plural($class);
+    }
+    
     public static function getTable()
     {
         if (strlen(static::$table) > 0) {
             return static::$table;
         }
 
-        $class = Strings::lastChunk(static::class, '\\');
-        $plural = Pluralizer::plural($class);
+        $plural = self::pluralClass();
         $table = Strings::toSnakeCase($plural);
 
         return $table;
+    }
+    
+    /**
+     * Returns entity generator for this model.
+     */
+    public static function getGenerator()
+    {
+        $plural = self::pluralClass();
+        $gen = self::$container->generatorResolver->resolveEntity($plural);
+
+        return $gen;
+    }
+    
+    /**
+     * Returns validation rules for this model.
+     */
+    public static function getRules($data)
+    {
+        $gen = self::getGenerator();
+		$rules = $gen->getRules($data);
+		
+		return $rules;
     }
     
     /**
@@ -59,38 +100,22 @@ abstract class DbModel extends SerializableModel
 	    return $this->{$idField};
     }
 
-    /**
-     * Creates "empty" model. Alias for empty constructor.
-     */
-    public static function create()
-    {
-        return new static();
-    }
-
-    /**
-     * Creates model based on database object. If object is null, returns null.
-     * A kind of wrapper for database object.
-     */
-	protected static function make($obj)
+    private static function fromDbObj($obj)
     {
         if (!$obj) {
             return null;
         }
         
-        $model = new static($obj);
-        
-        $model->afterMake();
-        
-        return $model;
+        return static::create($obj);
     }
     
     /**
      * Transforms an array of database objects into a collection of models.
      */
-    public static function makeMany($objs)
+    private static function makeMany($objs)
     {
 	    $many = array_map(function ($obj) {
-	        return static::make($obj);
+	        return static::fromDbObj($obj);
 	    }, $objs ?? []);
 	    
 	    return Collection::make($many);
@@ -116,13 +141,13 @@ abstract class DbModel extends SerializableModel
     public static function getBy($where)
     {
         $obj = self::$db->getObjBy(self::getTable(), $where);
-        return self::make($obj);
+        return self::fromDbObj($obj);
     }
     
     public static function getByField($field, $value, $where = null)
     {
         $obj = self::$db->getObjByField(self::getTable(), $field, $value, $where);
-        return self::make($obj);
+        return self::fromDbObj($obj);
     }
     
 	public static function getRaw($query, $params)
@@ -225,8 +250,9 @@ abstract class DbModel extends SerializableModel
 	
 	public function save()
 	{
-	    $this->beforeSave();
 	    $this->obj->save();
+	    
+	    return $this;
 	}
 
     protected function setFieldNoStamps($field, $value)
@@ -240,21 +266,17 @@ abstract class DbModel extends SerializableModel
 	        ? $this->obj->asArray()
 	        : null;
 	}
-	
-	// events
-	// they transform database object and return it
-	
-	protected function afterMake()
-	{
-	}
-	
-	protected function beforeSave()
-	{
-	}
-	
+
 	// magic
 	
 	public function __toString()
+	{
+	    return $this->toString();
+	}
+	
+	// not magic
+	
+	public function toString()
 	{
 	    $class = static::class;
 	    $id = $this->getId();

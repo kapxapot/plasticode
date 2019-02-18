@@ -43,9 +43,9 @@ abstract class ImageUploadController extends Controller
             });
 	    }
 	    
-		$msg = $this->translator->translate('Upload successful.');
-
-		return Core::json($response, [ 'message' => $msg ]);
+		return Core::json($response, [
+		    'message' => $this->translate('Upload successful.'),
+		]);
 	}
 
     /**
@@ -57,9 +57,11 @@ abstract class ImageUploadController extends Controller
 	    
 	    $zip = new \ZipArchive;
 	    $result = $zip->open($zipName);
+	    
         if ($result === true) {
             for ($i = 0; $i < $zip->numFiles; $i++) {
                 $fileName = $zip->getNameIndex($i);
+                
                 if (Image::isImagePath($fileName)) {
                     $fileNames[] = $fileName;
                 }

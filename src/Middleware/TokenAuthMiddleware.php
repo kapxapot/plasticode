@@ -4,8 +4,10 @@ namespace Plasticode\Middleware;
 
 use Plasticode\Exceptions\AuthenticationException;
 
-class TokenAuthMiddleware extends Middleware {
-	public function __invoke($request, $response, $next) {
+class TokenAuthMiddleware extends Middleware
+{
+	public function __invoke($request, $response, $next)
+	{
         $tokenLine = $request->getHeaderLine('Authorization');
         $lineParts = explode(' ', $tokenLine);
         

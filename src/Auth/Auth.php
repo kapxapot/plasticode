@@ -12,35 +12,28 @@ class Auth extends Contained {
 	private $role;
 	private $token;
 	
-	private function setUserId($id) {
-		$this->session->set('user', $id);
-		$this->user = null;
+	private function setToken($token) {
+		$this->session->set('token_id', $token->id);
 	}
 
-	private function setUser($user) {
-		$this->setUserId($user->id);
-	}
-	
-	private function setTokenId($id) {
-		$this->session->set('token', $id);
-		$this->token = null;
-	}
-	
-	private function setToken($token) {
-		$this->setUser($token->user());
-		$this->setTokenId($token->id);
-	}
-	
-	private function login($token) {
-		$this->setToken($token);
+	public function getToken() {
+		if (!$this->token) {
+			$id = $this->session->get('token_id');
+
+			if ($id) {
+				$this->token = $this->authTokenRepository->get($id);
+			}
+		}
+		
+		return $this->token;
 	}
 	
 	public function getUser() {
 		if (!$this->user) {
-			$id = $this->session->get('user');
+			$token = $this->getToken();
 
-			if ($id != null) {
-				$this->user = $this->userRepository->get($id);
+			if ($token) {
+				$this->user = $token->user();
 			}
 		}
 		
@@ -59,23 +52,9 @@ class Auth extends Contained {
 		return $this->role;
 	}
 
-	public function getToken() {
-		if (!$this->token) {
-			$id = $this->session->get('token');
-
-			if ($id != null) {
-				$this->token = $this->authTokenRepository->get($id);
-			}
-		}
-		
-		return $this->token;
-	}
-	
 	public function userString() {
 		$user = $this->getUser();
-		return ($user != null)
-			? "[{$user->id}] {$user->name}"
-			: null;
+		return $user ? $user->toString() : null;
 	}
 	
 	public function tokenString() {
@@ -92,35 +71,34 @@ class Auth extends Contained {
 	public function attempt($login, $password) {
 	    $user = $this->userRepository->getByLogin($login);
 
-		$ok = false;
+        if (!$user) {
+            return null;
+        }
+        
+        $passwordOk = Security::verifyPassword($password, $user->password);
 
-		if ($user) {
-			if (Security::verifyPassword($password, $user->password)) {
-				if (Security::rehashPasswordNeeded($user->password)) {
-					$user->password = Security::encodePassword($password);
-					$user->save();
-				}
-				
-				$token = $this->authTokenRepository->create();
-
-				$token->userId = $user->id;
-				$token->token = Security::generateToken();
-				$token->expiresAt = $this->generateExpirationTime();
-				
-				$token->save();
-
-				$this->login($token);
-
-				$ok = true;
-			}
+		if (!$passwordOk) {
+		    return null;
 		}
 		
-		return $ok;
+		if (Security::rehashPasswordNeeded($user->password)) {
+			$user->password = Security::encodePassword($password);
+			$user->save();
+		}
+		
+		$token = $this->authTokenRepository->store([
+			'user_id' => $user->id,
+			'token' => Security::generateToken(),
+			'expires_at' => $this->generateExpirationTime(),
+		]);
+		
+		$this->setToken($token);
+        
+        return $user;
 	}
 
 	public function logout() {
-		$this->session->delete('token');
-		$this->session->delete('user');
+		$this->session->delete('token_id');
 	}
 	
 	private function generateExpirationTime() {
@@ -151,7 +129,6 @@ class Auth extends Contained {
 		}
 			
 		$token->expiresAt = $this->generateExpirationTime();
-		
 		$token->save();
 
 		$this->setToken($token);

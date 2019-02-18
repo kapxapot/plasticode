@@ -7,7 +7,8 @@ use Illuminate\Support\Arr;
 
 use Plasticode\IO\File;
 
-class Settings {
+class Settings
+{
     private static function loadFile($file)
     {
         $data = File::load($file);
@@ -30,7 +31,8 @@ class Settings {
 		);
     }
     
-	public static function load($path, callable $enrich = null, $entryPoint = null) {
+	public static function load($path, callable $enrich = null, $entryPoint = null)
+	{
 	    $entryPoint = $entryPoint ?? 'general.yml';
 	    
 	    $entryPointPath = File::combine($path, $entryPoint);

@@ -15,7 +15,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     
     public static function make(array $data = null)
     {
-        return new Collection($data ?? []);
+        return new static($data ?? []);
     }
     
     public static function makeEmpty()
@@ -42,7 +42,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         foreach ($collections as $collection) {
             $merged = $merged->concat($collection);
         }
-        
+
         return $merged;
     }
 

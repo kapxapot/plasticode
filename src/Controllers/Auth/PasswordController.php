@@ -15,6 +15,7 @@ class PasswordController extends Controller {
 		$user = $this->auth->getUser();
 
 		$data = [ 'password' => $user->password ];
+		
 		$rules = $this->getRules($data);
 		$validation = $this->validator->validate($request, $rules);
 		
@@ -27,13 +28,11 @@ class PasswordController extends Controller {
 		$user->password = Security::encodePassword($password);
 		$user->save();
 		
-		$this->logger->info("Changed password for user: {$this->auth->userString()}");
+		$this->logger->info("Changed password for user: {$user}");
 		
-		$msg = $this->translator->translateMessage('Password change successful.');
-
-		$response = Core::json($response, [ 'message' => $msg ]);
-
-		return $response;
+		return Core::json($response, [
+		    'message' => $this->translate('Password change successful.'),
+		]);
 	}
 	
 	private function getRules($data) {

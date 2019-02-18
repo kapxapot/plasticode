@@ -38,6 +38,8 @@ class GeneratorResolver extends Contained {
 	}
 	
 	public function resolveEntity($entity) {
+	    $entity = mb_strtolower($entity);
+	    
 		$pascalEntity = Strings::toPascalCase($entity);
 		$generatorClass = $this->resolve($pascalEntity);
 
@@ -49,6 +51,8 @@ class GeneratorResolver extends Contained {
 			throw new ApplicationException("Unable to resolve {$entity} generator class.");
 		}
 		
-		return new $generatorClass($this->container, $entity);
+		$generator = new $generatorClass($this->container, $entity);
+
+		return $generator;
 	}
 }

@@ -90,11 +90,11 @@
 /*!**********************!*\
   !*** ./src/index.js ***!
   \**********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("\n\n__webpack_require__(/*! ./plasticode-core.module */ \"./src/plasticode-core.module.js\");\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _plasticode_core_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./plasticode-core.module */ \"./src/plasticode-core.module.js\");\n\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ }),
 
@@ -102,11 +102,11 @@ eval("\n\n__webpack_require__(/*! ./plasticode-core.module */ \"./src/plasticode
 /*!********************************************!*\
   !*** ./src/pl-http-interceptor.factory.js ***!
   \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! exports provided: httpInterceptor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.httpInterceptor = httpInterceptor;\nhttpInterceptor.$inject = ['$q', '$injector'];\n\nfunction httpInterceptor($q) {\n  return {\n    request: function request(config) {\n      if (!config.method) {\n        config.method = 'post';\n      }\n\n      return config;\n    },\n    response: function response(_response) {\n      return $q.when(_response);\n    },\n    responseError: function responseError(rejection) {\n      return $q.reject(rejection);\n    }\n  };\n}\n\n//# sourceURL=webpack:///./src/pl-http-interceptor.factory.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, \"httpInterceptor\", function() { return httpInterceptor; });\nhttpInterceptor.$inject = ['$q', '$injector'];\nfunction httpInterceptor($q) {\n  return {\n    request: function request(config) {\n      if (!config.method) {\n        config.method = 'post';\n      }\n\n      return config;\n    },\n    response: function response(_response) {\n      return $q.when(_response);\n    },\n    responseError: function responseError(rejection) {\n      return $q.reject(rejection);\n    }\n  };\n}\n\n//# sourceURL=webpack:///./src/pl-http-interceptor.factory.js?");
 
 /***/ }),
 
@@ -114,11 +114,11 @@ eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n
 /*!***************************************!*\
   !*** ./src/plasticode-core.module.js ***!
   \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n\nvar _plHttpInterceptor = __webpack_require__(/*! ./pl-http-interceptor.factory */ \"./src/pl-http-interceptor.factory.js\");\n\nexports.default = angular.module('plasticodeCore', []).config(PlasticodeConfig).factory('plasticodeHttpInterceptor', _plHttpInterceptor.httpInterceptor);\nPlasticodeConfig.$inject = ['$httpProvider'];\n\nfunction PlasticodeConfig($httpProvider) {\n  $httpProvider.interceptors.push('plasticodeHttpInterceptor');\n}\n\n//# sourceURL=webpack:///./src/plasticode-core.module.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _pl_http_interceptor_factory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./pl-http-interceptor.factory */ \"./src/pl-http-interceptor.factory.js\");\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (angular.module('plasticodeCore', []).config(PlasticodeConfig).factory('plasticodeHttpInterceptor', _pl_http_interceptor_factory__WEBPACK_IMPORTED_MODULE_0__[\"httpInterceptor\"]));\nPlasticodeConfig.$inject = ['$httpProvider'];\n\nfunction PlasticodeConfig($httpProvider) {\n  $httpProvider.interceptors.push('plasticodeHttpInterceptor');\n}\n\n//# sourceURL=webpack:///./src/plasticode-core.module.js?");
 
 /***/ })
 
