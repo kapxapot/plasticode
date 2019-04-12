@@ -27,6 +27,12 @@
 		
 			<base href="{{ base }}/">
 		
+    		<link rel="shortcut icon" href="{{ fav_icon ?? '/favicon.ico' }}" />
+    		
+    		{% if touch_icon %}
+    		    <link rel="apple-touch-icon" href="{{ touch_icon }}">
+    		{% endif %}
+		
 			<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
     		
     		{% if with_colorbox %}
@@ -45,6 +51,9 @@
             <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
             <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
 		    <script src="{{ folders.global }}bootstrap-select/angular-bootstrap-select.js"></script>
+
+            <!-- Lozad.js -->
+            <script type="text/javascript" src="//cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
 
 			{% block head_appendix %}{% endblock %}
 

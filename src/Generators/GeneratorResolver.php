@@ -2,11 +2,12 @@
 
 namespace Plasticode\Generators;
 
-use Plasticode\Contained;
 use Plasticode\Exceptions\ApplicationException;
 use Plasticode\Util\Strings;
 
-class GeneratorResolver extends Contained {
+class GeneratorResolver
+{
+    protected $container;
 	protected $namespaces;
 	
 	/**
@@ -15,18 +16,20 @@ class GeneratorResolver extends Contained {
 	 * @param ContainerInterface $container
 	 * @param string[] $namespaces Namespaces to search generators
 	 */
-	public function __construct($container, $namespaces) {
-		parent::__construct($container);
-		
+	public function __construct($container, $namespaces)
+	{
+		$this->container = $container;
 		$this->namespaces = $namespaces ?? [];
 		$this->namespaces[] = __NAMESPACE__;
 	}
 	
-	private function buildClassName($namespace, $name) {
+	private function buildClassName($namespace, $name)
+	{
 		return $namespace . '\\' . $name . 'Generator';
 	}
 	
-	private function resolve($name) {
+	private function resolve($name)
+	{
 		foreach ($this->namespaces as $namespace) {
 			$generatorClass = $this->buildClassName($namespace, $name);
 			if (class_exists($generatorClass)) {
@@ -37,7 +40,8 @@ class GeneratorResolver extends Contained {
 		return $generatorClass;
 	}
 	
-	public function resolveEntity($entity) {
+	public function resolveEntity($entity)
+	{
 	    $entity = mb_strtolower($entity);
 	    
 		$pascalEntity = Strings::toPascalCase($entity);

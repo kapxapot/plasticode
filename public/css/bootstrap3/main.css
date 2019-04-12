@@ -428,6 +428,10 @@ fieldset[disabled] .btn-primary.focus {
     margin-bottom: 15px;
 }
 
+.pagination-flex > a {
+    white-space: normal;
+}
+
 @media (max-width: 767px) {
 	.pagination-flex {
 		margin-left: -5px;

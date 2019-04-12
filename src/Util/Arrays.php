@@ -22,12 +22,12 @@ class Arrays
      * @param array $array
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      */
-    public static function toAssocBy($array, $by = 'id')
+    public static function toAssocBy($array, $by = 'id') : array
     {
         $groups = self::groupBy($array, $by);
         
         array_walk($groups, function (&$item, $key) {
-            return $item = $item[0];
+            $item = $item[0];
         });
         
         return $groups;
@@ -39,7 +39,7 @@ class Arrays
      * @param array $array
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      */
-    public static function groupBy($array, $by = 'id')
+    public static function groupBy($array, $by = 'id') : array
     {
         $result = [];
 
@@ -129,6 +129,40 @@ class Arrays
     }
     
     /**
+     * Removes "" and nulls from array.
+     */
+    public static function clean(array $array) : array
+    {
+        return array_filter($array, function ($item) {
+            return strlen($item) > 0;
+        });
+    }
+    
+    /**
+     * Skips $offset elements from the start and returns the remaining array.
+     */
+    public static function skip(array $array, int $offset) : array
+    {
+        return array_slice($array, $offset);
+    }
+    
+    /**
+     * Returns first $limit elements
+     */
+    public static function take(array $array, int $limit)
+    {
+        return array_slice($array, 0, $limit);
+    }
+    
+    /**
+     * Skips $offset elements and takes $limit elements
+     */
+    public static function slice(array $array, int $offset, int $limit)
+    {
+        return array_slice($array, $offset, $limit);
+    }
+    
+    /**
      * Returns first item from array or null.
      */
     public static function first($array)
@@ -148,12 +182,12 @@ class Arrays
      * Filters associative array by provided key set.
      * If key is absent, it is ignored.
      */
-    public static function filterKeys($array, $keys)
+    public static function filterKeys($array, array $keys) : array
     {
         $result = [];
         
         foreach ($keys as $key) {
-            if (array_key_exists($key, $array)) {
+            if (isset($array[$key])) {
                 $result[$key] = $array[$key];
             }
         }

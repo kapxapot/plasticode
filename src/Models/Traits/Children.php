@@ -2,6 +2,9 @@
 
 namespace Plasticode\Models\Traits;
 
+use Plasticode\Collection;
+use Plasticode\Query;
+
 trait Children
 {
 	public function parent()
@@ -11,10 +14,19 @@ trait Children
 	    });
 	}
 	
-	public function children()
+	public function children() : Collection
 	{
 	    return $this->lazy(__FUNCTION__, function () {
-	        return self::getManyByField('parent_id', $this->id);
+	        return self::query()
+                ->where('parent_id', $this->id)
+	            ->all();
 	    });
+	}
+	
+	public function orphans() : Collection
+	{
+        return self::query()
+            ->whereNull('parent_id')
+            ->all();
 	}
 }

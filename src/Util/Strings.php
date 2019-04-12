@@ -64,23 +64,31 @@ class Strings
 	{
 		$tags = array_map(function($t) {
 			return self::normalize($t);
-		}, explode(',', $str));
+		}, self::explode($str));
 		
 		return array_unique($tags);
 	}
 	
-	public static function explode($str, $delimiter = ',')
+	public static function trimArray(array $strArray) : array
 	{
-	    if (!$str) {
-	        return null;
-	    }
-
-	    return array_map(function($chunk) {
+	    $array = array_map(function($chunk) {
             return trim($chunk);
-        }, explode($delimiter, $str));
+        }, $strArray);
+        
+        return Arrays::clean($array);
 	}
 	
-	public static function lastChunk($str, $delimiter)
+	public static function explode($str, string $delimiter = ',') : array
+	{
+        return self::trimArray(explode($delimiter, $str));
+	}
+	
+	public static function toWords(string $str) : array
+	{
+	    return self::trimArray(preg_split("/\s/", $str));
+	}
+	
+	public static function lastChunk(string $str, string $delimiter) : string
 	{
 	    $chunks = explode($delimiter, $str);
 	    
@@ -95,7 +103,7 @@ class Strings
 	 *
 	 * @return string Truncated string
 	 */
-	public static function trunc($str, $limit, $stripTags = true)
+	public static function trunc($str, $limit, $stripTags = true) : string
 	{
 		return mb_substr($str, 0, $limit);
 	}
@@ -194,5 +202,10 @@ class Strings
     public static function endsWith($str, $mask)
     {
         return mb_substr($str, -strlen($mask)) == $mask;
+    }
+    
+    public static function compare(string $str1, string $str2)
+    {
+        return strcasecmp($str1, $str2);
     }
 }

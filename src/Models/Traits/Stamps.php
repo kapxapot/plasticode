@@ -25,4 +25,18 @@ trait Stamps
     {
         return Date::iso($this->updatedAt);
     }
+    
+    public function stamp()
+    {
+        $user = self::$auth->getUser();
+        
+        if ($user) {
+            $this->createdBy = $this->createdBy ?? $user->id;
+            $this->updatedBy = $user->id;
+        }
+        
+        if ($this->isPersisted()) {
+            $this->updatedAt = Date::dbNow();
+        }
+    }
 }

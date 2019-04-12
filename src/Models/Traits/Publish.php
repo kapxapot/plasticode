@@ -2,6 +2,9 @@
 
 namespace Plasticode\Models\Traits;
 
+use Plasticode\Query;
+use Plasticode\Util\Date;
+
 /**
  * Limited publish support: only published (no published_at).
  */
@@ -10,51 +13,40 @@ trait Publish
     /**
      * For Tags trait.
      */
-    protected static function tagsWhere($query)
+    protected static function tagsWhere(Query $query) : Query
     {
-        $where = self::wherePublished();
-        return $where($query);
+        return self::wherePublished($query);
     }
+
+    // queries
     
-    protected static function wherePublished($where = null)
+	public static function getBasePublished() : Query
+	{
+	    return self::wherePublished(self::baseQuery());
+	}
+    
+	public static function getPublished() : Query
+	{
+	    return self::wherePublished(self::query());
+	}
+    
+    protected static function wherePublished(Query $query) : Query
     {
-        return function ($q) use ($where) {
-            $q = $q->where('published', 1);
-            
-            if ($where) {
-                $q = $where($q);
-            }
-            
-            return $q;
-	    };
+        return $query->where('published', 1);
     }
-    
-    // GETTERS - MANY
-    
-	public static function getAllPublished($where = null)
-	{
-	    return self::getAll(
-	        self::wherePublished($where)
-        );
-	}
 	
-	// GETTERS - ONE
+	// props & funcs
+
+    public function publish()
+    {
+        if ($this->publishedAt === null) {
+            $this->publishedAt = Date::dbNow();
+        }
+        
+        $this->published = 1;
+    }
 	
-	public static function getPublished($id)
-	{
-	    return static::get($id, self::wherePublished());
-	}
-	
-	public static function getPublishedWhere($where)
-	{
-	    return self::getBy(
-	        self::wherePublished($where)
-        );
-	}
-	
-	// props
-	
-	public function isPublished()
+	public function isPublished() : bool
 	{
 	    return $this->published == 1;
 	}

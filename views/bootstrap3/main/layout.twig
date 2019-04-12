@@ -28,7 +28,7 @@
 		
 		{% include 'main/includes/twitter_card.twig' %}
 		
-		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel="shortcut icon" href="{{ fav_icon ?? '/favicon.ico' }}" />
 		
 		{% if touch_icon %}
 		    <link rel="apple-touch-icon" href="{{ touch_icon }}">
@@ -64,6 +64,14 @@
 	        	
     	{# Font Awesome #}
         <!--link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous"-->
+        
+        <!-- Lozad.js -->
+        <script type="text/javascript" src="//cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+        
+        {% if with_swipes %}
+            <!-- Hammer.js -->
+            <script src="https://hammerjs.github.io/dist/hammer.js"></script>
+        {% endif %}
 
 		{% block head_appendix %}{% endblock %}
 		

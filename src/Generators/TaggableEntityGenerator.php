@@ -11,10 +11,12 @@ class TaggableEntityGenerator extends EntityGenerator
 
 	public function afterSave($item, $data)
 	{
+	    parent::afterSave($item, $data);
+	    
 		$tags = Strings::toTags($item->{$this->tagsField});
 	
 		if (!($item->id > 0)) {
-			throw new \InvalidArgumentException('Entity id must be positive');
+			throw new \InvalidArgumentException('Entity id must be positive.');
 		}
 		
 		Tag::deleteByEntity($this->entity, $item->id);

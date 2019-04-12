@@ -4,7 +4,6 @@ namespace Plasticode\Models;
 
 use Plasticode\Contained;
 use Plasticode\Core\Cache;
-use Plasticode\Util\Date;
 use Plasticode\Util\Strings;
 
 abstract class Model implements \ArrayAccess
@@ -154,8 +153,13 @@ abstract class Model implements \ArrayAccess
         $snakeCase = Strings::toSnakeCase($property);
 		unset($this->obj[$snakeCase]);
 	}
-	
+
 	public function __toString()
+	{
+	    return $this->toString();
+	}
+	
+	public function toString()
 	{
 	    return static::class;
 	}

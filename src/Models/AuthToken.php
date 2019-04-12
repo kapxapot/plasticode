@@ -8,7 +8,9 @@ class AuthToken extends DbModel
     
     public static function getByToken($token)
     {
-        return self::getByField('token', $token);
+        return self::query()
+            ->where('token', $token)
+            ->one();
     }
 
     // PROPS

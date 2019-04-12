@@ -1,11 +1,11 @@
-{% macro tree(items) %}
+{% macro tree(items, field = 'items') %}
     {% import _self as m %}
 	{% if items %}
 		<ul>
 		    {% for i in items %}
 		        <li>
 		            <a href="{{ i.url }}">{{ i.title }}</a>
-	                {{ m.tree(i.items) }}
+	                {{ m.tree(i[field], field) }}
 		        </li>
 		    {% endfor %}
     	</ul>
@@ -25,3 +25,7 @@
 {% macro moment_from_now(date_iso) %}{% if date_iso %}{{ "{{moment('" ~ date_iso ~ "').fromNow()}}" }}{% else %}неизвестно когда{% endif %}{% endmacro %}
 
 {% macro moment_diff(start, end, unknown_end, format = 'D MMMM Y', short_format = 'D MMMM') %}{{ "{{momentDiff('" ~ (start.has_time ? start.iso : start) ~ "', " ~ (end ? "'" ~ (end.has_time ? end.iso : end) ~ "'" : "null") ~ ", " ~ unknown_end ~ (format ? ", '" ~ format ~ "'" : "") ~ (short_format ? ", '" ~ short_format ~ "'" : "") ~ ")}}" }}{% endmacro %}
+
+{% macro rgb(rgb) %}rgb({{ rgb.red }}, {{ rgb.green }}, {{ rgb.blue }}){% endmacro %}
+
+{% macro rgba(rgba) %}rgba({{ rgba.red }}, {{ rgba.green }}, {{ rgba.blue }}, {{ rgba.alpha }}){% endmacro %}

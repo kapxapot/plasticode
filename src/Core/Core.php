@@ -4,12 +4,14 @@ namespace Plasticode\Core;
 
 use Respect\Validation\Validator as v;
 
+use Plasticode\Collection;
 use Plasticode\Exceptions\IApiException;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Models\Model;
 use Plasticode\Util\Text;
 
-class Core {
+class Core
+{
     public static function bootstrap($container, $settings)
     {
         foreach ($settings as $key => $setting) {
@@ -22,22 +24,32 @@ class Core {
         Model::init($container);
     }
     
-	public static function json($response, $e, $options = []) {
-		$result = is_array($e) ? $e : $e->asArray();
-		
+	public static function json($response, $data, $options = [])
+	{
+	    if ($data instanceof Collection) {
+	        $data = $data->toArray();
+	    }
+	    elseif ($data instanceof \ORM) {
+	        $data = $data->asArray();
+	    }
+	    
+	    if (!is_array($data)) {
+	        throw new \InvalidArgumentException('Core::json expects an array, a Collection or a dbObj.');
+	    }
+
 		if (isset($options['params']['format'])) {
 			$format = $options['params']['format'];
 			
 			// datatables
 			if ($format == 'dt') {
 				$wrapper = new \stdClass;
-				$wrapper->data = $result;
+				$wrapper->data = $data;
 				
-				$result = $wrapper;
+				$data = $wrapper;
 			}
 		}
 
-		return $response->withJson($result);
+		return $response->withJson($data);
 	}
 
 	/**
@@ -47,7 +59,8 @@ class Core {
 	 * @param object $response
 	 * @param \Exception $ex
 	 */
-	public static function error($c, $response, $ex, $debug = false) {
+	public static function error($c, $response, $ex, $debug = false)
+	{
 		$status = 500;
 
 		if ($ex instanceof IApiException) {

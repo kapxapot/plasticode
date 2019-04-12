@@ -99,6 +99,34 @@ textarea.form-control {
     margin: 0;
 }
 
+.CodeMirror-hint:before {
+    top: 3px;
+}
+
+.CodeMirror-hint {
+    padding-left: 24px;
+}
+
+.article.CodeMirror-hint:before {
+    content: 'A';
+    background: #8383ff;
+}
+
+.news.CodeMirror-hint:before {
+    content: 'N';
+    background: #4bc700;
+}
+
+.event.CodeMirror-hint:before {
+    content: 'E';
+    background: #ff7c48;
+}
+
+.tag.CodeMirror-hint:before {
+    content: 'T';
+    background: #ff8bfb;
+}
+
 /* modals */
 @media (min-width: 768px) {
 	.modal-dialog-narrow {
@@ -243,6 +271,8 @@ a.gray:hover { color: white }
 
 .collapse__header {
 	font-weight: bolder;
+	padding-left: 12px;
+	padding-right: 12px;
 }
 
 .collapse__header,
@@ -271,6 +301,7 @@ a.gray:hover { color: white }
 .article .img,
 .article .embed-responsive,
 .article .carousel {
+    margin-top: 12px;
 	margin-bottom: 15px;
 	margin-left: -12px;
 	margin-right: -12px;
@@ -313,8 +344,8 @@ a.gray:hover { color: white }
 .spoiler .img,
 .spoiler .embed-responsive,
 .spoiler .carousel {
-	margin-left: -12px;
-	margin-right: -12px;
+	margin-left: 0;
+	margin-right: 0;
 }
 
 .spoiler .img:first-child,
@@ -331,6 +362,11 @@ a.gray:hover { color: white }
 
 .spoiler .center:last-child {
     margin-bottom: 0;
+}
+
+.spoiler p {
+    padding-left: 12px;
+    padding-right: 12px;
 }
 
 .article .img-left,
@@ -377,7 +413,8 @@ a.gray:hover { color: white }
 }
 
 .spoiler {
-	padding: 10px 12px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 	background-color: #ddd;
 	margin-bottom: 15px;
 	/*border-radius: 2px;*/
@@ -515,6 +552,98 @@ figcaption {
     background-color: inherit;
 }
 
+/* grid */
+
+@media (max-width: 767px) {
+    :root {
+        --gallery-grid-cell: 160px;
+    }
+}
+
+@media (min-width: 768px) {
+    :root {
+        --gallery-grid-cell: 160px;
+    }
+}
+
+.gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(var(--gallery-grid-cell), 1fr));
+    grid-auto-rows: var(--gallery-grid-cell);
+    /*grid-auto-flow: dense;*/
+    grid-gap: 10px;
+}
+
+.grid-item {
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1;
+    grid-template-rows: 1;
+}
+
+.grid-item img {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.grid-item img {
+    transition: transform 0.5s;
+}
+
+.grid-item:hover img {
+    transform: scale(1.1);
+}
+
+.grid-item.ratio-w3.ratio-h2 {
+    grid-column: span 2;
+    grid-row: span 1;
+}
+
+.grid-item.ratio-w2.ratio-h3 {
+    grid-column: span 1;
+    grid-row: span 2;
+}
+
+.grid-item.ratio-w2,
+.grid-item.ratio-w3 {
+    grid-column: span 2;
+}
+
+.grid-item.ratio-h2,
+.grid-item.ratio-h3 {
+    grid-row: span 2;
+}
+
+.grid-item__overlay {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    position: relative;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+    opacity: 0;
+    transition: all 0.5s;
+}
+
+.grid-item:hover .grid-item__overlay {
+    background: rgba(0, 0, 0, 0.2);
+    opacity: 1;
+}
+
+.grid-item__overlay,
+.grid-item__overlay:hover,
+.grid-item__overlay:visited,
+.grid-item__overlay:active,
+.grid-item__overlay:link {
+    text-decoration: none;
+    color: #eeeeee;
+    font-size: 120%;
+    text-shadow: 0 0 5px black;
+}
+
 /* flex */
 
 .flex-wrapper {
@@ -538,6 +667,12 @@ figcaption {
 
 .card-image {
 	width: 100%;
+}
+
+.sidebar-gallery .card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .card-body {
@@ -583,10 +718,22 @@ figcaption {
 }
 
 .gallery .flex-item,
+.gallery-grid .grid-item,
 .comics .flex-item,
 .comics-issue .flex-item,
 .streams .flex-item {
 	box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.5);
+}
+
+.gallery.gallery--uniform .flex-item .overlay,
+.gallery-grid .grid-item .overlay {
+    transition: opacity 0.75s;
+    opacity: 0;
+}
+
+.gallery.gallery--uniform .flex-item:hover .overlay,
+.gallery-grid .grid-item:hover .overlay {
+    opacity: 0.85;
 }
 
 .sidebar-gallery .gallery {
@@ -594,15 +741,19 @@ figcaption {
 }
 
 @media (max-width: 767px) {
-    .gallery .flex-item {
+    /*.gallery .flex-item {
+        width: 158px;
+    }*/
+
+    .sidebar-gallery .gallery .flex-item {
         width: 158px;
     }
 }
 
 @media (min-width: 768px) {
-    .gallery .flex-item {
+    /*.gallery .flex-item {
         width: 195px;
-    }
+    }*/
     
     .sidebar-gallery .gallery .flex-item {
         width: 158px;
@@ -628,11 +779,28 @@ figcaption {
 .sidebar-gallery .gallery .flex-item .overlay {
     display: none;
 }
-.article .gallery {
+
+@media (max-width: 767px) {
+    .gallery.gallery--uniform .flex-item img {
+        height: 200px;
+        width: auto;
+    }
+}
+
+@media (min-width: 768px) {
+    .gallery.gallery--uniform .flex-item img {
+        height: 300px;
+        width: auto;
+    }
+}
+
+.article .gallery,
+.article .gallery-grid {
     margin-bottom: 1rem;
 }
 
-.article .gallery:last-child {
+.article .gallery:last-child,
+.article .gallery-grid:last-child {
     margin-bottom: 0;
 }
 
@@ -663,7 +831,9 @@ h3:first-child, h4:first-child {
     }
 }
 
-.comic-image .overlay, .gallery .overlay {
+.comic-image .overlay,
+.gallery .overlay,
+.gallery-grid .overlay {
     padding: 4px;
     opacity: 0.85;
     filter: alpha(opacity=85);
@@ -677,12 +847,37 @@ h3:first-child, h4:first-child {
     	font-weight: normal;
     }
 
-    .gallery .overlay {
+    .gallery .overlay,
+    .gallery-grid .overlay {
     	font-size: 110%;
     }
 }
 
+/* images */
+
+img {  
+  position: relative;
+}
+
+/* style this to fit your needs */
+/* and remove [alt] to apply to all images*/
+img[alt]:after {  
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: inherit;
+  text-align: center;
+  content: "";/*attr(alt);*/
+}
+
 /* utility */
+
+.grid {
+    display: grid;
+}
 
 .flex {
     display: flex;
@@ -698,6 +893,10 @@ h3:first-child, h4:first-child {
 
 .p-1 {
     padding: 0.5rem;
+}
+
+.p-2 {
+    padding: 1rem;
 }
 
 .pt-0 {
@@ -724,16 +923,20 @@ h3:first-child, h4:first-child {
     margin-bottom: 0.5rem !important;
 }
 
-.mb-2 {
+.mb-2, .vgap-2 {
     margin-bottom: 1rem;
 }
 
-.mb-2:last-child {
+.vgap-2:last-child {
     margin-bottom: 0;
 }
 
 .mb-3 {
     margin-bottom: 2rem;
+}
+
+.mt-0 {
+    margin-top: 0 !important;
 }
 
 .mt-1 {
@@ -764,8 +967,12 @@ h3:first-child, h4:first-child {
     margin-right: 0.5rem;
 }
 
-.mr-2 {
+.mr-2, .hgap-2 {
     margin-right: 1rem;
+}
+
+.hgap-2:last-child {
+    margin-right: 0;
 }
 
 .mr-3 {

@@ -1,3 +1,14 @@
+var delay = (function() {
+    var timer = 0;
+    return function(callback, ms) {
+        clearTimeout(timer);
+        timer = setTimeout(callback, ms);
+    };
+})();
+
+const lozadObserver = lozad(); // lazy loads elements with default selector as '.lozad'
+lozadObserver.observe();
+
 function updateUI() {
 	// colorbox
 	if (typeof colorbox !== 'undefined' && colorbox instanceof HTMLDivElement) {
@@ -7,6 +18,10 @@ function updateUI() {
     
     $('[data-toggle="tooltip"]').tooltip();
     $('.carousel').carousel();
+    
+    if (lozadObserver) {
+        lozadObserver.observe();
+    }
 }
 
 $(function() {
@@ -17,8 +32,38 @@ $(function() {
         $(this).closest('.' + $(this).attr('data-hide')).hide();
     });
     
+    initSwipes();
+    
     updateUI();
 });
+
+function initSwipes() {
+    // check if swipes are enabled
+	if (typeof Hammer !== 'function') {
+	    return;
+	}
+
+    const elems = document.getElementsByClassName('swipable');
+    
+    if (elems.length === 0) {
+        return;
+    }
+    
+    const swipable = elems[0];
+
+    // create a simple instance
+    // by default, it only adds horizontal recognizers
+    const mc = new Hammer(swipable);
+
+    // listen to events...
+    mc.on("swipeleft", function(ev) {
+        navigateToNext();
+    });
+    
+    mc.on("swiperight", function(ev) {
+        navigateToPrev();
+    });
+}
 
 function focusOnModals() {
     $('.modal').on('shown.bs.modal', function() {
@@ -212,14 +257,6 @@ function escapeHtml(html) {
     return div.innerHTML;
 }
 
-var delay = (function() {
-    var timer = 0;
-    return function(callback, ms) {
-        clearTimeout(timer);
-        timer = setTimeout(callback, ms);
-    };
-})();
-
 function addClass(selector, className) {
     selector.attr('class', function(index, classNames) {
         return classNames + ' ' + className;
@@ -255,3 +292,58 @@ function momentDiff(start, end, unknownEnd, format = null, shortFormat = null) {
 
     return result;
 }
+
+function getLastChild(id) {
+	const el = document.getElementById(id);
+	return el.children[el.children.length - 1];
+}
+
+function getRelLinks() {
+    const elems = document.getElementsByTagName("link");
+    const links = {};
+
+    for (var i = 0; i < elems.length; i++) { // filter link elements
+        const elem = elems[i];
+        
+        if (elem.rel === "prev") {
+            links.prev = elem;
+        }
+        else if (elem.rel === "next") {
+            links.next = elem;
+        }
+    }
+    
+    return links;
+}
+
+function navigateToPrev() {
+    const links = getRelLinks();
+    
+    if (links.prev) {
+        location.href = links.prev.href;
+    }
+}
+
+function navigateToNext() {
+    const links = getRelLinks();
+    
+    if (links.next) {
+        location.href = links.next.href;
+    }
+}
+
+// link rel=prev, link rel=next keyboard navigation
+
+document.onkeyup = function(e) {
+    // abort if focusing input box
+    if (document.activeElement.nodeName === "INPUT" || document.activeElement.nodeName === "TEXTAREA") {
+        return;
+    }
+
+    if (e.keyCode === 37) { // left key
+        navigateToPrev();
+    }
+    else if (e.keyCode === 39) { // right key
+        navigateToNext();
+    }
+};

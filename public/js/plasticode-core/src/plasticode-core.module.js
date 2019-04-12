@@ -6,7 +6,8 @@ export default angular.module('plasticodeCore', [])
     .factory('plasticodeHttpInterceptor', httpInterceptor)
     .service('plDataService', plDataService)
 
-PlasticodeConfig.$inject = ['$httpProvider'];
-function PlasticodeConfig($httpProvider) {
+PlasticodeConfig.$inject = ['$httpProvider', '$compileProvider'];
+function PlasticodeConfig($httpProvider, $compileProvider) {
     $httpProvider.interceptors.push('plasticodeHttpInterceptor');
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|skype|callto|javascript):|data:image/);
 }

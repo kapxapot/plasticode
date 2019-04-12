@@ -2,6 +2,7 @@
 
 namespace Plasticode\Models\Traits;
 
+use Plasticode\Query;
 use Plasticode\Util\Date;
 
 /**
@@ -15,61 +16,43 @@ trait FullPublish
         isPublished as protected parentIsPublished;
     }
 
-    protected static function wherePublished($where = null)
-    {
-        return function ($q) use ($where) {
-            $parentWhere = self::parentWherePublished(function ($q) use ($where) {
-                $q = $q->whereRaw('(published_at < now())');
-                
-                if ($where) {
-                    $q = $where($q);
-                }
-                
-                return $q;
-            });
-            
-            return $parentWhere($q);
-	    };
-    }
+    // queries
     
-    // getters
-    
-    public static function getProtected($id, $where = null)
+    public static function getProtected() : Query
 	{
+	    $query = self::query();
+	    
 		$editor = self::can('edit');
 		
-		$where = $where ?? function($q) use ($id) {
-			return $q->where(static::$idField, $id);
-		};
+		if ($editor) {
+		    return $query;
+		}
 
-		return self::getBy(function ($q) use ($where, $editor) {
-			$q = $where($q);
+		$published = "(published = 1 and published_at < now())";
 
-			if (!$editor) {
-				$user = self::$auth->getUser();
-				
-				$published = "(published = 1 and published_at < now())";
+		$user = self::$auth->getUser();
 
-				if ($user) {
-					$q = $q->whereRaw("({$published} or created_by = ?)", [ $user->id ]);
-				}
-				else {
-					$q = $q->whereRaw($published);
-				}
-			}
-			
-			return $q;
-		});
+		if ($user) {
+			return $query->whereRaw("({$published} or created_by = ?)", [ $user->id ]);
+		}
+		
+		return $query->whereRaw($published);
 	}
 
-	// PROPS
+	// props
+
+    protected static function wherePublished(Query $query) : Query
+    {
+        return self::parentWherePublished($query)
+            ->whereRaw('(published_at < now())');
+    }
 	
-	public function isPublished()
+	public function isPublished() : bool
 	{
 	    return $this->parentIsPublished() && Date::happened($this->publishedAt);
 	}
 	
-    public function publishedAtIso()
+    public function publishedAtIso() : string
     {
         return $this->publishedAt ? Date::iso($this->publishedAt) : null;
     }

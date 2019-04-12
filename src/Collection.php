@@ -8,7 +8,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
 {
     protected $data;
     
-    protected function __construct($data)
+    protected function __construct(array $data)
     {
         $this->data = $data;
     }
@@ -63,12 +63,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
      * 
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      */
-    public function toAssoc($by = null)
+    public function toAssoc($by = null) : array
     {
         return Arrays::toAssocBy($this->data, $by ?? 'id');
     }
     
-    public function toArray()
+    public function toArray() : array
     {
         return $this->data;
     }
@@ -93,27 +93,27 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     /**
      * Skips $offset elements from the start and returns the remaining collection.
      */
-    public function skip($offset)
+    public function skip(int $offset)
     {
-        $data = array_slice($this->data, $offset);
+        $data = Arrays::skip($this->data, $offset);
         return self::make($data);
     }
     
     /**
      * Returns first $limit elements
      */
-    public function take($limit)
+    public function take(int $limit)
     {
-        $data = array_slice($this->data, 0, $limit);
+        $data = Arrays::take($this->data, $limit);
         return self::make($data);
     }
     
     /**
      * Skips $offset elements and takes $limit elements
      */
-    public function slice($offset, $limit)
+    public function slice(int $offset, int $limit)
     {
-        $data = array_slice($this->data, $offset, $limit);
+        $data = Arrays::slice($this->data, $offset, $limit);
         return self::make($data);
     }
 
@@ -187,7 +187,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         $data = Arrays::filterIn($this->data, $column, $values);
         return self::make($data);
     }
-    
+
     public function map($func)
     {
         $data = array_map($func, $this->data);

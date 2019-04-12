@@ -2,6 +2,8 @@
 
 namespace Plasticode\Models\Traits;
 
+use Plasticode\Util\Date;
+
 trait CachedDescription
 {
     protected static function getDescriptionField()
@@ -12,6 +14,11 @@ trait CachedDescription
     protected static function getDescriptionCacheField()
     {
         return 'cache';
+    }
+    
+    protected static function getDescriptionTTL()
+    {
+        return '1 hour';
     }
 
     public function parsedDescription()
@@ -27,12 +34,18 @@ trait CachedDescription
                 if (strlen($cache) > 0) {
                     $parsed = @json_decode($cache, true);
                 }
-    
-                //debug_print_backtrace(0, 5);
-                //var_dump("1 " . (is_null($parsed) ? "null" : "not null")); // not null
-    
+                
+                if (is_array($parsed)) {
+                    $updatedAt = $parsed['updated_at'] ?? null;
+                    
+                    if (!$updatedAt || Date::expired($updatedAt, static::getDescriptionTTL())) {
+                        unset($parsed);
+                    }
+                }
+
                 if (!is_array($parsed)) {
                     $parsed = self::$parser->parse($description);
+                    $parsed['updated_at'] = Date::dbNow();
                     
                     $this->{$cacheField} = json_encode($parsed);
                     $this->save();

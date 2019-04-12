@@ -3,10 +3,13 @@
 namespace Plasticode\Models;
 
 use Plasticode\Collection;
+use Plasticode\Query;
+use Plasticode\Exceptions\ApplicationException;
+use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\Util\Pluralizer;
 use Plasticode\Util\Strings;
 
-abstract class DbModel extends SerializableModel
+abstract class DbModel extends Model implements SerializableInterface
 {
     protected static $table;
     
@@ -18,9 +21,7 @@ abstract class DbModel extends SerializableModel
     protected static $sortReverse = false;
 
     protected static $tagsField = 'tags';
-    
-    protected $obj;
-    
+
     /**
      * Wraps an existing database object or creates a new one using provided data.
      * If data is null, wraps an empty database object.
@@ -37,13 +38,16 @@ abstract class DbModel extends SerializableModel
     }
     
     /**
-     * Static alias for new()
+     * Static alias for new().
      */
     public static function create($obj = null)
     {
         return new static($obj);
     }
     
+    /**
+     * create() + save().
+     */
     public static function store($obj = null)
     {
         $model = static::create($obj);
@@ -66,6 +70,34 @@ abstract class DbModel extends SerializableModel
         $table = Strings::toSnakeCase($plural);
 
         return $table;
+    }
+    
+    /**
+     * Bare query without sort.
+     * 
+     * Use this query if you need any sort order different from default.
+     */
+    protected static function baseQuery() : Query
+    {
+        $dbQuery = self::$db->forTable(self::getTable());
+        
+        $createModel = function ($obj) {
+            return self::fromDbObj($obj);
+        };
+        
+        $find = function (Query $query, $id) {
+            return $query->where(static::$idField, $id);
+        };
+        
+        return new Query($dbQuery, $createModel, $find);
+    }
+    
+    /**
+     * Base query with applied sort order.
+     */
+    protected static function query() : Query
+    {
+        return self::applySortOrder(self::baseQuery());
     }
     
     /**
@@ -99,7 +131,36 @@ abstract class DbModel extends SerializableModel
 	    $idField = static::$idField;
 	    return $this->{$idField};
     }
+    
+    public function hasId() : bool
+    {
+        $id = $this->getId();
+        
+        return is_numeric($id)
+            ? $id > 0
+            : strlen($id) > 0;
+    }
+    
+    /**
+     * Was model saved or not.
+     */
+    public function isPersisted()
+    {
+        return $this->hasId();
+    }
+    
+    public function failIfNotPersisted()
+    {
+        if (!$this->isPersisted()) {
+            throw new ApplicationException('Object must be persisted.');
+        }
+    }
 
+    /**
+     * Wrapper for model creation.
+     * 
+     * Checks if obj is null and doesn't create model for null.
+     */
     private static function fromDbObj($obj)
     {
         if (!$obj) {
@@ -108,55 +169,23 @@ abstract class DbModel extends SerializableModel
         
         return static::create($obj);
     }
+	
+	/**
+	 * Shortcut for getting all models with sort applied.
+	 */
+	public static function getAll() : Collection
+	{
+	    return self::query()->all();
+	}
     
     /**
-     * Transforms an array of database objects into a collection of models.
+     * Shortcut for getting model by id.
      */
-    private static function makeMany($objs)
+    public static function get($id)
     {
-	    $many = array_map(function ($obj) {
-	        return static::fromDbObj($obj);
-	    }, $objs ?? []);
-	    
-	    return Collection::make($many);
+        return self::baseQuery()->find($id);
     }
 
-	public static function getMany($where = null)
-	{
-	    $objs = self::$db->getManyObj(self::getTable(), $where);
-	    return self::makeMany($objs);
-	}
-    
-    public static function getManyByField($field, $value, $where = null)
-    {
-        $objs = self::$db->getManyObjByField(self::getTable(), $field, $value, $where);
-        return self::makeMany($objs);
-    }
-
-    public static function get($id, $where = null)
-    {
-        return self::getByField(static::$idField, $id, $where);
-    }
-    
-    public static function getBy($where)
-    {
-        $obj = self::$db->getObjBy(self::getTable(), $where);
-        return self::fromDbObj($obj);
-    }
-    
-    public static function getByField($field, $value, $where = null)
-    {
-        $obj = self::$db->getObjByField(self::getTable(), $field, $value, $where);
-        return self::fromDbObj($obj);
-    }
-    
-	public static function getRaw($query, $params)
-	{
-		return self::$db->getMany(self::getTable(), function($q) use ($query, $params) {
-			return $q->rawQuery($query, $params);
-		});
-	}
-    
     private static function buildSortOrder()
     {
         $order = static::$sortOrder;
@@ -171,7 +200,7 @@ abstract class DbModel extends SerializableModel
         return $order;
     }
     
-    private static function applySortOrder($query)
+    private static function applySortOrder(Query $query) : Query
     {
 	    $sortOrder = self::buildSortOrder();
 	    
@@ -184,49 +213,6 @@ abstract class DbModel extends SerializableModel
 	    }
 	    
 	    return $query;
-    }
-	
-	public static function getAll($where = null)
-	{
-		return self::getMany(function ($q) use ($where) {
-		    $q = self::applySortOrder($q);
-
-		    if ($where) {
-		        $q = $where($q);
-		    }
-		    
-		    return $q;
-		});
-	}
-	
-	public static function getCount($where = null)
-	{
-	    return self::$db->getCount(self::getTable(), $where);
-	}
-	
-	protected static function where($field, $value, $where = null)
-	{
-	    return function ($q) use ($field, $value, $where) {
-            $q = $q->where($field, $value);
-            
-            if ($where) {
-                $q = $where($q);
-            }
-            
-            return $q;
-    	};
-	}
-	
-	public static function getAllByField($field, $value, $where = null)
-	{
-	    return self::getAll(
-	        self::where($field, $value, $where)
-	    );
-	}
-	
-    public static function deleteBy($where)
-    {
-        self::$db->deleteBy(self::getTable(), $where);
     }
 
 	// rights
@@ -255,27 +241,18 @@ abstract class DbModel extends SerializableModel
 	    return $this;
 	}
 
-    protected function setFieldNoStamps($field, $value)
-	{
-		self::$db->setFieldNoStamps(self::getTable(), $this->getId(), $field, $value);
-	}
-	
 	public function serialize()
 	{
 	    return $this->obj
 	        ? $this->obj->asArray()
 	        : null;
 	}
-
-	// magic
 	
-	public function __toString()
+	public function entityAlias()
 	{
-	    return $this->toString();
+	    return self::getTable();
 	}
-	
-	// not magic
-	
+
 	public function toString()
 	{
 	    $class = static::class;

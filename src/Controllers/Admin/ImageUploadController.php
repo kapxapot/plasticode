@@ -38,7 +38,7 @@ abstract class ImageUploadController extends Controller
             $fileName = $file->getClientFilename();
             $this->logger->info("Uploaded file: {$fileName}.");
             
-            $images = $this->extractAndProcessImages($file->file, function ($image, $imageFileName) use ($context) {
+            $images = $this->extractAndProcessImages($file->file, function (Image $image, $imageFileName) use ($context) {
                 $this->addImage($context, $image, $imageFileName);
             });
 	    }
@@ -89,5 +89,5 @@ abstract class ImageUploadController extends Controller
 	/**
 	 * Adds image.
 	 */
-	protected abstract function addImage($context, $image, $fileName);
+	protected abstract function addImage($context, Image $image, $fileName);
 }

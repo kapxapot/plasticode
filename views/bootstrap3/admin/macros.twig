@@ -78,7 +78,7 @@
 {% macro mdearea(context, name, focus = false) %}
 	{% import _self as m %}
 	{% set col = context.columns[name] %}
-	<div class="form-group{% if not col.nullable %} required{% endif %} short" ng-class="{'short': isPreview}">
+	<div class="form-group{% if not col.nullable %} required{% endif %} short" ng-class="{'short': !isPreview}" ng-hide="loading">
 		<label for="{{ name }}">{{ m.col_name(col) }}</label>
         <div class="row mde-group" ng-class="{'mde-group-fullscreen': isPreview}">
         	<div class="mde-editor" ng-class="isPreview ? 'col-sm-6' : 'col-xs-12'">

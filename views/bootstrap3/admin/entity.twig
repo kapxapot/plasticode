@@ -76,7 +76,7 @@
 		}; */
 
         $scope.parse = function(text) {
-            $scope.ajax({
+            return $scope.ajax({
         		method: 'post',
         		url: '{{ api }}parser/parse',
         		data: {
@@ -85,6 +85,7 @@
         		noSuccessMessage: true,
         		onSuccess: function(data) {
         			$scope.item.preview = data.text;
+        			$scope.updateUI(); //angular.twig
         		}
         		});
         };
@@ -94,6 +95,32 @@
 	
 	$('#entityView').on('shown.bs.modal', function() {
 		formControls.trigger('change');
+		
+		var initCroppie = function() {
+			if ($scope.croppie) {
+				var i = $scope.item;
+				if (i && i.picture) {
+	            	//setTimeout(function() {
+	            		var obj = {
+			                url: i.picture,
+	            		};
+	            		
+	            		if (i.points) {
+			                obj['points'] = i.points;
+	            		}
+	            		
+	            		$scope.croppieLoading(true);
+			            $('#croppie-upload').croppie('bind', obj).then(function() {
+				        	$scope.croppieLoading(false);
+
+			            	$scope.croppieShow();
+			            	$('#croppie-upload').croppie('bind');
+			            });
+					//}, 2000);
+				}
+			}
+		};
+		initCroppie();
 	})
 
 	$('#entityView').on('show.bs.modal', function() {
@@ -127,7 +154,7 @@
                     	toolbar: buttons
                     }
                     
-                     {% include 'admin/includes/mde_buttons.twig' %}
+                    {% include 'admin/includes/mde_buttons.twig' %}
 
 					/* var options = {
 				        element: this,
@@ -169,33 +196,8 @@
 			{% endif %}
 		};
 		
-		var initCroppie = function() {
-			if ($scope.croppie) {
-				var i = $scope.item;
-				if (i && i.picture) {
-	            	//setTimeout(function() {
-	            		var obj = {
-			                url: i.picture,
-	            		};
-	            		
-	            		if (i.points) {
-			                obj['points'] = i.points;
-	            		}
-	            		
-			            $('#croppie-upload').croppie('bind', obj).then(function() {
-				        	$scope.croppieLoading(false);
-
-			            	$scope.croppieShow();
-			            	$('#croppie-upload').croppie('bind');
-			            });
-					//}, 2000);
-				}
-			}
-		};
-		
 		var init = function() {
 			initMdes();
-			initCroppie();
 		};
 		
 		{% block modal_shown %}
@@ -529,14 +531,19 @@
 	}
 	
     $scope.togglePreview = function(isPreview, editor) {
-        if(isPreview !== $scope.isPreview) {
+        if (isPreview !== $scope.isPreview) {
         	$scope.isPreview = isPreview;
-        	$scope.parse($scope.item.text);
+        	$scope.parse($scope.item.text).then(function () {
+        		//console.log(1);
+        		editor.codemirror.refresh();
+        	});
         }
     }
     
     $scope.search = function(text) {
-    	return plDataService.getMdeSearchHints(text).then(function (results) { return results });
+    	return plDataService.getMdeSearchHints(text).then(function (results) {
+    	    return results;
+    	});
     }
 	
 	$('#entityForm').submit(function(e) {

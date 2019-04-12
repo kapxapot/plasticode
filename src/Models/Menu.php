@@ -10,6 +10,8 @@ class Menu extends DbModel
     
     public function items()
     {
-        return self::$menuItemRepository->getAllByMenu($this->id);
+        return self::$menuItemRepository
+            ->getByMenu($this->id)
+            ->all();
     }
 }

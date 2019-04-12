@@ -1,1 +1,64 @@
 @import "~simplemde/dist/simplemde.min.css";
+.CodeMirror-hint {
+  margin: 0;
+  padding: 0 4px;
+  border-radius: 2px;
+  white-space: pre;
+  color: black;
+  cursor: pointer;
+  padding-left: 22px;
+  position: relative;
+  line-height: 1.5;
+
+  &:before {
+    position: absolute;
+    left: 5px;
+    bottom: 2px;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+    height: 15px;
+    width: 15px;
+    line-height: 16px;
+    text-align: center;
+    color: white;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    top: 5px;
+  }
+}
+
+.news.CodeMirror-hint {
+  &:before {
+    content: "Н";
+    background: black;
+  }
+}
+
+.article.CodeMirror-hint {
+  &:before {
+    content: "С";
+    background: blue;
+  }
+}
+
+.tag.CodeMirror-hint {
+  &:before {
+    content: "Т";
+    background: #ccc;
+  }
+}
+
+.event.CodeMirror-hint {
+  &:before {
+    content: 'С';
+    background: orange;
+  }
+}
+
+.stream.CodeMirror-hint {
+  &:before {
+    content: 'Т';
+    background: purple;
+  }
+}

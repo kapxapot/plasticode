@@ -3,62 +3,53 @@
 namespace Plasticode\Gallery;
 
 use Plasticode\Contained;
+use Plasticode\Gallery\ThumbStrategies\ThumbStrategyInterface;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
 
 class Gallery extends Contained
 {
-    /**
-     * Moved to IO\Image!
-     */
-	/*const IMAGE_TYPES = [
-		'jpeg' => 'jpg',
-		'png' => 'png',
-		'gif' => 'gif',
-	];*/
-	
+    protected $thumbStrategy;
+    
 	protected $baseDir;
 
 	protected $pictureField;
 	protected $pictureTypeField;
-
-	protected $thumbTypeField;
-	protected $thumbField;
-
 	protected $pictureFolder;
 	protected $picturePublicFolder;
 
+	public $thumbField;
+	protected $thumbTypeField;
 	protected $thumbFolder;
 	protected $thumbPublicFolder;
 
 	protected $folders;
 
-	public function __construct($container, $settings = [])
+	public function __construct($container, ThumbStrategyInterface $thumbStrategy, $settings = [])
 	{
 		parent::__construct($container);
+		
+		$this->thumbStrategy = $thumbStrategy;
 		
 		$this->baseDir = $settings['base_dir'];
 
 		$fieldSettings = $settings['fields'];
+		$folderSettings = $settings['folders'];
 
 		$this->pictureField = $fieldSettings['picture'] ?? 'picture';
 		$this->pictureTypeField = $fieldSettings['picture_type'];
+		$this->pictureFolder = $folderSettings['picture']['storage'];
+		$this->picturePublicFolder = $folderSettings['picture']['public'];
 
 		$this->thumbField = $fieldSettings['thumb'] ?? 'thumb';
 		$this->thumbTypeField = $fieldSettings['thumb_type'];
-
-		$folderSettings = $settings['folders'];
-		
-		$this->pictureFolder = $folderSettings['picture']['storage'];
-		$this->picturePublicFolder = $folderSettings['picture']['public'];
-		
 		$this->thumbFolder = $folderSettings['thumb']['storage'];
 		$this->thumbPublicFolder = $folderSettings['thumb']['public'];
 
 		$this->folders = $this->getSettings('folders');
 	}
 	
-	protected function getFolder($folder)
+	protected function getFolder($folder) : string
 	{
 		if (!isset($this->folders[$folder])) {
 			throw new \InvalidArgumentException('Unknown image folder: ' . $folder);
@@ -66,19 +57,10 @@ class Gallery extends Contained
 		
 		return $this->folders[$folder];
 	}
-	
-	/**
-	 * Use Image::getExtension().
-	 */
-	/*public static function getExtension($type)
-	{
-		return Image::IMAGE_TYPES[$type] ?? null;
-	}*/
-	
-	protected function getUrl($folder, $item, $typeField)
+
+	protected function getItemUrl($folder, $item, $typeField) : string
 	{
 		$path = $this->getFolder($folder);
-		
 		$ext = Image::getExtension($item[$typeField]);
 		
 		return $path . $item['id'] . '.' . $ext;
@@ -90,9 +72,9 @@ class Gallery extends Contained
 	 * @param array $item
 	 * @return string
 	 */
-	public function getPictureUrl($item)
+	public function getPictureUrl($item) : string
 	{
-		return $this->getUrl($this->picturePublicFolder, $item, $this->pictureTypeField);
+		return $this->getItemUrl($this->picturePublicFolder, $item, $this->pictureTypeField);
 	}
 	
 	/**
@@ -101,12 +83,15 @@ class Gallery extends Contained
 	 * @param array $item
 	 * @return string
 	 */
-	public function getThumbUrl($item)
+	public function getThumbUrl($item) : string
 	{
-		return $this->getUrl($this->thumbPublicFolder, $item, $this->thumbTypeField);
+		return $this->getItemUrl($this->thumbPublicFolder, $item, $this->thumbTypeField);
 	}
 
-	protected function buildImagePath($folder, $name, $imgType)
+    /**
+     * Build image's server path.
+     */
+	protected function buildImagePath($folder, $name, $imgType) : string
 	{
 		$path = $this->getFolder($folder);
 		$ext = Image::getExtension($imgType) ?? $imgType;
@@ -117,7 +102,7 @@ class Gallery extends Contained
 	/**
 	 * Get picture server path.
 	 */
-	public function buildPicturePath($name, $imgType)
+	public function buildPicturePath($name, $imgType) : string
 	{
 		return $this->buildImagePath($this->pictureFolder, $name, $imgType);
 	}
@@ -125,51 +110,33 @@ class Gallery extends Contained
 	/**
 	 * Get thumb server path.
 	 */
-	public function buildThumbPath($name, $imgType)
+	public function buildThumbPath($name, $imgType) : string
 	{
 		return $this->buildImagePath($this->thumbFolder, $name, $imgType);
 	}
 
 	/**
-	 * Use Image::buildTypesString().
-	 */
-	/*public static function buildTypesString()
-	{
-		$parts = [];
-		
-		foreach (array_keys(Image::IMAGE_TYPES) as $type) {
-			$parts[] = 'image/' . $type;
-		}
-		
-		return implode(', ', $parts);
-	}*/
-	
-	/**
 	 * Get picture from save data (API call).
+	 * 
+	 * @return Image|null
 	 */
-	protected function getPicture($data)
+	public function getPicture($item, $data)
 	{
-		$picture = null;
-		
-		if (array_key_exists($this->pictureField, $data)) {
-			$picture = Image::parseBase64($data[$this->pictureField]);
-		}
-
-		return $picture;
+	    $picture = $data[$this->pictureField] ?? null;
+	    
+	    return $picture
+	        ? Image::parseBase64($picture)
+	        : null;
 	}
 	
 	/**
 	 * Get thumb from save data (API call).
+	 * 
+	 * @return Image|null
 	 */
 	protected function getThumb($item, $data)
 	{
-		$thumb = null;
-		
-		if (array_key_exists($this->thumbField, $data)) {
-			$thumb = Image::parseBase64($data[$this->thumbField]);
-		}
-		
-		return $thumb;
+	    return $this->thumbStrategy->getThumb($this, $item, $data);
 	}
 	
 	/**
@@ -184,16 +151,30 @@ class Gallery extends Contained
 	 */
 	public function save($item, $data)
 	{
-		$picture = $this->getPicture($data);
+		$picture = $this->getPicture($item, $data);
+		
 		if ($picture && $picture->notEmpty()) {
 			$this->savePicture($item, $picture);
+			
+			// set width / height
+			if ($picture->width > 0) {
+			    $item->width = $picture->width;
+			}
+			
+			if ($picture->height > 0) {
+			    $item->height = $picture->height;
+			}
+			
+			// set avg_color
+			$item->avgColor = $this->getAvgColor($item, $picture);
 		}
 		
 		$thumb = $this->getThumb($item, $data);
+		
 		if ($thumb && $thumb->notEmpty()) {
 			$this->saveThumb($item, $thumb);
 		}
-		
+
 		$item = $this->beforeSave($item, $picture, $thumb);
 		
 		$item->save();
@@ -212,7 +193,7 @@ class Gallery extends Contained
 		return $item;
 	}
 	
-	protected function loadPicture($item)
+	public function loadPicture($item) : Image
 	{
 		$imgType = $item->{$this->pictureTypeField};
 		$fileName = $this->buildPicturePath($item->id, $imgType);
@@ -227,7 +208,7 @@ class Gallery extends Contained
 	 * 
 	 * @return void
 	 */
-	protected function savePicture($item, $picture)
+	protected function savePicture($item, Image $picture)
 	{
 		$fileName = $this->buildPicturePath($item->id, $picture->imgType);
 		$picture->save($fileName);
@@ -243,7 +224,7 @@ class Gallery extends Contained
 	 * 
 	 * @return void
 	 */
-	protected function saveThumb($item, $thumb)
+	protected function saveThumb($item, Image $thumb)
 	{
 		$fileName = $this->buildThumbPath($item->id, $thumb->imgType);
 		$thumb->save($fileName);
@@ -254,22 +235,33 @@ class Gallery extends Contained
 	
 	/**
 	 * Saves image with auto-generated thumb.
+	 * 
+	 * @return void
 	 */
-	public function saveImage($item, $picture)
+	public function saveImage($item, Image $picture)
 	{
-		if ($picture && $picture->notEmpty()) {
-			$this->savePicture($item, $picture);
+		if (!$picture || $picture->empty()) {
+		    throw new \InvalidArgumentException('Gallery.saveImage() can\'t save empty image.');
 		}
 		
+		$this->savePicture($item, $picture);
+		
+		$thumb = $this->createAndSaveThumb($item, $picture);
+
+		$item = $this->beforeSave($item, $picture, $thumb);
+
+		$item->save();
+	}
+	
+	private function createAndSaveThumb($item, Image $picture) : Image
+	{
 		$thumb = $this->getThumbFromImage($picture);
 		
 		if ($thumb && $thumb->notEmpty()) {
 			$this->saveThumb($item, $thumb);
 		}
 		
-		$item = $this->beforeSave($item, $picture, $thumb);
-		
-		$item->save();
+		return $thumb;
 	}
 	
 	public function delete($item)
@@ -280,74 +272,53 @@ class Gallery extends Contained
 		$thumbFileName = $this->buildThumbPath($item->id, $item->{$this->thumbTypeField});
 		File::delete($thumbFileName);
 	}
-	
-	/**
-	 * Converts GD Image to Base64.
-	 */
-	protected function gdImgToBase64($gdImg, $format = 'jpeg')
-	{
-		$data = null;
-		
-		// known ext?
-	    if (Image::getExtension($format) !== null) {
-	        ob_start();
-	
-	        if ($format == 'jpeg' ) {
-	            imagejpeg($gdImg, null, 99);
-	        } elseif ($format == 'png') {
-	            imagepng($gdImg);
-	        } elseif ($format == 'gif') {
-	            imagegif($gdImg);
-	        }
-	
-	        $data = ob_get_contents();
 
-	        ob_end_clean();
-	    }
-	
-	    return $data;
-	}
-	
 	/**
 	 * Generates thumb based on image.
 	 */
-	protected function getThumbFromImage($picture)
+	public function getThumbFromImage(Image $picture) : Image
 	{
-	    $data = $picture->data;
-	    $imgType = $picture->imgType;
-	    
-		$image = imagecreatefromstring($data);
-		if ($image === false) {
+		$image = $picture->getGdImage();
+		
+		if ($image === null) {
 			throw new \InvalidArgumentException('Error parsing gallery image.');
 		}
 
-		list($width, $height) = getimagesizefromstring($data);
-		
-		$thumbImage = $this->buildThumbImage($image, $width, $height);
-		
-		$thumbData = $this->gdImgToBase64($thumbImage, $imgType);
-		$thumb = new Image($thumbData, $imgType);
+		$thumbImage = $this->thumbStrategy->createThumb($image);
+
+		$thumb = Image::fromGdImage($thumbImage, $picture->imgType);
 
 		imagedestroy($thumbImage);
 		imagedestroy($image);
 		
 		return $thumb;
 	}
-	
-	/**
-	 * Builds GD image for thumb based on picture GD image.
-	 */
-	protected function buildThumbImage($image, $width, $height)
-	{
-		$newWidth = min($width, $height);
-		$newHeight = $newWidth;
-		
-		$x = intdiv($width - $newWidth, 2);
-		$y = intdiv($height - $newHeight, 2);
 
-		$thumbImage = imagecreatetruecolor($newWidth, $newHeight);
-		imagecopyresampled($thumbImage, $image, 0, 0, $x, $y, $newWidth, $newHeight, $newWidth, $newHeight);
+	/**
+	 * Checks if thumb exists, creates it otherwise
+	 */
+	public function ensureThumbExists($item)
+	{
+		$thumbPath = $this->buildThumbPath($item->id, $item->{$this->thumbTypeField});
 		
-		return $thumbImage;
+		if (File::exists($thumbPath)) {
+		    return;
+		}
+		
+		$picture = $this->loadPicture($item);
+		
+		$this->createAndSaveThumb($item, $picture);
+	}
+
+	public function getAvgColor($item, $picture = null)
+	{
+	    if (!$picture) {
+            $picture = $this->loadPicture($item);
+	    }
+        
+        $rgba = $picture->getAvgColor();
+        $color = Image::serializeRGBA($rgba);
+        
+        return $color;
 	}
 }

@@ -4,17 +4,16 @@ namespace Plasticode\Models;
 
 class User extends DbModel
 {
-    // GETTERS - ONE
+    // getters - one
     
     public static function getByLogin($login)
     {
-        return self::getBy(function ($q) use ($login) {
-    		return $q
-    		    ->whereAnyIs([
-                    [ 'login' => $login ],
-                    [ 'email' => $login ],
-                ]);
-        });
+        return self::query()
+		    ->whereAnyIs([
+                [ 'login' => $login ],
+                [ 'email' => $login ],
+            ])
+            ->one();
     }
     
     // PROPS

@@ -19,11 +19,14 @@ $(function() {
 	    $('.nav-tabs a[href="#' + hash + '"]').tab('show');
 	    $('.nav-pills a[href="#' + hash + '"]').tab('show');
 	}
-
-    $(".card").click(function() {
-        window.location = $(this).find("a").attr("href"); 
+	
+	const clickFunc = function() {
+        window.location = $(this).find("a").attr("href");
         return false;
-    });
+    };
+
+    $(".card").click(clickFunc);
+    //$(".gallery-grid .grid-item").click(clickFunc);
 });
 
 function search(site, curobj) {

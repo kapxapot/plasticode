@@ -2,6 +2,7 @@
 
 namespace Plasticode\Models\Traits;
 
+use Plasticode\Query;
 use Plasticode\Models\Tag;
 use Plasticode\Models\TagLink;
 use Plasticode\Util\Strings;
@@ -16,17 +17,11 @@ trait Tags
     /**
      * Returns tags as an array of TRIMMED strings
      */
-    protected function getTags()
+    protected function getTags() : array
     {
         $tags = $this->{static::$tagsField};
         
-		if (strlen($tags) > 0) {
-			$result = array_map(function($t) {
-				return trim($t);
-			}, explode(',', $tags));
-		}
-		
-		return $result ?? [];
+		return Strings::explode($tags);
     }
     
 	public function tagLinks()
@@ -39,27 +34,27 @@ trait Tags
 		}, $tags);
 	}
 
-	public static function getByTag($tag, $where = null)
+	public static function getBaseByTag($tag) : Query
+	{
+	    return static::getByTag($tag, self::baseQuery());
+	}
+
+	public static function getByTag($tag, Query $baseQuery = null) : Query
 	{
 		$tag = Strings::normalize($tag);
 		$ids = Tag::getIdsByTag(static::getTable(), $tag);
-		
+
 		if ($ids->empty()) {
-			return $ids;
+			return Query::empty();
 		}
 		
-		return self::getAll(function ($q) use ($ids, $where) {
-		    if (method_exists(static::class, 'tagsWhere')) {
-		        $q = static::tagsWhere($q);
-		    }
+		$query = $baseQuery ?? self::query();
+		$query = $query->whereIn('id', $ids);
+
+	    if (method_exists(static::class, 'tagsWhere')) {
+	        $query = static::tagsWhere($query);
+	    }
 		    
-    		$q = $q->whereIn('id', $ids->toArray());
-       		
-       		if ($where) {
-       			$q = $where($q);
-       		}
-            
-            return $q;
-		});
+        return $query;
 	}
 }

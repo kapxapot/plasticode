@@ -2,6 +2,8 @@
 
 namespace Plasticode\Models;
 
+use Plasticode\Query;
+
 class MenuItem extends DbModel
 {
     protected static $sortOrder = [
@@ -11,10 +13,11 @@ class MenuItem extends DbModel
     
     protected static $parentIdField = 'menu_id';
     
-    // GETTERS - MANY
+    // queries
     
-    public static function getAllByMenu($menuId)
+    public static function getByMenu($menuId) : Query
     {
-        return self::getAllByField(static::$parentIdField, $menuId);
+        return self::query()
+            ->where(static::$parentIdField, $menuId);
     }
 }

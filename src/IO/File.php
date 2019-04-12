@@ -4,7 +4,7 @@ namespace Plasticode\IO;
 
 class File
 {
-	public static function load($file)
+	public static function load(string $file)
 	{
         $content = @file_get_contents($file);
 
@@ -15,7 +15,7 @@ class File
 		return $content;
 	}
 	
-	public static function save($file, $data)
+	public static function save(string $file, $data)
 	{
 	    $dir = dirname($file);
 
@@ -26,14 +26,14 @@ class File
 	    file_put_contents($file, $data);
 	}
 	
-	public static function delete($file)
+	public static function delete(string $file)
 	{
 		if (file_exists($file)) {
 			unlink($file);
 		}
 	}
 	
-	public static function cleanUp($mask, $except = null)
+	public static function cleanUp(string $mask, $except = null)
 	{
 		foreach (glob($mask) as $toDel) {
 			if (!is_dir($toDel) && $toDel != $except) {
@@ -45,7 +45,7 @@ class File
 	/**
 	 * Returns file extension. If there's none, return null.
 	 */
-	public static function getExtension($path)
+	public static function getExtension(string $path)
 	{
         $chunk = strrchr($path, ".");
         return $chunk ? substr($chunk, 1) : null;
@@ -54,7 +54,7 @@ class File
 	/**
 	 * Returns file name without extension.
 	 */
-	public static function getName($path)
+	public static function getName(string $path)
 	{
 	    $path = basename($path);
         $pos = strrpos($path, '.');
@@ -79,5 +79,10 @@ class File
 	    }
 
         return $path;
+	}
+	
+	public static function exists(string $path)
+	{
+	    return file_exists($path);
 	}
 }

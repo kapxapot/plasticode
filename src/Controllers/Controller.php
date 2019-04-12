@@ -5,6 +5,7 @@ namespace Plasticode\Controllers;
 use Illuminate\Support\Arr;
 
 use Plasticode\Contained;
+use Plasticode\Exceptions\NotFoundException;
 use Plasticode\Models\Menu;
 
 /**
@@ -14,8 +15,12 @@ class Controller extends Contained
 {
 	protected $autoOneColumn = true;
 
-	protected function notFound($request, $response)
+	protected function notFound($request = null, $response = null)
 	{
+	    if (!$request || !$response) {
+            throw new NotFoundException;
+	    }
+	    
 		$handler = $this->notFoundHandler;
 		return $handler($request, $response);
 	}

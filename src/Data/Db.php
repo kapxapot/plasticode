@@ -298,13 +298,8 @@ class Db extends Contained
         return $this->dirty($table, $data, $id);
 	}
 	
-	public function dirty($table, $data, $id = null)
+	private function dirty($table, $data, $id = null)
 	{
-		// dirty
-		/*if ($this->hasField($table, 'created_at') && !$id) {
-			$data['created_at'] = Date::now();
-		}*/
-
 		$upd = $this->updatedAt($table);
 		if ($upd) {
 			$data['updated_at'] = $upd;
@@ -325,7 +320,7 @@ class Db extends Contained
 	private function updatedAt($table)
 	{
 		return $this->hasField($table, 'updated_at')
-			? Date::now()
+			? Date::dbNow()
 			: null;
 	}
     
@@ -537,7 +532,7 @@ class Db extends Contained
 	    $q = $this->forTable($table);
 	    $q = $where($q);
 	    
-	    $q->delete_many();
+	    $q->deleteMany();
 	}
 	
 	public function getQueryCount()

@@ -12,11 +12,18 @@ use Plasticode\Util\Text;
 class Parser extends Contained
 {
     private $config;
-    
+
     public function __construct($container, $config)
     {
         parent::__construct($container);
         $this->config = $config;
+    }
+    
+    const TAG_PARTS_DELIMITER = '|';
+
+    public function joinTagParts(array $parts) : string
+    {
+        return implode(self::TAG_PARTS_DELIMITER, $parts);
     }
     
     protected function render($componentName, $data = null)

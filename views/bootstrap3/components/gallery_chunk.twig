@@ -1,0 +1,10 @@
+{% import 'macros.twig' as gm %}
+
+{% if pictures|length > 0 %}
+	{% for p in pictures %}
+		<div class="grid-item{% if p.ratio_css %} {{ p.ratio_css }}{% endif %}" data-id="{{ p.id }}">
+            <img class="lozad" data-src="{{ p.thumb_url }}" alt="{{ p.comment }}"{% if p.bg_color|length > 0 %} style="background-color: {{ gm.rgb(p.bg_color) }};"{% endif %} />
+            <a class="grid-item__overlay p-2{% if lightbox %} colorbox{% endif %}" href="{{ lightbox ? p.url : p.page_url }}">{{ p.comment }}{% if show_author %}<br/>({{ p.author.full_name }}){% endif %}</a>
+		</div>
+	{% endfor %}
+{% endif %}
