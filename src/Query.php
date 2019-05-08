@@ -76,6 +76,19 @@ class Query
         
         return $func($obj);
     }
+
+    public function random()
+    {
+        $count = $this->count();
+        
+        if ($count === 0) {
+            return null;
+        }
+        
+        $offset = rand(0, $count - 1);
+        
+        return $this->slice($offset, 1)->one();
+    }
     
     public function count() : int
     {
@@ -84,6 +97,11 @@ class Query
         }
         
         return $this->query->count();
+    }
+    
+    public function any() : bool
+    {
+        return $this->count() > 0;
     }
     
     public function delete()
@@ -129,6 +147,21 @@ class Query
         
         return $this->branch(function ($q) use ($field, $values) {
             return $q->whereIn($field, $values);
+        });
+    }
+
+    public function whereNotIn($field, $values) : self
+    {
+        if ($values instanceof Collection) {
+            $values = $values->toArray();
+        }
+        
+        if (!is_array($values)) {
+            throw new \InvalidArgumentException('WhereNotIn error: values must be a Collection or an array.');
+        }
+        
+        return $this->branch(function ($q) use ($field, $values) {
+            return $q->whereNotIn($field, $values);
         });
     }
 

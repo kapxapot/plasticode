@@ -1,0 +1,18 @@
+{% set card_title = title ?? site_name %}
+{% set card_description = page_description ?? site_description %}
+{% set card_image = custom_card_image ?? twitter_card_image %}
+
+<meta name="twitter:card" content="{% if custom_card_image %}summary_large_image{% else %}summary{% endif %}" />
+<meta name="twitter:site" content="@{{ twitter_alias }}" />
+<meta name="twitter:title" content="{{ card_title }}" />
+<meta name="twitter:description" content="{{ card_description }}" />
+
+<meta property="og:title" content="{{ card_title }}" />
+<meta property="og:description" content="{{ card_description }}" />
+<meta property="og:site_name" content="{{ site_name }}" />
+
+
+{% if card_image %}
+	<meta name="twitter:image" content="{{ card_image }}" />
+	<meta property="og:image" content="{{ card_image }}" />
+{% endif %}

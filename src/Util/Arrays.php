@@ -4,6 +4,75 @@ namespace Plasticode\Util;
 
 class Arrays
 {
+    public static function exists($array, $key)
+    {
+        return !is_null($array) && ($array[$key] ?? null) !== null;
+    }
+    
+    /**
+     * Get an item from an associative array using "dot" notation.
+     * Taken from Illuminate/Support/Arr.
+     *
+     * @param array $array
+     * @param string $key
+     * @return mixed
+     */
+    public static function get($array, $key)
+    {
+        if (is_null($array) || count($array) == 0 || strlen($key) == 0) {
+            return null;
+        }
+
+        if (self::exists($array, $key)) {
+            return $array[$key];
+        }
+
+        foreach (explode('.', $key) as $segment) {
+            if (!self::exists($array, $segment)) {
+                return null;
+            }
+
+            $array = $array[$segment];
+        }
+
+        return $array;
+    }
+
+    /**
+     * Set an array item to a given value using "dot" notation.
+     * Taken from Illuminate/Support/Arr.
+     *
+     * @param array $array
+     * @param string $key
+     * @param mixed $value
+     * @return array
+     */
+    public static function set(&$array, $key, $value)
+    {
+        if (empty($array) || strlen($key) == 0) {
+            return null;
+        }
+
+        $keys = explode('.', $key);
+
+        while (count($keys) > 1) {
+            $key = array_shift($keys);
+
+            // If the key doesn't exist at this depth, we will just create an empty array
+            // to hold the next value, allowing us to create the arrays to hold final
+            // values at the correct depth. Then we'll keep digging into the array.
+            if (!isset($array[$key]) || !is_array($array[$key])) {
+                $array[$key] = [];
+            }
+
+            $array = &$array[$key];
+        }
+
+        $array[array_shift($keys)] = $value;
+
+        return $array;
+    }
+    
     /**
      * Returns distinct values from array grouped by selector ('id' by default).
      * 
@@ -125,6 +194,13 @@ class Arrays
     {
 	    return self::filter($array, function ($item) use ($column, $values) {
 	        return in_array(self::getProperty($item, $column), $values);
+	    });
+    }
+    
+    public static function filterNotIn($array, $column, $values)
+    {
+	    return self::filter($array, function ($item) use ($column, $values) {
+	        return !in_array(self::getProperty($item, $column), $values);
 	    });
     }
     

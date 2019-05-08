@@ -12,7 +12,9 @@
 				{% endfor %}
  				<li role="separator" class="divider"></li>
 			{% endif %}
-			<li><a href="{{ path_for('admin.index') }}">{{ admin_title ?? 'Админ' }}</a></li>
+			{% if not no_admin_link %}
+			    <li><a href="{{ path_for('admin.index') }}">{{ admin_title ?? 'Админ' }}</a></li>
+			{% endif %}
             {% include 'usernav_ext.twig' %}
             {% if with_auth %}
     			<li><a href="javascript:void(0);" ng-click="passwordChange();">Смена пароля</a></li>

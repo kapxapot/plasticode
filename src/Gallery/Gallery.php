@@ -3,6 +3,7 @@
 namespace Plasticode\Gallery;
 
 use Plasticode\Contained;
+use Plasticode\Exceptions\ApplicationException;
 use Plasticode\Gallery\ThumbStrategies\ThumbStrategyInterface;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
@@ -152,7 +153,7 @@ class Gallery extends Contained
 	public function save($item, $data)
 	{
 		$picture = $this->getPicture($item, $data);
-		
+
 		if ($picture && $picture->notEmpty()) {
 			$this->savePicture($item, $picture);
 			
@@ -166,7 +167,7 @@ class Gallery extends Contained
 			}
 			
 			// set avg_color
-			$item->avgColor = $this->getAvgColor($item, $picture);
+			$item->avg_color = $this->getAvgColor($item, $picture);
 		}
 		
 		$thumb = $this->getThumb($item, $data);
@@ -253,7 +254,7 @@ class Gallery extends Contained
 		$item->save();
 	}
 	
-	private function createAndSaveThumb($item, Image $picture) : Image
+	private function createAndSaveThumb($item, Image $picture)
 	{
 		$thumb = $this->getThumbFromImage($picture);
 		
@@ -276,12 +277,12 @@ class Gallery extends Contained
 	/**
 	 * Generates thumb based on image.
 	 */
-	public function getThumbFromImage(Image $picture) : Image
+	public function getThumbFromImage(Image $picture)
 	{
 		$image = $picture->getGdImage();
 		
 		if ($image === null) {
-			throw new \InvalidArgumentException('Error parsing gallery image.');
+			return null;
 		}
 
 		$thumbImage = $this->thumbStrategy->createThumb($image);
@@ -316,9 +317,14 @@ class Gallery extends Contained
             $picture = $this->loadPicture($item);
 	    }
         
-        $rgba = $picture->getAvgColor();
-        $color = Image::serializeRGBA($rgba);
+        try {
+            $rgba = $picture->getAvgColor();
+            $color = Image::serializeRGBA($rgba);
         
-        return $color;
+            return $color;
+        }
+        catch (\Exception $ex) {
+            throw new ApplicationException('Unable to get avg. color. ' . $ex->getMessage());
+        }
 	}
 }

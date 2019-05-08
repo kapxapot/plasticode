@@ -2,7 +2,7 @@
 
 namespace Plasticode;
 
-use Illuminate\Support\Arr;
+use Plasticode\Util\Arrays;
 
 class Contained
 {
@@ -28,9 +28,9 @@ class Contained
 	public function getSettings($path = null)
 	{
 		$result = $this->container->get('settings');
-		
+
 		if ($path) {
-			$result = Arr::get($result, $path);
+			$result = Arrays::get($result, $path);
 		}
 		
 		return $result;

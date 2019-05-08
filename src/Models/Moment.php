@@ -27,7 +27,7 @@ class Moment extends Model
     
     // FUNCS
     
-    public function __toString()
+    public function toString()
     {
         return $this->date;
     }

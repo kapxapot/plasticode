@@ -2,11 +2,10 @@
 
 namespace Plasticode\Controllers;
 
-use Illuminate\Support\Arr;
-
 use Plasticode\Contained;
 use Plasticode\Exceptions\NotFoundException;
 use Plasticode\Models\Menu;
+use Plasticode\Util\Arrays;
 
 /**
  * Base controller for controllers showing views.
@@ -40,8 +39,8 @@ class Controller extends Contained
 			$params['one_column'] = 1;
 		}
 		
-		$params['rel_prev'] = Arr::get($settings, 'params.paging.prev.url');
-		$params['rel_next'] = Arr::get($settings, 'params.paging.next.url');
+		$params['rel_prev'] = Arrays::get($settings, 'params.paging.prev.url');
+		$params['rel_next'] = Arrays::get($settings, 'params.paging.next.url');
 		
 		if (isset($settings['image'])) {
 		    $params['twitter_card_image'] = $settings['image'];
@@ -87,7 +86,7 @@ class Controller extends Contained
 			$action = $bits[0];
 			$entity = $bits[1];
 
-			Arr::set($result, "actions.{$action}.{$entity}", true);
+			Arrays::set($result, "actions.{$action}.{$entity}", true);
 		}
 		else {
 			throw new \InvalidArgumentException('Unknown sidebar part: ' . $part);

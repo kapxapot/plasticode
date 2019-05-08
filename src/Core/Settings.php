@@ -3,9 +3,9 @@
 namespace Plasticode\Core;
 
 use Symfony\Component\Yaml\Yaml;
-use Illuminate\Support\Arr;
 
 use Plasticode\IO\File;
+use Plasticode\Util\Arrays;
 
 class Settings
 {
@@ -55,29 +55,28 @@ class Settings
 				$private = $tableSettings['private'] ?? [];
 				
 				$fields = array_unique(array_merge($private, $public));
-				
-				Arr::set($settings, "tables.{$table}.fields", $fields);
+				Arrays::set($settings, "tables.{$table}.fields", $fields);
 			}
 			
 			// flatten attributes
 			foreach ($settings['entities'] as $entity => $entitySettings) {
-				Arr::set($settings, "entities.{$entity}.alias", $entity);
+				Arrays::set($settings, "entities.{$entity}.alias", $entity);
 				
 				foreach ($entitySettings['columns'] as $column => $columnSettings) {
 					foreach ($columnSettings['attributes'] ?? [] as $attr) {
-						Arr::set($settings, "entities.{$entity}.columns.{$column}.{$attr}", 'true');
+						Arrays::set($settings, "entities.{$entity}.columns.{$column}.{$attr}", 'true');
 					}
 				}
 			}
 		
 			// count sort index
 			foreach ($settings['entities'] as $entity => $entitySettings) {
-				$sort = Arr::get($settings, "tables.{$entity}.sort");
+				$sort = Arrays::get($settings, "tables.{$entity}.sort");
 				
 				$count = 0;
 				foreach ($entitySettings['columns'] as $column => $columnSettings) {
 					if ($column == $sort) {
-						Arr::set($settings, "tables.{$entity}.sort_index", $count);
+						Arrays::set($settings, "tables.{$entity}.sort_index", $count);
 						break;
 					}
 					elseif (!array_key_exists('hidden', $columnSettings)) {

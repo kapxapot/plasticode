@@ -9,14 +9,14 @@ trait Children
 {
 	public function parent()
 	{
-	    return $this->lazy(__FUNCTION__, function () {
+	    return $this->lazy(function () {
     	    return self::get($this->parentId);
 	    });
 	}
 	
 	public function children() : Collection
 	{
-	    return $this->lazy(__FUNCTION__, function () {
+	    return $this->lazy(function () {
 	        return self::query()
                 ->where('parent_id', $this->id)
 	            ->all();

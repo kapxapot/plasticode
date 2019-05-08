@@ -38,13 +38,13 @@ abstract class Model implements \ArrayAccess
         self::$roleRepository = self::$container->roleRepository;
         self::$menuItemRepository = self::$container->menuItemRepository;
         
-        self::$staticCache = new Cache;
+        self::$staticCache = new Cache();
     }
 
     public function __construct($obj = null)
     {
         $this->obj = $obj ?? [];
-        $this->objCache = new Cache;
+        $this->objCache = new Cache();
     }
 
     protected static function getSettings($path)
@@ -66,9 +66,17 @@ abstract class Model implements \ArrayAccess
 
 	// lazy
 	
-	protected function lazy($name, callable $loader)
+    private static function getLazyFuncName()
+    {
+        list($one, $two, $caller) = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+        return $caller['function'];
+    }
+	
+	protected function lazy(\Closure $loader, $name = null, bool $ignoreCache = false)
 	{
-	    if (!$this->objCache->exists($name)) {
+	    $name = $name ?? self::getLazyFuncName();
+	    
+	    if ($ignoreCache === true || !$this->objCache->exists($name)) {
 	        $this->objCache->set($name, $loader());
 	    }
 	    
@@ -80,9 +88,11 @@ abstract class Model implements \ArrayAccess
 	    $this->objCache->delete($name);
 	}
 	
-	protected static function staticLazy($name, callable $loader)
+	protected static function staticLazy(\Closure $loader, $name = null, bool $ignoreCache = false)
 	{
-	    if (!self::$staticCache->exists($name)) {
+	    $name = $name ?? self::getLazyFuncName();
+	    
+	    if ($ignoreCache === true || !self::$staticCache->exists($name)) {
 	        self::$staticCache->set($name, $loader());
 	    }
 	    

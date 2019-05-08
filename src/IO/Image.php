@@ -9,28 +9,36 @@ class Image
 	public $data;
 	public $imgType;
 	
-	public $width;
-	public $height;
+	public $width = 0;
+	public $height = 0;
 	
 	public function __construct($data = null, $imgType = null)
 	{
 	    $this->imgType = $imgType;
+	    $this->data = $data;
 
-	    $this->setData($data);
+	    $this->updateWidthHeight();
 	}
 	
-	public function setData($data)
+	public static function makeEmpty() : self
 	{
-	    $this->data = $data;
-	    
+	    return new Image();
+	}
+
+	private function updateWidthHeight()
+	{
 	    if ($this->notEmpty()) {
 	        list($width, $height) = getimagesizefromstring($this->data);
 	        
 	        $this->width = $width;
 	        $this->height = $height;
 	    }
+	    else {
+	        $this->width = 0;
+	        $this->height = 0;
+	    }
 	}
-	
+
 	private static $typesToExtensions = [
 		'jpeg' => 'jpg',
 		'png' => 'png',
@@ -95,22 +103,16 @@ class Image
 
 	public static function parseBase64($base64) : self
 	{
-		$img = new Image;
-		
 		if (preg_match("#^data:image/(\w+);base64,(.*)$#i", $base64, $matches)) {
 			$imgType = $matches[1];
 			$data = $matches[2];
 
-			if (strlen($data) > 0) {
-				$img->data = base64_decode($data);
-				$img->imgType = $imgType;
+			if (strlen($data) > 0 && strlen($imgType) > 0) {
+			    return new static(base64_decode($data), $imgType);
 			}
-			/*else {
-				throw \InvalidArgumentException('No image.');
-			}*/
 		}
 		
-		return $img;
+		return self::makeEmpty();
 	}
 	
 	/**
@@ -120,7 +122,7 @@ class Image
 	{
 		$data = self::gdImgToBase64($gdImage, $imgType);
 		
-		return new Image($data, $imgType);
+		return new static($data, $imgType);
 	}
 	
 	/**
@@ -131,7 +133,7 @@ class Image
 		$data = null;
 		
 		// known ext?
-	    if (Image::getExtension($format) !== null) {
+	    if (self::getExtension($format) !== null) {
 	        ob_start();
 	
 	        if ($format == 'jpeg' ) {
@@ -154,17 +156,14 @@ class Image
 	
 	public static function load($fileName, $imgType) : self
 	{
-		$img = new Image;
-		$img->imgType = $imgType;
-		
 		try {
 		    $data = File::load($fileName);
-		    $img->setData($data);
+		    return new static($data, $imgType);
 		} catch (\Exception $ex) {
 		    // ..
 		}
 
-		return $img;
+		return self::makeEmpty();
 	}
 
 	public function notEmpty() : bool

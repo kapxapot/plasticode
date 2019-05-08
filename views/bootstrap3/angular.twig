@@ -34,7 +34,9 @@
 		{% endif %}
 		
 		$scope.prePost = function(e) {
-			e.preventDefault();
+		    if (e != null) {
+			    e.preventDefault();
+		    }
 			
 			$scope.alertError = null;
 			$scope.alertSuccess = null;

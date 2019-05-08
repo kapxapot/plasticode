@@ -18,9 +18,14 @@ trait FullPublish
 
     // queries
     
-    public static function getProtected() : Query
+    public static function getBaseProtected() : Query
+    {
+        return self::getProtected(self::baseQuery());
+    }
+    
+    public static function getProtected(Query $query = null) : Query
 	{
-	    $query = self::query();
+	    $query = $query ?? self::query();
 	    
 		$editor = self::can('edit');
 		

@@ -26,7 +26,7 @@
 		{% endif %}
 		<meta name="description" content="{% if page_description %}{{ page_description }}{% else %}{% if title %}{{ title }} - {% endif %}{{ site_name }} - {{ site_description }}{% endif %}" />
 		
-		{% include 'main/includes/twitter_card.twig' %}
+		{% include 'main/includes/meta_card.twig' %}
 		
 		<link rel="shortcut icon" href="{{ fav_icon ?? '/favicon.ico' }}" />
 		
@@ -63,15 +63,15 @@
 		{% endif %}
 	        	
     	{# Font Awesome #}
-        <!--link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous"-->
+    	{% if font_awesome_css %}
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
+        {% endif %}
         
         <!-- Lozad.js -->
         <script type="text/javascript" src="//cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
         
-        {% if with_swipes %}
-            <!-- Hammer.js -->
-            <script src="https://hammerjs.github.io/dist/hammer.js"></script>
-        {% endif %}
+        <!-- Hammer.js -->
+        <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 
 		{% block head_appendix %}{% endblock %}
 		
@@ -108,7 +108,11 @@
 	{% set angular_app = angular.app ?? 'pcApp' %}
 	{% set angular_ctrl = angular.ctrl ?? 'pcCtrl' %}
 
-	<body ng-app="{{ angular_app }}" ng-controller="{{ angular_ctrl }}">
+    {% if fullscreen %}
+        {% set body_styles = 'fullscreen' %}
+    {% endif %}
+
+	<body ng-app="{{ angular_app }}" ng-controller="{{ angular_ctrl }}"{% if body_styles %} class="{{ body_styles }}"{% endif %}>
 		<!-- nav bar -->
 		{% include 'main/includes/nav.twig' %}
 		
@@ -205,7 +209,9 @@
 		{% endif %}
 		
 		{# Font Awesome #}
-		<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
+		{% if not font_awesome_css %}
+		    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
+		{% endif %}
 
 		{% include 'main/includes/js.twig' %}
 

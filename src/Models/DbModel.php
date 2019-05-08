@@ -77,7 +77,7 @@ abstract class DbModel extends Model implements SerializableInterface
      * 
      * Use this query if you need any sort order different from default.
      */
-    protected static function baseQuery() : Query
+    public static function baseQuery() : Query
     {
         $dbQuery = self::$db->forTable(self::getTable());
         
@@ -95,7 +95,7 @@ abstract class DbModel extends Model implements SerializableInterface
     /**
      * Base query with applied sort order.
      */
-    protected static function query() : Query
+    public static function query() : Query
     {
         return self::applySortOrder(self::baseQuery());
     }
@@ -129,7 +129,11 @@ abstract class DbModel extends Model implements SerializableInterface
     public function getId()
     {
 	    $idField = static::$idField;
-	    return $this->{$idField};
+	    $id = $this->{$idField};
+	    
+	    return is_numeric($id)
+	        ? intval($id)
+	        : $id;
     }
     
     public function hasId() : bool
@@ -177,13 +181,26 @@ abstract class DbModel extends Model implements SerializableInterface
 	{
 	    return self::query()->all();
 	}
+	
+	public static function getCount() : int
+	{
+	    return self::baseQuery()->count();
+	}
     
     /**
      * Shortcut for getting model by id.
      */
-    public static function get($id)
+    public static function get($id, bool $ignoreCache = false)
     {
-        return self::baseQuery()->find($id);
+        $name = static::class . $id;
+        
+        return self::staticLazy(
+            function () use ($id) {
+                return self::baseQuery()->find($id);
+            },
+            $name,
+            $ignoreCache
+        );
     }
 
     private static function buildSortOrder()

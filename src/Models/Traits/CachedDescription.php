@@ -23,7 +23,7 @@ trait CachedDescription
 
     public function parsedDescription()
     {
-        return $this->lazy(__FUNCTION__, function () {
+        return $this->lazy(function () {
             $descriptionField = static::getDescriptionField();
             $cacheField = static::getDescriptionCacheField();
             

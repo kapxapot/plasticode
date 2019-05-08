@@ -10,7 +10,7 @@
         <div class="carousel-inner" role="listbox">
             {% for slide in slides %}
                 <div class="item{% if loop.first %} active{% endif %}">
-                    <img src="{{ slide.src }}" alt="{{ slide.caption }}">
+                    <img src="{{ slide.src }}" alt="{{ slide.caption }}" class="carousel-slide-img swipable">
                     {% if slide.caption %}
                         <div class="carousel-caption">{{ slide.caption }}</div>
                     {% endif %}

@@ -37,32 +37,62 @@ $(function() {
     updateUI();
 });
 
+function isCarouselImg(element) {
+    return $(element).hasClass('carousel-slide-img');
+}
+
+function findCarousel(element) {
+    return $(element).closest('.carousel');
+}
+
 function initSwipes() {
     // check if swipes are enabled
 	if (typeof Hammer !== 'function') {
 	    return;
 	}
 
-    const elems = document.getElementsByClassName('swipable');
+    $('.swipable').each((index, swipable) => {
+        console.log(swipable);
+        
+        const mc = new Hammer(swipable);
     
-    if (elems.length === 0) {
-        return;
-    }
-    
-    const swipable = elems[0];
+        // listen to events...
+        mc.on("swipeleft", ev => {
+            const element = ev.target;
 
-    // create a simple instance
-    // by default, it only adds horizontal recognizers
-    const mc = new Hammer(swipable);
+            // carousel?
+            if (isCarouselImg(element)) {
+                const carousel = findCarousel(element);
 
-    // listen to events...
-    mc.on("swipeleft", function(ev) {
-        navigateToNext();
+                if (carousel) {
+                    carousel.carousel('next');
+                }
+            }
+            else {
+                navigateToNext();
+            }
+        });
+        
+        mc.on("swiperight", ev => {
+            const element = ev.target;
+            
+            // carousel?
+            if (isCarouselImg(element)) {
+                const carousel = findCarousel(element);
+                
+                if (carousel) {
+                    carousel.carousel('prev');
+                }
+            }
+            else {
+                navigateToPrev();
+            }
+        });
     });
-    
-    mc.on("swiperight", function(ev) {
-        navigateToPrev();
-    });
+}
+
+function autofocus() {
+    $('[data-focus]').focus();
 }
 
 function focusOnModals() {
@@ -119,6 +149,10 @@ function resetForm(name) {
     $('#' + name + 'Form')[0].reset();
 }
 
+function reloadWindow() {
+	location.reload();
+}
+
 function signedIn(data, targetUrl, withCookie) {
 	saveToken(data['token'], withCookie);
 
@@ -126,16 +160,17 @@ function signedIn(data, targetUrl, withCookie) {
 		location.href = targetUrl;
 	}
 	else {
-		location.reload();
+		reloadWindow();
 	}
 }
 
 function signedOut(data) {
 	deleteToken();
-	location.reload();
+	reloadWindow();
 }
 
 var authTokenKey = 'auth_token';
+var authTokenCookieTtl = 365; // days
 
 function getAuthTokenKey() {
 	return authTokenKey;
@@ -147,7 +182,7 @@ function saveToken(token, cookie = false) {
 	localStorage.setItem(key, token);
 	
 	if (cookie) {
-		saveCookie(key, token);
+		saveCookie(key, token, authTokenCookieTtl);
 	}
 }
 
@@ -316,11 +351,44 @@ function getRelLinks() {
     return links;
 }
 
+let fullscreenMode = false;
+
+function toggleFullscreen() {
+    if (fullscreenMode === true) {
+        exitFullscreen();
+    }
+    else {
+        openFullscreen();
+    }
+}
+
+function openFullscreen() {
+    if (fullscreenMode !== true) {
+        setQueryParam('full', '');
+        fullscreenMode = true;
+    }
+}
+
+function exitFullscreen() {
+    if (fullscreenMode === true) {
+        removeQueryParam('full');
+        fullscreenMode = false;
+    }
+}
+
+function mutateUrlToFullscreen(url) {
+    if (fullscreenMode) {
+        url += '?full';
+    }
+    
+    return url;
+}
+
 function navigateToPrev() {
     const links = getRelLinks();
     
     if (links.prev) {
-        location.href = links.prev.href;
+        location.href = mutateUrlToFullscreen(links.prev.href);
     }
 }
 
@@ -328,13 +396,77 @@ function navigateToNext() {
     const links = getRelLinks();
     
     if (links.next) {
-        location.href = links.next.href;
+        location.href = mutateUrlToFullscreen(links.next.href);
     }
+}
+
+function getUrl() {
+    return new URL(window.location);
+}
+
+function getQueryParams() {
+    return getUrl().searchParams;
+}
+
+function getQueryParam(name) {
+    return getQueryParams().get(name);
+}
+
+function setUrl(path = null, params = null, hash = null) {
+    path = path ? path : getUrl().pathname;
+    
+    const paramsStr = paramsToString(params);
+    
+    if (paramsStr.length > 0) {
+        path += '?' + paramsStr;
+    }
+
+    if (hash) {
+        path += '#' + hash.replace(/^#/, '');
+    }
+    
+    window.history.replaceState({}, '', path);
+}
+
+function paramsToString(params) {
+    let str = '';
+    
+    for (var p of params) {
+        const name = p[0];
+        const value = p[1];
+        
+        str += name;
+        
+        if (value && value.length > 0) {
+            str += '=' + value;
+        }
+    }
+    
+    return str;
+}
+
+function setQueryParams(params) {
+    const url = getUrl();
+    setUrl(url.pathname, params, url.hash);
+}
+
+function setQueryParam(name, value) {
+    const params = getQueryParams();
+    params.set(name, value);
+    
+    setQueryParams(params);
+}
+
+function removeQueryParam(name) {
+    const params = getQueryParams();
+    params.delete(name);
+    
+    setQueryParams(params);
 }
 
 // link rel=prev, link rel=next keyboard navigation
 
-document.onkeyup = function(e) {
+document.addEventListener('keyup', e => {
     // abort if focusing input box
     if (document.activeElement.nodeName === "INPUT" || document.activeElement.nodeName === "TEXTAREA") {
         return;
@@ -346,4 +478,4 @@ document.onkeyup = function(e) {
     else if (e.keyCode === 39) { // right key
         navigateToNext();
     }
-};
+});

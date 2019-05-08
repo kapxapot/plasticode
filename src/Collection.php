@@ -91,6 +91,27 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     }
     
     /**
+     * Flattens a collection of elements, arrays and collections one level
+     */
+    public function flatten()
+    {
+        $data = [];
+        
+        foreach ($this->data as $item) {
+            if (is_array($item) || $item instanceof self) {
+                foreach ($item as $subItem) {
+                    $data[] = $subItem;
+                }
+            }
+            else {
+                $data[] = $item;
+            }
+        }
+        
+        return self::make($data);
+    }
+    
+    /**
      * Skips $offset elements from the start and returns the remaining collection.
      */
     public function skip(int $offset)
@@ -115,6 +136,19 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     {
         $data = Arrays::slice($this->data, $offset, $limit);
         return self::make($data);
+    }
+    
+    public function random()
+    {
+        $count = $this->count();
+        
+        if ($count === 0) {
+            return null;
+        }
+        
+        $offset = rand(0, $count - 1);
+        
+        return $this->slice($offset, 1)->first();
     }
 
     /**
@@ -185,6 +219,16 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         }
         
         $data = Arrays::filterIn($this->data, $column, $values);
+        return self::make($data);
+    }
+    
+    public function whereNotIn($column, $values)
+    {
+        if ($values instanceof Collection) {
+            $values = $values->toArray();
+        }
+        
+        $data = Arrays::filterNotIn($this->data, $column, $values);
         return self::make($data);
     }
 

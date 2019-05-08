@@ -84,7 +84,7 @@
         		},
         		noSuccessMessage: true,
         		onSuccess: function(data) {
-        			$scope.item.preview = data.text;
+        			$scope.preview = data.text;
         			$scope.updateUI(); //angular.twig
         		}
         		});
@@ -129,11 +129,6 @@
 
 		var initMdes = function() {
 			{% if mde %}
-				$('#entityView').find('textarea').each(function() {
-					{# remove required #}
-					/* $(this).attr('required', false);
-
-                    var buttons = mdeButtons(); */
                     var buttons = angular.copy(mdEditorService.defaultButtons);
                     
                     var previewButton = {
@@ -155,14 +150,6 @@
                     }
                     
                     {% include 'admin/includes/mde_buttons.twig' %}
-
-					/* var options = {
-				        element: this,
-				        spellChecker: false,
-				        toolbar: buttons,
-				        status: false,
-				        forceSync: true
-				    }; */
                     
 				     if ($scope.itemId == 0) {
 				        options.autosave = {
@@ -173,26 +160,6 @@
 				    }
 				    
 				    $scope.editorOpts = options;
-				    
-				    /*var mde = new SimpleMDE(options);
-				    var cm = mde.codemirror;
-	
-					cm.on('refresh', function() {
-					    if (mde.isFullscreenActive()) {
-					        $('body').addClass('simplemde-fullscreen');
-					    } else {
-					        $('body').removeClass('simplemde-fullscreen');
-					    }
-					});	
-
-                    cm.on("change", function() {
-                        delay(function() {
-                            $scope.parse(mde);
-                        }, 1000);
-                    });
-
-					$scope.mdes.push(mde); */
-				});
 			{% endif %}
 		};
 		
@@ -520,20 +487,22 @@
 	};
 	
 	$scope.isPreview = false;
-	$scope.textSync = function(text, col) {
+	$scope.textSync = function(text, editor, col) {
 		$scope.item[col] = text;
 		//console.log($scope.item[col]);
 		if($scope.isPreview) {
 			delay(function() {
-                $scope.parse(text);
+                $scope.parse(text).then(function() {
+                	editor.codemirror.refresh();
+                	});
             }, 1000);
 		}
 	}
 	
-    $scope.togglePreview = function(isPreview, editor) {
+    $scope.togglePreview = function(isPreview, editor, col) {
         if (isPreview !== $scope.isPreview) {
         	$scope.isPreview = isPreview;
-        	$scope.parse($scope.item.text).then(function () {
+        	$scope.parse($scope.item[col]).then(function () {
         		//console.log(1);
         		editor.codemirror.refresh();
         	});
