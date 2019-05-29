@@ -1,7 +1,7 @@
 {
     "name": "plasticode/plasticode",
     "description": "Plasticode engine for building sites",
-    "keywords": [ "PHP, ""Plasticode", "Bootstrap", "Slim", "Twig", "API" ],
+    "keywords": [ "PHP", "Plasticode", "Bootstrap", "Slim", "Twig", "API" ],
     "homepage": "http://github.com/kapxapot/plasticode",
     "license": "TBD",
     "authors": [

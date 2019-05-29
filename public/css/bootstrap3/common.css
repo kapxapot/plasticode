@@ -638,6 +638,7 @@ figcaption {
 .flex-item {
     margin: 10px 5px;
     /*border-radius: 2px;*/
+    overflow: hidden;
 }
 
 .flex-item-shaded {
@@ -1017,6 +1018,10 @@ div.dataTables_wrapper div.dataTables_paginate {
     padding-bottom: 0 !important;
 }
 
+.pb-1 {
+    padding-bottom: 0.5rem !important;
+}
+
 .ph-0 {
     padding-left: 0 !important;
     padding-right: 0 !important;
@@ -1028,6 +1033,11 @@ div.dataTables_wrapper div.dataTables_paginate {
 
 .m-2 {
     margin: 1rem;
+}
+
+.mh-0 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
 }
 
 .mb-0 {
@@ -1078,20 +1088,25 @@ div.dataTables_wrapper div.dataTables_paginate {
     margin-left: 2rem;
 }
 
-.mr-1 {
+.mr-1,
+.hgap-1 {
     margin-right: 0.5rem;
 }
 
-.mr-2, .hgap-2 {
+.mr-2,
+.hgap-2 {
     margin-right: 1rem;
 }
 
-.hgap-2:last-child {
-    margin-right: 0;
+.mr-3,
+.hgap-3 {
+    margin-right: 2rem;
 }
 
-.mr-3 {
-    margin-right: 2rem;
+.hgap-1:last-child,
+.hgap-2:last-child,
+.hgap-3:last-child {
+    margin-right: 0;
 }
 
 .grey-3,
@@ -1148,6 +1163,10 @@ div.dataTables_wrapper div.dataTables_paginate {
     line-height: 1.2em;
 }
 
+.font-130 {
+    font-size: 130%;
+}
+
 .font-150 {
     font-size: 150%;
 }
@@ -1158,6 +1177,10 @@ div.dataTables_wrapper div.dataTables_paginate {
 
 .br-all {
     word-break: break-all;
+}
+
+.inline-block {
+    display: inline-block;
 }
 
 /* ng-cloak */

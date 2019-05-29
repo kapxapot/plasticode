@@ -25,7 +25,7 @@ class Contained
 		}
 	}
 	
-	public function getSettings($path = null)
+	public function getSettings($path = null, $default = null)
 	{
 		$result = $this->container->get('settings');
 
@@ -33,6 +33,6 @@ class Contained
 			$result = Arrays::get($result, $path);
 		}
 		
-		return $result;
+		return $result ?? $default;
 	}
 }

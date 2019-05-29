@@ -63,6 +63,13 @@ abstract class Model implements \ArrayAccess
 	{
 	    return self::$roleRepository->get($id);
 	}
+	
+	// auth
+	
+	protected static function getCurrentUser()
+	{
+	    return self::$auth->getUser();
+	}
 
 	// lazy
 	

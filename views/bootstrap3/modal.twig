@@ -1,22 +1,27 @@
+{% set var_loading = var_loading ?? 'loading' %}
+{% set var_saving = var_saving ?? 'saving' %}
+{% set var_alert_error = var_alert_error ?? 'alertError' %}
+{% set full_check = (var_loading ? var_loading ~ ' || ' : '') ~ var_saving %}
+
 <div id="{{ modal_name }}View" name="views.{{ modal_name }}View" class="modal fade" role="dialog" data-backdrop="static">
 	<div class="modal-dialog{% if modal_narrow %} modal-dialog-narrow{% endif %}" ng-class="{'modal-dialog-fullscreen': isPreview}">
 	    <div class="modal-content">
 			<form id="{{ modal_name }}Form" name="forms.{{ modal_name }}Form" method="post">
 		    	<div class="modal-header">
-		        	<button type="button" class="close" ng-disabled="loading" data-dismiss="modal">&times;</button>
+		        	<button type="button" class="close" ng-disabled="{{ full_check }}" data-dismiss="modal">&times;</button>
 		        	<h4 class="modal-title">{{ modal_title }}</h4>
 		      	</div>
-		      	<div class="modal-body">
+		      	<div class="modal-body{% if modal_body_style %} {{ modal_body_style }}{% endif %}">
 		      		{% block modal_body %}{% endblock %}
 					<div class="alert alert-danger alert-dismissable fade in">
 						<a href="javascript:void()" class="close" data-hide="alert" aria-label="close">&times;</a>
-						<div ng-bind-html="alertError|rawHtml"></div>
+						<div ng-bind-html="{{ var_alert_error }}|rawHtml"></div>
 					</div>
               	</div>
 		      	<div class="modal-footer">
 		      		<div>
-			        	<button type="button" class="btn btn-default" ng-disabled="saving" data-dismiss="modal">Отмена</button>
-			        	<button type="submit" class="btn btn-primary modal-button" ng-disabled="loading || saving"><i class="fas fa-spinner fa-lg fa-spin modal-button-spinner" ng-show="saving"></i><span ng-hide="saving">{{ modal_save_label ?? 'Сохранить' }}</span></button>
+			        	<button type="button" class="btn btn-default" ng-disabled="{{ var_saving }}" data-dismiss="modal">Отмена</button>
+			        	<button type="submit" class="btn btn-primary modal-button" ng-disabled="{{ full_check }}"><i class="fas fa-spinner fa-lg fa-spin modal-button-spinner" ng-show="{{ var_saving }}"></i><span ng-hide="{{ var_saving }}">{{ modal_save_label ?? 'Сохранить' }}</span></button>
 		      		</div>
 			      	{% if modal_persist %}
 						<div class="checkbox">

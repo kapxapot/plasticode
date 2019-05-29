@@ -2,6 +2,8 @@
 
 namespace Plasticode\Generators;
 
+use Plasticode\Core\Security;
+
 class UsersGenerator extends EntityGenerator
 {
 	public function getRules($data, $id = null)

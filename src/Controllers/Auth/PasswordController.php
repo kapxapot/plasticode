@@ -10,14 +10,16 @@ use Plasticode\Core\Security;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Validation\ValidationRules;
 
-class PasswordController extends Controller {
-	public function postChangePassword($request, $response) {
+class PasswordController extends Controller
+{
+	public function postChangePassword($request, $response)
+	{
 		$user = $this->auth->getUser();
 
 		$data = [ 'password' => $user->password ];
 		
 		$rules = $this->getRules($data);
-		$validation = $this->validator->validate($request, $rules);
+		$validation = $this->validator->validateRequest($request, $rules);
 		
 		if ($validation->failed()) {
 			throw new ValidationException($validation->errors);
@@ -35,7 +37,8 @@ class PasswordController extends Controller {
 		]);
 	}
 	
-	private function getRules($data) {
+	private function getRules($data)
+	{
 		$rules = new ValidationRules($this->container);
 
 		return [

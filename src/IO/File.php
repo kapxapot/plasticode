@@ -68,10 +68,11 @@ class File
 	 */
 	public static function combine(...$parts)
 	{
-	    $sep = DIRECTORY_SEPARATOR;
+		$sep = DIRECTORY_SEPARATOR;
+		$path = null;
 	    
 	    foreach ($parts as $part) {
-	        if (!$path) {
+	        if ($path === null) {
 	            $path = $part;
 	        } else {
 	            $path = rtrim($path, $sep) . $sep . ltrim($part, $sep);

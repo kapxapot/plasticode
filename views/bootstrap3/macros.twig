@@ -32,7 +32,4 @@
 
 {% macro rgba(rgba) %}rgba({{ rgba.red }}, {{ rgba.green }}, {{ rgba.blue }}, {{ rgba.alpha }}){% endmacro %}
 
-{% macro ng_cloak(content, label = null) %}
-    <span class="splash" ng-cloak>{{ label ?? 'загрузка...' }}</span>
-    <span ng-cloak>{{ content }}</span>
-{% endmacro %}
+{% macro ng_cloak(content, label = null) %}<span class="splash" ng-cloak>{{ label ?? 'загрузка...' }}</span><span ng-cloak>{{ content }}</span>{% endmacro %}

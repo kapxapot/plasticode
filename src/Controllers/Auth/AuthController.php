@@ -18,7 +18,7 @@ class AuthController extends Controller {
 		$data = $request->getParsedBody();
 
 		$rules = $this->userRepository->getRules($data);
-		$validation = $this->validator->validate($request, $rules);
+		$validation = $this->validator->validateRequest($request, $rules);
 		
 		if ($validation->failed()) {
 			throw new ValidationException($validation->errors);

@@ -224,7 +224,7 @@ class Bootstrap
             'dbClass' => function ($container) {
                 return \Plasticode\Data\Db::class;
             },
-
+            
             'db' => function ($container) {
                 $dbs = $this->dbSettings;
                 

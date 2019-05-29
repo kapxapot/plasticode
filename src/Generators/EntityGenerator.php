@@ -41,7 +41,7 @@ class EntityGenerator extends Contained
 	public function validate($request, $data, $id = null)
 	{
 		$rules = $this->getRules($data, $id);
-		$validation = $this->validator->validate($request, $rules);
+		$validation = $this->validator->validateRequest($request, $rules);
 		
 		if ($validation->failed()) {
 			throw new ValidationException($validation->errors);

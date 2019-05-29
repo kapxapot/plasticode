@@ -119,6 +119,10 @@ function showAlertError() {
 	showAlert('.alert-danger');
 }
 
+function showModalAlertError() {
+    showAlert('.modal .alert-danger');
+}
+
 function hideAlert(selector) {
     $(selector).hide();
 }
@@ -134,6 +138,11 @@ function hideAlertError() {
 function hideAlerts() {
     hideAlertSuccess();
     hideAlertError();
+}
+
+function hideModalAlerts() {
+    hideAlertSuccess();
+    hideAlert('.modal .alert-danger');
 }
 
 function showModal(name) {
@@ -330,7 +339,9 @@ function momentDiff(start, end, unknownEnd, format = null, shortFormat = null) {
 
 function getLastChild(id) {
 	const el = document.getElementById(id);
-	return el.children[el.children.length - 1];
+	return el
+	    ? el.children[el.children.length - 1]
+	    : null;
 }
 
 function getRelLinks() {
