@@ -1,6 +1,6 @@
 # Plasticode
 
-My library for building sites.
+PHP framework on top of Slim framework.
 
 Sites built on **Plasticode**:
 
