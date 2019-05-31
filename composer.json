@@ -1,27 +1,27 @@
 {
-    "name": "plasticode/plasticode",
-    "description": "Plasticode engine for building sites",
-    "keywords": [ "PHP", "Plasticode", "Bootstrap", "Slim", "Twig", "API" ],
-    "homepage": "http://github.com/kapxapot/plasticode",
-    "license": "TBD",
-    "authors": [
-        {
-            "name": "Sergey Atroshchenko (kapxapot)",
-            "email": "kapxapot@gmail.com",
-            "homepage": "http://kapxapot.ru"
-        }
-    ],
-    "require": {
-        "slim/slim": "^3.8",
-        "monolog/monolog": "^1.22",
-        "respect/validation": "^1.1",
-        "j4mie/idiorm": "^1.5",
-        "symfony/yaml": "^3.3",
-        "slim/twig-view": "^2.2"
-    },
-    "autoload": {
-    	"psr-4": {
-    		"Plasticode\\": "src"
-    	}
-    }
+	"name": "plasticode/plasticode",
+	"description": "Plasticode engine for building sites",
+	"keywords": [ "PHP", "Plasticode", "Bootstrap", "Slim", "Twig", "API" ],
+	"homepage": "http://github.com/kapxapot/plasticode",
+	"license": "TBD",
+	"authors": [
+		{
+			"name": "Sergey Atroshchenko (kapxapot)",
+			"email": "kapxapot@gmail.com",
+			"homepage": "http://kapxapot.ru"
+		}
+	],
+	"require": {
+		"slim/slim": "^3.8",
+		"monolog/monolog": "^1.22",
+		"respect/validation": "^1.1",
+		"j4mie/idiorm": "^1.5",
+		"symfony/yaml": "^3.3",
+		"slim/twig-view": "^2.2"
+	},
+	"autoload": {
+		"psr-4": {
+			"Plasticode\\": "src"
+		}
+	}
 }
