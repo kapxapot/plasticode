@@ -2,11 +2,18 @@
 
 namespace Plasticode\External;
 
-use Plasticode\Contained;
+class Twitch
+{
+	private $settings;
 
-class Twitch extends Contained {
-	public function getStreamData($id) {
-		$clientId = $this->getSettings('twitch.client_id');
+	public function __construct(array $settings)
+	{
+		$this->settings = $settings;
+	}
+
+	public function getStreamData($id)
+	{
+		$clientId = $this->settings['client_id'];
 
 		$url = "https://api.twitch.tv/kraken/streams?channel={$id}";
 
@@ -16,7 +23,8 @@ class Twitch extends Contained {
 		return $json;
 	}
 
-	private function curlGet($url, $clientId) {
+	private function curlGet($url, $clientId)
+	{
 		$ch = curl_init();
 
 		$headers = [ "Client-ID: {$clientId}" ];

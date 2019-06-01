@@ -2,20 +2,27 @@
 
 namespace Plasticode\External;
 
-use Plasticode\Contained;
+class Telegram
+{
+	private $settings;
 
-class Telegram extends Contained {
-	public function sendMessage($channelId, $message) {
-		$tgs = $this->getSettings('telegram');
-		
-		$botToken = $tgs['bot_token'];
-		$channel = $tgs['channels'][$channelId];
+	public function __construct(array $settings)
+	{
+		$this->settings = $settings;
+	}
+
+	public function sendMessage($channelId, $message)
+	{
+		$botToken = $this->settings['bot_token'];
+		$channel = $this->settings['channels'][$channelId];
 
 		$this->curlSendMessage($botToken, $channel, $message);
 	}
 
-	private function curlSendMessage($botToken, $chatId, $message) {
-		$url = "https://api.telegram.org/bot{$botToken}/sendMessage";
+	private function curlSendMessage($botToken, $chatId, $message)
+	{
+		$url = 'https://api.telegram.org/bot' . $botToken . '/sendMessage';
+	
 		$params = [
 		    'chat_id' => '@' . $chatId,
 		    'text' => $message,

@@ -1,6 +1,6 @@
 {
-	"name": "plasticode/plasticode",
-	"description": "Plasticode engine for building sites",
+	"name": "kapxapot/plasticode",
+	"description": "PHP framework based on Slim framework",
 	"keywords": [ "PHP", "Plasticode", "Bootstrap", "Slim", "Twig", "API" ],
 	"homepage": "http://github.com/kapxapot/plasticode",
 	"license": "TBD",
@@ -12,12 +12,14 @@
 		}
 	],
 	"require": {
+		"php": "^7.0",
 		"slim/slim": "^3.8",
 		"monolog/monolog": "^1.22",
 		"respect/validation": "^1.1",
 		"j4mie/idiorm": "^1.5",
 		"symfony/yaml": "^3.3",
-		"slim/twig-view": "^2.2"
+		"slim/twig-view": "^2.2",
+		"jublonet/codebird-php": "^3.1"
 	},
 	"autoload": {
 		"psr-4": {

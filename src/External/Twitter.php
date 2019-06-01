@@ -2,18 +2,16 @@
 
 namespace Plasticode\External;
 
-use Plasticode\Contained;
-use Plasticode\Lib\Codebird\Codebird;
+use Codebird\Codebird;
+
 use Plasticode\Util\Strings;
 
-class Twitter extends Contained
+class Twitter
 {
     private $cb;
     
-    public function __construct($container, $settings)
+    public function __construct($settings)
     {
-        parent::__construct($container);
-        
         Codebird::setConsumerKey($settings['consumer_key'], $settings['consumer_secret']);
     
         $this->cb = Codebird::getInstance();

@@ -261,15 +261,15 @@ class Bootstrap
             // external
             
             'twitch' => function ($container) {
-            	return new \Plasticode\External\Twitch($container);
+            	return new \Plasticode\External\Twitch($this->settings['twitch']);
             },
             
             'telegram' => function ($container) {
-            	return new \Plasticode\External\Telegram($container);
+            	return new \Plasticode\External\Telegram($this->settings['telegram']);
             },
             
             'twitter' => function ($container) {
-            	return new \Plasticode\External\Twitter($container, $this->settings['twitter']);
+            	return new \Plasticode\External\Twitter($this->settings['twitter']);
             },
             
             // handlers
