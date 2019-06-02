@@ -3,7 +3,7 @@
 	"description": "PHP framework based on Slim framework",
 	"keywords": [ "PHP", "Plasticode", "Bootstrap", "Slim", "Twig", "API" ],
 	"homepage": "http://github.com/kapxapot/plasticode",
-	"license": "TBD",
+	"license": "MIT",
 	"authors": [
 		{
 			"name": "Sergey Atroshchenko (kapxapot)",
