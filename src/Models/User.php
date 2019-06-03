@@ -4,19 +4,15 @@ namespace Plasticode\Models;
 
 class User extends DbModel
 {
-    // getters - one
-    
     public static function getByLogin($login)
     {
         return self::query()
-		    ->whereAnyIs([
+            ->whereAnyIs([
                 [ 'login' => $login ],
                 [ 'email' => $login ],
             ])
             ->one();
     }
-    
-    // PROPS
     
     public function displayName()
     {
@@ -26,5 +22,10 @@ class User extends DbModel
     public function role()
     {
         return self::getRole($this->roleId);
+    }
+    
+    public function toString()
+    {
+        return '[' . $this->getId() . '] ' . $this->displayName();
     }
 }
