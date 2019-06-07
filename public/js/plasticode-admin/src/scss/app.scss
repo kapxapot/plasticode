@@ -6,14 +6,13 @@
   white-space: pre;
   color: black;
   cursor: pointer;
-  padding-left: 22px;
+  padding-left: 24px;
   position: relative;
   line-height: 1.5;
 
   &:before {
     position: absolute;
     left: 5px;
-    bottom: 2px;
     border-radius: 50%;
     font-size: 12px;
     font-weight: bold;
@@ -24,35 +23,35 @@
     color: white;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    top: 5px;
+    top: 3px;
   }
 }
 
 .news.CodeMirror-hint {
   &:before {
-    content: "Н";
-    background: black;
+    content: 'N';
+    background: #4bc700;
   }
 }
 
 .article.CodeMirror-hint {
   &:before {
-    content: "С";
-    background: blue;
+    content: 'A';
+    background: #8383ff;
   }
 }
 
 .tag.CodeMirror-hint {
   &:before {
-    content: "Т";
-    background: #ccc;
+    content: 'T';
+    background: #ff8bfb;
   }
 }
 
 .event.CodeMirror-hint {
   &:before {
-    content: 'С';
-    background: orange;
+    content: 'E';
+    background: #ff7c48;
   }
 }
 
@@ -61,4 +60,9 @@
     content: 'Т';
     background: purple;
   }
+}
+
+.editor-toolbar a.toggled {
+  background: #fcfcfc;
+  border-color: #95a5a6;
 }

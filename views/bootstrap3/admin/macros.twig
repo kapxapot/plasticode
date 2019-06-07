@@ -83,10 +83,10 @@
         <div class="row mde-group" ng-class="{'mde-group-fullscreen': isPreview}">
         	<div class="mde-editor" ng-class="isPreview ? 'col-sm-6' : 'col-xs-12'">
         		<pl-md-editor value="item.{{name}}" name="{{name}}" is-disabled="loading" on-change="textSync(value, editor, '{{name}}')" mde-config="editorOpts" on-preview="togglePreview(isPreview, editor,  '{{name}}')" on-search="search(text)" {% if focus %} data-modalfocus{% endif %}></pl-md-editor>
-        	</div>
+            <pl-entity-autosave value="item.{{name}}" entity-type="'{{ alias }}'" entity-id="item.id" entity-updated-at="item.updated_at" on-load="textSync(text, null, '{{name}}')"></pl-entity-autosave>
+          </div>
         	<div class="mde-result col-sm-6 article hidden-xs" ng-bind-html="preview | rawHtml" ng-if="isPreview"></div>
         </div>
-        <pl-entity-autosave value="item.{{name}}" entity-type="'{{ alias }}'" entity-id="item.id" entity-updated-at="item.updated_at" on-load="textSync(text, null, '{{name}}')"></pl-entity-autosave>
 		{{ m.tooltip(col) }}
 	</div>
 {% endmacro %}

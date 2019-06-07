@@ -6,9 +6,54 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
     <script src="../dist/plasticode-admin.js"></script>
 </head>
-<body>
-<pl-md-editor value="'aaa'"></pl-md-editor>
+<body ng-controller="testController">
+<pl-md-editor value="text" is-disabled="disabled" on-change="upText(value)" mde-config="mdeConfig" on-search="search(value)"></pl-md-editor>
+<button ng-click="alert()">alert</button>
+<button ng-click="replaceText()">replace</button>
+<button ng-click="resetSettings()">reset</button>
+<button ng-click="setNullText()">null text</button>
+{{text}}
 <script type="text/javascript">
+    angular.module('plasticodeAdmin').controller('testController', ['$scope', '$timeout', '$q', function ($scope, $timeout, $q) {
+        $scope.text='';
+        $scope.disabled = true;
+        $scope.mdeConfig = {};
+
+        $timeout(function () {
+            $scope.text = 'absadasd';
+            $scope.disabled = false;
+            console.log(1);
+        }, 2500);
+
+        $scope.upText = function (value) {
+            $scope.text = value;
+        };
+
+        $scope.alert = function () {
+          alert($scope.text);
+        };
+
+        $scope.replaceText = function () {
+            $scope.text = 'new text';
+        };
+
+        $scope.resetSettings = function () {
+            $scope.mdeConfig = {
+                toolbar: []
+            }
+        };
+
+        $scope.setNullText = function () {
+            $scope.text = null;
+        };
+
+        $scope.search = function () {
+            return $q.resolve([]);
+        }
+
+
+    }]);
+
     angular.bootstrap(document.body, ['plasticodeAdmin']);
 </script>
 </body>
