@@ -1,8 +1,9 @@
-mdEditorService.$inject = [];
-export default function mdEditorService() {
+mdEditorService.$inject = ['$localStorage'];
+export default function mdEditorService($localStorage) {
     const service = {
         appendButton: appendButton,
         tagWrapButton: tagWrapButton,
+        toggleAutoCloseBrackets: toggleAutoCloseBrackets,
         wrapButton: wrapButton,
         defaultButtons: [
             tagWrapButton('boldText', 'fa fa-bold', 'b', 'Полужирный', 'Ctrl-B'),
@@ -29,7 +30,9 @@ export default function mdEditorService() {
             '|',
             tagWrapButton('carousel', 'fa fa-recycle', 'carousel', 'Карусель'),
             tagWrapButton('spoiler', 'fa fa-chevron-right', 'spoiler', 'Спойлер'),
-            tagWrapButton('quote', 'fa fa-quote-right', 'quote', 'Цитата')
+            tagWrapButton('quote', 'fa fa-quote-right', 'quote', 'Цитата'),
+            '|',
+            _customButton('autoCloseBrackets', toggleAutoCloseBrackets, 'fa fa-code', 'Автоматически закрывать скобки')
         ]
     };
 
@@ -47,6 +50,14 @@ export default function mdEditorService() {
         return _customButton(id, function(e) {
             _tagWrap(e, tag, text);
         }, cls, title, binding);
+    }
+
+    function toggleAutoCloseBrackets(editor, val = !editor.codemirror.getOption('autoCloseBrackets')) {
+        let autoCloseBrackets = val;
+        editor.codemirror.setOption('autoCloseBrackets', autoCloseBrackets);
+        $localStorage.plEditorAutoCloseBrackets = autoCloseBrackets;
+
+        editor.toolbarElements.autoCloseBrackets.className = autoCloseBrackets ? 'fa fa-code toggled' : 'fa fa-code';
     }
 
     function wrapButton(id, cls, pre, post, title, binding = null, text = null) {

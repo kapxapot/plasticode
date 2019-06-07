@@ -14,8 +14,8 @@ export const plMdEditor = {
     }
 };
 
-plMdEditorController.$inject = ['$element', '$scope', 'mdEditorService', 'plDataService'];
-function plMdEditorController($element, scope, mdEditorService, plDataService) {
+plMdEditorController.$inject = ['$element', '$scope', 'mdEditorService', 'plDataService', '$localStorage'];
+function plMdEditorController($element, scope, mdEditorService, plDataService, $localStorage) {
     /* jshint validthis: true */
     let vm = this,
         mde, editorDefaults,
@@ -67,22 +67,23 @@ function plMdEditorController($element, scope, mdEditorService, plDataService) {
             status: false,
             forceSync: true,
             autoRefresh: true,
-            autoCloseBrackets: true,
+            autoCloseBrackets: angular.isDefined($localStorage.plEditorAutoCloseBrackets) ? $localStorage.plEditorAutoCloseBrackets : true,
             plasticode: {
                 preview: false
             }
         };
         scope.$applyAsync(() => {
             mde = new SimpleMDE(Object.assign(editorDefaults, vm.mdeConfig));
-            console.log(mde);
+            //console.log(mde);
 
+            mdEditorService.toggleAutoCloseBrackets(mde, mde.codemirror.getOption('autoCloseBrackets'));
             _setText();
             _setShortcuts();
             _toggleReadOnly(vm.isDisabled);
             mde.codemirror.on('change', () => {
                 scope.$applyAsync(() => {
                     vm.text = mde.value();
-                    vm.onChange({value: vm.text});
+                    vm.onChange({value: vm.text, editor: mde});
                 });
             });
 
@@ -100,14 +101,25 @@ function plMdEditorController($element, scope, mdEditorService, plDataService) {
         });
     }
 
+    function _isLink(token = '') {
+        if (token && angular.isString(token)) {
+            let tokenParts = token.split(' ');
+
+            if (tokenParts.includes('link') ||
+                (tokenParts.includes('string') && tokenParts.includes('url'))) {
+                return !tokenParts.includes('formatting');
+            } else return false;
+        } else return false
+    }
+
     function _setShortcuts() {
         let keyMap = {};
+        keyMap['Home'] = "goLineLeft";
+        keyMap['End'] = 'goLineRight';
         if(mde.toolbar) {
             mde.toolbar.forEach(button => {
                 if (button.binding !== null) {
-                    keyMap[button.binding] = function () {
-                        button.action(mde);
-                    }
+                    keyMap[button.binding] = () => button.action(mde);
                 }
             });
         }
@@ -143,8 +155,7 @@ function plMdEditorController($element, scope, mdEditorService, plDataService) {
     function _parseAndSearch(editor) {
         let cur = editor.getDoc().getCursor(),
             token = editor.getTokenTypeAt(cur);
-        //console.log(token);
-        if (token === 'link' || token === 'string url') {
+        if (_isLink(token)) {
             let linkMarker = _getMarker(editor, cur);
             if (linkMarker && linkMarker.link) {
                 //console.log(linkMarker.find(), vm.onSearch);
