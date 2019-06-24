@@ -168,17 +168,23 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         return self::make($data);
     }
     
-    public function any()
+    public function any($by = null, $value = null) : bool
     {
+        if ($by !== null) {
+            return $this
+                ->where($by, $value)
+                ->any();
+        }
+
         return !$this->empty();
     }
 
-    public function empty()
+    public function empty() : bool
     {
         return $this->count() == 0;
     }
     
-    public function contains($value)
+    public function contains($value) : bool
     {
         return in_array($value, $this->data);
     }
