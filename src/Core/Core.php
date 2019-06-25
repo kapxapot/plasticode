@@ -23,6 +23,12 @@ class Core
         
         Model::init($container);
     }
+
+    public static function isJsonRequest($request) : bool
+    {
+        $contentType = $request->getContentType();
+        return (strpos($contentType, 'application/json') !== false);
+    }
     
     public static function json($response, $data, $options = [])
     {
