@@ -4,7 +4,6 @@ namespace Plasticode\Handlers;
 
 use Plasticode\Contained;
 use Plasticode\Core\Core;
-use Plasticode\Util\Strings;
 
 class ErrorHandler extends Contained
 {
@@ -17,14 +16,12 @@ class ErrorHandler extends Contained
         $this->debug = $debug;
     }
     
-	public function __invoke($request, $response, $exception)
-	{
-		$contentType = $request->getHeaderLine('Accept');
-
-    	if ($this->debug && Strings::startsWith($contentType, 'text/html')) {
-    	    throw $exception;
-    	}
-    	
-    	return Core::error($this->container, $response, $exception, $this->debug);
-	}
+    public function __invoke($request, $response, $exception)
+    {
+        if ($this->debug && !Core::isJsonRequest($request)) {
+            throw $exception;
+        }
+        
+        return Core::error($this->container, $response, $exception);
+    }
 }
