@@ -117,9 +117,9 @@ abstract class DbModel extends Model implements SerializableInterface
     public static function getRules($data)
     {
         $gen = self::getGenerator();
-		$rules = $gen->getRules($data);
-		
-		return $rules;
+        $rules = $gen->getRules($data);
+        
+        return $rules;
     }
     
     /**
@@ -128,12 +128,12 @@ abstract class DbModel extends Model implements SerializableInterface
      */
     public function getId()
     {
-	    $idField = static::$idField;
-	    $id = $this->{$idField};
-	    
-	    return is_numeric($id)
-	        ? intval($id)
-	        : $id;
+        $idField = static::$idField;
+        $id = $this->{$idField};
+        
+        return is_numeric($id)
+            ? intval($id)
+            : $id;
     }
     
     public function hasId() : bool
@@ -173,19 +173,19 @@ abstract class DbModel extends Model implements SerializableInterface
         
         return static::create($obj);
     }
-	
-	/**
-	 * Shortcut for getting all models with sort applied.
-	 */
-	public static function getAll() : Collection
-	{
-	    return self::query()->all();
-	}
-	
-	public static function getCount() : int
-	{
-	    return self::baseQuery()->count();
-	}
+    
+    /**
+     * Shortcut for getting all models with sort applied.
+     */
+    public static function getAll() : Collection
+    {
+        return self::query()->all();
+    }
+    
+    public static function getCount() : int
+    {
+        return self::baseQuery()->count();
+    }
     
     /**
      * Shortcut for getting model by id.
@@ -219,62 +219,74 @@ abstract class DbModel extends Model implements SerializableInterface
     
     private static function applySortOrder(Query $query) : Query
     {
-	    $sortOrder = self::buildSortOrder();
-	    
-	    foreach ($sortOrder as $sort) {
-	        $field = $sort['field'];
-	        
-	        $query = ($sort['reverse'] ?? false)
-	            ? $query->orderByDesc($field)
-	            : $query->orderByAsc($field);
-	    }
-	    
-	    return $query;
+        $sortOrder = self::buildSortOrder();
+        
+        foreach ($sortOrder as $sort) {
+            $field = $sort['field'];
+            
+            $query = ($sort['reverse'] ?? false)
+                ? $query->orderByDesc($field)
+                : $query->orderByAsc($field);
+        }
+        
+        return $query;
     }
 
-	// rights
-	
-	public static function tableAccess()
-	{
-	    return self::$db->getRights(self::getTable());
-	}
-	
-	public static function can($rights)
-	{
-	    return self::$db->can(self::getTable(), $rights);
-	}
-	
-	public function access()
-	{
-	    return self::$db->getRights(self::getTable(), $this->obj);
-	}
-	
-	// instance methods
-	
-	public function save()
-	{
-	    $this->obj->save();
-	    
-	    return $this;
-	}
+    // rights
+    
+    public static function tableAccess()
+    {
+        return self::$db->getRights(self::getTable());
+    }
+    
+    public static function can($rights)
+    {
+        return self::$db->can(self::getTable(), $rights);
+    }
+    
+    public function access()
+    {
+        return self::$db->getRights(self::getTable(), $this->obj);
+    }
+    
+    // instance methods
+    
+    public function save()
+    {
+        $this->obj->save();
+        
+        return $this;
+    }
 
-	public function serialize()
-	{
-	    return $this->obj
-	        ? $this->obj->asArray()
-	        : null;
-	}
-	
-	public function entityAlias()
-	{
-	    return self::getTable();
-	}
+    public function serialize()
+    {
+        return $this->obj
+            ? $this->obj->asArray()
+            : null;
+    }
+    
+    public function entityAlias()
+    {
+        return self::getTable();
+    }
 
-	public function toString()
-	{
-	    $class = static::class;
-	    $id = $this->getId();
-	    
-	    return "[{$id}] {$class}";
-	}
+    /**
+     * Checks if two objects are equal.
+     * 
+     * Equal means:
+     *  - Same class.
+     *  - Same id.
+     */
+    public function equals(object $obj) : bool
+    {
+        return !is_null($obj) && ($obj instanceof self) && ($obj->getId() === $this->getId());
+    }
+
+    public function toString()
+    {
+        $class = static::class;
+        $id = $this->getId();
+        
+        return "[{$id}] {$class}";
+    }
 }
