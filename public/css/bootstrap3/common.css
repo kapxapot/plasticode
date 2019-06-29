@@ -21,10 +21,17 @@
     --table-odd-bg-color: #e7e7e7;
     --quote-border-color: #94d694;
 
-    --break-1: 600px;
-    --break-2: 768px;
-    --break-3: 992px;
-    --break-4: 1200px;
+    --break-xs: 600px;
+    --break-sm: 768px;
+    --break-md: 992px;
+    --break-lg: 1200px;
+
+    --break-pre-xs: calc(var(--break-xs) - 1px);
+    --break-pre-sm: calc(var(--break-sm) - 1px);
+    --break-pre-md: calc(var(--break-md) - 1px);
+    --break-pre-lg: calc(var(--break-lg) - 1px);
+
+    --bs-modal-z-index: 1050;
 
     /* move this to warcry.ru stylesheet */
     --bluepost-color: #00bfff;
@@ -129,7 +136,7 @@ textarea.form-control {
 }
 
 /* modals */
-@media (min-width: 768px) {
+@media (min-width: var(--break-sm)) {
     .modal-dialog-narrow {
         width: 400px;
     }
@@ -386,7 +393,7 @@ a.gray:hover {
     margin-top: 4px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: var(--break-sm)) {
     figure {
         display: table;
     }
@@ -553,13 +560,13 @@ figcaption {
 
 /* grid */
 
-@media (max-width: 767px) {
+@media (max-width: var(--break-pre-sm)) {
     :root {
         --gallery-grid-cell: 160px;
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: var(--break-sm)) {
     :root {
         --gallery-grid-cell: 150px;
     }
@@ -738,25 +745,25 @@ figcaption {
     margin: -7px;
 }
 
-@media (max-width: 767px) {
+@media (max-width: var(--break-pre-sm)) {
     .sidebar-gallery .gallery .flex-item {
         width: 158px;
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: var(--break-sm)) {
     .sidebar-gallery .gallery .flex-item {
         width: 158px;
     }
 }
 
-@media (min-width: 992px) {
+@media (min-width: var(--break-md)) {
     .sidebar-gallery .gallery .flex-item {
         width: 104px;
     }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: var(--break-lg)) {
     .sidebar-gallery .gallery .flex-item {
         width: 129px;
     }
@@ -770,14 +777,14 @@ figcaption {
     display: none;
 }
 
-@media (max-width: 767px) {
+@media (max-width: var(--break-pre-sm)) {
     .gallery.gallery--uniform .flex-item img {
         height: 200px;
         width: auto;
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: var(--break-sm)) {
     .gallery.gallery--uniform .flex-item img {
         height: 300px;
         width: auto;
@@ -824,7 +831,7 @@ figcaption {
     width: 100%;
     height: 100%;
     position: fixed;
-    background: rgba(0, 0, 0, 1);
+    background: var(--black);
     top: 0;
     left: 0;
     z-index: 1000;
@@ -905,7 +912,7 @@ h3:first-child, h4:first-child {
     margin-top: 0;
 }
 
-@media (max-width: 767px) {
+@media (max-width: var(--break-pre-sm)) {
     .comic-image img {
         height: 240px;
         width: auto;
@@ -921,7 +928,7 @@ h3:first-child, h4:first-child {
     line-height: 1.05em;
 }
 
-@media (min-width: 768px) {
+@media (min-width: var(--break-sm)) {
     .comic-image .overlay {
         font-size: 130%;
         color: var(--black);
@@ -961,7 +968,7 @@ table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child:before {
     top: inherit;
 }
 
-@media (min-width: 768px) {
+@media (min-width: var(--break-sm)) {
     .dataTables_length {
         text-align: right;
     }

@@ -115,7 +115,7 @@ input[type="file"] {
     right: 0;
     margin: 10px;
     width: 300px;
-    z-index: 1100;
+    z-index: calc(var(--bs-modal-z-index) + 50);
 }
 
 /* SimpleMDE / Codemirror disabled state */
@@ -130,5 +130,5 @@ textarea:disabled + .editor-toolbar + .CodeMirror-wrap {
 
 .CodeMirror-hints {
     font-family: sans-serif;
-    z-index: 1060; /* bootstrap modal is 1050 */
+    z-index: calc(var(--bs-modal-z-index) + 10); /* bootstrap modal is 1050 */
 }
