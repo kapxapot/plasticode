@@ -1,69 +1,69 @@
 <!DOCTYPE html>
 {% set lang = lang ?? 'ru' %}
 <html lang="{{ lang }}">
-	<head>
-		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		
-		<meta name="theme-color" content="#222" />
-		
-		{# init #}
-		{% set year = 'now'|date('Y') %}
-		{% set year_from = copyright_from ?? year %}
-		{% set years_str %}{% if year > year_from %}{{ year_from }}—{% endif %}{{ year }}{% endset %}
-		
-		{# set to false to exclude auth blocks #}
-		{% set with_auth = with_auth ?? true %}
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        <meta name="theme-color" content="#222" />
+        
+        {# init #}
+        {% set year = 'now'|date('Y') %}
+        {% set year_from = copyright_from ?? year %}
+        {% set years_str %}{% if year > year_from %}{{ year_from }}—{% endif %}{{ year }}{% endset %}
+        
+        {# set to false to exclude auth blocks #}
+        {% set with_auth = with_auth ?? true %}
 
-		<title>{% if title %}{{ title|raw }} - {% endif %}{{ site_name }}{% if not title %} - {{ short_site_description }}{% endif %}</title>
-		
-		<!-- created by Sergey "kapxapot" Atroshchenko &copy; {{ years_str }} -->
+        <title>{% if title %}{{ title|raw }} - {% endif %}{{ site_name }}{% if not title %} - {{ short_site_description }}{% endif %}</title>
+        
+        <!-- created by Sergey "kapxapot" Atroshchenko &copy; {{ years_str }} -->
 
-		<meta name="copyright" content="(c) {{ years_str }} Copyright by {{ site_name }}" />
-		{% if site_keywords %}
-			<meta name="keywords" content="{{ site_keywords }}" />
-		{% endif %}
-		<meta name="description" content="{% if page_description %}{{ page_description }}{% else %}{% if title %}{{ title }} - {% endif %}{{ site_name }} - {{ site_description }}{% endif %}" />
-		
-		{% include 'main/includes/meta_card.twig' %}
-		
-		<link rel="shortcut icon" href="{{ fav_icon ?? '/favicon.ico' }}" />
-		
-		{% if touch_icon %}
-		    <link rel="apple-touch-icon" href="{{ touch_icon }}">
-		{% endif %}
+        <meta name="copyright" content="(c) {{ years_str }} Copyright by {{ site_name }}" />
+        {% if site_keywords %}
+            <meta name="keywords" content="{{ site_keywords }}" />
+        {% endif %}
+        <meta name="description" content="{% if page_description %}{{ page_description }}{% else %}{% if title %}{{ title }} - {% endif %}{{ site_name }} - {{ site_description }}{% endif %}" />
+        
+        {% include 'main/includes/meta_card.twig' %}
+        
+        <link rel="shortcut icon" href="{{ fav_icon ?? '/favicon.ico' }}" />
+        
+        {% if touch_icon %}
+            <link rel="apple-touch-icon" href="{{ touch_icon }}">
+        {% endif %}
 
-		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
-		
-		{% if with_colorbox %}
-			<link href="{{ folders.global }}colorbox/colorbox.css" rel="stylesheet" />
-		{% endif %}
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+        
+        {% if with_colorbox %}
+            <link href="{{ folders.global }}colorbox/colorbox.css" rel="stylesheet" />
+        {% endif %}
 
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-		
-		{% if with_datatables %}
-			<script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
-			<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
-			<script src="//cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
-			
-			<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css">
-			<script src="//cdn.datatables.net/responsive/2.1.1/js/dataTables.responsive.min.js"></script>
-			<script src="//cdn.datatables.net/responsive/2.1.1/js/responsive.bootstrap.min.js"></script>
-		{% endif %}
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+        
+        {% if with_datatables %}
+            <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+            <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+            <script src="//cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+            
+            <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css">
+            <script src="//cdn.datatables.net/responsive/2.1.1/js/dataTables.responsive.min.js"></script>
+            <script src="//cdn.datatables.net/responsive/2.1.1/js/responsive.bootstrap.min.js"></script>
+        {% endif %}
 
-		<!-- Moment.js -->
-		<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"></script>
-		
-		{% if with_charts %}
-			<!-- Chart.js -->
-			<script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
-			<script src="//cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.5/chartjs-plugin-annotation.js"></script>
-		{% endif %}
-	        	
-    	{# Font Awesome #}
-    	{% if font_awesome_css %}
+        <!-- Moment.js -->
+        <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"></script>
+        
+        {% if with_charts %}
+            <!-- Chart.js -->
+            <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.5/chartjs-plugin-annotation.js"></script>
+        {% endif %}
+                
+        {# Font Awesome #}
+        {% if font_awesome_css %}
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
         {% endif %}
         
@@ -73,161 +73,161 @@
         <!-- Hammer.js -->
         <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 
-		{% block head_appendix %}{% endblock %}
-		
-		{# global Plasticode css #}
-		<link href="{{ folders.global }}css/bootstrap3/common.css" rel="stylesheet" />
-		<link href="{{ folders.global }}css/bootstrap3/main.css" rel="stylesheet" />
-		
-		{# local Plasticode css #}
-		{% include 'main/includes/css.twig' %}
+        {% block head_appendix %}{% endblock %}
+        
+        {# global Plasticode css #}
+        <link href="{{ folders.global }}css/bootstrap3/common.css" rel="stylesheet" />
+        <link href="{{ folders.global }}css/bootstrap3/main.css" rel="stylesheet" />
+        
+        {# local Plasticode css #}
+        {% include 'main/includes/css.twig' %}
 
-		{% if rss_feed %}
-			<link rel="alternate" type="application/rss+xml" title="{{ site_name }} RSS" href="{{ rss_feed }}" />
-		{% endif %}
-		
-		{#<link rel="search" href="/search.xml" type="application/opensearchdescription+xml" title="{{ site_name }}"/>#}
-		
-		{% if rel_prev %}<link rel="prev" href="{{ rel_prev }}" />{% endif %}
-		{% if rel_next %}<link rel="next" href="{{ rel_next }}" />{% endif %}
+        {% if rss_feed %}
+            <link rel="alternate" type="application/rss+xml" title="{{ site_name }} RSS" href="{{ rss_feed }}" />
+        {% endif %}
+        
+        {#<link rel="search" href="/search.xml" type="application/opensearchdescription+xml" title="{{ site_name }}"/>#}
+        
+        {% if rel_prev %}<link rel="prev" href="{{ rel_prev }}" />{% endif %}
+        {% if rel_next %}<link rel="next" href="{{ rel_next }}" />{% endif %}
 
-		{% if google_analytics_id and not debug %}
-			<!-- Global site tag (gtag.js) - Google Analytics -->
-			<script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_id }}"></script>
-			<script>
-				window.dataLayer = window.dataLayer || [];
-				function gtag(){dataLayer.push(arguments);}
-				gtag('js', new Date());
+        {% if google_analytics_id and not debug %}
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_id }}"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
 
-				gtag('config', '{{ google_analytics_id }}');
-			</script>
-		{% endif %}
-	</head>
-	
-	{% set angular_app = angular.app ?? 'pcApp' %}
-	{% set angular_ctrl = angular.ctrl ?? 'pcCtrl' %}
+                gtag('config', '{{ google_analytics_id }}');
+            </script>
+        {% endif %}
+    </head>
+    
+    {% set angular_app = angular.app ?? 'pcApp' %}
+    {% set angular_ctrl = angular.ctrl ?? 'pcCtrl' %}
 
     {% if fullscreen %}
         {% set body_styles = 'fullscreen' %}
     {% endif %}
 
-	<body ng-app="{{ angular_app }}" ng-controller="{{ angular_ctrl }}"{% if body_styles %} class="{{ body_styles }}"{% endif %}>
-		<!-- nav bar -->
-		{% include 'main/includes/nav.twig' %}
-		
-		<div class="container">
-		    {% if with_auth %}
-    			{% if auth.user %}
-    				{% include 'modals/auth/password/change.twig' %}
-    			{% else %}
-    				{% include 'modals/auth/signup.twig' %}
-    				{% include 'modals/auth/signin.twig' %}
-    			{% endif %}
-			{% endif %}
+    <body ng-app="{{ angular_app }}" ng-controller="{{ angular_ctrl }}"{% if body_styles %} class="{{ body_styles }}"{% endif %}>
+        <!-- nav bar -->
+        {% include 'main/includes/nav.twig' %}
+        
+        <div class="container">
+            {% if with_auth %}
+                {% if auth.user %}
+                    {% include 'modals/auth/password/change.twig' %}
+                {% else %}
+                    {% include 'modals/auth/signup.twig' %}
+                    {% include 'modals/auth/signin.twig' %}
+                {% endif %}
+            {% endif %}
 
-			<!-- content -->
-			<div class="row">
-		        <!-- main -->
-		        <div id="main" class="{% if not one_column %}col-md-9 {% endif %}col-xs-12">
-					{% block content %}{% endblock %}
-		
-					{% if not no_social %}
-						<div id="social-share">
-							{% include 'main/includes/share.twig' %}
-						</div>
-					{% endif %}
-		
-					{% if not no_disqus %}
-						<div id="comments">
-							{% include 'main/includes/comments.twig' %}
-						</div>
-					{% endif %}
-            		
-            	    <div class="ad visible-sm-block visible-lg-block">
-            		    {% include 'main/includes/banners/bottom_sm_lg.twig' %}
-            	    </div>
-            		
-            	    <div class="ad visible-md-block">
-            		    {% include 'main/includes/banners/bottom_md.twig' %}
-            	    </div>
+            <!-- content -->
+            <div class="row">
+                <!-- main -->
+                <div id="main" class="{% if not one_column %}col-md-9 {% endif %}col-xs-12">
+                    {% block content %}{% endblock %}
+        
+                    {% if not no_social %}
+                        <div id="social-share">
+                            {% include 'main/includes/share.twig' %}
+                        </div>
+                    {% endif %}
+        
+                    {% if not no_disqus %}
+                        <div id="comments">
+                            {% include 'main/includes/comments.twig' %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="ad visible-sm-block visible-lg-block">
+                        {% include 'main/includes/banners/bottom_sm_lg.twig' %}
+                    </div>
+                    
+                    <div class="ad visible-md-block">
+                        {% include 'main/includes/banners/bottom_md.twig' %}
+                    </div>
             
-            	    <div class="ad visible-xs-block">
-            		    {% include 'main/includes/banners/bottom_xs.twig' %}
-            	    </div>
-		        </div>
+                    <div class="ad visible-xs-block">
+                        {% include 'main/includes/banners/bottom_xs.twig' %}
+                    </div>
+                </div>
 
-				{% include 'angular.twig' with { 'with_auth': with_auth, 'lang': lang } %}
-				
-				<!-- SIDEBAR -->
-        		<div id="sidebar" class="{% if not one_column %}col-md-3 {% endif %}col-xs-12">
-					{% if sidebar %}		
-						<div id="sidebar-panels">
-							{% include 'main/includes/sidebar.twig' %}
-						</div>
-					{% endif %}
-					
-					{% if not one_column %}
-					    <div class="ad visible-lg-block">
-						    {% include 'main/includes/banners/sidebar_lg.twig' %}
-					    </div>
+                {% include 'angular.twig' with { 'with_auth': with_auth, 'lang': lang } %}
+                
+                <!-- SIDEBAR -->
+                <div id="sidebar" class="{% if not one_column %}col-md-3 {% endif %}col-xs-12">
+                    {% if sidebar %}		
+                        <div id="sidebar-panels">
+                            {% include 'main/includes/sidebar.twig' %}
+                        </div>
+                    {% endif %}
+                    
+                    {% if not one_column %}
+                        <div class="ad visible-lg-block">
+                            {% include 'main/includes/banners/sidebar_lg.twig' %}
+                        </div>
 
-					    <div class="ad visible-md-block">
-						    {% include 'main/includes/banners/sidebar_md.twig' %}
-					    </div>
-					{% endif %}
+                        <div class="ad visible-md-block">
+                            {% include 'main/includes/banners/sidebar_md.twig' %}
+                        </div>
+                    {% endif %}
 
-					{% if vk_widget.group_id %}
-    					{% if index %}
-    						<div id="vk">
-    							{% include 'main/includes/vk.twig' %}
-    						</div>
-    					{% endif %}
-					
-					    {% if vk_widget.with_chat %}
-							{% include 'main/includes/vk_chat.twig' %}
+                    {% if vk_widget.group_id %}
+                        {% if index %}
+                            <div id="vk">
+                                {% include 'main/includes/vk.twig' %}
+                            </div>
+                        {% endif %}
+                    
+                        {% if vk_widget.with_chat %}
+                            {% include 'main/includes/vk_chat.twig' %}
                         {% endif %}
                     {% endif %}
 
-					{% include 'main/includes/sidebar_more.twig' %}
-				</div>
-			</div>
-		</div>
+                    {% include 'main/includes/sidebar_more.twig' %}
+                </div>
+            </div>
+        </div>
 
-		<!-- FOOTER -->
-		<div id="footer" class="navbar navbar-inverse">
-			<div class="container dark">
-				{% include 'main/includes/footer.twig' %}
-			</div>
-		</div>
+        <!-- FOOTER -->
+        <div id="footer" class="navbar navbar-inverse">
+            <div class="container gray-9">
+                {% include 'main/includes/footer.twig' %}
+            </div>
+        </div>
 
-		<!-- scripts -->
-		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-		
-		{% if with_colorbox %}
-			<script src="{{ folders.global }}colorbox/colorbox.js"></script>
-		{% endif %}
-		
-		{# Font Awesome #}
-		{% if not font_awesome_css %}
-		    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
-		{% endif %}
+        <!-- scripts -->
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        
+        {% if with_colorbox %}
+            <script src="{{ folders.global }}colorbox/colorbox.js"></script>
+        {% endif %}
+        
+        {# Font Awesome #}
+        {% if not font_awesome_css %}
+            <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
+        {% endif %}
 
-		{% include 'main/includes/js.twig' %}
+        {% include 'main/includes/js.twig' %}
 
-		{# local js #}
-		<script src="{{ folders.global }}js/common.js"></script>
-		<script src="{{ folders.global }}js/main.js"></script>
+        {# local js #}
+        <script src="{{ folders.global }}js/common.js"></script>
+        <script src="{{ folders.global }}js/main.js"></script>
 
-		{% if auth_token_key %}
-			<script>
-				authTokenKey = '{{ auth_token_key }}';
-			</script>
-		{% endif %}
+        {% if auth_token_key %}
+            <script>
+                authTokenKey = '{{ auth_token_key }}';
+            </script>
+        {% endif %}
 
-		{% if with_charts %}
-			<script src="{{ folders.global }}js/colors.js"></script>
-		{% endif %}
-		
-   		{% block more_js %}{% endblock %}
-	</body>
+        {% if with_charts %}
+            <script src="{{ folders.global }}js/colors.js"></script>
+        {% endif %}
+        
+           {% block more_js %}{% endblock %}
+    </body>
 </html>

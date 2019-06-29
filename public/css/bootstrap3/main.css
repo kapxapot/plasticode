@@ -1,5 +1,6 @@
 :root {
     --link-color: #1370bf;
+    --social-links-color: #66ff94;
 }
 
 body {
@@ -473,6 +474,10 @@ fieldset[disabled] .btn-primary.focus {
 .social-links a {
     color: var(--gray-6);
     transition: color 0.5s;
+}
+
+.social-links a:hover {
+    color: var(--social-links-color);
 }
 
 .disclaimer {
