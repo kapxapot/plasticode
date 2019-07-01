@@ -2,6 +2,6 @@
 
 namespace Plasticode\Events;
 
-class Event
+abstract class Event
 {
 }
