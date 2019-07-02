@@ -6,25 +6,15 @@ use Plasticode\Util\Date;
 
 trait Stamps
 {
-    use Created;
+    use Created, Updated;
 
-    public function updater()
-    {
-        return static::getUser($this->updatedBy);
-    }
-
-    public function updatedAtIso()
-    {
-        return Date::iso($this->updatedAt);
-    }
-    
     public function stamp()
     {
         $user = self::$auth->getUser();
         
         if ($user) {
-            $this->createdBy = $this->createdBy ?? $user->id;
-            $this->updatedBy = $user->id;
+            $this->createdBy = $this->createdBy ?? $user->getId();
+            $this->updatedBy = $user->getId();
         }
         
         if ($this->isPersisted()) {
