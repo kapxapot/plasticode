@@ -6,6 +6,7 @@ use Plasticode\Collection;
 use Plasticode\Query;
 use Plasticode\Exceptions\ApplicationException;
 use Plasticode\Models\Interfaces\SerializableInterface;
+use Plasticode\Util\Classes;
 use Plasticode\Util\Pluralizer;
 use Plasticode\Util\Strings;
 
@@ -56,7 +57,7 @@ abstract class DbModel extends Model implements SerializableInterface
     
     private static function pluralClass()
     {
-        $class = Strings::lastChunk(static::class, '\\');
+        $class = Classes::shortName(static::class);
         return Pluralizer::plural($class);
     }
     

@@ -271,6 +271,14 @@ class Bootstrap
             'parser' => function ($container) {
                 return new \Plasticode\Core\Parser($container, $container->parserConfig);
             },
+
+            'dispatcher' => function ($c) {
+                return new \Plasticode\Events\EventDispatcher($c->eventProcessors);
+            },
+
+            'eventProcessors' => function ($c) {
+                return [];
+            },
             
             // external
             
