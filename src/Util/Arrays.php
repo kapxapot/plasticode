@@ -4,7 +4,7 @@ namespace Plasticode\Util;
 
 class Arrays
 {
-    public static function exists($array, $key)
+    public static function exists($array, $key) : bool
     {
         return !is_null($array) && ($array[$key] ?? null) !== null;
     }
@@ -47,7 +47,7 @@ class Arrays
      * @param mixed $value
      * @return array
      */
-    public static function set(&$array, $key, $value)
+    public static function set(&$array, $key, $value) : array
     {
         if (empty($array) || strlen($key) == 0) {
             return null;
@@ -79,7 +79,7 @@ class Arrays
      * @param array $array
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      */
-    public static function distinctBy($array, $by = 'id')
+    public static function distinctBy($array, $by = 'id') : array
     {
         return array_values(self::toAssocBy($array, $by));
     }
@@ -126,7 +126,7 @@ class Arrays
     /**
      * Extracts non-null 'id' column/property values.
      */
-    public static function extractIds($array)
+    public static function extractIds($array) : array
     {
         return self::extract($array, 'id');
     }
@@ -134,7 +134,7 @@ class Arrays
     /**
      * Extracts non-null column/property values from array.
      */
-    public static function extract($array, $column)
+    public static function extract($array, $column) : array
     {
         if ($array === null) {
             return null;
@@ -149,6 +149,11 @@ class Arrays
         });
     }
     
+    /**
+     * Returns property value.
+     * 
+     * @return mixed
+     */
     private static function getProperty($obj, $property)
     {
         return is_array($obj)
@@ -158,6 +163,8 @@ class Arrays
     
     /**
      * Filters array by column/property value or callable, then returns first item or null.
+     * 
+     * @return mixed
      */
     public static function firstBy($array, $by, $value = null)
     {
@@ -167,6 +174,8 @@ class Arrays
     
     /**
      * Filters array by column/property value or callable, then returns last item or null.
+     * 
+     * @return mixed
      */
     public static function lastBy($array, $by, $value = null)
     {
@@ -177,7 +186,7 @@ class Arrays
     /**
      * Filters array by column/property value or callable.
      */
-    public static function filter($array, $by, $value = null)
+    public static function filter($array, $by, $value = null) : array
     {
         if ($array === null) {
             return null;
@@ -190,14 +199,14 @@ class Arrays
         });
     }
     
-    public static function filterIn($array, $column, $values)
+    public static function filterIn($array, $column, $values) : array
     {
 	    return self::filter($array, function ($item) use ($column, $values) {
 	        return in_array(self::getProperty($item, $column), $values);
 	    });
     }
     
-    public static function filterNotIn($array, $column, $values)
+    public static function filterNotIn($array, $column, $values) : array
     {
 	    return self::filter($array, function ($item) use ($column, $values) {
 	        return !in_array(self::getProperty($item, $column), $values);
@@ -225,7 +234,7 @@ class Arrays
     /**
      * Returns first $limit elements
      */
-    public static function take(array $array, int $limit)
+    public static function take(array $array, int $limit) : array
     {
         return array_slice($array, 0, $limit);
     }
@@ -233,13 +242,15 @@ class Arrays
     /**
      * Skips $offset elements and takes $limit elements
      */
-    public static function slice(array $array, int $offset, int $limit)
+    public static function slice(array $array, int $offset, int $limit) : array
     {
         return array_slice($array, $offset, $limit);
     }
     
     /**
      * Returns first item from array or null.
+     * 
+     * @return mixed
      */
     public static function first($array)
     {
@@ -248,6 +259,8 @@ class Arrays
     
     /**
      * Returns last item from array or null.
+     * 
+     * @return mixed
      */
     public static function last($array)
     {
@@ -271,27 +284,27 @@ class Arrays
         return $result;
     }
     
-    public static function orderBy($array, $column, $dir = null, $type = null)
+    public static function orderBy($array, $column, $dir = null, $type = null) : array
     {
         return Sort::by($array, $column, $dir, $type);
     }
     
-    public static function orderByDesc($array, $column, $type = null)
+    public static function orderByDesc($array, $column, $type = null) : array
     {
         return Sort::desc($array, $column, $type);
     }
     
-    public static function orderByStr($array, $column, $dir = null)
+    public static function orderByStr($array, $column, $dir = null) : array
     {
         return Sort::byStr($array, $column, $dir);
     }
     
-    public static function orderByStrDesc($array, $column)
+    public static function orderByStrDesc($array, $column) : array
     {
         return Sort::descStr($array, $column);
     }
     
-    public static function multiSort($array, $sorts)
+    public static function multiSort($array, $sorts) : array
     {
         return Sort::multi($array, $sorts);
     }
