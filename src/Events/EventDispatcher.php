@@ -30,19 +30,36 @@ class EventDispatcher
         $this->processors = $processors;
     }
 
+    private function log(string $msg) : void
+    {
+        $this->eventLog->info($msg);
+    }
+
     public function dispatch(Event $event) : void
     {
-        $eventClass = get_class($event);
+        $this->log('Dispatching event ' . $event->toString());
+
+        $eventClass = $event->getClass();
         $method = $this->getProcessMethod($eventClass);
         $processors = $this->getProcessors($eventClass);
 
         $queue = [];
 
         foreach ($processors as $processor) {
+            $this->log('Invoking ' . $processor->getClass() . '->' . $method . '(' . $event->toString() . ')');
+
             $nextEvents = $processor->{$method}($event);
 
+            if (count($nextEvents) > 0) {
+                $eventStr = implode(', ', array_map(function ($e) {
+                    return $e->toString();
+                }));
+
+                $this->log('Next events (' . count($nextEvents) . '): ' . $eventStr);
+            }
+
             foreach ($nextEvents as $nextEvent) {
-                $queue[] = $nextEvent;
+                $queue[] = $nextEvent->withParent($event);
             }
         }
 
@@ -51,12 +68,19 @@ class EventDispatcher
                 $this->dispatch($queueEvent);
             }
         }
+
+        $this->log('Finished dispatching event ' . $event->toString());
     }
 
     private function getProcessors(string $eventClass) : array
     {
         if (!array_key_exists($eventClass, $this->map)) {
+            $this->log('No processor map found for ' . $eventClass);
+
             $this->mapEventClass($eventClass);
+        }
+        else {
+            $this->log('Processor map found for ' . $eventClass);
         }
 
         return $this->map[$eventClass];
@@ -64,41 +88,47 @@ class EventDispatcher
 
     private function mapEventClass(string $eventClass) : void
     {
+        $this->log('Building processor map for ' . $eventClass);
+
+        $map = [];
         $methodName = $this->getProcessMethod($eventClass);
 
         foreach ($this->processors as $processor) {
             if (\method_exists($processor, $methodName)) {
-                $this->addMapping($eventClass, $processor);
+                $this->log('Method ' . $methodName . ' found in processor ' . $processor->getClass());
+
+                $map[] = $processor;
             }
         }
+
+        $this->map[$eventClass] = $map;
     }
 
     private function getProcessMethod(string $eventClass)
     {
-        return "process" . Classes::shortName($eventClass);
+        return 'process' . Classes::shortName($eventClass);
     }
 
     /**
      * Looks for loops in the event chain.
      * 
-     * Temporarily just looks for the same event class.
+     * Looks for the same event class with the same entity id.
      * 
-     * To do: Should check entity id too.
-     *
      * @param Event $event
      * @return bool
      */
     private function isLoop(Event $event) : bool
     {
-        $eventClass = get_class($event);
+        $eventClass = $event->getClass();
 
         $cur = $event->getParent();
 
         while (!is_null($cur)) {
-            $curClass = get_class($cur);
+            $curClass = $cur->getClass();
 
-            // should check entities' ids here too
-            if ($curClass === $eventClass) {
+            if ($curClass === $eventClass && $cur->getEntityId() === $event->getEntityId()) {
+                $this->log('Loop found in event ' . $event->toString());
+
                 return true;
             }
 
