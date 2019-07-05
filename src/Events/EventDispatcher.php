@@ -41,29 +41,30 @@ class EventDispatcher extends Contained
 
     public function dispatch(Event $event) : void
     {
-        $this->log('Dispatching event ' . $event->toString());
-
-        $eventClass = $event->getClass();
-        $method = $this->getProcessMethod($eventClass);
-        $processors = $this->getProcessors($eventClass);
-
         $queue = [];
 
+        $eventClass = $event->getClass();
+
+        $this->log('Dispatching...');
+        $this->log('...event: ' . $eventClass);
+        $this->log('...entity: ' . $event->getEntity()->toString());
+
+        $processors = $this->getProcessors($eventClass);
+        $method = $this->getProcessMethod($eventClass);
+
         foreach ($processors as $processor) {
-            $this->log('Invoking ' . $processor->getClass() . '->' . $method . '(' . $event->toString() . ')');
+            $this->log('Invoking...');
+            $this->log('...processor: ' . $processor->getClass());
+            $this->log('...method: ' . $method);
 
             $nextEventsIterator = $processor->{$method}($event);
-            $nextEvents = iterator_to_array($nextEventsIterator);
+            //$nextEvents = iterator_to_array($nextEventsIterator);
 
-            if (count($nextEvents) > 0) {
-                $eventStr = implode(', ', array_map(function ($e) {
-                    return $e->toString();
-                }, $nextEvents));
-
-                $this->log('Next events (' . count($nextEvents) . '): ' . $eventStr);
-            }
-
-            foreach ($nextEvents as $nextEvent) {
+            foreach ($nextEventsIterator as $nextEvent) {
+                $this->log('Queueing...');
+                $this->log('...event: ' . $nextEvent->getClass());
+                $this->log('...entity: ' . $nextEvent->getEntity()->toString());
+    
                 $queue[] = $nextEvent->withParent($event);
             }
         }
@@ -74,20 +75,29 @@ class EventDispatcher extends Contained
             if (!$this->isLoop($queueEvent)) {
                 $this->dispatch($queueEvent);
             }
+            else {
+                $this->log('[!] Loop found, aborting...');
+                $this->log('...event: ' . $queueEvent->getClass());
+                $this->log('...entity: ' . $queueEvent->getEntity()->toString());
+            }
         }
 
-        $this->log('Finished dispatching event ' . $event->toString());
+        $this->log('Finished dispatching...');
+        $this->log('...event: ' . $eventClass);
+        $this->log('...entity: ' . $event->getEntity()->toString());
     }
 
     private function getProcessors(string $eventClass) : array
     {
+        $this->log('Getting processors for ' . $eventClass);
+
         if (!array_key_exists($eventClass, $this->map)) {
-            $this->log('No processor map found for ' . $eventClass);
+            $this->log('...no processor map found');
 
             $this->mapEventClass($eventClass);
         }
         else {
-            $this->log('Processor map found for ' . $eventClass);
+            $this->log('...processor map found');
         }
 
         return $this->map[$eventClass];
@@ -95,17 +105,21 @@ class EventDispatcher extends Contained
 
     private function mapEventClass(string $eventClass) : void
     {
-        $this->log('Building processor map for ' . $eventClass);
+        $this->log('...building processor map');
 
         $map = [];
         $methodName = $this->getProcessMethod($eventClass);
 
         foreach ($this->processors as $processor) {
             if (\method_exists($processor, $methodName)) {
-                $this->log('Method ' . $methodName . ' found in processor ' . $processor->getClass());
+                $this->log('...method ' . $methodName . ' found in processor ' . $processor->getClass());
 
                 $map[] = $processor;
             }
+        }
+
+        if (count($map) == 0) {
+            $this->log('...no processors found');
         }
 
         $this->map[$eventClass] = $map;
@@ -134,8 +148,6 @@ class EventDispatcher extends Contained
             $curClass = $cur->getClass();
 
             if ($curClass === $eventClass && $cur->getEntityId() === $event->getEntityId()) {
-                $this->log('Loop found in event ' . $event->toString());
-
                 return true;
             }
 
