@@ -57,7 +57,7 @@ abstract class Event
 
     public function getClass() : string
     {
-        return statis::class;
+        return static::class;
     }
 
     public function toString()

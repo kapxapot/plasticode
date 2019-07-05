@@ -8,6 +8,6 @@ abstract class EventProcessor extends Contained
 {
     public function getClass() : string
     {
-        return statis::class;
+        return static::class;
     }
 }
