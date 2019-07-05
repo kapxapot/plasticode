@@ -46,16 +46,16 @@ class EventDispatcher extends Contained
         $eventClass = $event->getClass();
 
         $this->log('Dispatching...');
-        $this->log('...event: ' . $eventClass);
-        $this->log('...entity: ' . $event->getEntity()->toString());
+        $this->log('   event: ' . $eventClass);
+        $this->log('   entity: ' . $event->getEntity()->toString());
 
         $processors = $this->getProcessors($eventClass);
         $method = $this->getProcessMethod($eventClass);
 
         foreach ($processors as $processor) {
             $this->log('Invoking...');
-            $this->log('...processor: ' . $processor->getClass());
-            $this->log('...method: ' . $method);
+            $this->log('   processor: ' . $processor->getClass());
+            $this->log('   method: ' . $method);
 
             try {
                 $nextEventsIterator = $processor->{$method}($event);
@@ -63,15 +63,15 @@ class EventDispatcher extends Contained
     
                 foreach ($nextEventsIterator as $nextEvent) {
                     $this->log('Queueing...');
-                    $this->log('...event: ' . $nextEvent->getClass());
-                    $this->log('...entity: ' . $nextEvent->getEntity()->toString());
+                    $this->log('   event: ' . $nextEvent->getClass());
+                    $this->log('   entity: ' . $nextEvent->getEntity()->toString());
         
                     $queue[] = $nextEvent->withParent($event);
                 }
             }
             catch (\Exception $ex) {
                 $this->log('[!] Event processing error...');
-                $this->log('...message: ' . $ex->getMessage());
+                $this->log('   message: ' . $ex->getMessage());
             }
         }
 
@@ -83,8 +83,8 @@ class EventDispatcher extends Contained
             }
             else {
                 $this->log('[!] Loop found, aborting...');
-                $this->log('...event: ' . $queueEvent->getClass());
-                $this->log('...entity: ' . $queueEvent->getEntity()->toString());
+                $this->log('   event: ' . $queueEvent->getClass());
+                $this->log('   entity: ' . $queueEvent->getEntity()->toString());
             }
         }
 
@@ -96,12 +96,12 @@ class EventDispatcher extends Contained
         $this->log('Getting processors for ' . $eventClass);
 
         if (!array_key_exists($eventClass, $this->map)) {
-            $this->log('...no processor map found');
+            $this->log('   no processor map found');
 
             $this->mapEventClass($eventClass);
         }
         else {
-            $this->log('...processor map found');
+            $this->log('   processor map found (' . count($this->map[$eventClass]) . ' processors)');
         }
 
         return $this->map[$eventClass];
@@ -109,21 +109,21 @@ class EventDispatcher extends Contained
 
     private function mapEventClass(string $eventClass) : void
     {
-        $this->log('...building processor map');
+        $this->log('   building processor map');
 
         $map = [];
         $methodName = $this->getProcessMethod($eventClass);
 
         foreach ($this->processors as $processor) {
             if (\method_exists($processor, $methodName)) {
-                $this->log('...method ' . $methodName . ' found in processor ' . $processor->getClass());
+                $this->log('   method ' . $methodName . ' found in processor ' . $processor->getClass());
 
                 $map[] = $processor;
             }
         }
 
         if (count($map) == 0) {
-            $this->log('...no processors found');
+            $this->log('   no processors found');
         }
 
         $this->map[$eventClass] = $map;
