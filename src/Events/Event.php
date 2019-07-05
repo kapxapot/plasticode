@@ -23,7 +23,7 @@ abstract class Event
         return $this->parent;
     }
 
-    public function setParent(Event $parent) : void
+    public function setParent(?Event $parent) : void
     {
         $this->parent = $parent;
     }
