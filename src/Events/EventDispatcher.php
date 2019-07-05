@@ -68,6 +68,8 @@ class EventDispatcher extends Contained
             }
         }
 
+        $this->log('Queue size: ' . count($queue));
+
         foreach ($queue as $queueEvent) {
             if (!$this->isLoop($queueEvent)) {
                 $this->dispatch($queueEvent);
