@@ -58,7 +58,7 @@ class EventDispatcher extends Contained
             if (count($nextEvents) > 0) {
                 $eventStr = implode(', ', array_map(function ($e) {
                     return $e->toString();
-                }), $nextEvents);
+                }, $nextEvents));
 
                 $this->log('Next events (' . count($nextEvents) . '): ' . $eventStr);
             }
