@@ -77,10 +77,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
      * Groups collection by column/property or callable.
      * 
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
-     * @return Returns associative array of collections.
+     * @return array Returns associative array of collections.
      */
     public function group($by = null) : array
     {
+        $result = [];
+
         $groups = Arrays::groupBy($this->data, $by ?? 'id');
         
         foreach ($groups as $key => $group) {
