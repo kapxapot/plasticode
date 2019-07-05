@@ -52,12 +52,13 @@ class EventDispatcher extends Contained
         foreach ($processors as $processor) {
             $this->log('Invoking ' . $processor->getClass() . '->' . $method . '(' . $event->toString() . ')');
 
-            $nextEvents = $processor->{$method}($event);
+            $nextEventsIterator = $processor->{$method}($event);
+            $nextEvents = iterator_to_array($nextEventsIterator);
 
             if (count($nextEvents) > 0) {
                 $eventStr = implode(', ', array_map(function ($e) {
                     return $e->toString();
-                }));
+                }), $nextEvents);
 
                 $this->log('Next events (' . count($nextEvents) . '): ' . $eventStr);
             }
