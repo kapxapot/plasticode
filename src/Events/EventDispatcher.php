@@ -57,15 +57,21 @@ class EventDispatcher extends Contained
             $this->log('...processor: ' . $processor->getClass());
             $this->log('...method: ' . $method);
 
-            $nextEventsIterator = $processor->{$method}($event);
-            //$nextEvents = iterator_to_array($nextEventsIterator);
-
-            foreach ($nextEventsIterator as $nextEvent) {
-                $this->log('Queueing...');
-                $this->log('...event: ' . $nextEvent->getClass());
-                $this->log('...entity: ' . $nextEvent->getEntity()->toString());
+            try {
+                $nextEventsIterator = $processor->{$method}($event);
+                //$nextEvents = iterator_to_array($nextEventsIterator);
     
-                $queue[] = $nextEvent->withParent($event);
+                foreach ($nextEventsIterator as $nextEvent) {
+                    $this->log('Queueing...');
+                    $this->log('...event: ' . $nextEvent->getClass());
+                    $this->log('...entity: ' . $nextEvent->getEntity()->toString());
+        
+                    $queue[] = $nextEvent->withParent($event);
+                }
+            }
+            catch (\Exception $ex) {
+                $this->log('[!] Event processing error...');
+                $this->log('...message: ' . $ex->getMessage());
             }
         }
 
@@ -82,9 +88,7 @@ class EventDispatcher extends Contained
             }
         }
 
-        $this->log('Finished dispatching...');
-        $this->log('...event: ' . $eventClass);
-        $this->log('...entity: ' . $event->getEntity()->toString());
+        $this->log('Finished dispatching ' . $eventClass);
     }
 
     private function getProcessors(string $eventClass) : array
