@@ -288,7 +288,7 @@ class Bootstrap
             },
 
             'dispatcher' => function ($c) {
-                return new \Plasticode\Events\EventDispatcher($c->eventProcessors);
+                return new \Plasticode\Events\EventDispatcher($c, $c->eventProcessors);
             },
 
             'eventProcessors' => function ($c) {

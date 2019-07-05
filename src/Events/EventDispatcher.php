@@ -2,9 +2,10 @@
 
 namespace Plasticode\Events;
 
+use Plasticode\Contained;
 use Plasticode\Util\Classes;
 
-class EventDispatcher
+class EventDispatcher extends Contained
 {
     /**
      * Event processors
@@ -23,10 +24,13 @@ class EventDispatcher
     /**
      * Creates event dispatcher.
      *
+     * @param object $container DI container
      * @param array $processors Event processors
      */
-    public function __construct(array $processors)
+    public function __construct($container, array $processors)
     {
+        parent::__construct($container);
+
         $this->processors = $processors;
     }
 
