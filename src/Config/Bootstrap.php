@@ -202,11 +202,16 @@ class Bootstrap
                 foreach ($globals as $key => $value) {
                     $view[$key] = $value;
                 }
+
+                $user = $c->auth->getUser();
             
                 $view['auth'] = [
                     'check' => $c->auth->check(),
-                    'user' => $c->auth->getUser(),
+                    'user' => $user,
                     'role' => $c->auth->getRole(),
+                    'avatar' => is_null($user)
+                        ? $c->linker->defaultGravatarUrl()
+                        : $user->gravatarUrl(),
                 ];
             
                 $view['image_types'] = \Plasticode\IO\Image::buildTypesString();
