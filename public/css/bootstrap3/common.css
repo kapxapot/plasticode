@@ -985,11 +985,32 @@ div.dataTables_wrapper div.dataTables_paginate {
 
 .avatar {
     border-radius: 50%;
+    width: 32px;
+    height: 32px;
 }
 
-.navbar .avatar {
-    width: 20px;
-    height: 20px;
+.avatar--inline {
+    width: 22px;
+    height: 22px;
+    margin-top: -2px;
+}
+
+/* user menu */
+
+.usermenu {
+    padding-top: 20px;
+    padding-bottom: 0;
+    position: relative;
+}
+
+.usermenu__avatar {
+    position: absolute;
+    top: 12px;
+    right: 26px;
+}
+
+.usermenu__username {
+    margin-right: 42px;
 }
 
 /* utility */
