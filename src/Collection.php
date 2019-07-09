@@ -299,6 +299,14 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         $data = Arrays::multiSort($this->data, $sorts);
         return self::make($data);
     }
+
+    public function orderByFunc(\Closure $func) : self
+    {
+        $data = $this->data; // cloning
+        usort($data, $func);
+
+        return self::make($data);
+    }
     
     public function reverse() : self
     {
