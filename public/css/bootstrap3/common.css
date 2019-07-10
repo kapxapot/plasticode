@@ -1027,6 +1027,12 @@ div.dataTables_wrapper div.dataTables_paginate {
     }
 }
 
+@media (max-width: 1199px) {
+    .navbar-right .dropdown-menu {
+        right: initial;
+    }
+}
+
 /* utility */
 
 .grid {
