@@ -10,7 +10,7 @@ class AccessRightsExtension extends \Twig_Extension {
     }
     
     public function getName() {
-    	return "accessRights";
+        return "accessRights";
     }
     
     public function getFunctions() {
@@ -20,12 +20,12 @@ class AccessRightsExtension extends \Twig_Extension {
     }
     
     public function can($entity, $action) {
-    	$can = !$action;
-    	if (!$can) {
-	    	$access = $this->container->access;
-	    	$can = $access->checkRights($entity, $action);
-    	}
-    	
-    	return $can;
+        $can = !$action;
+        if (!$can) {
+            $access = $this->container->access;
+            $can = $access->checkRights($entity, $action);
+        }
+        
+        return $can;
     }
 }
