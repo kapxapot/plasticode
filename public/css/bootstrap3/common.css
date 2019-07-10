@@ -23,8 +23,8 @@
 
     --space-0: 0;
     --space-1: var(--space-base);
-    --space-2: calc(var(--space-1) * var(--font-multi));
-    --space-3: calc(var(--space-2) * var(--font-multi));
+    --space-2: calc(var(--space-1) * var(--space-multi));
+    --space-3: calc(var(--space-2) * var(--space-multi));
 
     --font-base: 100%;
     --font-multi: 1.15;
