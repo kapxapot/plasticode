@@ -18,10 +18,22 @@
     --coral-red: #ff4040;
     --darkgreen: darkgreen;
 
+    --space-base: 0.5rem;
+    --space-multi: 2;
+
     --space-0: 0;
-    --space-1: 0.5rem;
-    --space-2: 1rem;
-    --space-3: 2rem;
+    --space-1: var(--space-base);
+    --space-2: calc(var(--space-1) * var(--font-multi));
+    --space-3: calc(var(--space-2) * var(--font-multi));
+
+    --font-base: 100%;
+    --font-multi: 1.15;
+
+    --font-md: var(--font-base);
+    --font-sm: calc(var(--font-md) / var(--font-multi));
+    --font-xs: calc(var(--font-sm) / var(--font-multi));
+    --font-lg: calc(var(--font-md) * var(--font-multi));
+    --font-xl: calc(var(--font-lg) * var(--font-multi));
 
     --table-odd-bg-color: #e7e7e7;
     --quote-border-color: #94d694;
@@ -1003,14 +1015,16 @@ div.dataTables_wrapper div.dataTables_paginate {
     position: relative;
 }
 
-.usermenu__avatar {
-    position: absolute;
-    top: 12px;
-    right: 26px;
-}
-
-.usermenu__username {
-    margin-right: 42px;
+@media (min-width: 1200px) {
+    .usermenu__avatar {
+        position: absolute;
+        top: 12px;
+        right: 26px;
+    }
+    
+    .usermenu__username {
+        margin-right: 42px;
+    }
 }
 
 /* utility */
@@ -1286,6 +1300,26 @@ div.dataTables_wrapper div.dataTables_paginate {
 
 .inline-block {
     display: inline-block;
+}
+
+.font-xs {
+    font-size: var(--font-xs);
+}
+
+.font-sm {
+    font-size: var(--font-sm);
+}
+
+.font-md {
+    font-size: var(--font-md);
+}
+
+.font-lg {
+    font-size: var(--font-lg);
+}
+
+.font-xl {
+    font-size: var(--font-xl);
 }
 
 /* ng-cloak */
