@@ -22,7 +22,14 @@ class EventDispatcher extends Contained
     private $map = [];
 
     /**
-     * Creates event dispatcher.
+     * Event queue
+     *
+     * @var array
+     */
+    private $queue = [];
+
+    /**
+     * Creates event dispatcher
      *
      * @param object $container DI container
      * @param array $processors Event processors
@@ -39,13 +46,51 @@ class EventDispatcher extends Contained
         $this->eventLog->info($msg);
     }
 
+    /**
+     * Adds event to event queue
+     *
+     * @param Event $event
+     * @return void
+     */
+    private function enqueue(Event $event) : void
+    {
+        // checking for loop
+        if ($this->isLoop($event)) {
+            $this->log('[!] Loop found, enqueue aborted for ' . $event->toString());
+            return;
+        }
+
+        $this->queue[] = $event;
+
+        $this->log('Queued ' . $event->toString() . ', queue size = ' . count($this->queue));
+    }
+
+    /**
+     * Tries to take event from event queue
+     *
+     * @return Event|null
+     */
+    private function dequeue() : ?Event
+    {
+        return array_shift($this->queue);
+    }
+
+    /**
+     * Entry point for new event processing
+     *
+     * @param Event $event
+     * @return void
+     */
     public function dispatch(Event $event) : void
     {
-        $queue = [];
+        $this->processEvent($event);
+    }
 
+    private function processEvent(Event $event) : void
+    {
         $eventClass = $event->getClass();
 
-        $this->log('Dispatching...');
+        $this->log('Processing...');
         $this->log('   event: ' . $eventClass);
         $this->log('   entity: ' . $event->getEntity()->toString());
 
@@ -59,14 +104,11 @@ class EventDispatcher extends Contained
 
             try {
                 $nextEventsIterator = $processor->{$method}($event);
-                //$nextEvents = iterator_to_array($nextEventsIterator);
     
                 foreach ($nextEventsIterator as $nextEvent) {
-                    $this->log('Queueing...');
-                    $this->log('   event: ' . $nextEvent->getClass());
-                    $this->log('   entity: ' . $nextEvent->getEntity()->toString());
-        
-                    $queue[] = $nextEvent->withParent($event);
+                    $eventWithParent = $nextEvent->withParent($event);
+
+                    $this->enqueue($eventWithParent);
                 }
             }
             catch (\Exception $ex) {
@@ -75,20 +117,23 @@ class EventDispatcher extends Contained
             }
         }
 
-        $this->log('Queue size: ' . count($queue));
+        $this->log('Finished processing ' . $eventClass);
 
-        foreach ($queue as $queueEvent) {
-            if (!$this->isLoop($queueEvent)) {
-                $this->dispatch($queueEvent);
-            }
-            else {
-                $this->log('[!] Loop found, aborting...');
-                $this->log('   event: ' . $queueEvent->getClass());
-                $this->log('   entity: ' . $queueEvent->getEntity()->toString());
-            }
+        $this->processNext();
+    }
+
+    /**
+     * Process next event in event queue
+     *
+     * @return void
+     */
+    private function processNext() : void
+    {
+        $event = $this->dequeue();
+
+        if (!is_null($event)) {
+            $this->processEvent($event);
         }
-
-        $this->log('Finished dispatching ' . $eventClass);
     }
 
     private function getProcessors(string $eventClass) : array
