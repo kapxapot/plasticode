@@ -147,6 +147,9 @@ class Bootstrap
                     $path,
                     \Monolog\Logger::DEBUG
                 );
+
+                $formatter = new \Monolog\Formatter\LineFormatter(null, null, false, true);
+                $handler->setFormatter($formatter);
             
                 $logger->pushHandler($handler);
             
@@ -314,6 +317,9 @@ class Bootstrap
                     $path,
                     \Monolog\Logger::DEBUG
                 );
+
+                $formatter = new \Monolog\Formatter\LineFormatter(null, null, false, true);
+                $handler->setFormatter($formatter);
             
                 $logger->pushHandler($handler);
             
