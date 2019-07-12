@@ -119,6 +119,7 @@ class EventDispatcher extends Contained
 
         $this->log('Finished processing ' . $eventClass);
         $this->log('Queue size = ' . count($this->queue));
+        $this->log('');
 
         $this->processNext();
     }
