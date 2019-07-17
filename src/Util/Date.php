@@ -56,9 +56,9 @@ class Date
     // null = now()
     public static function dt($date = null, $timeZone = null) : \DateTime
     {
-        if ($timeZone != null) {
-            $tz = new \DateTimeZone($timeZone);
-        }
+        $tz = (!is_null($timeZone))
+            ? new \DateTimeZone($timeZone)
+            : null;
         
         return ($date instanceof \DateTime)
             ? ($tz
