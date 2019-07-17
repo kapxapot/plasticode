@@ -12,107 +12,109 @@ use Plasticode\Util\Arrays;
  */
 class Controller extends Contained
 {
-	protected $autoOneColumn = true;
+    protected $autoOneColumn = true;
 
-	protected function notFound($request = null, $response = null)
-	{
-	    if (!$request || !$response) {
+    protected function notFound($request = null, $response = null)
+    {
+        if (!$request || !$response) {
             throw new NotFoundException;
-	    }
-	    
-		$handler = $this->notFoundHandler;
-		return $handler($request, $response);
-	}
+        }
+        
+        $handler = $this->notFoundHandler;
+        return $handler($request, $response);
+    }
 
-	protected function buildParams($settings)
-	{
-		$params = [
-			'menu' => $this->buildMenu($settings),
-		];
+    protected function buildParams($settings)
+    {
+        $params = [
+            'menu' => $this->buildMenu($settings),
+        ];
 
-		$sidebar = $this->buildSidebar($settings);
-		
-		if (count($sidebar) > 0) {
-			$params['sidebar'] = $sidebar;
-		}
-		elseif ($this->autoOneColumn === true) {
-			$params['one_column'] = 1;
-		}
-		
-		$params['rel_prev'] = Arrays::get($settings, 'params.paging.prev.url');
-		$params['rel_next'] = Arrays::get($settings, 'params.paging.next.url');
-		
-		if (isset($settings['image'])) {
-		    $params['twitter_card_image'] = $settings['image'];
-		}
-		
-		if (isset($settings['large_image'])) {
-		    $params['custom_card_image'] = $settings['large_image'];
-		}
-		
-		if (strlen($settings['description']) > 0) {
-		    $params['page_description'] = strip_tags($settings['description']);
-		}
-		
-		$params['debug'] = $this->getSettings('debug');
+        $sidebar = $this->buildSidebar($settings);
+        
+        if (count($sidebar) > 0) {
+            $params['sidebar'] = $sidebar;
+        }
+        elseif ($this->autoOneColumn === true) {
+            $params['one_column'] = 1;
+        }
+        
+        $params['rel_prev'] = Arrays::get($settings, 'params.paging.prev.url');
+        $params['rel_next'] = Arrays::get($settings, 'params.paging.next.url');
+        
+        if (isset($settings['image'])) {
+            $params['twitter_card_image'] = $settings['image'];
+        }
+        
+        if (isset($settings['large_image'])) {
+            $params['custom_card_image'] = $settings['large_image'];
+        }
 
-		return array_merge($params, $settings['params']);
-	}
-	
-	protected function buildMenu($settings)
-	{
-		return Menu::getAll();
-	}
-	
-	protected function buildSidebar($settings)
-	{
-		$result = [];
-		
-		if (is_array($settings['sidebar'])) {
-			foreach ($settings['sidebar'] as $part) {
-				$result =
-					$this->buildPart($settings, $result, $part) ??
-					$this->buildActionPart($result, $part);
-			}
-		}
+        $description = $settings['description'] ?? null;
+        
+        if (strlen($description) > 0) {
+            $params['page_description'] = strip_tags($description);
+        }
+        
+        $params['debug'] = $this->getSettings('debug');
 
-		return $result;
-	}
-	
-	protected function buildActionPart($result, $part)
-	{
-		$bits = explode('.', $part);
-		if (count($bits) > 1) {
-			$action = $bits[0];
-			$entity = $bits[1];
+        return array_merge($params, $settings['params']);
+    }
+    
+    protected function buildMenu($settings)
+    {
+        return Menu::getAll();
+    }
+    
+    protected function buildSidebar($settings)
+    {
+        $result = [];
 
-			Arrays::set($result, "actions.{$action}.{$entity}", true);
-		}
-		else {
-			throw new \InvalidArgumentException('Unknown sidebar part: ' . $part);
-		}
+        $sidebarSettings = $settings['sidebar'] ?? [];
+        
+        foreach ($sidebarSettings as $part) {
+            $result =
+                $this->buildPart($settings, $result, $part) ??
+                $this->buildActionPart($result, $part);
+        }
 
-		return $result;
-	}
-	
-	protected function buildPart($settings, $result, $part)
-	{
-		return null;
-	}
-	
-	protected function translate($message)
-	{
-	    return $this->translator->translate($message);
-	}
-	
-	public function render($response, $template, $params, $logQueryCount = false)
-	{
-	    $rendered = $this->view->render($response, $template, $params);
-		
-		if ($logQueryCount) {
-		    $this->logger->info("Query count: " . $this->db->getQueryCount());
-		}
-		
-		return $rendered;
-	}
+        return $result;
+    }
+    
+    protected function buildActionPart($result, $part)
+    {
+        $bits = explode('.', $part);
+        if (count($bits) > 1) {
+            $action = $bits[0];
+            $entity = $bits[1];
+
+            Arrays::set($result, "actions.{$action}.{$entity}", true);
+        }
+        else {
+            throw new \InvalidArgumentException('Unknown sidebar part: ' . $part);
+        }
+
+        return $result;
+    }
+    
+    protected function buildPart($settings, $result, $part)
+    {
+        return null;
+    }
+    
+    protected function translate($message)
+    {
+        return $this->translator->translate($message);
+    }
+    
+    public function render($response, $template, $params, $logQueryCount = false)
+    {
+        $rendered = $this->view->render($response, $template, $params);
+        
+        if ($logQueryCount) {
+            $this->logger->info("Query count: " . $this->db->getQueryCount());
+        }
+        
+        return $rendered;
+    }
 }
