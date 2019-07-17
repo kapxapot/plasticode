@@ -8,6 +8,8 @@ Sites built on **Plasticode**:
 - http://dacomics.ru
 - http://blizzardstreams.com
 
+For boilerplate see [kapxapot/plasticode-boilerplate](https://github.com/kapxapot/plasticode-boilerplate).
+
 ## Manual
 
 ### Phinx migrations
