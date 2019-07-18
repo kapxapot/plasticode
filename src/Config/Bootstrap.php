@@ -157,7 +157,7 @@ class Bootstrap
             },
             
             'captchaConfig' => function ($c) {
-                return new \Plasticode\Config\Captcha;  
+                return new \Plasticode\Config\Captcha();  
             },
             
             'captcha' => function ($c) {
@@ -173,7 +173,7 @@ class Bootstrap
             },
             
             'cases' => function ($c) {
-                return new \Plasticode\Util\Cases;
+                return new \Plasticode\Util\Cases();
             },
             
             'view' => function ($c) {
@@ -233,7 +233,7 @@ class Bootstrap
             },
             
             'cache' => function ($c) {
-                return new \Plasticode\Core\Cache;
+                return new \Plasticode\Core\Cache();
             },
             
             'session' => function ($c) {
@@ -288,7 +288,7 @@ class Bootstrap
             },
             
             'parserConfig' => function ($c) {
-                return new \Plasticode\Config\Parsing;
+                return new \Plasticode\Config\Parsing();
             },
             
             'parser' => function ($c) {
