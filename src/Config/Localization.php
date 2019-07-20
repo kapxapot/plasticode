@@ -70,7 +70,7 @@ class Localization
             'stream_id' => 'Код',
             
             // 404
-            'Page not found or moved somewhere we don\'t know where.' => 'Страница не найдена или перемещена.',
+            'Page not found or moved.' => 'Страница не найдена или перемещена.',
             'Error 404' => 'Ошибка 404',
         ];
     }

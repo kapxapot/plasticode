@@ -2,20 +2,16 @@
 
 namespace Plasticode\Config;
 
-use Plasticode\Util\Cases;
-
 class Bootstrap
 {
     protected $settings;
     protected $dbSettings;
-    protected $debug;
     protected $dir;
     
-    public function __construct($settings, $debug, $dir)
+    public function __construct($settings, $dir)
     {
         $this->settings = $settings;
         $this->dbSettings = $this->settings['db'];
-        $this->debug = $debug;
         $this->dir = $dir;
     }
     
@@ -193,7 +189,7 @@ class Bootstrap
             
                 $view = new \Slim\Views\Twig($templatesPath, [
                     'cache' => $cachePath,
-                    'debug' => $this->debug,
+                    'debug' => $this->settings['debug'],
                 ]);
             
                 $view->addExtension(new \Slim\Views\TwigExtension($c->router, $c->request->getUri()));
@@ -274,6 +270,10 @@ class Bootstrap
                 
                 return new $dbClass($c);
             },
+
+            'api' => function ($c) {
+                return new \Plasticode\Data\Api($c);
+            },
             
             'renderer' => function ($c) {
                 return new \Plasticode\Core\Renderer($c->view);
@@ -347,7 +347,7 @@ class Bootstrap
             },
             
             'errorHandler' => function ($c) {
-                return new \Plasticode\Handlers\ErrorHandler($c, $this->debug);
+                return new \Plasticode\Handlers\ErrorHandler($c);
             },
             
             'notAllowedHandler' => function ($c) {

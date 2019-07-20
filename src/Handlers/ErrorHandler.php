@@ -2,26 +2,16 @@
 
 namespace Plasticode\Handlers;
 
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
 use Plasticode\Contained;
-use Plasticode\Core\Core;
+use Plasticode\Core\Response;
 
 class ErrorHandler extends Contained
 {
-    private $debug;
-    
-    public function __construct($container, $debug = false)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, \Exception $exception) : ResponseInterface
     {
-        parent::__construct($container);
-        
-        $this->debug = $debug;
-    }
-    
-    public function __invoke($request, $response, $exception)
-    {
-        if ($this->debug && !Core::isJsonRequest($request)) {
-            throw $exception;
-        }
-        
-        return Core::error($this->container, $response, $exception);
+        return Response::error($this->container, $request, $response, $exception);
     }
 }
