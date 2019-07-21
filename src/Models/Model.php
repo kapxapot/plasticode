@@ -52,137 +52,137 @@ abstract class Model implements \ArrayAccess
         return self::$container->getSettings($path);
     }
 
-	// repositories
-	
-	protected static function getUser($id)
-	{
-	    return self::$userRepository->get($id);
-	}
-	
-	protected static function getRole($id)
-	{
-	    return self::$roleRepository->get($id);
-	}
-	
-	// auth
-	
-	protected static function getCurrentUser()
-	{
-	    return self::$auth->getUser();
-	}
+    // repositories
+    
+    protected static function getUser($id)
+    {
+        return self::$userRepository->get($id);
+    }
+    
+    protected static function getRole($id)
+    {
+        return self::$roleRepository->get($id);
+    }
+    
+    // auth
+    
+    protected static function getCurrentUser()
+    {
+        return self::$auth->getUser();
+    }
 
-	// lazy
-	
+    // lazy
+    
     private static function getLazyFuncName()
     {
         list($one, $two, $caller) = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
         return $caller['function'];
     }
-	
-	protected function lazy(\Closure $loader, $name = null, bool $ignoreCache = false)
-	{
-	    $name = $name ?? self::getLazyFuncName();
-	    
-	    if ($ignoreCache === true || !$this->objCache->exists($name)) {
-	        $this->objCache->set($name, $loader());
-	    }
-	    
-	    return $this->objCache->get($name);
-	}
-	
-	protected function resetLazy($name)
-	{
-	    $this->objCache->delete($name);
-	}
-	
-	protected static function staticLazy(\Closure $loader, $name = null, bool $ignoreCache = false)
-	{
-	    $name = $name ?? self::getLazyFuncName();
-	    
-	    if ($ignoreCache === true || !self::$staticCache->exists($name)) {
-	        self::$staticCache->set($name, $loader());
-	    }
-	    
-	    return self::$staticCache->get($name);
-	}
-	
-	protected static function resetStaticLazy($name)
-	{
-	    self::$staticCache->delete($name);
-	}
+    
+    protected function lazy(\Closure $loader, $name = null, bool $ignoreCache = false)
+    {
+        $name = $name ?? self::getLazyFuncName();
+        
+        if ($ignoreCache === true || !$this->objCache->exists($name)) {
+            $this->objCache->set($name, $loader());
+        }
+        
+        return $this->objCache->get($name);
+    }
+    
+    protected function resetLazy($name)
+    {
+        $this->objCache->delete($name);
+    }
+    
+    protected static function staticLazy(\Closure $loader, $name = null, bool $ignoreCache = false)
+    {
+        $name = $name ?? self::getLazyFuncName();
+        
+        if ($ignoreCache === true || !self::$staticCache->exists($name)) {
+            self::$staticCache->set($name, $loader());
+        }
+        
+        return self::$staticCache->get($name);
+    }
+    
+    protected static function resetStaticLazy($name)
+    {
+        self::$staticCache->delete($name);
+    }
 
     // magic
     
     private function checkPropertyExists($property)
     {
-	    if (array_key_exists($property, $this->obj)) {
-	        $className = static::class;
-	        throw new \Exception("Property conflict in model: method defined over existing property. Class: {$className}, Property: {$property}.");
-	    }
+        if (array_key_exists($property, $this->obj)) {
+            $className = static::class;
+            throw new \Exception("Property conflict in model: method defined over existing property. Class: {$className}, Property: {$property}.");
+        }
     }
 
-	public function __get($property)
-	{
-	    $camelCase = Strings::toCamelCase($property);
+    public function __get($property)
+    {
+        $camelCase = Strings::toCamelCase($property);
         $snakeCase = Strings::toSnakeCase($property);
-	    
-		if (method_exists($this, $camelCase)) {
-		    $this->checkPropertyExists($snakeCase);
-		    return $this->{$camelCase}();
-		}
         
-		return $this->obj[$snakeCase];
-	}
-	
-	public function __set($property, $value)
-	{
-	    $camelCase = Strings::toCamelCase($property);
+        if (method_exists($this, $camelCase)) {
+            $this->checkPropertyExists($snakeCase);
+            return $this->{$camelCase}();
+        }
+        
+        return $this->obj[$snakeCase];
+    }
+    
+    public function __set($property, $value)
+    {
+        $camelCase = Strings::toCamelCase($property);
         $snakeCase = Strings::toSnakeCase($property);
-	    
-	    if (method_exists($this, $camelCase)) {
-		    $this->checkPropertyExists($snakeCase);
-		    $this->{$camelCase}($value);
-		} else {
-	        $this->obj[$snakeCase] = $value;
-		}
-	}
-	
-	public function __isset($property)
-	{
-	    $camelCase = Strings::toCamelCase($property);
-	    
-		if (method_exists($this, $camelCase)) {
-		    return $this->{$camelCase}() !== null;
-		}
-		
+        
+        if (method_exists($this, $camelCase)) {
+            $this->checkPropertyExists($snakeCase);
+            $this->{$camelCase}($value);
+        } else {
+            $this->obj[$snakeCase] = $value;
+        }
+    }
+    
+    public function __isset($property)
+    {
+        $camelCase = Strings::toCamelCase($property);
+        
+        if (method_exists($this, $camelCase)) {
+            return $this->{$camelCase}() !== null;
+        }
+        
         $snakeCase = Strings::toSnakeCase($property);
-		return isset($this->obj[$snakeCase]);
-	}
-	
-	public function __unset($property)
-	{
-	    $camelCase = Strings::toCamelCase($property);
-	    
-		if (method_exists($this, $camelCase)) {
-		    return $this->{$camelCase}(null);
-		}
-		
+        return isset($this->obj[$snakeCase]);
+    }
+    
+    public function __unset($property)
+    {
+        $camelCase = Strings::toCamelCase($property);
+        
+        if (method_exists($this, $camelCase)) {
+            return $this->{$camelCase}(null);
+        }
+        
         $snakeCase = Strings::toSnakeCase($property);
-		unset($this->obj[$snakeCase]);
-	}
+        unset($this->obj[$snakeCase]);
+    }
 
-	public function __toString()
-	{
-	    return $this->toString();
-	}
-	
-	public function toString()
-	{
-	    return static::class;
-	}
-	
-	// array access
-	
+    public function __toString()
+    {
+        return $this->toString();
+    }
+    
+    public function toString()
+    {
+        return static::class;
+    }
+    
+    // array access
+    
     public function offsetSet($offset, $value) {
         if (is_null($offset)) {
             throw new \InvalidArgumentException('$offset cannot be null.');
