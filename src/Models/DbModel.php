@@ -15,16 +15,15 @@ abstract class DbModel extends Model implements SerializableInterface
     protected static $table;
     
     protected static $idField = 'id';
+    protected static $tagsField = 'tags';
 
     protected static $sortOrder = [];
-
     protected static $sortField = null;
     protected static $sortReverse = false;
 
-    protected static $tagsField = 'tags';
-
     /**
-     * Wraps an existing database object or creates a new one using provided data.
+     * Wraps an existing database object or creates a new one using provided data
+     * 
      * If data is null, wraps an empty database object.
      */
     public function __construct($obj = null)
@@ -39,7 +38,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Static alias for new().
+     * Static alias for new()
      */
     public static function create($obj = null)
     {
@@ -47,7 +46,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * create() + save().
+     * create() + save()
      */
     public static function store($obj = null)
     {
@@ -74,7 +73,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Bare query without sort.
+     * Bare query without sort
      * 
      * Use this query if you need any sort order different from default.
      */
@@ -94,7 +93,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Base query with applied sort order.
+     * Base query with applied sort order
      */
     public static function query() : Query
     {
@@ -102,7 +101,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Returns entity generator for this model.
+     * Returns entity generator for this model
      */
     public static function getGenerator()
     {
@@ -113,7 +112,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Returns validation rules for this model.
+     * Returns validation rules for this model
      */
     public static function getRules($data)
     {
@@ -124,6 +123,8 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
+     * Returns the id of the model
+     * 
      * Use getId() instead of id when $idField is custom.
      * It is recommended to use getId() always for safer code.
      */
@@ -147,7 +148,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Was model saved or not.
+     * Was model saved or not
      */
     public function isPersisted()
     {
@@ -162,7 +163,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
 
     /**
-     * Wrapper for model creation.
+     * Wrapper for model creation
      * 
      * Checks if obj is null and doesn't create model for null.
      */
@@ -176,7 +177,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Shortcut for getting all models with sort applied.
+     * Shortcut for getting all models with sort applied
      */
     public static function getAll() : Collection
     {
@@ -189,7 +190,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Shortcut for getting model by id.
+     * Shortcut for getting model by id
      */
     public static function get($id, bool $ignoreCache = false)
     {
@@ -272,7 +273,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
 
     /**
-     * Checks if two objects are equal.
+     * Checks if two objects are equal
      * 
      * Equal means:
      *  - Same class.

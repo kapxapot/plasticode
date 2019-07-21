@@ -6,23 +6,39 @@ use Plasticode\Util\Strings;
 
 class Query
 {
+    /**
+     * ORM query
+     *
+     * @var \ORM
+     */
     private $query;
     
-    private $createModel; // func
-    private $find; // func
+    /**
+     * Method for model creation
+     *
+     * @var \Closure
+     */
+    private $createModel;
+
+    /**
+     * Method for finding a model
+     *
+     * @var \Closure
+     */
+    private $find;
     
-    public function __construct($query, callable $createModel = null, callable $find = null)
+    public function __construct(\ORM $query, \Closure $createModel = null, \Closure $find = null)
     {
         $this->query = $query;
         
         if (!$this->isEmpty()) {
-            if ($createModel === null) {
+            if (is_null($createModel)) {
                 throw new \InvalidArgumentException('Query requires createModel function!');
             }
         
             $this->createModel = $createModel;
 
-            if ($find === null) {
+            if (is_null($find)) {
                 throw new \InvalidArgumentException('Query requires find function!');
             }
         
@@ -50,12 +66,12 @@ class Query
         
         $objs = $this->query->findMany();
         
-	    $all = array_map(function ($obj) {
+        $all = array_map(function ($obj) {
             $func = $this->createModel;
             return $func($obj);
-	    }, $objs ?? []);
-	    
-	    return Collection::make($all);
+        }, $objs ?? []);
+        
+        return Collection::make($all);
     }
     
     public function find($id)
@@ -197,13 +213,13 @@ class Query
     public function search(string $searchQuery, string $where, int $paramCount = 1) : self
     {
         return $this->branch(function ($q) use ($searchQuery, $where, $paramCount) {
-    		$words = Strings::toWords($searchQuery);
-    		
-    		foreach ($words as $word) {
-    			$wrapped = '%' . $word . '%';
-    			$params = array_fill(0, $paramCount, $wrapped);
-    			$q = $q->whereRaw($where, $params);
-    		}
+            $words = Strings::toWords($searchQuery);
+            
+            foreach ($words as $word) {
+                $wrapped = '%' . $word . '%';
+                $params = array_fill(0, $paramCount, $wrapped);
+                $q = $q->whereRaw($where, $params);
+            }
     
             return $q;
         });

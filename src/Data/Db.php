@@ -29,7 +29,7 @@ final class Db extends Contained
         return $tableSettings['table'] ?? $table;
     }
     
-    public function forTable(string $table)
+    public function forTable(string $table) : \ORM
     {
         $tableName = $this->getTableName($table);
         
@@ -48,7 +48,7 @@ final class Db extends Contained
         return $fields && in_array($field, $fields);
     }
     
-    public function selectMany(string $table, array $exclude = null)
+    public function selectMany(string $table, array $exclude = null) : \ORM
     {
         $t = $this->forTable($table);
         $fields = $this->fields($table);
@@ -62,7 +62,7 @@ final class Db extends Contained
             : $t->selectMany();
     }
     
-    protected function filterBy($items, string $field, array $args)
+    protected function filterBy($items, string $field, array $args) : \ORM
     {
         return $items->where($field, $args['id']);
     }
