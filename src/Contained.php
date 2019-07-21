@@ -11,7 +11,7 @@ class Contained
     /**
      * DI container
      *
-     * @var ContainerInterface ContainerInterface;
+     * @var ContainerInterface
      */
     public $container;
 

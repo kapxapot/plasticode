@@ -2,8 +2,8 @@
 
 namespace Plasticode\Controllers\Auth;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Validator as v;
 
 use Plasticode\Controllers\Controller;
@@ -39,7 +39,13 @@ class PasswordController extends Controller
         ]);
     }
     
-    private function getRules($data)
+    /**
+     * Get validation rules
+     *
+     * @param array $data
+     * @return array
+     */
+    private function getRules(array $data) : array
     {
         $rules = new ValidationRules($this->container);
 

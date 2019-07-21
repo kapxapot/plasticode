@@ -3,8 +3,8 @@
 namespace Plasticode\Core;
 
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 use Plasticode\Collection;
 use Plasticode\Exceptions\IApiException;

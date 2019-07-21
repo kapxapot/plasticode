@@ -2,8 +2,8 @@
 
 namespace Plasticode\Controllers\Admin;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 use Plasticode\Core\Response;
 use Plasticode\Controllers\Controller;

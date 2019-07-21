@@ -2,8 +2,8 @@
 
 namespace Plasticode\Handlers;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 use Plasticode\Contained;
 use Plasticode\Core\Response;
