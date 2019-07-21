@@ -2,34 +2,24 @@
 
 namespace Plasticode\Data;
 
-use Psr\Container\ContainerInterface;
-
 use Plasticode\Contained;
 use Plasticode\Util\Date;
 
-class Db extends Contained
+final class Db extends Contained
 {
     /**
      * Tables settings
      *
      * @var array
      */
-    protected $tables;
-
-    /**
-     * Creates new Db instance.
-     * 
-     * @param ContainerInterface $container DI container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        parent::__construct($container);
-        
-        $this->tables = $this->getSettings('tables');
-    }
+    private $tables;
 
     public function getTableSettings(string $table) : ?array
     {
+        if (is_null($this->tables)) {
+            $this->tables = $this->getSettings('tables');
+        }
+
         return $this->tables[$table] ?? null;
     }
     
@@ -48,7 +38,8 @@ class Db extends Contained
     
     public function fields(string $table) : ?array
     {
-        return $this->tables[$table]['fields'] ?? null;
+        $tableSettings = $this->getTableSettings($table);
+        return $tableSettings['fields'] ?? null;
     }
     
     public function hasField(string $table, string $field) : bool
