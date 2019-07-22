@@ -23,14 +23,14 @@ class Api extends Contained
      */
     public function get(ResponseInterface $response, string $table, $id, object $provider) : ResponseInterface
     {
-        $e = $this->db->selectMany($table)->findOne($id);
+        $e = $this->db->get($table, $id);
 
         if (!$e) {
             throw new NotFoundException();
         }
 
         if (!$this->db->can($table, 'api_read', $e)) {
-            $this->logger->info("Unauthorized read attempt on {$table}: {$e->id}");
+            $this->logger->info("Unauthorized read attempt on {$table}: {$e['id']}");
 
             throw new AuthorizationException();
         }
@@ -88,8 +88,14 @@ class Api extends Contained
 
         return Response::json($response, $items, $options);
     }
-        
-    private function addUserNames($item)
+    
+    /**
+     * Adds user names for created_by / updated_by
+     *
+     * @param array $item
+     * @return array
+     */
+    private function addUserNames(array $item) : array
     {
         if (isset($item['created_by'])) {
             $created = $this->userRepository->get($item['created_by']);
@@ -151,7 +157,7 @@ class Api extends Contained
      */
     public function update(ServerRequestInterface $request, ResponseInterface $response, string $table, $id, object $provider) : ResponseInterface
     {
-        $e = $this->db->forTable($table)->findOne($id);
+        $e = $this->db->getObj($table, $id);
 
         if (!$e) {
             throw new NotFoundException();
@@ -191,7 +197,7 @@ class Api extends Contained
      */
     public function delete(ResponseInterface $response, string $table, $id, object $provider) : ResponseInterface
     {
-        $e = $this->db->forTable($table)->findOne($id);
+        $e = $this->db->getObj($table, $id);
         
         if (!$e) {
             throw new NotFoundException();
