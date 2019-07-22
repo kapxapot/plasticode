@@ -27,7 +27,7 @@ class Query
      */
     private $find;
     
-    public function __construct(\ORM $query, \Closure $createModel = null, \Closure $find = null)
+    public function __construct(?\ORM $query, \Closure $createModel = null, \Closure $find = null)
     {
         $this->query = $query;
         
@@ -48,7 +48,7 @@ class Query
     
     public static function empty() : self
     {
-        return new static(null, null, null);
+        return new static(null);
     }
     
     public function isEmpty() : bool
