@@ -23,7 +23,7 @@ final class Db extends Contained
         return $this->tables[$table] ?? null;
     }
     
-    protected function getTableName(string $table) : string
+    private function getTableName(string $table) : string
     {
         $tableSettings = $this->getTableSettings($table);
         return $tableSettings['table'] ?? $table;
@@ -36,13 +36,13 @@ final class Db extends Contained
         return \ORM::forTable($tableName);
     }
     
-    public function fields(string $table) : ?array
+    private function fields(string $table) : ?array
     {
         $tableSettings = $this->getTableSettings($table);
         return $tableSettings['fields'] ?? null;
     }
     
-    public function hasField(string $table, string $field) : bool
+    private function hasField(string $table, string $field) : bool
     {
         $fields = $this->fields($table);
         return $fields && in_array($field, $fields);
@@ -62,7 +62,7 @@ final class Db extends Contained
             : $t->selectMany();
     }
     
-    protected function filterBy($items, string $field, array $args) : \ORM
+    public function filterBy($items, string $field, array $args) : \ORM
     {
         return $items->where($field, $args['id']);
     }
@@ -101,7 +101,7 @@ final class Db extends Contained
         return $tableRights->get($item);
     }
     
-    protected function enrichRights($table, $item)
+    private function enrichRights($table, $item)
     {
         if (is_null($item)) {
             return null;
@@ -111,7 +111,7 @@ final class Db extends Contained
         return $tr->enrichRights($item);
     }
     
-    protected function enrichRightsMany($table, $items)
+    private function enrichRightsMany($table, $items)
     {
         if (is_null($items)) {
             return null;
@@ -164,7 +164,14 @@ final class Db extends Contained
         return $obj ? $obj->asArray() : null;
     }
     
-    protected function get($table, $id)
+    /**
+     * Returns entity as array enriched with access rights
+     *
+     * @param string $table
+     * @param mixed $id
+     * @return array
+     */
+    public function get(string $table, $id) : array
     {
         $obj = $this->getObj($table, $id);
         $item = $this->asArray($obj);
@@ -183,14 +190,6 @@ final class Db extends Contained
         }
         
         return $query->findOne();
-    }
-    
-    protected function getBy($table, $where)
-    {
-        $obj = $this->getObjBy($table, $where);
-        $item = $this->asArray($obj);
-        
-        return $this->enrichRights($table, $item);
     }
     
     public function getObjBy($table, $where)
@@ -215,7 +214,7 @@ final class Db extends Contained
         return $query;
     }
     
-    protected function getArray($query) : ?array
+    private function getArray($query) : ?array
     {
         $result = $query->findArray();
         return $result ? array_values($result) : null;
@@ -234,13 +233,6 @@ final class Db extends Contained
         return $this
             ->getManyBaseQuery($table, $where)
             ->findMany();
-    }
-    
-    protected function getManyByField($table, $field, $value)
-    {
-        return $this->getMany($table, function ($q) use ($field, $value) {
-            return $q->where($field, $value);
-        });
     }
     
     public function getManyObjByField($table, $field, $value, $where = null)
@@ -274,39 +266,6 @@ final class Db extends Contained
         return $query->findOne();
     }
     
-    protected function getByField($table, $field, $value, $where = null)
-    {
-        $obj = $this->getObjByField($table, $field, $value, $where);
-        $item = $this->asArray($obj);
-        
-        return $this->enrichRights($table, $item);
-    }
-    
-    protected function getIdByField($table, $field, $value, $where = null)
-    {
-        $obj = $this->getObjByField($table, $field, $value, $where);
-        return $obj ? $obj->id : null;
-    }
-    
-    protected function getIdByName($table, $name, $where = null)
-    {
-        return $this->getIdByField($table, 'name', $name, $where);
-    }
-    
-    protected function setFieldNoStamps($table, $id, $field, $value)
-    {
-        return $this->setField($table, $id, $field, $value, false);
-    }
-    
-    protected function setField($table, $id, $field, $value, $withStamps = true)
-    {
-        if (strlen($id) == 0) {
-            throw new \Exception("No id provided for {$table}.{$field} set.");
-        }
-        
-        return $this->set($table, $id, [ $field => $value ], $withStamps);
-    }
-    
     public function create(string $table, array $data = null)
     {
         $item = $this->forTable($table)->create();
@@ -316,28 +275,6 @@ final class Db extends Contained
         }
         
         return $item;
-    }
-    
-    protected function set(string $table, $id, array $data, bool $withStamps = true)
-    {
-        $obj = $this->getObj($table, $id);
-        
-        if (!$obj) {
-            $obj = $this->create($table);
-            $obj->id = $id;
-        } elseif ($withStamps) {
-            $upd = $this->updatedAt($table);
-            if ($upd) {
-                $obj->updated_at = $upd;
-            }
-        }
-
-        $obj->set($data);
-        $obj->save();
-        
-        $item = $this->asArray($obj);
-        
-        return $this->enrichRights($table, $item);
     }
     
     public function isRecursiveParent(string $table, $id, $parentId, string $parentField = null) : bool
