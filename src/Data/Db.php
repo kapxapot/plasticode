@@ -111,17 +111,6 @@ final class Db extends Contained
         return $tr->enrichRights($item);
     }
     
-    private function enrichRightsMany($table, $items)
-    {
-        if (is_null($items)) {
-            return null;
-        }
-        
-        $tr = $this->getTableRights($table);
-
-        return array_values(array_map(array($tr, 'enrichRights'), $items));
-    }
-    
     /**
      * Returns new updated_at value for the table, if it has the corresponding field
      *
@@ -158,12 +147,6 @@ final class Db extends Contained
         return $data;
     }
     
-    // SHORTCUTS
-    private function asArray($obj) : ?array
-    {
-        return $obj ? $obj->asArray() : null;
-    }
-    
     /**
      * Returns entity as array enriched with access rights
      *
@@ -174,7 +157,7 @@ final class Db extends Contained
     public function get(string $table, $id) : array
     {
         $obj = $this->getObj($table, $id);
-        $item = $this->asArray($obj);
+        $item = $obj ? $obj->asArray() : null;
         
         return $this->enrichRights($table, $item);
     }
@@ -191,82 +174,20 @@ final class Db extends Contained
         
         return $query->findOne();
     }
-    
-    public function getObjBy($table, $where)
-    {
-        $query = $this->forTable($table);
-        return $where($query)->findOne();
-    }
 
     public function isPublished($item) : bool
     {
         return isset($item['published_at']) && Date::happened($item['published_at']);
     }
     
-    private function getManyBaseQuery(string $table, $where = null)
-    {
-        $query = $this->forTable($table);
-
-        if ($where) {
-            $query = $where($query);
-        }
-        
-        return $query;
-    }
-    
-    private function getArray($query) : ?array
-    {
-        $result = $query->findArray();
-        return $result ? array_values($result) : null;
-    }
-    
-    public function getMany($table, $where = null)
-    {
-        $query = $this->getManyBaseQuery($table, $where);
-        $items = $this->getArray($query);
-        
-        return $this->enrichRightsMany($table, $items);
-    }
-
-    public function getManyObj($table, $where = null)
-    {
-        return $this
-            ->getManyBaseQuery($table, $where)
-            ->findMany();
-    }
-    
-    public function getManyObjByField($table, $field, $value, $where = null)
-    {
-        return $this->getManyObj($table, function ($q) use ($field, $value, $where) {
-            $q = $q->where($field, $value);
-            
-            if ($where) {
-                $q = $where($q);
-            }
-            
-            return $q;
-        });
-    }
-    
-    public function getCount($table, $where = null)
-    {
-        return $this->getManyBaseQuery($table, $where)->count();
-    }
-    
-    public function getObjByField($table, $field, $value, $where = null)
-    {
-        $query = $this
-            ->forTable($table)
-            ->where($field, $value);
-            
-        if ($where) {
-            $query = $where($query);
-        }
-
-        return $query->findOne();
-    }
-    
-    public function create(string $table, array $data = null)
+    /**
+     * Creates record and fills it with data
+     *
+     * @param string $table
+     * @param array $data
+     * @return \ORM
+     */
+    public function create(string $table, array $data = null) : \ORM
     {
         $item = $this->forTable($table)->create();
         
@@ -297,14 +218,6 @@ final class Db extends Contained
         }
 
         return $recursive;
-    }
-    
-    public function deleteBy($table, \Closure $where)
-    {
-        $q = $this->forTable($table);
-        $q = $where($q);
-        
-        $q->deleteMany();
     }
     
     public function getQueryCount()
