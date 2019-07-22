@@ -164,7 +164,7 @@ class Api extends Contained
         }
 
         $original = $request->getParsedBody();
-        $data = $this->beforeValidate($table, $original, $id);
+        $data = $this->beforeValidate($table, $original);
 
         $provider->validate($request, $data, $id);
         
@@ -210,5 +210,64 @@ class Api extends Contained
         $this->logger->info("Deleted {$table}: {$e->id}");
         
         return $response->withStatus(204);
+    }
+    
+    /**
+     * Prepares record for validation
+     *
+     * @param string $table
+     * @param array $data
+     * @return array
+     */
+    private function beforeValidate(string $table, array $data) : array
+    {
+        $data = $this->securePublished($table, $data);
+        $data = $this->stamps($table, $data);
+
+        return $data;
+    }
+
+    /**
+     * Unset published if the user has no rights for it
+     * 
+     * This is a security check, alternatively ~NotAuthorized() exception can be thrown.
+     *
+     * @param string $table
+     * @param array $data
+     * @return array
+     */
+    private function securePublished(string $table, array $data) : array
+    {
+        $canPublish = $this->db->can($table, 'publish');
+        
+        if (isset($data['published']) && !$canPublish) {
+            unset($data['published']);
+        }
+
+        return $data;
+    }
+    
+    /**
+     * Undocumented function
+     *
+     * @param string $table
+     * @param array $data
+     * @return array
+     */
+    private function stamps(string $table, array $data) : array
+    {
+        $upd = $this->db->updatedAt($table);
+
+        if ($upd) {
+            $data['updated_at'] = $upd;
+        }
+        
+        $user = $this->auth->getUser();
+
+        if ($user) {
+            $data = $this->db->stampBy($table, $data, $user->getId());
+        }
+
+        return $data;
     }
 }

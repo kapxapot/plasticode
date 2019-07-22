@@ -122,42 +122,40 @@ final class Db extends Contained
         return array_values(array_map(array($tr, 'enrichRights'), $items));
     }
     
-    protected function beforeValidate($table, $data, $id = null)
-    {
-        // unset
-        $canPublish = $this->can($table, 'publish');
-        
-        if (isset($data['published']) && !$canPublish) {
-            unset($data['published']);
-        }
-
-        return $this->dirty($table, $data, $id);
-    }
-    
-    private function dirty($table, $data, $id = null)
-    {
-        $upd = $this->updatedAt($table);
-        if ($upd) {
-            $data['updated_at'] = $upd;
-        }
-        
-        $user = $this->auth->getUser();
-        if ($this->hasField($table, 'created_by') && !$id) {
-            $data['created_by'] = $user->id;
-        }
-        
-        if ($this->hasField($table, 'updated_by')) {
-            $data['updated_by'] = $user->id;
-        }
-
-        return $data;
-    }
-    
-    private function updatedAt($table)
+    /**
+     * Returns new updated_at value for the table, if it has the corresponding field
+     *
+     * @param string $table
+     * @return string|null
+     */
+    public function updatedAt(string $table) : ?string
     {
         return $this->hasField($table, 'updated_at')
             ? Date::dbNow()
             : null;
+    }
+
+    /**
+     * Updated created_by / updated_by fields if applicable
+     *
+     * @param string $table
+     * @param array $data
+     * @param mixed $userId
+     * @return array
+     */
+    public function stampBy(string $table, array $data, $userId) : array
+    {
+        $createdBy = $data['created_by'] ?? null;
+
+        if ($this->hasField($table, 'created_by') && is_null($createdBy)) {
+            $data['created_by'] = $userId;
+        }
+        
+        if ($this->hasField($table, 'updated_by')) {
+            $data['updated_by'] = $userId;
+        }
+
+        return $data;
     }
     
     // SHORTCUTS
