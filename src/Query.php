@@ -27,28 +27,30 @@ class Query
      */
     private $find;
     
-    public function __construct(?\ORM $query, \Closure $createModel = null, \Closure $find = null)
+    public function __construct(\ORM $query = null, \Closure $createModel = null, \Closure $find = null)
     {
+        if (is_null($query)) {
+            return;
+        }
+
         $this->query = $query;
         
-        if (!$this->isEmpty()) {
-            if (is_null($createModel)) {
-                throw new \InvalidArgumentException('Query requires createModel function!');
-            }
-        
-            $this->createModel = $createModel;
-
-            if (is_null($find)) {
-                throw new \InvalidArgumentException('Query requires find function!');
-            }
-        
-            $this->find = $find;
+        if (is_null($createModel)) {
+            throw new \InvalidArgumentException('Query requires createModel function!');
         }
+    
+        $this->createModel = $createModel;
+
+        if (is_null($find)) {
+            throw new \InvalidArgumentException('Query requires find function!');
+        }
+    
+        $this->find = $find;
     }
     
     public static function empty() : self
     {
-        return new static(null);
+        return new static();
     }
     
     public function isEmpty() : bool
