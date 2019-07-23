@@ -16,6 +16,7 @@ class Env
             $dotenv->load();
         }
         catch (\Exception $ex) {
+            throw $ex;
         }
         
         // APP_ENV must be set either in .env file (dev, stage), or in environment variables (prod)
