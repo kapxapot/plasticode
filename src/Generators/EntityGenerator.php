@@ -111,8 +111,6 @@ class EntityGenerator extends Contained
         if (isset($options['uri'])) {
             $endPoints[] = [ 'uri' => $options['uri'], 'options' => $options ];
         }
-
-        //$uri = $options['uri'] ?? $alias;
         
         foreach ($endPoints as $endPoint) {
             $endPointUri = $endPoint['uri'];
