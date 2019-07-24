@@ -2,12 +2,11 @@
 
 namespace Plasticode\Handlers\Traits;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
 use Plasticode\Core\Request;
 use Plasticode\Core\Response;
 use Plasticode\Exceptions\NotFoundException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 trait NotFound
 {

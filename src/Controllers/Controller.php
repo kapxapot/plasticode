@@ -2,29 +2,36 @@
 
 namespace Plasticode\Controllers;
 
+use Plasticode\Collection;
 use Plasticode\Contained;
 use Plasticode\Exceptions\NotFoundException;
 use Plasticode\Models\Menu;
 use Plasticode\Util\Arrays;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Base controller for controllers showing views.
+ * Base controller for controllers showing views
  */
 class Controller extends Contained
 {
+    /**
+     * @var boolean
+     */
     protected $autoOneColumn = true;
 
-    protected function notFound($request = null, $response = null)
+    protected function notFound(ServerRequestInterface $request = null, ResponseInterface $response = null) : ResponseInterface
     {
         if (!$request || !$response) {
-            throw new NotFoundException;
+            throw new NotFoundException();
         }
-        
+
         $handler = $this->notFoundHandler;
+
         return $handler($request, $response);
     }
 
-    protected function buildParams($settings)
+    protected function buildParams(array $settings) : array
     {
         $params = [
             'menu' => $this->buildMenu($settings),
@@ -61,12 +68,12 @@ class Controller extends Contained
         return array_merge($params, $settings['params']);
     }
     
-    protected function buildMenu($settings)
+    protected function buildMenu(array $settings) : Collection
     {
         return Menu::getAll();
     }
     
-    protected function buildSidebar($settings)
+    protected function buildSidebar(array $settings) : array
     {
         $result = [];
 
@@ -81,7 +88,7 @@ class Controller extends Contained
         return $result;
     }
     
-    protected function buildActionPart($result, $part)
+    protected function buildActionPart(array $result, string $part) : array
     {
         $bits = explode('.', $part);
         if (count($bits) > 1) {
@@ -97,20 +104,30 @@ class Controller extends Contained
         return $result;
     }
     
-    protected function buildPart($settings, $result, $part)
+    /**
+     * Builds sidebar part and adds it to result
+     * 
+     * If the part is not built, returns null
+     *
+     * @param array $settings
+     * @param array $result
+     * @param string $part
+     * @return array|null
+     */
+    protected function buildPart(array $settings, array $result, string $part) : ?array
     {
         return null;
     }
     
-    protected function translate($message)
+    protected function translate(string $message) : string
     {
         return $this->translator->translate($message);
     }
     
-    public function render($response, $template, $params, $logQueryCount = false)
+    protected function render(ResponseInterface $response, string $template, array $params, bool $logQueryCount = false) : ResponseInterface
     {
         $rendered = $this->view->render($response, $template, $params);
-        
+
         if ($logQueryCount) {
             $this->logger->info("Query count: " . $this->db->getQueryCount());
         }

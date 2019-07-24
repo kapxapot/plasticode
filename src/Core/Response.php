@@ -2,14 +2,14 @@
 
 namespace Plasticode\Core;
 
+use Plasticode\Collection;
+use Plasticode\Exceptions\ValidationException;
+use Plasticode\Exceptions\Interfaces\HttpExceptionInterface;
+use Plasticode\Exceptions\Interfaces\PropagatedExceptionInterface;
+use Plasticode\Util\Text;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-
-use Plasticode\Collection;
-use Plasticode\Exceptions\IApiException;
-use Plasticode\Exceptions\ValidationException;
-use Plasticode\Util\Text;
 
 class Response
 {
@@ -38,7 +38,7 @@ class Response
 
         if (isset($options['params']['format'])) {
             $format = $options['params']['format'];
-            
+
             // datatables
             if ($format == 'dt') {
                 $wrapper = new \stdClass;
@@ -65,8 +65,6 @@ class Response
     }
 
     /**
-     * Error, error!
-     * 
      * Writes error into response and returns it
      * 
      * @param ContainerInterface $container DI container
@@ -87,7 +85,7 @@ class Response
             throw $ex;
         }
 
-        $status = ($ex instanceof IApiException)
+        $status = ($ex instanceof HttpExceptionInterface)
             ? $ex->GetErrorCode()
             : self::DEFAULT_ERROR_STATUS;
         
@@ -123,9 +121,15 @@ class Response
             }
         }
 
-        // if not debug & not json request - hide the exception and show general error
-        if (!$debug && !$jsonRequest) {
-            return self::text($response, 'Server error.')
+        // if not debug - hide non-propagated exception and return general error message
+        if (!$debug && !($ex instanceof PropagatedExceptionInterface)) {
+            $msg = 'Server error.';
+            $errors = null;
+        }
+
+        if (!$jsonRequest) {
+            // todo: add $errors to the output
+            return self::text($response, $msg)
                 ->withStatus($status);
         }
 
