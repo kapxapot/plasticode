@@ -50,6 +50,7 @@ class Settings
         }
         
         if (array_key_exists('tables', $settings)) {
+            // merge public + private => fields
             foreach ($settings['tables'] as $table => $tableSettings) {
                 $public = $tableSettings['public'] ?? [];
                 $private = $tableSettings['private'] ?? [];

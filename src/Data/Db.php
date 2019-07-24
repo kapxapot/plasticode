@@ -44,8 +44,10 @@ final class Db extends Contained
     
     private function hasField(string $table, string $field) : bool
     {
-        $fields = $this->fields($table);
-        return $fields && in_array($field, $fields);
+        $tableSettings = $this->getTableSettings($table);
+        $has = $tableSettings['fields'] ?? null;
+
+        return $has && in_array($field, $has);
     }
     
     public function selectMany(string $table, array $exclude = null) : \ORM
