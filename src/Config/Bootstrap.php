@@ -16,7 +16,7 @@ class Bootstrap
     }
     
     /**
-     * Not used yet.
+     * Not used yet
      *
      * @return array
      */
@@ -39,7 +39,7 @@ class Bootstrap
     }
     
     /**
-     * Not used yet.
+     * Not used yet
      *
      * @return array
      */
@@ -62,7 +62,7 @@ class Bootstrap
     }
     
     /**
-     * Get mappings for DI container.
+     * Get mappings for DI container
      *
      * @return array
      */
@@ -116,21 +116,23 @@ class Bootstrap
             'logger' => function ($c) {
                 $logger = new \Monolog\Logger($this->settings['logger']['name']);
             
-                $logger->pushProcessor(function ($record) use ($c) {
-                    $user = $c->auth->getUser();
+                $logger->pushProcessor(
+                    function ($record) use ($c) {
+                        $user = $c->auth->getUser();
 
-                    if ($user) {
-                        $record['extra']['user'] = $user->toString();
-                    }
+                        if ($user) {
+                            $record['extra']['user'] = $user->toString();
+                        }
+                        
+                        $token = $c->auth->getToken();
+
+                        if ($token) {
+                            $record['extra']['token'] = $token->toString();
+                        }
                     
-                    $token = $c->auth->getToken();
-
-                    if ($token) {
-                        $record['extra']['token'] = $token->toString();
+                        return $record;
                     }
-                
-                    return $record;
-                });
+                );
 
                 $path = $this->settings['logger']['path'];
                 
@@ -178,19 +180,25 @@ class Bootstrap
                 $path = $tws['templates_path'];
                 $path = is_array($path) ? $path : [ $path ];
             
-                $templatesPath = array_map(function ($p) {
-                    return $this->dir . $p;
-                }, $path);
+                $templatesPath = array_map(
+                    function ($p) {
+                        return $this->dir . $p;
+                    },
+                    $path
+                );
             
                 $cachePath = $tws['cache_path'];
                 if ($cachePath) {
                     $cachePath = $this->dir . $cachePath;
                 }
             
-                $view = new \Slim\Views\Twig($templatesPath, [
-                    'cache' => $cachePath,
-                    'debug' => $this->settings['debug'],
-                ]);
+                $view = new \Slim\Views\Twig(
+                    $templatesPath,
+                    [
+                        'cache' => $cachePath,
+                        'debug' => $this->settings['debug'],
+                    ]
+                );
             
                 $view->addExtension(new \Slim\Views\TwigExtension($c->router, $c->request->getUri()));
                 $view->addExtension(new \Plasticode\Twig\Extensions\AccessRightsExtension($c));
