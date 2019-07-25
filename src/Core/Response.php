@@ -33,7 +33,7 @@ class Response
         }
         
         if (!is_array($data)) {
-            throw new \InvalidArgumentException('Core::json expects an array, a Collection or a dbObj.');
+            throw new \InvalidArgumentException('Response::json expects an array, a Collection or a dbObj.');
         }
 
         if (isset($options['params']['format'])) {
