@@ -45,7 +45,7 @@ final class Db extends Contained
     private function hasField(string $table, string $field) : bool
     {
         $tableSettings = $this->getTableSettings($table);
-        $has = $tableSettings['fields'] ?? null;
+        $has = $tableSettings['has'] ?? null;
 
         return $has && in_array($field, $has);
     }

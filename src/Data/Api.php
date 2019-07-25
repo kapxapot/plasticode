@@ -98,7 +98,7 @@ class Api extends Contained
     private function addUserNames(array $item) : array
     {
         $creator = '[no data]';
-        
+
         if (isset($item['created_by'])) {
             $created = $this->userRepository->get($item['created_by']);
             $creator = $created->login ?? $item['created_by'];
@@ -260,7 +260,7 @@ class Api extends Contained
      */
     private function stamps(string $table, array $data) : array
     {
-        $this->logger->info("...stamps for {$table}: {$data['id']}");
+        $this->logger->info("...stamps for {$table}");
 
         $upd = $this->db->updatedAt($table);
 
