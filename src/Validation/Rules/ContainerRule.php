@@ -15,7 +15,7 @@ abstract class ContainerRule extends AbstractRule
         $this->container = $container;
     }
     
-    public function validate(string $input)
+    public function validate($input)
     {
         if (!isset($this->container)) {
             throw new InvalidConfigurationException('Container not found!');
