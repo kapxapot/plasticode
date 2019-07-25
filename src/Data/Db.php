@@ -139,10 +139,14 @@ final class Db extends Contained
         $createdBy = $data['created_by'] ?? null;
 
         if ($this->hasField($table, 'created_by') && is_null($createdBy)) {
+            $this->logger->info("...created_by = {$userId}");
+
             $data['created_by'] = $userId;
         }
         
         if ($this->hasField($table, 'updated_by')) {
+            $this->logger->info("...updated_by = {$userId}");
+
             $data['updated_by'] = $userId;
         }
 

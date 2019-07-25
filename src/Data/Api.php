@@ -99,12 +99,12 @@ class Api extends Contained
     {
         if (isset($item['created_by'])) {
             $created = $this->userRepository->get($item['created_by']);
-            $item['created_by_name'] = $created->login ?? $item['created_by'];
+            $item['created_by_name'] = $created->login ?? $item['created_by'] ?? '[no data]';
         }
 
         if (isset($item['updated_by'])) {
             $updated = $this->userRepository->get($item['updated_by']);
-            $item['updated_by_name'] = $updated->login ?? $item['updated_by'];
+            $item['updated_by_name'] = $updated->login ?? $item['updated_by'] ?? '[no data]';
         }
         
         return $item;
@@ -128,7 +128,9 @@ class Api extends Contained
         }
 
         $original = $request->getParsedBody();
-        $data = $this->beforeValidate($table, $original);
+
+        $data = $this->securePublished($table, $original);
+        $data = $this->stamps($table, $data);
         
         $provider->validate($request, $data);
         
@@ -170,7 +172,9 @@ class Api extends Contained
         }
 
         $original = $request->getParsedBody();
-        $data = $this->beforeValidate($table, $original);
+
+        $data = $this->securePublished($table, $original);
+        $data = $this->stamps($table, $data);
 
         $provider->validate($request, $data, $id);
         
@@ -217,25 +221,11 @@ class Api extends Contained
         
         return $response->withStatus(204);
     }
-    
-    /**
-     * Prepares record for validation
-     *
-     * @param string $table
-     * @param array $data
-     * @return array
-     */
-    private function beforeValidate(string $table, array $data) : array
-    {
-        $data = $this->securePublished($table, $data);
-        $data = $this->stamps($table, $data);
-
-        return $data;
-    }
 
     /**
      * Unset published if the user has no rights for it
      * 
+     * Currentl it just unsets published property, if the user has no rights to change it.
      * This is a security check, alternatively ~NotAuthorized() exception can be thrown.
      *
      * @param string $table
@@ -254,7 +244,7 @@ class Api extends Contained
     }
     
     /**
-     * Undocumented function
+     * Adds updated_at / created_by / updated_by values
      *
      * @param string $table
      * @param array $data
@@ -262,13 +252,19 @@ class Api extends Contained
      */
     private function stamps(string $table, array $data) : array
     {
+        $this->logger->info("...stamps for {$table}: {$data['id']}");
+
         $upd = $this->db->updatedAt($table);
+
+        $this->logger->info("...updated_at = {$upd}");
 
         if ($upd) {
             $data['updated_at'] = $upd;
         }
         
         $user = $this->auth->getUser();
+
+        $this->logger->info("...user = {$user}");
 
         if ($user) {
             $data = $this->db->stampBy($table, $data, $user->getId());
