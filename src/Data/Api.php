@@ -2,13 +2,12 @@
 
 namespace Plasticode\Data;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
 use Plasticode\Contained;
 use Plasticode\Core\Response;
-use Plasticode\Exceptions\NotFoundException;
-use Plasticode\Exceptions\AuthorizationException;
+use Plasticode\Exceptions\Http\NotFoundException;
+use Plasticode\Exceptions\Http\AuthorizationException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Api extends Contained
 {

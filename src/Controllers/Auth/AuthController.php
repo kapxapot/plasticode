@@ -2,14 +2,13 @@
 
 namespace Plasticode\Controllers\Auth;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
 use Plasticode\Controllers\Controller;
 use Plasticode\Core\Response;
 use Plasticode\Core\Security;
 use Plasticode\Exceptions\ValidationException;
-use Plasticode\Exceptions\AuthenticationException;
+use Plasticode\Exceptions\Http\AuthenticationException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class AuthController extends Controller
 {
@@ -44,10 +43,13 @@ class AuthController extends Controller
         $token = $this->auth->getToken();
         $response = $response->withStatus(201);
 
-        $response = Response::json($response, [
-            'token' => $token->token,
-            'message' => $this->translate('Registration successful.'),
-        ]);
+        $response = Response::json(
+            $response,
+            [
+                'token' => $token->token,
+                'message' => $this->translate('Registration successful.'),
+            ]
+        );
 
         return $response;
     }
@@ -67,10 +69,13 @@ class AuthController extends Controller
     
         $token = $this->auth->getToken();
 
-        return Response::json($response, [
-            'token' => $token->token,
-            'message' => $this->translate('Login successful.'),
-        ]);
+        return Response::json(
+            $response,
+            [
+                'token' => $token->token,
+                'message' => $this->translate('Login successful.'),
+            ]
+        );
     }
 
     public function postSignOut(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface

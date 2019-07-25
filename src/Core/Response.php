@@ -3,6 +3,7 @@
 namespace Plasticode\Core;
 
 use Plasticode\Collection;
+use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Exceptions\Interfaces\HttpExceptionInterface;
 use Plasticode\Exceptions\Interfaces\PropagatedExceptionInterface;
@@ -33,7 +34,7 @@ class Response
         }
         
         if (!is_array($data)) {
-            throw new \InvalidArgumentException('Response::json expects an array, a Collection or a dbObj.');
+            throw new InvalidArgumentException('Response::json expects an array, a Collection or a dbObj.');
         }
 
         if (isset($options['params']['format'])) {

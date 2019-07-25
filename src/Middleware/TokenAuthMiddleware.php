@@ -2,11 +2,13 @@
 
 namespace Plasticode\Middleware;
 
-use Plasticode\Exceptions\AuthenticationException;
+use Plasticode\Exceptions\Http\AuthenticationException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class TokenAuthMiddleware extends Middleware
 {
-    public function __invoke($request, $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next) : ResponseInterface
     {
         $tokenLine = $request->getHeaderLine('Authorization');
         $lineParts = explode(' ', $tokenLine);

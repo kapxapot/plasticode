@@ -2,8 +2,9 @@
 
 namespace Plasticode\Generators;
 
-use Plasticode\Exceptions\ApplicationException;
+use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Util\Strings;
+use Psr\Container\ContainerInterface;
 
 class GeneratorResolver
 {
@@ -11,25 +12,27 @@ class GeneratorResolver
     protected $namespaces;
     
     /**
-     * Creates GeneratorResolver.
+     * Creates GeneratorResolver
      * 
      * @param ContainerInterface $container
      * @param string[] $namespaces Namespaces to search generators
      */
-    public function __construct($container, $namespaces)
+    public function __construct(ContainerInterface $container, array $namespaces)
     {
         $this->container = $container;
         $this->namespaces = $namespaces ?? [];
         $this->namespaces[] = __NAMESPACE__;
     }
     
-    private function buildClassName($namespace, $name)
+    private function buildClassName(string $namespace, string $name) : string
     {
         return $namespace . '\\' . $name . 'Generator';
     }
     
-    private function resolve($name)
+    private function resolve(string $name) : ?string
     {
+        $generatorClass = null;
+
         foreach ($this->namespaces as $namespace) {
             $generatorClass = $this->buildClassName($namespace, $name);
             if (class_exists($generatorClass)) {
@@ -40,7 +43,7 @@ class GeneratorResolver
         return $generatorClass;
     }
     
-    public function resolveEntity($entity)
+    public function resolveEntity(string $entity) : EntityGenerator
     {
         $entity = mb_strtolower($entity);
         
@@ -52,7 +55,7 @@ class GeneratorResolver
         }
         
         if (!class_exists($generatorClass)) {
-            throw new ApplicationException("Unable to resolve {$entity} generator class.");
+            throw new InvalidConfigurationException("Unable to resolve {$entity} generator class.");
         }
         
         $generator = new $generatorClass($this->container, $entity);

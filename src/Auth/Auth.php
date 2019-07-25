@@ -4,19 +4,22 @@ namespace Plasticode\Auth;
 
 use Plasticode\Contained;
 use Plasticode\Core\Security;
-use Plasticode\Exceptions\AuthenticationException;
+use Plasticode\Exceptions\Http\AuthenticationException;
 use Plasticode\Util\Date;
 
-class Auth extends Contained {
+class Auth extends Contained
+{
     private $user;
     private $role;
     private $token;
     
-    private function setToken($token) {
+    private function setToken($token)
+    {
         $this->session->set('token_id', $token->id);
     }
 
-    public function getToken() {
+    public function getToken()
+    {
         if (!$this->token) {
             $id = $this->session->get('token_id');
 
@@ -28,7 +31,8 @@ class Auth extends Contained {
         return $this->token;
     }
     
-    public function getUser() {
+    public function getUser()
+    {
         if (!$this->user) {
             $token = $this->getToken();
 
@@ -40,7 +44,8 @@ class Auth extends Contained {
         return $this->user;
     }
     
-    public function getRole() {
+    public function getRole()
+    {
         if (!$this->role) {
             $user = $this->getUser();
             
@@ -52,11 +57,13 @@ class Auth extends Contained {
         return $this->role;
     }
 
-    public function check() {
+    public function check()
+    {
         return $this->getUser() !== null;
     }
     
-    public function attempt($login, $password) {
+    public function attempt($login, $password)
+    {
         $user = $this->userRepository->getByLogin($login);
 
         if (!$user) {
@@ -74,27 +81,32 @@ class Auth extends Contained {
             $user->save();
         }
         
-        $token = $this->authTokenRepository->store([
-            'user_id' => $user->id,
-            'token' => Security::generateToken(),
-            'expires_at' => $this->generateExpirationTime(),
-        ]);
+        $token = $this->authTokenRepository->store(
+            [
+                'user_id' => $user->id,
+                'token' => Security::generateToken(),
+                'expires_at' => $this->generateExpirationTime(),
+            ]
+        );
         
         $this->setToken($token);
         
         return $user;
     }
 
-    public function logout() {
+    public function logout()
+    {
         $this->session->delete('token_id');
     }
     
-    private function generateExpirationTime() {
+    private function generateExpirationTime()
+    {
         $ttl = $this->getSettings('token_ttl');
         return Date::generateExpirationTime($ttl * 60);
     }
     
-    public function validateCookie($tokenStr) {
+    public function validateCookie($tokenStr)
+    {
         try {
             $this->validateToken($tokenStr);
         }
@@ -103,7 +115,8 @@ class Auth extends Contained {
         }
     }
 
-    public function validateToken($tokenStr, $ignoreExpiration = false) {
+    public function validateToken($tokenStr, $ignoreExpiration = false)
+    {
         $token = $this->getToken();
         if (!$token || $token->token != $tokenStr) {
             $token = $this->authTokenRepository->getByToken($tokenStr);
@@ -124,7 +137,8 @@ class Auth extends Contained {
         return $token;
     }
     
-    public function isOwnerOf($item) {
+    public function isOwnerOf($item)
+    {
         $user = $this->getUser();
         return isset($item['created_by']) && ($user !== null) && ($item['created_by'] == $user->id);
     }

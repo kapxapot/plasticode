@@ -8,7 +8,13 @@ use Plasticode\Util\Strings;
 
 class Linker extends Contained
 {
-    public function abs($url = null)
+    /**
+     * Makes url absolute. If no url provided, returns site url
+     *
+     * @param string $url
+     * @return string
+     */
+    public function abs(string $url = null) : string
     {
         $baseUrl = rtrim($this->getSettings('view_globals.site_url'), '/');
         
@@ -19,26 +25,26 @@ class Linker extends Contained
         return $url;
     }
     
-    public function root()
+    public function root() : string
     {
         return $this->getSettings('root');
     }
 
-    public function getExtension($type)
+    public function getExtension($type) : ?string
     {
-        return Image::getExtension($type ?? 'jpeg');		
+        return Image::getExtension($type ?? 'jpeg');
     }
 
     /**
-     * For paging.
+     * For paging
      */
-    function page($base, $page)
+    function page(string $base, int $page) : string
     {
         $delim = strpos($base, '?') !== false ? '&' : '?';
         return $base . ($page == 1 ? '' : "{$delim}page={$page}");
     }
 
-    public function tag($tag = null, $tab = null)
+    public function tag(string $tag = null, string $tab = null) : string
     {
         $tag = Strings::fromSpaces($tag, '+');
         $url = $this->router->pathFor('main.tag', [ 'tag' => $tag ]);
@@ -52,17 +58,17 @@ class Linker extends Contained
 
     // Twitch
     
-    public function twitchImg($id)
+    public function twitchImg(string $id) : string
     {
-        return "//static-cdn.jtvnw.net/previews-ttv/live_user_{$id}-320x180.jpg";
+        return "https://static-cdn.jtvnw.net/previews-ttv/live_user_{$id}-320x180.jpg";
     }
     
-    public function twitchLargeImg($id)
+    public function twitchLargeImg(string $id) : string
     {
-        return "//static-cdn.jtvnw.net/previews-ttv/live_user_{$id}-640x360.jpg";
+        return "https://static-cdn.jtvnw.net/previews-ttv/live_user_{$id}-640x360.jpg";
     }
     
-    public function twitch($id)
+    public function twitch(string $id) : string
     {
         return 'http://twitch.tv/' . $id;
     }

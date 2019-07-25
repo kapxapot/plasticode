@@ -2,7 +2,10 @@
 
 namespace Plasticode\Middleware;
 
-use Plasticode\Exceptions\AuthenticationException;
+use Plasticode\Exceptions\Http\AuthenticationException;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class AccessMiddleware extends Middleware
 {
@@ -10,7 +13,7 @@ class AccessMiddleware extends Middleware
     private $action;
     private $redirect;
     
-    public function __construct($container, $entity, $action, $redirect = null)
+    public function __construct(ContainerInterface $container, string $entity, string $action, string $redirect = null)
     {
         parent::__construct($container);
         
@@ -19,7 +22,7 @@ class AccessMiddleware extends Middleware
         $this->redirect = $redirect;
     }
     
-    public function __invoke($request, $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
         if ($this->access->checkRights($this->entity, $this->action)) {
             $response = $next($request, $response);

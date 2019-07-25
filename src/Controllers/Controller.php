@@ -4,7 +4,8 @@ namespace Plasticode\Controllers;
 
 use Plasticode\Collection;
 use Plasticode\Contained;
-use Plasticode\Exceptions\NotFoundException;
+use Plasticode\Exceptions\InvalidArgumentException;
+use Plasticode\Exceptions\Http\NotFoundException;
 use Plasticode\Models\Menu;
 use Plasticode\Util\Arrays;
 use Psr\Http\Message\ResponseInterface;
@@ -98,7 +99,7 @@ class Controller extends Contained
             Arrays::set($result, "actions.{$action}.{$entity}", true);
         }
         else {
-            throw new \InvalidArgumentException('Unknown sidebar part: ' . $part);
+            throw new InvalidArgumentException('Unknown sidebar part: ' . $part);
         }
 
         return $result;

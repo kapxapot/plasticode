@@ -3,41 +3,39 @@
 namespace Plasticode\Data;
 
 use Plasticode\Contained;
-use Plasticode\Exceptions\ApplicationException;
+use Psr\Container\ContainerInterface;
 
-class TableRights extends Contained {
+class TableRights extends Contained
+{
     public $table;
 
-    public function __construct($c, $table) {
-        parent::__construct($c);
+    public function __construct(ContainerInterface $container, string $table)
+    {
+        parent::__construct($container);
         
         $this->table = $table;
     }
     
-    public function get($item = null) {
-        try {
-            $can = $this->access->getAllRights($this->table);
-        
-            if ($item) {
-                $item = is_array($item) ? $item : $item->asArray();
-    
-                $noOwner = !isset($item['created_by']);
-                $own = $this->auth->isOwnerOf($item);
-        
-                $can['read'] = $noOwner || $can['read'] || ($own && $can['read_own']);
-                $can['edit'] = $can['edit'] || ($own && $can['edit_own']);
-                $can['delete'] = $can['delete'] || ($own && $can['delete_own']);
-            }
-        }
-        catch (ApplicationException $ex) {
-            // some tables don't have rights
-            // that's ok HERE
+    public function get($item = null)
+    {
+        $can = $this->access->getAllRights($this->table);
+
+        if ($item) {
+            $item = is_array($item) ? $item : $item->asArray();
+
+            $noOwner = !isset($item['created_by']);
+            $own = $this->auth->isOwnerOf($item);
+
+            $can['read'] = $noOwner || $can['read'] || ($own && $can['read_own']);
+            $can['edit'] = $can['edit'] || ($own && $can['edit_own']);
+            $can['delete'] = $can['delete'] || ($own && $can['delete_own']);
         }
 
         return $can;
     }
     
-    public function enrichRights($item) {
+    public function enrichRights($item)
+    {
         if ($item) {
             $rights = $this->get($item);
     
@@ -50,7 +48,8 @@ class TableRights extends Contained {
         return $item;
     }
     
-    public function canRead($item) {
+    public function canRead($item)
+    {
         $rights = $this->get($item);
         return $rights['read'];
     }

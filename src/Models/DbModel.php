@@ -4,7 +4,7 @@ namespace Plasticode\Models;
 
 use Plasticode\Collection;
 use Plasticode\Query;
-use Plasticode\Exceptions\ApplicationException;
+use Plasticode\Exceptions\InvalidOperationException;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\Util\Classes;
 use Plasticode\Util\Pluralizer;
@@ -158,7 +158,7 @@ abstract class DbModel extends Model implements SerializableInterface
     public function failIfNotPersisted()
     {
         if (!$this->isPersisted()) {
-            throw new ApplicationException('Object must be persisted.');
+            throw new InvalidOperationException('Object must be persisted.');
         }
     }
 

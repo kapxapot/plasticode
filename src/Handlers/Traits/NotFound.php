@@ -4,7 +4,7 @@ namespace Plasticode\Handlers\Traits;
 
 use Plasticode\Core\Request;
 use Plasticode\Core\Response;
-use Plasticode\Exceptions\NotFoundException;
+use Plasticode\Exceptions\Http\NotFoundException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -17,17 +17,19 @@ trait NotFound
             return Response::error($this->container, $request, $response, $ex);
         }
 
-        $params = $this->buildParams([
-            'params' => [
-                'text' => $this->translate('Page not found or moved.'),
-                'title' => $this->translate('Error 404'),
-                'no_breadcrumbs' => true,
-                'no_disqus' => 1,
-                'no_social' => 1,
-            ],
-        ]);
+        $params = $this->buildParams(
+            [
+                'params' => [
+                    'text' => $this->translate('Page not found or moved.'),
+                    'title' => $this->translate('Error 404'),
+                    'no_breadcrumbs' => true,
+                    'no_disqus' => 1,
+                    'no_social' => 1,
+                ],
+            ]
+        );
 
-        return $this->view->render($response, 'main/generic.twig', $params)
+        return $this->render($response, 'main/generic.twig', $params)
             ->withStatus(404);
     }
 }

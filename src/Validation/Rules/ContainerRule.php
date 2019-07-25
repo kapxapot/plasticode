@@ -2,23 +2,23 @@
 
 namespace Plasticode\Validation\Rules;
 
+use Plasticode\Exceptions\InvalidConfigurationException;
+use Psr\Container\ContainerInterface;
 use Respect\Validation\Rules\AbstractRule;
-
-use Plasticode\Exceptions\ApplicationException;
 
 abstract class ContainerRule extends AbstractRule
 {
-	protected $container;
+    protected $container;
 
-	public function setContainer($container)
-	{
-		$this->container = $container;
-	}
-	
-	public function validate($input)
-	{
-		if (!isset($this->container)) {
-			throw new ApplicationException('Container not found!');
-		}
-	}
+    public function setContainer(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+    
+    public function validate(string $input)
+    {
+        if (!isset($this->container)) {
+            throw new InvalidConfigurationException('Container not found!');
+        }
+    }
 }

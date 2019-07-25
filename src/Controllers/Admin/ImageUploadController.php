@@ -2,13 +2,12 @@
 
 namespace Plasticode\Controllers\Admin;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
 use Plasticode\Core\Response;
 use Plasticode\Controllers\Controller;
-use Plasticode\Exceptions\BadRequestException;
+use Plasticode\Exceptions\Http\BadRequestException;
 use Plasticode\IO\Image;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 abstract class ImageUploadController extends Controller
 {
@@ -44,9 +43,10 @@ abstract class ImageUploadController extends Controller
             );
         }
         
-        return Response::json($response, [
-            'message' => $this->translate('Upload successful.'),
-        ]);
+        return Response::json(
+            $response,
+            ['message' => $this->translate('Upload successful.')]
+        );
     }
 
     /**
