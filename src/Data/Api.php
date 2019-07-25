@@ -141,7 +141,7 @@ class Api extends Contained
 
         $this->logger->info("Created {$table}: {$e->id}");
         
-        return $this->apiGet($response, $table, $e->id, $provider)
+        return $this->get($response, $table, $e->id, $provider)
             ->withStatus(201);
     }
     
