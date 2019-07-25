@@ -260,19 +260,13 @@ class Api extends Contained
      */
     private function stamps(string $table, array $data) : array
     {
-        $this->logger->info("...stamps for {$table}");
-
         $upd = $this->db->updatedAt($table);
-
-        $this->logger->info("...updated_at = {$upd}");
 
         if ($upd) {
             $data['updated_at'] = $upd;
         }
         
         $user = $this->auth->getUser();
-
-        $this->logger->info("...user = {$user}");
 
         if ($user) {
             $data = $this->db->stampBy($table, $data, $user->getId());
