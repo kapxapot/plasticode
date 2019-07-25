@@ -97,15 +97,23 @@ class Api extends Contained
      */
     private function addUserNames(array $item) : array
     {
+        $creator = '[no data]';
+        
         if (isset($item['created_by'])) {
             $created = $this->userRepository->get($item['created_by']);
-            $item['created_by_name'] = $created->login ?? $item['created_by'] ?? '[no data]';
+            $creator = $created->login ?? $item['created_by'];
         }
+
+        $item['created_by_name'] = $creator;
+
+        $updater = '[no data]';
 
         if (isset($item['updated_by'])) {
             $updated = $this->userRepository->get($item['updated_by']);
-            $item['updated_by_name'] = $updated->login ?? $item['updated_by'] ?? '[no data]';
+            $updater = $updated->login ?? $item['updated_by'];
         }
+
+        $item['updated_by_name'] = $updater;
         
         return $item;
     }
