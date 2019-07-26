@@ -1,7 +1,7 @@
 {% if entity.creator %}
     {% set user = entity.creator %}
     <div class="glyphicon-block" title="Автор">
-        <img src="{{ user.gravatar_url }}" class="avatar avatar--inline{% if big %} avatar--big{% endif %}">
+        <img src="{{ user.gravatar_url }}" class="avatar avatar--inline">
         {% if user.forum_member %}
             <b><a href="{{ user.forum_member.page_url }}">{{ user.display_name }}</a></b>
         {% else %}
