@@ -2,10 +2,9 @@
 
 namespace Plasticode\Core;
 
+use Plasticode\Models\Model;
 use Psr\Container\ContainerInterface;
 use Respect\Validation\Validator as v;
-
-use Plasticode\Models\Model;
 
 class Core
 {
@@ -14,16 +13,20 @@ class Core
      *
      * @param ContainerInterface $container
      * @param array $settings
+     * @param array $validationNamespaces
      * @return void
      */
-    public static function bootstrap(ContainerInterface $container, array $settings) : void
+    public static function bootstrap(ContainerInterface $container, array $settings, array $validationNamespaces = [])
     {
         foreach ($settings as $key => $value) {
             $container[$key] = $value;
         }
         
         v::with('Plasticode\\Validation\\Rules\\');
-        v::with('App\\Validation\\Rules\\'); // refactor this, this shouldn't be here
+
+        foreach ($validationNamespaces as $namespace) {
+            v::with($namespace);
+        }
         
         Model::init($container);
     }

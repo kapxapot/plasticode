@@ -2,11 +2,10 @@
 
 namespace Plasticode\Controllers;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
 use Plasticode\Contained;
 use Plasticode\Core\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ParserController extends Contained
 {

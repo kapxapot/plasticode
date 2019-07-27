@@ -4,15 +4,15 @@ namespace Plasticode\Core;
 
 class Translator
 {
-	private $dictionaries;
+    private $dictionaries;
 
-	public function __construct($dictionaries)
-	{
-		$this->dictionaries = $dictionaries;
-	}
+    public function __construct(array $dictionaries)
+    {
+        $this->dictionaries = $dictionaries;
+    }
 
-	public function translate($value)
-	{
-		return $this->dictionaries[$value] ?? $value;
-	}
+    public function translate(string $value) : string
+    {
+        return $this->dictionaries[$value] ?? $value;
+    }
 }

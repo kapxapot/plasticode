@@ -3,6 +3,7 @@
 namespace Plasticode\Generators;
 
 use Plasticode\Util\Pluralizer;
+use Psr\Container\ContainerInterface;
 
 class ChildEntityGenerator extends EntityGenerator
 {
@@ -12,7 +13,7 @@ class ChildEntityGenerator extends EntityGenerator
     protected $namesLabel;
     protected $parentNameField;
 
-    public function __construct($container, $entity, $options)
+    public function __construct(ContainerInterface $container, string $entity, array $options)
     {
         parent::__construct($container, $entity);
         
@@ -23,22 +24,22 @@ class ChildEntityGenerator extends EntityGenerator
         $this->parentNameField = $options['parent']['name_field'] ?? 'name';
     }
 
-    protected function plural($word)
+    protected function plural(string $word) : string
     {
         return Pluralizer::plural($word);
     }
     
-    protected function parents()
+    protected function parents() : string
     {
         return $this->plural($this->parentName);
     }
     
-    protected function names()
+    protected function names() : string
     {
         return $this->plural($this->name);
     }
     
-    public function getOptions()
+    public function getOptions() : array
     {
         $options = parent::getOptions();
         
@@ -48,18 +49,23 @@ class ChildEntityGenerator extends EntityGenerator
         return $options;
     }
     
-    public function getAdminParams($args)
+    public function getAdminParams(array $args) : array
     {
         $params = parent::getAdminParams($args);
 
         $parentId = $args['id'];
         $parent = $this->db->getEntityById($this->parents(), $parentId);
 
-        $params['source'] = $this->parents() . "/{$parentId}/" . $this->names();
+        $params['source'] = $this->parents() . '/' . $parentId . '/' . $this->names();
         $params['breadcrumbs'] = [
-            [ 'text' => $this->parentsLabel, 'link' => $this->router->pathFor('admin.entities.' . $this->parents()) ],
-            [ 'text' => $parent[$this->parentNameField] ],
-            [ 'text' => $this->namesLabel ],
+            [
+                'text' => $this->parentsLabel,
+                'link' => $this->router->pathFor(
+                    'admin.entities.' . $this->parents()
+                )
+            ],
+            ['text' => $parent[$this->parentNameField]],
+            ['text' => $this->namesLabel],
         ];
         
         $params['hidden'] = [

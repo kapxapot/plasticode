@@ -2,13 +2,33 @@
 
 namespace Plasticode\Config;
 
+use Plasticode\IO\File;
+use Psr\Container\ContainerInterface;
+
 class Bootstrap
 {
+    /**
+     * Settings
+     *
+     * @var array
+     */
     protected $settings;
+
+    /**
+     * Database settings
+     *
+     * @var array
+     */
     protected $dbSettings;
+
+    /**
+     * Current directory
+     *
+     * @var string
+     */
     protected $dir;
     
-    public function __construct($settings, $dir)
+    public function __construct(array $settings, string $dir)
     {
         $this->settings = $settings;
         $this->dbSettings = $this->settings['db'];
@@ -69,62 +89,62 @@ class Bootstrap
     public function getMappings() : array
     {
         return [
-            'userClass' => function ($c) {
+            'userClass' => function (ContainerInterface $container) {
                 return \Plasticode\Models\User::class;
             },
             
-            'roleClass' => function ($c) {
+            'roleClass' => function (ContainerInterface $container) {
                 return \Plasticode\Models\Role::class;
             },
             
-            'authTokenClass' => function ($c) {
+            'authTokenClass' => function (ContainerInterface $container) {
                 return \Plasticode\Models\AuthToken::class;
             },
             
-            'menuClass' => function ($c) {
+            'menuClass' => function (ContainerInterface $container) {
                 return \Plasticode\Models\Menu::class;
             },
             
-            'menuItemClass' => function ($c) {
+            'menuItemClass' => function (ContainerInterface $container) {
                 return \Plasticode\Models\MenuItem::class;
             },
             
-            'userRepository' => function ($c) {
-                return new \Plasticode\StaticProxy($c->userClass);
+            'userRepository' => function (ContainerInterface $container) {
+                return new \Plasticode\StaticProxy($container->userClass);
             },
             
-            'roleRepository' => function ($c) {
-                return new \Plasticode\StaticProxy($c->roleClass);
+            'roleRepository' => function (ContainerInterface $container) {
+                return new \Plasticode\StaticProxy($container->roleClass);
             },
             
-            'authTokenRepository' => function ($c) {
-                return new \Plasticode\StaticProxy($c->authTokenClass);
+            'authTokenRepository' => function (ContainerInterface $container) {
+                return new \Plasticode\StaticProxy($container->authTokenClass);
             },
             
-            'menuRepository' => function ($c) {
-                return new \Plasticode\StaticProxy($c->menuClass);
+            'menuRepository' => function (ContainerInterface $container) {
+                return new \Plasticode\StaticProxy($container->menuClass);
             },
             
-            'menuItemRepository' => function ($c) {
-                return new \Plasticode\StaticProxy($c->menuItemClass);
+            'menuItemRepository' => function (ContainerInterface $container) {
+                return new \Plasticode\StaticProxy($container->menuItemClass);
             },
             
-            'auth' => function ($c) {
-                return new \Plasticode\Auth\Auth($c);
+            'auth' => function (ContainerInterface $container) {
+                return new \Plasticode\Auth\Auth($container);
             },
             
-            'logger' => function ($c) {
+            'logger' => function (ContainerInterface $container) {
                 $logger = new \Monolog\Logger($this->settings['logger']['name']);
             
                 $logger->pushProcessor(
-                    function ($record) use ($c) {
-                        $user = $c->auth->getUser();
+                    function ($record) use ($container) {
+                        $user = $container->auth->getUser();
 
                         if ($user) {
                             $record['extra']['user'] = $user->toString();
                         }
                         
-                        $token = $c->auth->getToken();
+                        $token = $container->auth->getToken();
 
                         if ($token) {
                             $record['extra']['token'] = $token->toString();
@@ -136,17 +156,17 @@ class Bootstrap
 
                 $path = $this->settings['logger']['path'];
                 
-                // if relative path, make it absolute
-                if (\Plasticode\Util\Strings::startsWith($path, '/../')) {
-                    $path = $this->dir . $path;
-                }
+                $path = File::absolutePath($this->dir, $path);
 
                 $handler = new \Monolog\Handler\StreamHandler(
                     $path,
                     \Monolog\Logger::DEBUG
                 );
 
-                $formatter = new \Monolog\Formatter\LineFormatter(null, null, false, true);
+                $formatter = new \Monolog\Formatter\LineFormatter(
+                    null, null, false, true
+                );
+
                 $handler->setFormatter($formatter);
             
                 $logger->pushHandler($handler);
@@ -154,42 +174,51 @@ class Bootstrap
                 return $logger;
             },
             
-            'captchaConfig' => function ($c) {
-                return new \Plasticode\Config\Captcha();  
+            'captchaConfig' => function (ContainerInterface $container) {
+                return new \Plasticode\Config\Captcha();
             },
             
-            'captcha' => function ($c) {
-                return new \Plasticode\Auth\Captcha($c, $c->captchaConfig->getReplaces());
+            'captcha' => function (ContainerInterface $container) {
+                return new \Plasticode\Auth\Captcha(
+                    $container,
+                    $container->captchaConfig->getReplaces()
+                );
             },
             
-            'access' => function ($c) {
-                return new \Plasticode\Auth\Access($c);
+            'access' => function (ContainerInterface $container) {
+                $auth = $container->auth;
+                $accessSettings = $container->getSettings('access');
+
+                return new \Plasticode\Auth\Access($auth, $accessSettings);
             },
             
-            'generatorResolver' => function ($c) {
-                return new \Plasticode\Generators\GeneratorResolver($c, [ '\\App\\Generators' ]);
+            'generatorResolver' => function (ContainerInterface $container) {
+                return new \Plasticode\Generators\GeneratorResolver(
+                    $container,
+                    ['\\App\\Generators']
+                );
             },
             
-            'cases' => function ($c) {
+            'cases' => function (ContainerInterface $container) {
                 return new \Plasticode\Util\Cases();
             },
             
-            'view' => function ($c) {
+            'view' => function (ContainerInterface $container) {
                 $tws = $this->settings['view'];
             
                 $path = $tws['templates_path'];
-                $path = is_array($path) ? $path : [ $path ];
+                $path = is_array($path) ? $path : [$path];
             
                 $templatesPath = array_map(
-                    function ($p) {
-                        return $this->dir . $p;
+                    function ($tPath) {
+                        return File::combine($this->dir, $tPath);
                     },
                     $path
                 );
             
                 $cachePath = $tws['cache_path'];
                 if ($cachePath) {
-                    $cachePath = $this->dir . $cachePath;
+                    $cachePath = File::combine($this->dir, $cachePath);
                 }
             
                 $view = new \Slim\Views\Twig(
@@ -200,8 +229,19 @@ class Bootstrap
                     ]
                 );
             
-                $view->addExtension(new \Slim\Views\TwigExtension($c->router, $c->request->getUri()));
-                $view->addExtension(new \Plasticode\Twig\Extensions\AccessRightsExtension($c));
+                $twigExt = new \Slim\Views\TwigExtension(
+                    $container->router,
+                    $container->request->getUri()
+                );
+                
+                $view->addExtension($twigExt);
+
+                $accessExt = new \Plasticode\Twig\Extensions\AccessRightsExtension(
+                    $container->access
+                );
+
+                $view->addExtension($accessExt);
+
                 $view->addExtension(new \Twig\Extension\DebugExtension);
 
                 // set globals
@@ -210,14 +250,14 @@ class Bootstrap
                     $view[$key] = $value;
                 }
 
-                $user = $c->auth->getUser();
+                $user = $container->auth->getUser();
             
                 $view['auth'] = [
-                    'check' => $c->auth->check(),
+                    'check' => $container->auth->check(),
                     'user' => $user,
-                    'role' => $c->auth->getRole(),
+                    'role' => $container->auth->getRole(),
                     'avatar' => is_null($user)
-                        ? $c->linker->defaultGravatarUrl()
+                        ? $container->linker->defaultGravatarUrl()
                         : $user->gravatarUrl(),
                 ];
             
@@ -236,97 +276,114 @@ class Bootstrap
                 return $view;
             },
             
-            'cache' => function ($c) {
+            'cache' => function (ContainerInterface $container) {
                 return new \Plasticode\Core\Cache();
             },
             
-            'session' => function ($c) {
+            'session' => function (ContainerInterface $container) {
                 $root = $this->settings['root'];
                 $name = 'sessionContainer' . $root;
                 
                 return new \Plasticode\Core\Session($name);
             },
             
-            'localization' => function ($c) {
+            'localization' => function (ContainerInterface $container) {
                 return new \Plasticode\Config\Localization();
             },
             
-            'translator' => function ($c) {
-                $lang = $this->settings['view_globals']['lang'];
-                $loc = $c->localization->get($lang);
+            'translator' => function (ContainerInterface $container) {
+                $lang = $this->settings['view_globals']['lang'] ?? 'ru';
+                $loc = $container->localization->get($lang);
                 
                 return new \Plasticode\Core\Translator($loc);
             },
             
-            'validator' => function ($c) {
-                return new \Plasticode\Validation\Validator($c);
+            'validator' => function (ContainerInterface $container) {
+                return new \Plasticode\Validation\Validator($container);
             },
             
-            'dbClass' => function ($c) {
+            'dbClass' => function (ContainerInterface $container) {
                 return \Plasticode\Data\Db::class;
             },
             
-            'db' => function ($c) {
+            'db' => function (ContainerInterface $container) {
                 $dbs = $this->dbSettings;
                 
-                \ORM::configure("mysql:host={$dbs['host']};dbname={$dbs['database']}");
-                \ORM::configure("username", $dbs['user']);
-                \ORM::configure("password", $dbs['password']);
-                \ORM::configure("driver_options", array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+                \ORM::configure(
+                    'mysql:host=' . $dbs['host'] .
+                    ';dbname=' . $dbs['database']
+                );
                 
-                $dbClass = $c->dbClass;
+                \ORM::configure('username', $dbs['user']);
+                \ORM::configure('password', $dbs['password'] ?? '');
                 
-                return new $dbClass($c);
+                \ORM::configure(
+                    'driver_options',
+                    [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']
+                );
+                
+                $dbClass = $container->dbClass;
+                
+                return new $dbClass($container);
             },
 
-            'api' => function ($c) {
-                return new \Plasticode\Data\Api($c);
+            'api' => function (ContainerInterface $container) {
+                return new \Plasticode\Data\Api($container);
             },
             
-            'renderer' => function ($c) {
-                return new \Plasticode\Core\Renderer($c->view);
+            'renderer' => function (ContainerInterface $container) {
+                return new \Plasticode\Core\Renderer($container->view);
             },
             
-            'pagination' => function ($c) {
-                return new \Plasticode\Core\Pagination($c->linker, $c->renderer);
+            'pagination' => function (ContainerInterface $container) {
+                return new \Plasticode\Core\Pagination(
+                    $container->linker,
+                    $container->renderer
+                );
             },
             
-            'linker' => function ($c) {
-                return new \Plasticode\Core\Linker($c);
+            'linker' => function (ContainerInterface $container) {
+                return new \Plasticode\Core\Linker($container);
             },
             
-            'parserConfig' => function ($c) {
+            'parserConfig' => function (ContainerInterface $container) {
                 return new \Plasticode\Config\Parsing();
             },
             
-            'parser' => function ($c) {
-                return new \Plasticode\Core\Parser($c, $c->parserConfig);
+            'parser' => function (ContainerInterface $container) {
+                return new \Plasticode\Core\Parser(
+                    $container,
+                    $container->parserConfig
+                );
             },
 
-            'dispatcher' => function ($c) {
-                return new \Plasticode\Events\EventDispatcher($c, $c->eventProcessors);
+            'dispatcher' => function (ContainerInterface $container) {
+                return new \Plasticode\Events\EventDispatcher(
+                    $container,
+                    $container->eventProcessors
+                );
             },
 
-            'eventProcessors' => function ($c) {
+            'eventProcessors' => function (ContainerInterface $container) {
                 return [];
             },
                 
-            'eventLog' => function ($c) {
+            'eventLog' => function (ContainerInterface $container) {
                 $logger = new \Monolog\Logger($this->settings['event_log']['name']);
                 
                 $path = $this->settings['event_log']['path'];
                 
-                // if relative path, make it absolute
-                if (\Plasticode\Util\Strings::startsWith($path, '/../')) {
-                    $path = $this->dir . $path;
-                }
+                $path = File::absolutePath($this->dir, $path);
 
                 $handler = new \Monolog\Handler\StreamHandler(
                     $path,
                     \Monolog\Logger::DEBUG
                 );
 
-                $formatter = new \Monolog\Formatter\LineFormatter(null, null, false, true);
+                $formatter = new \Monolog\Formatter\LineFormatter(
+                    null, null, false, true
+                );
+
                 $handler->setFormatter($formatter);
             
                 $logger->pushHandler($handler);
@@ -336,30 +393,36 @@ class Bootstrap
         
             // external
             
-            'twitch' => function ($c) {
-                return new \Plasticode\External\Twitch($this->settings['twitch']);
+            'twitch' => function (ContainerInterface $container) {
+                return new \Plasticode\External\Twitch(
+                    $this->settings['twitch']
+                );
             },
             
-            'telegram' => function ($c) {
-                return new \Plasticode\External\Telegram($this->settings['telegram']);
+            'telegram' => function (ContainerInterface $container) {
+                return new \Plasticode\External\Telegram(
+                    $this->settings['telegram']
+                );
             },
             
-            'twitter' => function ($c) {
-                return new \Plasticode\External\Twitter($this->settings['twitter']);
+            'twitter' => function (ContainerInterface $container) {
+                return new \Plasticode\External\Twitter(
+                    $this->settings['twitter']
+                );
             },
             
             // handlers
             
-            'notFoundHandler' => function ($c) {
-                return new \Plasticode\Handlers\NotFoundHandler($c);
+            'notFoundHandler' => function (ContainerInterface $container) {
+                return new \Plasticode\Handlers\NotFoundHandler($container);
             },
             
-            'errorHandler' => function ($c) {
-                return new \Plasticode\Handlers\ErrorHandler($c);
+            'errorHandler' => function (ContainerInterface $container) {
+                return new \Plasticode\Handlers\ErrorHandler($container);
             },
             
-            'notAllowedHandler' => function ($c) {
-                return new \Plasticode\Handlers\NotAllowedHandler($c);
+            'notAllowedHandler' => function (ContainerInterface $container) {
+                return new \Plasticode\Handlers\NotAllowedHandler($container);
             },
         ];
     }

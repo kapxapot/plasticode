@@ -4,25 +4,32 @@ namespace Plasticode\Validation;
 
 use Plasticode\Contained;
 use Plasticode\Exceptions\InvalidConfigurationException;
-use Respect\Validation\Validator as v;
+use Psr\Container\ContainerInterface;
+use Respect\Validation\Validatable;
+use Respect\Validation\Validator;
 
 class ValidationRules extends Contained
 {
+    /**
+     * Rules
+     *
+     * @var array
+     */
     private $rules;
     
-    public function __construct($container)
+    public function __construct(ContainerInterface $container)
     {
         parent::__construct($container);
         
         $this->rules = $this->buildRules();
     }
     
-    private function buildRules()
+    private function buildRules() : array
     {
         $settings = $this->getSettings();
         
         $notEmpty = function () {
-            return v::notEmpty();
+            return Validator::notEmpty();
         };
         
         $solid = function () use ($notEmpty) {
@@ -44,7 +51,7 @@ class ValidationRules extends Contained
                 return $solid()->regex('/^[\w]+$/');
             },
             'nullableAlias' => function () {
-                return v::noWhitespace();
+                return Validator::noWhitespace();
             },
             'text' => function () use ($notEmpty) {
                 return $notEmpty();
@@ -53,13 +60,13 @@ class ValidationRules extends Contained
                 return $solid();
             },
             'posInt' => function () {
-                return v::numeric()->positive();
+                return Validator::numeric()->positive();
             },
             'image' => function () {
-                return v::imageNotEmpty()->imageTypeAllowed();
+                return Validator::imageNotEmpty()->imageTypeAllowed();
             },
             'password' => function () use ($settings) {
-                return v::noWhitespace()->length($settings['password_min']);
+                return Validator::noWhitespace()->length($settings['password_min']);
             },
             'login' => function () use ($alias, $settings) {
                 return $alias()->length(
@@ -70,10 +77,12 @@ class ValidationRules extends Contained
         ];
     }
     
-    public function get($name, $optional = false)
+    public function get(string $name, bool $optional = false) : Validator
     {
         if (!array_key_exists($name, $this->rules)) {
-            throw new InvalidConfigurationException("Validation rule '{$name}' not found.");
+            throw new InvalidConfigurationException(
+                'Validation rule \'' . $name . '\' not found.'
+            );
         }
         
         $rule = $this->rules[$name]();
@@ -83,18 +92,18 @@ class ValidationRules extends Contained
             : $rule;
     }
 
-    public function lat($add = '')
+    public function lat(string $add = '') : string
     {
         return "/^[\w {$add}]+$/";
     }
     
-    public function cyr($add = '')
+    public function cyr(string $add = '') : string
     {
         return "/^[\w\p{Cyrillic} {$add}]+$/u";
     }
     
-    public function optional($rule)
+    public function optional(Validatable $rule) : Validator
     {
-        return v::optional($rule);
+        return Validator::optional($rule);
     }
 }

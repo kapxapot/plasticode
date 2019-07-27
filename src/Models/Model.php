@@ -4,7 +4,12 @@ namespace Plasticode\Models;
 
 use Plasticode\Contained;
 use Plasticode\Core\Cache;
+use Plasticode\Exceptions\InvalidArgumentException;
+use Plasticode\Exceptions\InvalidConfigurationException;
+use Plasticode\Models\Role;
+use Plasticode\Models\User;
 use Plasticode\Util\Strings;
+use Psr\Container\ContainerInterface;
 
 abstract class Model implements \ArrayAccess
 {
@@ -24,8 +29,9 @@ abstract class Model implements \ArrayAccess
     protected $objCache;
     protected static $staticCache;
 
-    public static function init($container)
+    public static function init(ContainerInterface $container)
     {
+        // hack for getSettings()
         self::$container = new Contained($container);
         
         self::$db = self::$container->db;
@@ -47,39 +53,39 @@ abstract class Model implements \ArrayAccess
         $this->objCache = new Cache();
     }
 
-    protected static function getSettings($path)
+    protected static function getSettings(string $path)
     {
         return self::$container->getSettings($path);
     }
 
     // repositories
     
-    protected static function getUser($id)
+    protected static function getUser($id) : ?User
     {
         return self::$userRepository->get($id);
     }
     
-    protected static function getRole($id)
+    protected static function getRole($id) : ?Role
     {
         return self::$roleRepository->get($id);
     }
     
     // auth
     
-    protected static function getCurrentUser()
+    protected static function getCurrentUser() : ?User
     {
         return self::$auth->getUser();
     }
 
     // lazy
     
-    private static function getLazyFuncName()
+    private static function getLazyFuncName() : string
     {
         list($one, $two, $caller) = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
         return $caller['function'];
     }
     
-    protected function lazy(\Closure $loader, $name = null, bool $ignoreCache = false)
+    protected function lazy(\Closure $loader, string $name = null, bool $ignoreCache = false)
     {
         $name = $name ?? self::getLazyFuncName();
         
@@ -90,12 +96,12 @@ abstract class Model implements \ArrayAccess
         return $this->objCache->get($name);
     }
     
-    protected function resetLazy($name)
+    protected function resetLazy(string $name)
     {
         $this->objCache->delete($name);
     }
     
-    protected static function staticLazy(\Closure $loader, $name = null, bool $ignoreCache = false)
+    protected static function staticLazy(\Closure $loader, string $name = null, bool $ignoreCache = false)
     {
         $name = $name ?? self::getLazyFuncName();
         
@@ -106,22 +112,27 @@ abstract class Model implements \ArrayAccess
         return self::$staticCache->get($name);
     }
     
-    protected static function resetStaticLazy($name)
+    protected static function resetStaticLazy(string $name)
     {
         self::$staticCache->delete($name);
     }
 
     // magic
     
-    private function checkPropertyExists($property)
+    private function checkPropertyExists(string $property)
     {
         if (array_key_exists($property, $this->obj)) {
             $className = static::class;
-            throw new \Exception("Property conflict in model: method defined over existing property. Class: {$className}, Property: {$property}.");
+
+            throw new InvalidConfigurationException(
+                'Property conflict in model: ' .
+                'method defined over existing property. ' .
+                'Class: ' . $className . ', property: ' . $property
+            );
         }
     }
 
-    public function __get($property)
+    public function __get(string $property)
     {
         $camelCase = Strings::toCamelCase($property);
         $snakeCase = Strings::toSnakeCase($property);
@@ -134,7 +145,7 @@ abstract class Model implements \ArrayAccess
         return $this->obj[$snakeCase];
     }
     
-    public function __set($property, $value)
+    public function __set(string $property, $value)
     {
         $camelCase = Strings::toCamelCase($property);
         $snakeCase = Strings::toSnakeCase($property);
@@ -147,7 +158,7 @@ abstract class Model implements \ArrayAccess
         }
     }
     
-    public function __isset($property)
+    public function __isset(string $property)
     {
         $camelCase = Strings::toCamelCase($property);
         
@@ -159,7 +170,7 @@ abstract class Model implements \ArrayAccess
         return isset($this->obj[$snakeCase]);
     }
     
-    public function __unset($property)
+    public function __unset(string $property)
     {
         $camelCase = Strings::toCamelCase($property);
         
@@ -171,35 +182,39 @@ abstract class Model implements \ArrayAccess
         unset($this->obj[$snakeCase]);
     }
 
-    public function __toString()
+    public function __toString() : string
     {
         return $this->toString();
     }
     
-    public function toString()
+    public function toString() : string
     {
         return static::class;
     }
     
     // array access
     
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         if (is_null($offset)) {
-            throw new \InvalidArgumentException('$offset cannot be null.');
+            throw new InvalidArgumentException('$offset cannot be null.');
         } else {
             $this->{$offset} = $value;
         }
     }
 
-    public function offsetExists($offset) {
+    public function offsetExists($offset) : bool
+    {
         return isset($this->{$offset});
     }
 
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         unset($this->{$offset});
     }
 
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         return isset($this->{$offset})
             ? $this->{$offset}
             : null;

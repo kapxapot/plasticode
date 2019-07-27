@@ -3,7 +3,6 @@
 namespace Plasticode\Core;
 
 use Plasticode\Contained;
-use Plasticode\IO\File;
 use Plasticode\IO\Image;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\Numbers;
@@ -637,7 +636,7 @@ class Parser extends Contained
     }
 
     /**
-     * Parse Markdown lists.
+     * Parse Markdown lists
      */
     protected function parseListMD($text)
     {
@@ -664,8 +663,7 @@ class Parser extends Contained
                     
                     $list[] = $matches[3];
                     $ordered = $itemOrdered;
-                }
-                else {
+                } else {
                     $flush();
                     $results[] = $line;
                 }
@@ -677,7 +675,7 @@ class Parser extends Contained
         });
     }
     
-    protected function parseMarkdown($text)
+    protected function parseMarkdown(string $text) : string
     {
         $text = $this->parseListMD($text);
 
@@ -687,7 +685,7 @@ class Parser extends Contained
     /**
      * Override this to render placeholder links (double brackets etc.)
      */
-    public function renderLinks($text)
+    public function renderLinks(string $text) : string
     {
         // example:
         // $text = str_replace('%news%/', $this->linker->news(), $text);
@@ -698,7 +696,7 @@ class Parser extends Contained
     /**
      * Lightweight parsing, just text.
      */
-    public function justText($text)
+    public function justText(string $text) : string
     {
         $parsed = $this->parse($text);
         $text = $parsed['text'];

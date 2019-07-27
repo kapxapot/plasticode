@@ -13,22 +13,22 @@ abstract class Event
      */
     private $parent;
 
-    public function __construct(Event $parent = null)
+    public function __construct(self $parent = null)
     {
         $this->setParent($parent);
     }
 
-    public function getParent() : ?Event
+    public function getParent() : ?self
     {
         return $this->parent;
     }
 
-    public function setParent(?Event $parent) : void
+    public function setParent(?self $parent) : void
     {
         $this->parent = $parent;
     }
 
-    public function withParent(Event $parent) : self
+    public function withParent(self $parent) : self
     {
         $this->setParent($parent);
         return $this;
@@ -60,7 +60,7 @@ abstract class Event
         return static::class;
     }
 
-    public function toString()
+    public function toString() : string
     {
         $str = $this->getClass();
         $entity = $this->getEntity();

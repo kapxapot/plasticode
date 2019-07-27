@@ -4,8 +4,5 @@ namespace Plasticode\Models\Interfaces;
 
 interface LinkableInterface
 {
-    /**
-     * String or null.
-     */
-    public function url();
+    public function url() : ?string;
 }

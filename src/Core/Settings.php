@@ -2,14 +2,13 @@
 
 namespace Plasticode\Core;
 
-use Symfony\Component\Yaml\Yaml;
-
 use Plasticode\IO\File;
 use Plasticode\Util\Arrays;
+use Symfony\Component\Yaml\Yaml;
 
 class Settings
 {
-    private static function loadFile($file)
+    private static function loadFile(string $file)
     {
         $data = File::load($file);
         $data = self::replaceEnvEntries($data);
@@ -17,7 +16,7 @@ class Settings
         return Yaml::parse($data);
     }
     
-    private static function replaceEnvEntries($data)
+    private static function replaceEnvEntries(string $data) : string
     {
         return preg_replace_callback(
             '/\{(\w+)\}/',
@@ -31,7 +30,7 @@ class Settings
         );
     }
     
-    public static function load($path, callable $enrich = null, $entryPoint = null)
+    public static function load(string $path, \Closure $enrich = null, string $entryPoint = null) : array
     {
         $entryPoint = $entryPoint ?? 'general.yml';
         

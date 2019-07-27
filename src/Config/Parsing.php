@@ -4,7 +4,7 @@ namespace Plasticode\Config;
 
 class Parsing
 {
-    public function getCleanupReplaces()
+    public function getCleanupReplaces() : array
     {
         return [
             '</p><br/>' => '</p><p>',
@@ -21,7 +21,7 @@ class Parsing
         ];
     }
 
-    public function getReplaces()
+    public function getReplaces() : array
     {
         return [
             '[center]' => '<div class="center">',

@@ -5,20 +5,51 @@ namespace Plasticode\Auth;
 use Plasticode\Contained;
 use Plasticode\Core\Security;
 use Plasticode\Exceptions\Http\AuthenticationException;
+use Plasticode\Models\AuthToken;
+use Plasticode\Models\Role;
+use Plasticode\Models\User;
 use Plasticode\Util\Date;
 
 class Auth extends Contained
 {
+    /**
+     * Current user
+     *
+     * @var Plasticode\Models\User
+     */
     private $user;
+
+    /**
+     * Current role
+     *
+     * @var Plasticode\Models\Role
+     */
     private $role;
+
+    /**
+     * Current auth token
+     *
+     * @var Plasticode\Models\AuthToken
+     */
     private $token;
     
-    private function setToken($token)
+    /**
+     * Set current auth token
+     *
+     * @param Plasticode\Models\AuthToken $token
+     * @return void
+     */
+    private function setToken(AuthToken $token)
     {
         $this->session->set('token_id', $token->id);
     }
 
-    public function getToken()
+    /**
+     * Get current auth token
+     *
+     * @return Plasticode\Models\AuthToken|null
+     */
+    public function getToken() : ?AuthToken
     {
         if (!$this->token) {
             $id = $this->session->get('token_id');
@@ -31,7 +62,12 @@ class Auth extends Contained
         return $this->token;
     }
     
-    public function getUser()
+    /**
+     * Get current user
+     *
+     * @return Plasticode\Models\User|null
+     */
+    public function getUser() : ?User
     {
         if (!$this->user) {
             $token = $this->getToken();
@@ -44,7 +80,12 @@ class Auth extends Contained
         return $this->user;
     }
     
-    public function getRole()
+    /**
+     * Get current role
+     *
+     * @return Plasticode\Models\Role|null
+     */
+    public function getRole() : ?Role
     {
         if (!$this->role) {
             $user = $this->getUser();
@@ -57,12 +98,24 @@ class Auth extends Contained
         return $this->role;
     }
 
-    public function check()
+    /**
+     * Check if there is current user authenticated
+     *
+     * @return boolean
+     */
+    public function check() : bool
     {
-        return $this->getUser() !== null;
+        return !is_null($this->getUser());
     }
     
-    public function attempt($login, $password)
+    /**
+     * Attempt login with login and password
+     *
+     * @param string $login
+     * @param string $password
+     * @return Plasticode\Models\User|null
+     */
+    public function attempt(string $login, string $password) : ?User
     {
         $user = $this->userRepository->getByLogin($login);
 
@@ -94,28 +147,51 @@ class Auth extends Contained
         return $user;
     }
 
+    /**
+     * Logout the current user
+     *
+     * @return void
+     */
     public function logout()
     {
         $this->session->delete('token_id');
     }
     
-    private function generateExpirationTime()
+    /**
+     * Generate expiration time based on token_ttl setting
+     *
+     * @return string
+     */
+    private function generateExpirationTime() : string
     {
         $ttl = $this->getSettings('token_ttl');
         return Date::generateExpirationTime($ttl * 60);
     }
     
-    public function validateCookie($tokenStr)
+    /**
+     * Tries to validate auth token taken from cookie
+     *
+     * @param string $tokenStr
+     * @return void
+     */
+    public function validateCookie(string $tokenStr)
     {
         try {
             $this->validateToken($tokenStr);
         }
-        catch (\Exception $ex) {
+        catch (AuthenticationException $authEx) {
             // do nothing
         }
     }
 
-    public function validateToken($tokenStr, $ignoreExpiration = false)
+    /**
+     * Validates auth token and authenticates user, if it's ok
+     *
+     * @param string $tokenStr
+     * @param boolean $ignoreExpiration
+     * @return AuthToken
+     */
+    public function validateToken(string $tokenStr, bool $ignoreExpiration = false) : AuthToken
     {
         $token = $this->getToken();
         if (!$token || $token->token != $tokenStr) {
@@ -135,11 +211,5 @@ class Auth extends Contained
         $this->setToken($token);
 
         return $token;
-    }
-    
-    public function isOwnerOf($item)
-    {
-        $user = $this->getUser();
-        return isset($item['created_by']) && ($user !== null) && ($item['created_by'] == $user->id);
     }
 }

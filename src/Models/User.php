@@ -7,10 +7,12 @@ class User extends DbModel
     public static function getByLogin($login) : ?self
     {
         return self::query()
-            ->whereAnyIs([
-                [ 'login' => $login ],
-                [ 'email' => $login ],
-            ])
+            ->whereAnyIs(
+                [
+                    ['login' => $login],
+                    ['email' => $login],
+                ]
+            )
             ->one();
     }
     
@@ -46,5 +48,10 @@ class User extends DbModel
     public function gravatarUrl() : string
     {
         return self::$linker->gravatarUrl($this->gravatarHash());
+    }
+
+    public function isOwnerOf(array $item) : bool
+    {
+        return ($item['created_by'] ?? null) == $this->getId();
     }
 }

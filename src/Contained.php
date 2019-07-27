@@ -11,7 +11,7 @@ class Contained
     /**
      * DI container
      *
-     * @var ContainerInterface
+     * @var Psr\Container\ContainerInterface
      */
     public $container;
 
@@ -33,7 +33,9 @@ class Contained
      */
     public function __get(string $property)
     {
-        if ($this->container->{$property} || is_array($this->container->{$property})) {
+        if ($this->container->{$property}
+            || is_array($this->container->{$property})
+        ) {
             return $this->container->{$property};
         }
     }

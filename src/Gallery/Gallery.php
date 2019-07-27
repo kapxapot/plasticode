@@ -77,7 +77,9 @@ class Gallery extends Contained
      */
     public function getPictureUrl(array $item) : string
     {
-        return $this->getItemUrl($this->picturePublicFolder, $item, $this->pictureTypeField);
+        return $this->getItemUrl(
+            $this->picturePublicFolder, $item, $this->pictureTypeField
+        );
     }
     
     /**
@@ -88,7 +90,9 @@ class Gallery extends Contained
      */
     public function getThumbUrl(array $item) : string
     {
-        return $this->getItemUrl($this->thumbPublicFolder, $item, $this->thumbTypeField);
+        return $this->getItemUrl(
+            $this->thumbPublicFolder, $item, $this->thumbTypeField
+        );
     }
 
     /**
@@ -189,7 +193,10 @@ class Gallery extends Contained
             $item->{$this->pictureTypeField} = $picture->imgType;
         }
         
-        if ($this->pictureTypeField != $this->thumbTypeField && $thumb && $thumb->notEmpty()) {
+        if ($this->pictureTypeField != $this->thumbTypeField
+            && $thumb
+            && $thumb->notEmpty()
+        ) {
             $item->{$this->thumbTypeField} = $thumb->imgType;
         }
         
@@ -244,7 +251,9 @@ class Gallery extends Contained
     public function saveImage(\ORM $item, Image $picture)
     {
         if (!$picture || $picture->empty()) {
-            throw new InvalidArgumentException('Gallery.saveImage() can\'t save empty image.');
+            throw new InvalidArgumentException(
+                'Gallery.saveImage() can\'t save empty image.'
+            );
         }
         
         $this->savePicture($item, $picture);
@@ -269,10 +278,18 @@ class Gallery extends Contained
     
     public function delete(\ORM $item)
     {
-        $pictureFileName = $this->buildPicturePath($item->id, $item->{$this->pictureTypeField});
+        $pictureFileName = $this->buildPicturePath(
+            $item->id,
+            $item->{$this->pictureTypeField}
+        );
+
         File::delete($pictureFileName);
 
-        $thumbFileName = $this->buildThumbPath($item->id, $item->{$this->thumbTypeField});
+        $thumbFileName = $this->buildThumbPath(
+            $item->id,
+            $item->{$this->thumbTypeField}
+        );
+
         File::delete($thumbFileName);
     }
 
@@ -302,7 +319,10 @@ class Gallery extends Contained
      */
     public function ensureThumbExists($item)
     {
-        $thumbPath = $this->buildThumbPath($item->id, $item->{$this->thumbTypeField});
+        $thumbPath = $this->buildThumbPath(
+            $item->id,
+            $item->{$this->thumbTypeField}
+        );
         
         if (File::exists($thumbPath)) {
             return;
@@ -326,7 +346,10 @@ class Gallery extends Contained
             return $color;
         }
         catch (\Exception $ex) {
-            throw new InvalidResultException('Unable to get avg. color. ' . $ex->getMessage());
+            throw new InvalidResultException(
+                'Unable to get avg. color. ' .
+                $ex->getMessage()
+            );
         }
     }
 }

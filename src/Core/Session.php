@@ -6,7 +6,7 @@ class Session
 {
     private $name;
 
-    public function __construct($name)
+    public function __construct(string $name)
     {
         $this->name = $name;
 
@@ -15,22 +15,22 @@ class Session
         }
     }
     
-    public function get($key)
+    public function get(string $key)
     {
         return $_SESSION[$this->name][$key] ?? null;
     }
 
-    public function set($key, $value)
+    public function set(string $key, $value)
     {
         $_SESSION[$this->name][$key] = $value;
     }
     
-    public function delete($key)
+    public function delete(string $key)
     {
         unset($_SESSION[$this->name][$key]);
     }
     
-    public function getAndDelete($key)
+    public function getAndDelete(string $key)
     {
         $value = $this->get($key);
         $this->delete($key);

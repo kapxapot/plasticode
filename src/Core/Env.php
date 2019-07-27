@@ -6,6 +6,13 @@ use Dotenv\Dotenv;
 
 class Env
 {
+    /**
+     * Load environment variables from .env file
+     *
+     * @param string $path
+     * @param string $appEnvVar
+     * @return void
+     */
     public static function load(string $path, string $appEnvVar = null)
     {
         $appEnvVar = $appEnvVar ?? 'APP_ENV';
@@ -16,12 +23,17 @@ class Env
             $dotenv->load();
         }
         catch (\Exception $ex) {
-            throw $ex;
         }
         
-        // APP_ENV must be set either in .env file (dev, stage), or in environment variables (prod)
-        if (strlen(getenv($appEnvVar)) == 0) {
-            die('Environment variable ' . $appEnvVar . ' can\'t be empty, set it to "dev"/"prod", etc.');
+        // APP_ENV must be set either in .env file (dev, stage),
+        // or in environment variables (prod)
+        $appEnv = getenv($appEnvVar);
+
+        if (strlen($appEnv) == 0) {
+            die(
+                'Environment variable ' . $appEnvVar . ' can\'t be empty, ' .
+                'set it to "dev"/"prod", etc.'
+            );
         }
     }
 }

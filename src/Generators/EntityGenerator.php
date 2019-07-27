@@ -2,18 +2,19 @@
 
 namespace Plasticode\Generators;
 
-use Respect\Validation\Validator as v;
-
 use Plasticode\Contained;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Validation\ValidationRules;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Respect\Validation\Validator;
 
 class EntityGenerator extends Contained
 {
     protected $entity;
     protected $rules;
 
-    public function __construct($container, $entity)
+    public function __construct(ContainerInterface $container, string $entity)
     {
         parent::__construct($container);
         
@@ -21,24 +22,24 @@ class EntityGenerator extends Contained
         $this->rules = new ValidationRules($container);
     }
     
-    protected function rule($name, $optional = false)
+    protected function rule(string $name, bool $optional = false) : Validator
     {
         return $this->rules->get($name, $optional);
     }
     
-    protected function optional($name)
+    protected function optional(string $name) : Validator
     {
         return $this->rule($name, true);
     }
 
-    protected function getRules($data, $id = null)
+    protected function getRules(array $data, $id = null) : array
     {
         return [
-            'updated_at' => v::unchanged($this->entity, $id)
+            'updated_at' => Validator::unchanged($this->entity, $id),
         ];
     }
     
-    public function validate($request, $data, $id = null)
+    public function validate(ServerRequestInterface $request, array $data, $id = null) : void
     {
         $rules = $this->getRules($data, $id);
         $validation = $this->validator->validateRequest($request, $rules);
@@ -48,7 +49,7 @@ class EntityGenerator extends Contained
         }
     }
     
-    protected function getOptions()
+    protected function getOptions() : array
     {
         return [];
     }
@@ -71,7 +72,7 @@ class EntityGenerator extends Contained
     {
     }
     
-    public function getAdminParams($args)
+    public function getAdminParams(array $args)
     {
         $settings = $this->getSettings();
         $params = $settings['entities'][$this->entity];

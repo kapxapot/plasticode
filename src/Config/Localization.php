@@ -2,22 +2,40 @@
 
 namespace Plasticode\Config;
 
+use Plasticode\Exceptions\InvalidConfigurationException;
+
 class Localization
 {
-    public function get($lang)
+    /**
+     * Get localization config for language
+     * 
+     * Default language - English (en)
+     *
+     * @param string $lang
+     * @return array
+     */
+    public function get(string $lang) : array
     {
         if (!$lang || $lang == 'en') {
             return null;
         }
         
         if (is_callable(array($this, $lang))) {
-            return $this->$lang();
+            return $this->{$lang}();
         }
         
-        throw new \Exception("Dictionary for language '{$lang}' not found. Define it in Localization class.");
+        throw new InvalidConfigurationException(
+            'Dictionary for language \'' . $lang . '\' not found. ' .
+            'Define it in App\\Config\\Localization class.'
+        );
     }
-        
-    protected function ru()
+    
+    /**
+     * Localization config for Russian (ru)
+     *
+     * @return array
+     */
+    protected function ru() : array
     {
         return [
             // messages

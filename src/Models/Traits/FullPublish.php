@@ -24,39 +24,39 @@ trait FullPublish
     }
     
     public static function getProtected(Query $query = null) : Query
-	{
-	    $query = $query ?? self::query();
-	    
-		$editor = self::can('edit');
-		
-		if ($editor) {
-		    return $query;
-		}
+    {
+        $query = $query ?? self::query();
+        
+        $editor = self::can('edit');
+        
+        if ($editor) {
+            return $query;
+        }
 
-		$published = "(published = 1 and published_at < now())";
+        $published = "(published = 1 and published_at < now())";
 
-		$user = self::$auth->getUser();
+        $user = self::$auth->getUser();
 
-		if ($user) {
-			return $query->whereRaw("({$published} or created_by = ?)", [ $user->id ]);
-		}
-		
-		return $query->whereRaw($published);
-	}
+        if ($user) {
+            return $query->whereRaw("({$published} or created_by = ?)", [ $user->id ]);
+        }
+        
+        return $query->whereRaw($published);
+    }
 
-	// props
+    // props
 
     protected static function wherePublished(Query $query) : Query
     {
         return self::parentWherePublished($query)
             ->whereRaw('(published_at < now())');
     }
-	
-	public function isPublished() : bool
-	{
-	    return $this->parentIsPublished() && Date::happened($this->publishedAt);
-	}
-	
+    
+    public function isPublished() : bool
+    {
+        return $this->parentIsPublished() && Date::happened($this->publishedAt);
+    }
+    
     public function publishedAtIso() : string
     {
         return $this->publishedAt ? Date::iso($this->publishedAt) : null;

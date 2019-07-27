@@ -2,31 +2,68 @@
 
 namespace Plasticode\Auth;
 
-use Plasticode\Contained;
 use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\InvalidConfigurationException;
 
-class Access extends Contained
+class Access
 {
+    /**
+     * Authentication context
+     *
+     * @var Plasticode\Auth\Auth
+     */
+    private $auth;
+
+    /**
+     * Flattened actions
+     *
+     * @var array
+     */
     private $actions;
+
+    /**
+     * Templates settings
+     *
+     * @var array
+     */
     private $templates;
+
+    /**
+     * Rights settings
+     *
+     * @var array
+     */
     private $rights;
     
-    public function __construct($container)
+    public function __construct(Auth $auth, array $accessSettings)
     {
-        parent::__construct($container);
-        
-        $settings = $this->getSettings('access');
-        
-        $this->actions = $this->flattenActions($settings['actions']);
+        $this->auth = $auth;
+        $this->actions = $this->flattenActions($accessSettings['actions']);
+        $this->templates = $accessSettings['templates'];
+        $this->rights = $accessSettings['rights'];
+    }
 
-        $this->templates = $settings['templates'];
-        $this->rights = $settings['rights'];
+    /**
+     * Get user
+     *
+     * @return User|null
+     */
+    public function getUser() : ?User
+    {
+        return $this->auth->getUser();
     }
     
-    private function flattenActions($tree, $path = [], $flat = [])
+    /**
+     * Flattens action tree
+     *
+     * @param array $tree
+     * @param array $path
+     * @param array $flat
+     * @return array
+     */
+    private function flattenActions(array $tree, array $path = [], array $flat = []) : array
     {
-        $add = function($node) use ($path, &$flat) {
+        $add = function ($node) use ($path, &$flat) {
             $path[] = $node;
             $flat[$node] = $path;
             
@@ -48,7 +85,15 @@ class Access extends Contained
         return $flat;
     }
 
-    public function checkRights($entity, $action)
+    /**
+     * Check entity rights for action (also inherited)
+     * for current user and role
+     *
+     * @param string $entity
+     * @param string $action
+     * @return boolean
+     */
+    public function checkRights(string $entity, string $action) : bool
     {
         if (!isset($this->actions[$action])) {
             throw new InvalidArgumentException('Unknown action: ' . $action);
@@ -60,13 +105,17 @@ class Access extends Contained
         $roleTag = $role->tag;
         
         if (!isset($this->rights[$entity])) {
-            throw new InvalidConfigurationException('You must configure access rights for entity "' . $entity . '"');
+            throw new InvalidConfigurationException(
+                'You must configure access rights for entity "' . $entity . '"'
+            );
         }
         
         $rights = $this->rights[$entity];
 
         foreach ($this->actions[$action] as $actionBit) {
-            $grantAccess = $this->checkRightsForExactAction($rights, $actionBit, $roleTag);
+            $grantAccess = $this->checkRightsForExactAction(
+                $rights, $actionBit, $roleTag
+            );
             
             if ($grantAccess) {
                 break;
@@ -76,7 +125,15 @@ class Access extends Contained
         return $grantAccess;
     }
     
-    private function checkRightsForExactAction($rights, $action, $roleTag)
+    /**
+     * Checks entity rights for exact action based on roleTag
+     *
+     * @param array $rights
+     * @param string $action
+     * @param string $roleTag
+     * @return boolean
+     */
+    private function checkRightsForExactAction(array $rights, string $action, string $roleTag) : bool
     {
         $grantAccess = false;
 
@@ -84,7 +141,9 @@ class Access extends Contained
             $tname = $rights['template'];
 
             if (!isset($this->templates[$tname])) {
-                throw new InvalidConfigurationException('Unknown access rights template: ' . $tname);
+                throw new InvalidConfigurationException(
+                    'Unknown access rights template: ' . $tname
+                );
             }
             
             $template = $this->templates[$tname];
@@ -93,13 +152,20 @@ class Access extends Contained
         }
         
         if (!$grantAccess) {
-             $grantAccess = in_array($action, $rights[$roleTag] ?? []);
-         }
+            $grantAccess = in_array($action, $rights[$roleTag] ?? []);
+        }
 
         return $grantAccess;
     }
     
-    public function getAllRights($entity)
+    /**
+     * Get all rights for the entity
+     * for current user and role
+     *
+     * @param string $entity
+     * @return array
+     */
+    public function getAllRights(string $entity) : array
     {
         $path = "access.{$entity}";
         $can = $this->cache->get($path);

@@ -5,6 +5,7 @@ namespace Plasticode\IO;
 use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Exceptions\InvalidOperationException;
+use Plasticode\Exceptions\InvalidResultException;
 
 class Image
 {
@@ -34,8 +35,7 @@ class Image
             
             $this->width = $width;
             $this->height = $height;
-        }
-        else {
+        } else {
             $this->width = 0;
             $this->height = 0;
         }
@@ -65,7 +65,9 @@ class Image
         $type = self::$extensionsToTypes[$ext] ?? null;
         
         if (is_null($type)) {
-            throw new InvalidConfigurationException('No image type found for extension ' . $ext . '.');
+            throw new InvalidConfigurationException(
+                'No image type found for extension ' . $ext . '.'
+            );
         }
         
         return $type;
@@ -89,8 +91,7 @@ class Image
 
     /**
      * Build mime-type string
-     * 
-     * image/jpeg, image/png, image/gif
+     * 'image/jpeg, image/png, image/gif'
      */
     public static function buildTypesString() : string
     {
@@ -145,7 +146,9 @@ class Image
             } elseif ($format == 'gif') {
                 imagegif($gdImg);
             } else {
-                throw new InvalidArgumentException('Invalid image format: ' . $format);
+                throw new InvalidArgumentException(
+                    'Invalid image format: ' . $format
+                );
             }
     
             $data = ob_get_contents();
@@ -161,8 +164,11 @@ class Image
         try {
             $data = File::load($fileName);
             return new static($data, $imgType);
-        } catch (\Exception $ex) {
-            // ..
+        }
+        catch (\Exception $ex) {
+            throw new InvalidResultException(
+                'Can\'t load image ' . $fileName . ': ' . $ex->getMessage()
+            );
         }
 
         return self::makeEmpty();

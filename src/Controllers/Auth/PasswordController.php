@@ -2,15 +2,14 @@
 
 namespace Plasticode\Controllers\Auth;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Respect\Validation\Validator as v;
-
 use Plasticode\Controllers\Controller;
 use Plasticode\Core\Response;
 use Plasticode\Core\Security;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Validation\ValidationRules;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Respect\Validation\Validator as v;
 
 class PasswordController extends Controller
 {
@@ -18,7 +17,7 @@ class PasswordController extends Controller
     {
         $user = $this->auth->getUser();
 
-        $data = [ 'password' => $user->password ];
+        $data = ['password' => $user->password];
         
         $rules = $this->getRules($data);
         $validation = $this->validator->validateRequest($request, $rules);
@@ -34,9 +33,10 @@ class PasswordController extends Controller
         
         $this->logger->info("Changed password for user: {$user}");
         
-        return Response::json($response, [
-            'message' => $this->translate('Password change successful.'),
-        ]);
+        return Response::json(
+            $response,
+            ['message' => $this->translate('Password change successful.')]
+        );
     }
     
     /**

@@ -2,29 +2,43 @@
 
 namespace Plasticode\Data;
 
-use Plasticode\Contained;
-use Psr\Container\ContainerInterface;
+use Plasticode\Auth\Access;
 
-class TableRights extends Contained
+class TableRights
 {
-    public $table;
+    /**
+     * User
+     *
+     * @var Plasticode\Models\User
+     */
+    private $user;
 
-    public function __construct(ContainerInterface $container, string $table)
+    /**
+     * Table access rights
+     *
+     * @var array
+     */
+    private $rights;
+
+    public function __construct(Access $access, string $table)
     {
-        parent::__construct($container);
-        
-        $this->table = $table;
+        $this->user = $access->getUser();
+        $this->rights = $access->getAllRights($table);
     }
     
-    public function get($item = null)
+    /**
+     * Get table access rights for user and item (optionally)
+     *
+     * @param array $item
+     * @return array
+     */
+    public function get(array $item = null) : array
     {
-        $can = $this->access->getAllRights($this->table);
+        $can = $this->rights;
 
         if ($item) {
-            $item = is_array($item) ? $item : $item->asArray();
-
             $noOwner = !isset($item['created_by']);
-            $own = $this->auth->isOwnerOf($item);
+            $own = !is_null($this->user) && $this->user->isOwnerOf($item);
 
             $can['read'] = $noOwner || $can['read'] || ($own && $can['read_own']);
             $can['edit'] = $can['edit'] || ($own && $can['edit_own']);
@@ -34,7 +48,13 @@ class TableRights extends Contained
         return $can;
     }
     
-    public function enrichRights($item)
+    /**
+     * Adds edit/delete rights to item
+     *
+     * @param array $item
+     * @return array
+     */
+    public function enrichRights(array $item) : array
     {
         if ($item) {
             $rights = $this->get($item);
@@ -48,7 +68,13 @@ class TableRights extends Contained
         return $item;
     }
     
-    public function canRead($item)
+    /**
+     * Get table read rights for user and item (optionally)
+     *
+     * @param array $item
+     * @return boolean
+     */
+    public function canRead(array $item) : bool
     {
         $rights = $this->get($item);
         return $rights['read'];

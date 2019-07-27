@@ -20,7 +20,7 @@ class AspectRatio extends Model
     ];
     
     /**
-     * Creates AspectRatio object.
+     * Creates AspectRatio object
      */
     public function __construct(int $width, int $height, array $supportedRatios = null)
     {
@@ -97,7 +97,7 @@ class AspectRatio extends Model
         return $maxRatio;
     }
 
-    public function cssClasses()
+    public function cssClasses() : string
     {
         $ratio = $this->ratioApprox();
         $maxRatio = $this->maxRatio();

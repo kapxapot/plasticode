@@ -4,6 +4,7 @@ namespace Plasticode\Events;
 
 use Plasticode\Contained;
 use Plasticode\Util\Classes;
+use Psr\Container\ContainerInterface;
 
 class EventDispatcher extends Contained
 {
@@ -34,7 +35,7 @@ class EventDispatcher extends Contained
      * @param object $container DI container
      * @param array $processors Event processors
      */
-    public function __construct($container, array $processors)
+    public function __construct(ContainerInterface $container, array $processors)
     {
         parent::__construct($container);
 

@@ -2,13 +2,13 @@
 
 namespace Plasticode\Validation;
 
-use Respect\Validation\Validator as v;
-use Respect\Validation\Exceptions\NestedValidationException;
-
 use Plasticode\Contained;
 use Plasticode\Validation\Rules\ContainerRule;
+use Psr\Http\Message\ServerRequestInterface;
+use Respect\Validation\Exceptions\NestedValidationException;
 
-class Validator extends Contained {
+class Validator extends Contained
+{
     public $errors;
 
     private function validate(\Closure $getField, array $rules) : self
@@ -29,7 +29,7 @@ class Validator extends Contained {
                 $rule->setName($name)->assert($value);
             }
             catch (NestedValidationException $e) {
-                $e->setParam('translator', [ $this->translator, 'translate' ]);
+                $e->setParam('translator', [$this->translator, 'translate']);
                 $this->errors[$field] = $e->getMessages();
             }
         }
@@ -47,7 +47,7 @@ class Validator extends Contained {
         );
     }
     
-    public function validateRequest($request, array $rules) : self
+    public function validateRequest(ServerRequestInterface $request, array $rules) : self
     {
         return $this->validate(
             function ($field) use ($request) {
