@@ -32,12 +32,6 @@ class AccessRightsExtension extends \Twig_Extension
     
     public function can(string $entity, string $action) : bool
     {
-        $can = !$action;
-
-        if (!$can) {
-            $can = $this->access->checkRights($entity, $action);
-        }
-        
-        return $can;
+        return $this->access->checkRights($entity, $action);
     }
 }

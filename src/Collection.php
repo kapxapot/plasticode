@@ -320,9 +320,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
             return $item->serialize();
         });
     }
-	
-	// ArrayAccess
-	
+    
+    // ArrayAccess
+    
     public function offsetSet($offset, $value) {
         if (is_null($offset)) {
             throw new \InvalidArgumentException('$offset cannot be null.');
