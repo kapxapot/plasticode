@@ -88,7 +88,7 @@ final class Db extends Contained
     
     public function getTableRights(string $table) : TableRights
     {
-        return new TableRights($this->container, $table);
+        return new TableRights($this->access, $table);
     }
     
     public function can($table, $rights, $item = null)
