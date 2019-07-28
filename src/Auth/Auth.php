@@ -187,17 +187,18 @@ class Auth extends Contained
     /**
      * Validates auth token and authenticates user, if it's ok
      *
-     * @param string $tokenStr
+     * @param string|null $tokenStr
      * @param boolean $ignoreExpiration
      * @return AuthToken
      */
-    public function validateToken(string $tokenStr, bool $ignoreExpiration = false) : AuthToken
+    public function validateToken(?string $tokenStr, bool $ignoreExpiration = false) : AuthToken
     {
         $token = $this->getToken();
+
         if (!$token || $token->token != $tokenStr) {
             $token = $this->authTokenRepository->getByToken($tokenStr);
             
-            if ($token == null) {
+            if (is_null($token)) {
                 throw new AuthenticationException('Incorrect security token.');
             }
             elseif (!$ignoreExpiration && strtotime($token->expiresAt) < time()) {
