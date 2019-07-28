@@ -4,13 +4,14 @@ namespace Plasticode\Config;
 
 use Plasticode\IO\File;
 use Psr\Container\ContainerInterface;
+use Slim\Collection;
 
 class Bootstrap
 {
     /**
      * Settings
      *
-     * @var array
+     * @var Slim\Collection
      */
     protected $settings;
 
@@ -28,7 +29,7 @@ class Bootstrap
      */
     protected $dir;
     
-    public function __construct(array $settings, string $dir)
+    public function __construct(Collection $settings, string $dir)
     {
         $this->settings = $settings;
         $this->dbSettings = $this->settings['db'];
