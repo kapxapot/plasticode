@@ -1,272 +1,272 @@
 <script>
-	var app = angular.module('{{ angular_app }}', [{{ angular_modules }}]);
-	
-	{# init #}
-	{% set with_auth = with_auth ?? true %}
-	
-	{# для alert'ов #}
-	app.filter('rawHtml', ['$sce', function($sce){
-		return function(val) {
-			return $sce.trustAsHtml(val);
-		};
-	}]);
-	
-	{{ angular_filters }}
-
-	app.controller('{{ angular_ctrl }}', ['$scope', '$http', '$timeout', '$injector', function($scope, $http, $timeout, $injector) {
-    	$scope.views = {};
-    	$scope.forms = {};
-    	
-    	if (typeof moment !== 'undefined') {
-        	$scope.moment = moment;
-        	$scope.moment.locale('{{ lang }}');
-        	
-        	$scope.momentDiff = function (start, end, unknownEnd, format = null) {
-        	    return momentDiff(start, end, unknownEnd, format);
-        	}
-    	}
-
-		$scope.loading = false;
-		$scope.saving = false;
-		
-		{% if with_auth and not auth.user %}
-			$scope.captcha = 'загрузка...';
-		{% endif %}
-		
-		$scope.prePost = function(e) {
-		    if (e != null) {
-			    e.preventDefault();
-		    }
-			
-			$scope.alertError = null;
-			$scope.alertSuccess = null;
-			
-			hideAlerts();
-
-			$scope.saving = true;
-		};
-	
-		if (hasToken()) {
-			{# for datatables #}
-			$.ajaxSetup({
-				headers: getHeaders()
-			});
-			
-			{# for AngularJS Ajax #}
-			$http.defaults.headers.common = getHeaders();
-		}
-
-		$scope.ajax = function(config) {
-			if (!config.method) {
-				config.method = 'post';
-			}
-			
-			const setError = config.setError
-			    ? config.setError
-			    : (msg) => { $scope.alertError = msg; };
-			
-			const showError = config.showError
-			    ? config.showError
-			    : () => { showAlertError(); };
-			
-			const setLoading = config.setLoading
-			    ? config.setLoading
-			    : (loading) => { $scope.loading = loading; };
-			
-			const setSaving = config.setSaving
-			    ? config.setSaving
-			    : (saving) => { $scope.saving = saving; };
-			
-			return $http(config).then(function(response) {
-				var data = response.data;
-				if (data.error) {
-					setError(data.message);
-
-					showError();
-
-					if (config.onError) {
-						config.onError(data);
-					}
-				}
-				else {
-					if (config.view && !config.persist) {
-	      				$('#' + config.view +'View').modal('hide');
-					}
-
-					if (!config.noSuccessMessage) {
-						var message = 'Данные успешно сохранены.';
-						if (data.message) {
-							message = data.message;
-						}
-						else if (config.message) {
-							message = config.message;
-						}
-
-						$scope.alertSuccess = message;
-						showAlertSuccess();
-					}
-
-					if (config.onSuccess) {
-						config.onSuccess(data, config.context);
-					}
-				}
-
-				setLoading(false);
-				setSaving(false);
-			}, function(response) {
-				var data = response.data;
-				if (data.error) {
-					setError(data.message);
-				}
-				else {
-				    let msg = response.status + ' ' + response.statusText;
-				    data = { error: true, message: msg };
-				    
-					setError(msg);
-				}
-				
-				showError();
-
-				setLoading(false);
-				setSaving(false);
-
-				if (config.onError) {
-					config.onError(data, config.context);
-				}
-			});
-		};
-
-		$scope.updateUI = function() {
-		 	$scope.$applyAsync(function() {
-		 		updateUI();
-		 	});
-    	};
-		
-		focusOnModals();
-		
-		{% if with_auth %}
-    		{% if not auth.user %}
-    			$scope.refreshCaptcha = function() {
-    				$http.get('{{ api }}captcha').success(function(data) {
-    					$scope.captcha = data['captcha'];
-    					$('#signUpForm').find('#captcha').val(null);
-    				});
-    			};
-    			
-    			$scope.signUp = function() {
-    				$scope.refreshCaptcha();
+    var app = angular.module('{{ angular_app }}', [{{ angular_modules }}]);
     
-    				showModal('signUp');
-    			};
-    			
-    			$scope.signIn = function(targetUrl) {
-    				$scope.targetUrl = targetUrl;
+    {# init #}
+    {% set with_auth = with_auth ?? true %}
     
-    				showModal('signIn');
-    			};
-    			
-    			$scope.signInSuccess = function(data) {
-        			signedIn(data, $scope.targetUrl, $scope.rememberMe);
-        		};
-    			
-    			$scope.switchFromTo = function(from, to) {
-    				hideModal(from);
-    				
-    				setTimeout(function() {
-    					if (to == 'signIn') {
-    						$scope.signIn();
-    					}
-    					else if (to == 'signUp') {
-    						$scope.signUp();
-    					}
-    				}, 500);
-    			};
+    {# для alert'ов #}
+    app.filter('rawHtml', ['$sce', function($sce){
+        return function(val) {
+            return $sce.trustAsHtml(val);
+        };
+    }]);
+    
+    {{ angular_filters }}
+
+    app.controller('{{ angular_ctrl }}', ['$scope', '$http', '$timeout', '$injector', function($scope, $http, $timeout, $injector) {
+        $scope.views = {};
+        $scope.forms = {};
+        
+        if (typeof moment !== 'undefined') {
+            $scope.moment = moment;
+            $scope.moment.locale('{{ lang }}');
+            
+            $scope.momentDiff = function (start, end, unknownEnd, format = null) {
+                return momentDiff(start, end, unknownEnd, format);
+            }
+        }
+
+        $scope.loading = false;
+        $scope.saving = false;
+        
+        {% if with_auth and not auth.user %}
+            $scope.captcha = 'загрузка...';
+        {% endif %}
+        
+        $scope.prePost = function(e) {
+            if (e != null) {
+                e.preventDefault();
+            }
+            
+            $scope.alertError = null;
+            $scope.alertSuccess = null;
+            
+            hideAlerts();
+
+            $scope.saving = true;
+        };
+    
+        if (hasToken()) {
+            {# for datatables #}
+            $.ajaxSetup({
+                headers: getHeaders()
+            });
+            
+            {# for AngularJS Ajax #}
+            $http.defaults.headers.common = getHeaders();
+        }
+
+        $scope.ajax = function(config) {
+            if (!config.method) {
+                config.method = 'post';
+            }
+            
+            const setError = config.setError
+                ? config.setError
+                : (msg) => { $scope.alertError = msg; };
+            
+            const showError = config.showError
+                ? config.showError
+                : () => { showAlertError(); };
+            
+            const setLoading = config.setLoading
+                ? config.setLoading
+                : (loading) => { $scope.loading = loading; };
+            
+            const setSaving = config.setSaving
+                ? config.setSaving
+                : (saving) => { $scope.saving = saving; };
+            
+            return $http(config).then(function(response) {
+                var data = response.data;
+                if (data.error) {
+                    setError(data.message);
+
+                    showError();
+
+                    if (config.onError) {
+                        config.onError(data);
+                    }
+                }
+                else {
+                    if (config.view && !config.persist) {
+                          $('#' + config.view +'View').modal('hide');
+                    }
+
+                    if (!config.noSuccessMessage) {
+                        var message = 'Данные успешно сохранены.';
+                        if (data.message) {
+                            message = data.message;
+                        }
+                        else if (config.message) {
+                            message = config.message;
+                        }
+
+                        $scope.alertSuccess = message;
+                        showAlertSuccess();
+                    }
+
+                    if (config.onSuccess) {
+                        config.onSuccess(data, config.context);
+                    }
+                }
+
+                setLoading(false);
+                setSaving(false);
+            }, function(response) {
+                var data = response.data;
+                if (data.error) {
+                    setError(data.message);
+                }
+                else {
+                    let msg = response.status + ' ' + response.statusText;
+                    data = { error: true, message: msg };
+                    
+                    setError(msg);
+                }
                 
-    			$('#signUpForm').submit(function(e) {
-    				$scope.prePost(e);
-    
-    		    	var obj = {
-    		    		login: $('#signUpForm').find('#su_login').val(),
-    		    		name: $('#signUpForm').find('#su_name').val(),
-    		    		email: $('#signUpForm').find('#su_email').val(),
-    		    		password: $('#signUpForm').find('#su_password').val(),
-    		    		captcha: $('#signUpForm').find('#su_captcha').val(),
-    		    	};
-    		    	
-    		    	if ($scope.moreSignUpFields) {
-    		    	    obj = $scope.moreSignUpFields(obj);
-    		    	}
-    		    	
-    		    	$scope.rememberMe = $('#signUpForm').find('#su_remember').is(':checked');
-    
-    		    	$scope.ajax({
-    		    		url: '{{ path_for('auth.signup') }}',
-    		    		data: obj,
-    		    		view: 'signUp',
-    		    		onSuccess: $scope.signInSuccess,
-    		    		noSuccessMessage: true,
-    		    		onError: $scope.refreshCaptcha,
-    		    	});
-    		    });
-    
-    			$('#signInForm').submit(function(e) {
-    				$scope.prePost(e);
-    				
-    		    	var obj = {
-    		    		login: $('#signInForm').find('#si_login').val(),
-    		    		password: $('#signInForm').find('#si_password').val(),
-    		    	};
-    		    	
-    		    	$scope.rememberMe = $('#signInForm').find('#si_remember').is(':checked');
-    
-    		    	$scope.ajax({
-    		    		url: '{{ path_for('auth.signin') }}',
-    		    		data: obj,
-    		    		view: 'signIn',
-    		    		onSuccess: $scope.signInSuccess,
-    		    		noSuccessMessage: true,
-    		    		onError: function() {
-    		    			//$('#signInForm').find('#si_password').val(null);
-    		    		},
-    		    	});
-    		    });
-    
-    		    {% if signin_onload %}
-    		    	$scope.signIn();
-    		    {% endif %}
-    		{% else %}
-    			$scope.passwordChange = function() {
-    			    resetForm('passwordChange');
-    				//$('#passwordChangeForm')[0].reset();
-    				
-    				showModal('passwordChange');
-    			}
-    
-    			$scope.signOut = function() {
-    		    	$scope.ajax({
-    		    		url: '{{ path_for('auth.signout') }}',
-    		    		onSuccess: signedOut,
-    		    		noSuccessMessage: true,
-    		    	});
-    			}
-    
-    			$('#passwordChangeForm').submit(function(e) {
-    				$scope.prePost(e);
-    				
-    		    	var obj = {
-    		    		password_old: $('#passwordChangeForm').find('#pc_password_old').val(),
-    		    		password: $('#passwordChangeForm').find('#pc_password').val(),
-    		    	};
-    
-    		    	$scope.ajax({
-    		    		url: '{{ path_for('auth.password.change') }}',
-    		    		data: obj,
-    		    		view: 'passwordChange'
-    		    	});
-    			});
-    		{% endif %}
-		{% endif %}
+                showError();
 
-		{{ more_angular }}
-	}]);
+                setLoading(false);
+                setSaving(false);
+
+                if (config.onError) {
+                    config.onError(data, config.context);
+                }
+            });
+        };
+
+        $scope.updateUI = function() {
+             $scope.$applyAsync(function() {
+                 updateUI();
+             });
+        };
+        
+        focusOnModals();
+        
+        {% if with_auth %}
+            {% if not auth.user %}
+                $scope.refreshCaptcha = function() {
+                    $http.get('{{ api }}captcha').success(function(data) {
+                        $scope.captcha = data['captcha'];
+                        $('#signUpForm').find('#captcha').val(null);
+                    });
+                };
+                
+                $scope.signUp = function() {
+                    $scope.refreshCaptcha();
+    
+                    showModal('signUp');
+                };
+                
+                $scope.signIn = function(targetUrl) {
+                    $scope.targetUrl = targetUrl;
+    
+                    showModal('signIn');
+                };
+                
+                $scope.signInSuccess = function(data) {
+                    signedIn(data, $scope.targetUrl, $scope.rememberMe);
+                };
+                
+                $scope.switchFromTo = function(from, to) {
+                    hideModal(from);
+                    
+                    setTimeout(function() {
+                        if (to == 'signIn') {
+                            $scope.signIn();
+                        }
+                        else if (to == 'signUp') {
+                            $scope.signUp();
+                        }
+                    }, 500);
+                };
+                
+                $('#signUpForm').submit(function(e) {
+                    $scope.prePost(e);
+    
+                    var obj = {
+                        login: $('#signUpForm').find('#su_login').val(),
+                        name: $('#signUpForm').find('#su_name').val(),
+                        email: $('#signUpForm').find('#su_email').val(),
+                        password: $('#signUpForm').find('#su_password').val(),
+                        captcha: $('#signUpForm').find('#su_captcha').val(),
+                    };
+                    
+                    if ($scope.moreSignUpFields) {
+                        obj = $scope.moreSignUpFields(obj);
+                    }
+                    
+                    $scope.rememberMe = $('#signUpForm').find('#su_remember').is(':checked');
+    
+                    $scope.ajax({
+                        url: '{{ path_for('auth.signup') }}',
+                        data: obj,
+                        view: 'signUp',
+                        onSuccess: $scope.signInSuccess,
+                        noSuccessMessage: true,
+                        onError: $scope.refreshCaptcha,
+                    });
+                });
+    
+                $('#signInForm').submit(function(e) {
+                    $scope.prePost(e);
+                    
+                    var obj = {
+                        login: $('#signInForm').find('#si_login').val(),
+                        password: $('#signInForm').find('#si_password').val(),
+                    };
+                    
+                    $scope.rememberMe = $('#signInForm').find('#si_remember').is(':checked');
+    
+                    $scope.ajax({
+                        url: '{{ path_for('auth.signin') }}',
+                        data: obj,
+                        view: 'signIn',
+                        onSuccess: $scope.signInSuccess,
+                        noSuccessMessage: true,
+                        onError: function() {
+                            //$('#signInForm').find('#si_password').val(null);
+                        },
+                    });
+                });
+    
+                {% if signin_onload %}
+                    $scope.signIn();
+                {% endif %}
+            {% else %}
+                $scope.passwordChange = function() {
+                    resetForm('passwordChange');
+                    //$('#passwordChangeForm')[0].reset();
+                    
+                    showModal('passwordChange');
+                }
+    
+                $scope.signOut = function() {
+                    $scope.ajax({
+                        url: '{{ path_for('auth.signout') }}',
+                        onSuccess: signedOut,
+                        noSuccessMessage: true,
+                    });
+                }
+    
+                $('#passwordChangeForm').submit(function(e) {
+                    $scope.prePost(e);
+                    
+                    var obj = {
+                        password_old: $('#passwordChangeForm').find('#pc_password_old').val(),
+                        password: $('#passwordChangeForm').find('#pc_password').val(),
+                    };
+    
+                    $scope.ajax({
+                        url: '{{ path_for('auth.password.change') }}',
+                        data: obj,
+                        view: 'passwordChange'
+                    });
+                });
+            {% endif %}
+        {% endif %}
+
+        {{ more_angular }}
+    }]);
 </script>
