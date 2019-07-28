@@ -54,13 +54,13 @@ abstract class DbModel extends Model implements SerializableInterface
         return $model->save();
     }
     
-    private static function pluralClass()
+    private static function pluralClass() : string
     {
         $class = Classes::shortName(static::class);
         return Pluralizer::plural($class);
     }
     
-    public static function getTable()
+    public static function getTable() : string
     {
         if (strlen(static::$table) > 0) {
             return static::$table;
@@ -192,7 +192,7 @@ abstract class DbModel extends Model implements SerializableInterface
     /**
      * Shortcut for getting model by id
      */
-    public static function get($id, bool $ignoreCache = false)
+    public static function get($id, bool $ignoreCache = false) : ?self
     {
         $name = static::class . $id;
         
@@ -205,7 +205,7 @@ abstract class DbModel extends Model implements SerializableInterface
         );
     }
 
-    private static function buildSortOrder()
+    private static function buildSortOrder() : array
     {
         $order = static::$sortOrder;
         
@@ -236,38 +236,38 @@ abstract class DbModel extends Model implements SerializableInterface
 
     // rights
     
-    public static function tableAccess()
+    public static function tableAccess() : array
     {
         return self::$db->getRights(self::getTable());
     }
     
-    public static function can($rights)
+    public static function can($rights) : bool
     {
         return self::$db->can(self::getTable(), $rights);
     }
     
-    public function access()
+    public function access() : array
     {
         return self::$db->getRights(self::getTable(), $this->obj);
     }
     
     // instance methods
     
-    public function save()
+    public function save() : self
     {
         $this->obj->save();
         
         return $this;
     }
 
-    public function serialize()
+    public function serialize() : ?array
     {
         return $this->obj
             ? $this->obj->asArray()
             : null;
     }
     
-    public function entityAlias()
+    public function entityAlias() : string
     {
         return self::getTable();
     }
