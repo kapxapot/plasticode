@@ -6,7 +6,7 @@ use Plasticode\Core\Security;
 
 class UsersGenerator extends EntityGenerator
 {
-    public function getRules($data, $id = null)
+    public function getRules(array $data, $id = null) : array
     {
         $rules = parent::getRules($data, $id);
         
