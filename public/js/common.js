@@ -161,7 +161,13 @@ function reloadWindow() {
 }
 
 function signedIn(data, targetUrl, withCookie) {
-    saveToken(data['token'], withCookie);
+    const token = data['token'];
+
+    if (token === undefined) {
+        throw "Invalid auth token!";
+    }
+
+    saveToken(token, withCookie);
 
     if (targetUrl) {
         location.href = targetUrl;
