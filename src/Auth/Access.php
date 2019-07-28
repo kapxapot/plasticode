@@ -4,6 +4,7 @@ namespace Plasticode\Auth;
 
 use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\InvalidConfigurationException;
+use Plasticode\Models\User;
 
 class Access
 {
