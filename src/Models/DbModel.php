@@ -284,7 +284,7 @@ abstract class DbModel extends Model implements SerializableInterface
         return !is_null($obj) && ($obj instanceof self) && ($obj->getId() === $this->getId());
     }
 
-    public function toString()
+    public function toString() : string
     {
         $class = static::class;
         $id = $this->getId();
