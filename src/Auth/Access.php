@@ -2,6 +2,7 @@
 
 namespace Plasticode\Auth;
 
+use Plasticode\Core\Cache;
 use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Models\User;
@@ -14,6 +15,13 @@ class Access
      * @var Plasticode\Auth\Auth
      */
     private $auth;
+
+    /**
+     * Cache
+     *
+     * @var Plasticode\Core\Cache
+     */
+    private $cache;
 
     /**
      * Flattened actions
@@ -36,9 +44,10 @@ class Access
      */
     private $rights;
     
-    public function __construct(Auth $auth, array $accessSettings)
+    public function __construct(Auth $auth, Cache $cache, array $accessSettings)
     {
         $this->auth = $auth;
+        $this->cache = $cache;
         $this->actions = $this->flattenActions($accessSettings['actions']);
         $this->templates = $accessSettings['templates'];
         $this->rights = $accessSettings['rights'];
@@ -168,10 +177,10 @@ class Access
      */
     public function getAllRights(string $entity) : array
     {
-        $path = "access.{$entity}";
+        $path = 'access.' . $entity;
         $can = $this->cache->get($path);
 
-        if ($can === null) {
+        if (is_null($can)) {
             $can = [];
             $rights = array_keys($this->actions);
             

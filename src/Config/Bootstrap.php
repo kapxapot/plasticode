@@ -187,10 +187,11 @@ class Bootstrap
             },
             
             'access' => function (ContainerInterface $container) {
-                $auth = $container->auth;
-                $accessSettings = $this->settings['access'];
-
-                return new \Plasticode\Auth\Access($auth, $accessSettings);
+                return new \Plasticode\Auth\Access(
+                    $container->auth,
+                    $container->cache,
+                    $this->settings['access']
+                );
             },
             
             'generatorResolver' => function (ContainerInterface $container) {
