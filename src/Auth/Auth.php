@@ -171,10 +171,10 @@ class Auth extends Contained
     /**
      * Tries to validate auth token taken from cookie
      *
-     * @param string $tokenStr
+     * @param string|null $tokenStr
      * @return void
      */
-    public function validateCookie(string $tokenStr)
+    public function validateCookie(?string $tokenStr)
     {
         try {
             $this->validateToken($tokenStr);
