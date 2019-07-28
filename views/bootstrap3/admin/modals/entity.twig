@@ -7,22 +7,22 @@
 {% set modal_persist = true %}
 
 {% block modal_body %}
-	{% for name, value in hidden %}
-		{{ m.hidden(name, value) }}
-	{% endfor %}
-	{% for col, value in columns if (col != 'id' and (value.readonly is null or value.on_form == true) and can(alias, value.access)) %}
-		{% if value.entity %}
-			{{ m.entity(_context, col, loop.first) }}
-		{% elseif value.type == 'site_url' %}
-			{{ m.site_url(_context, col, loop.first) }}
-		{% elseif value.type == 'html' %}
-			{{ m.mdearea(_context, col, loop.first, alias) }}
-		{% elseif value.type == 'bool' %}
-			{{ m.checkbox(_context, col, loop.first) }}
-		{% elseif value.type == 'thumb' %}
-			{{ m.thumb(_context, col, loop.first) }}
-		{% else %}
-			{{ m.input(_context, col, value.type, value.prefix, value.suffix, loop.first) }}
-		{% endif %}
-	{% endfor %}
+    {% for name, value in hidden %}
+        {{ m.hidden(name, value) }}
+    {% endfor %}
+    {% for col, value in columns if (col != 'id' and (value.readonly is null or value.on_form == true) and (not value.access or can(alias, value.access))) %}
+        {% if value.entity %}
+            {{ m.entity(_context, col, loop.first) }}
+        {% elseif value.type == 'site_url' %}
+            {{ m.site_url(_context, col, loop.first) }}
+        {% elseif value.type == 'html' %}
+            {{ m.mdearea(_context, col, loop.first, alias) }}
+        {% elseif value.type == 'bool' %}
+            {{ m.checkbox(_context, col, loop.first) }}
+        {% elseif value.type == 'thumb' %}
+            {{ m.thumb(_context, col, loop.first) }}
+        {% else %}
+            {{ m.input(_context, col, value.type, value.prefix, value.suffix, loop.first) }}
+        {% endif %}
+    {% endfor %}
 {% endblock %}

@@ -5,14 +5,14 @@
 {% set modal_save_label = modal_save_label ?? 'Отправить' %}
 
 {% block modal_body %}
-	<div class="form-group required">
-		<label for="u_file">Файл</label>
-		<div>
-    		<label class="btn btn-primary btn-file">
-    	    	Выбрать... <input type="file" name="u_file" id="u_file" class="form-control" accept="{{ accepts ?? '.zip,application/zip' }}" required />
-    		</label>
-		</div>
-		<div id="u_filename" class="mt-2 hidden"></div>
-		<span class="help-block">{{ help ?? 'Zip-архив с картинками' }}</span>
-	</div>
+    <div class="form-group required">
+        <label for="u_file">Файл</label>
+        <div>
+            <label class="btn btn-primary btn-file">
+                Выбрать... <input type="file" name="u_file" id="u_file" class="form-control" accept="{{ accepts ?? '.zip,application/zip' }}" required />
+            </label>
+        </div>
+        <div id="u_filename" class="mt-2 hidden"></div>
+        <span class="help-block">{{ help ?? 'Zip-архив с картинками' }}</span>
+    </div>
 {% endblock %}
