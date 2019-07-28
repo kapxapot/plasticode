@@ -4,7 +4,7 @@ namespace Plasticode\Generators;
 
 class MenuItemsGenerator extends EntityGenerator
 {
-    public function getRules($data, $id = null)
+    public function getRules(array $data, $id = null) : array
     {
         $rules = parent::getRules($data, $id);
         
@@ -15,7 +15,7 @@ class MenuItemsGenerator extends EntityGenerator
         return $rules;
     }
     
-    public function getOptions()
+    public function getOptions() : array
     {
         $options = parent::getOptions();
         
@@ -25,7 +25,7 @@ class MenuItemsGenerator extends EntityGenerator
         return $options;
     }
     
-    public function getAdminParams($args)
+    public function getAdminParams(array $args) : array
     {
         $params = parent::getAdminParams($args);
 

@@ -8,6 +8,7 @@ use Plasticode\Validation\ValidationRules;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Validator;
+use Slim\App;
 
 class EntityGenerator extends Contained
 {
@@ -72,7 +73,7 @@ class EntityGenerator extends Contained
     {
     }
     
-    public function getAdminParams(array $args)
+    public function getAdminParams(array $args) : array
     {
         $settings = $this->getSettings();
         $params = $settings['entities'][$this->entity];
@@ -82,7 +83,14 @@ class EntityGenerator extends Contained
         return $params;
     }
 
-    public function generateAPIRoutes($app, $access)
+    /**
+     * Generate API routes based on settings
+     *
+     * @param App $app
+     * @param \Closure $access Creates AccessMiddleware
+     * @return void
+     */
+    public function generateAPIRoutes(App $app, \Closure $access) : void
     {
         $this->generateGetAllRoute($app, $access);
         
@@ -91,11 +99,16 @@ class EntityGenerator extends Contained
         if ($api == "full") {
             $this->generateCRUDRoutes($app, $access);
         }
-        
-        return $this;
     }
     
-    public function generateGetAllRoute($app, $access)
+    /**
+     * Generate API route for loading all entities
+     *
+     * @param App $app
+     * @param \Closure $access Creates AccessMiddleware
+     * @return void
+     */
+    public function generateGetAllRoute(App $app, \Closure $access) : void
     {
         $alias = $this->entity;
         $provider = $this;
@@ -124,11 +137,16 @@ class EntityGenerator extends Contained
                 return $this->api->getMany($response, $alias, $provider, $endPointOptions);
             })->add($access($alias, 'api_read'));
         }
-        
-        return $this;
     }
     
-    public function generateCRUDRoutes($app, $access)
+    /**
+     * Generate CRUD routes
+     *
+     * @param App $app
+     * @param \Closure $access
+     * @return void
+     */
+    public function generateCRUDRoutes(App $app, \Closure $access)
     {
         $alias = $this->entity;
         $table = $this->entity;
@@ -137,21 +155,54 @@ class EntityGenerator extends Contained
         $shortPath = '/' . $alias;
         $fullPath = '/' . $alias . '/{id:\d+}';
 
-        $get = $app->get($fullPath, function ($request, $response, $args) use ($table, $provider) {
-            return $this->api->get($response, $table, $args['id'], $provider);
-        });
+        $get = $app->get(
+            $fullPath,
+            function ($request, $response, $args) use ($table, $provider) {
+                return $this->api->get(
+                    $response,
+                    $table,
+                    $args['id'],
+                    $provider
+                );
+            }
+        );
         
-        $post = $app->post($shortPath, function ($request, $response, $args) use ($table, $provider) {
-            return $this->api->create($request, $response, $table, $provider);
-        });
+        $post = $app->post(
+            $shortPath,
+            function ($request, $response, $args) use ($table, $provider) {
+                return $this->api->create(
+                    $request,
+                    $response,
+                    $table,
+                    $provider
+                );
+            }
+        );
         
-        $put = $app->put($fullPath, function ($request, $response, $args) use ($table, $provider) {
-            return $this->api->update($request, $response, $table, $args['id'], $provider);
-        });
+        $put = $app->put(
+            $fullPath,
+            function ($request, $response, $args) use ($table, $provider) {
+                return $this->api->update(
+                    $request,
+                    $response,
+                    $table,
+                    $args['id'],
+                    $provider
+                );
+            }
+        );
         
-        $delete = $app->delete($fullPath, function ($request, $response, $args) use ($table, $provider) {
-            return $this->api->delete($response, $table, $args['id'], $provider);
-        });
+        $delete = $app->delete(
+            $fullPath,
+            function ($request, $response, $args) use ($table, $provider) {
+                return $this->api->delete(
+                    $response,
+                    $table,
+                    $args['id'],
+                    $provider
+                );
+            }
+        );
         
         if ($access) {
             $get->add($access($table, 'api_read'));
@@ -163,7 +214,14 @@ class EntityGenerator extends Contained
         return $this;
     }
 
-    public function generateAdminPageRoute($app, $access)
+    /**
+     * Generate admin page route
+     *
+     * @param App $app
+     * @param \Closure $access
+     * @return void
+     */
+    public function generateAdminPageRoute(App $app, \Closure $access)
     {
         $alias = $this->entity;
         $provider = $this;
@@ -193,8 +251,14 @@ class EntityGenerator extends Contained
                 $params['args'] = $adminArgs;
             }
 
-            return $this->view->render($response, 'admin/' . $templateName . '.twig', $params);
-        })->add($access($alias, 'read_own', 'admin.index'))->setName('admin.entities.' . $alias);
+            return $this->view->render(
+                $response,
+                'admin/' . $templateName . '.twig',
+                $params
+            );
+        })
+            ->add($access($alias, 'read_own', 'admin.index'))
+            ->setName('admin.entities.' . $alias);
         
         return $this;
     }
