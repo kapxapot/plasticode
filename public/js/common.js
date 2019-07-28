@@ -163,7 +163,7 @@ function reloadWindow() {
 function signedIn(data, targetUrl, withCookie) {
     const token = data['token'];
 
-    if (token === undefined) {
+    if (!token) {
         throw "Invalid auth token!";
     }
 
