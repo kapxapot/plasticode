@@ -188,7 +188,7 @@ class Bootstrap
             
             'access' => function (ContainerInterface $container) {
                 $auth = $container->auth;
-                $accessSettings = $this->settings('access');
+                $accessSettings = $this->settings['access'];
 
                 return new \Plasticode\Auth\Access($auth, $accessSettings);
             },
