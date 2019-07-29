@@ -2,16 +2,15 @@
 
 namespace Plasticode;
 
-use Psr\Container\ContainerInterface;
-
 use Plasticode\Util\Arrays;
+use Psr\Container\ContainerInterface;
 
 class Contained
 {
     /**
      * DI container
      *
-     * @var Psr\Container\ContainerInterface
+     * @var \Psr\Container\ContainerInterface
      */
     public $container;
 
