@@ -3,6 +3,7 @@
 namespace Plasticode\Generators;
 
 use Plasticode\Contained;
+use Plasticode\Data\Rights;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Validation\ValidationRules;
 use Psr\Container\ContainerInterface;
@@ -135,6 +136,8 @@ class EntityGenerator extends Contained
      */
     public function generateGetAllRoute(App $app, \Closure $access) : void
     {
+        $provider = $this;
+
         $options = $this->getOptions();
         $noFilterOptions = $options;
 
@@ -160,15 +163,15 @@ class EntityGenerator extends Contained
 
             $app->get(
                 '/' . $endPointUri,
-                function ($request, $response, $args) use ($endPointOptions) {
+                function ($request, $response, $args) use ($provider, $endPointOptions) {
                     $endPointOptions['args'] = $args;
                     $endPointOptions['params'] = $request->getParams();
                 
                     return $this->api->getMany(
-                        $response, $this->entity, $this, $endPointOptions
+                        $response, $provider, $endPointOptions
                     );
                 }
-            )->add($access($this->entity, 'api_read'));
+            )->add($access($this->entity, Rights::API_READ));
         }
     }
     
@@ -181,50 +184,63 @@ class EntityGenerator extends Contained
      */
     public function generateCRUDRoutes(App $app, \Closure $access) : void
     {
+        $provider = $this;
+
         $shortPath = '/' . $this->entity;
         $fullPath = '/' . $this->entity . '/{id:\d+}';
 
         $get = $app->get(
             $fullPath,
-            function ($request, $response, $args) {
+            function ($request, $response, $args) use ($provider) {
                 return $this->api->get(
-                    $response, $this->entity, $args['id'], $this
+                    $response, $args['id'], $provider
                 );
             }
         );
         
         $post = $app->post(
             $shortPath,
-            function ($request, $response) {
+            function ($request, $response) use ($provider) {
                 return $this->api->create(
-                    $request, $response, $this->entity, $this
+                    $request, $response, $provider
                 );
             }
         );
         
         $put = $app->put(
             $fullPath,
-            function ($request, $response, $args) {
+            function ($request, $response, $args) use ($provider) {
                 return $this->api->update(
-                    $request, $response, $this->entity, $args['id'], $this
+                    $request, $response, $args['id'], $provider
                 );
             }
         );
         
         $delete = $app->delete(
             $fullPath,
-            function ($request, $response, $args) {
+            function ($request, $response, $args) use ($provider) {
                 return $this->api->delete(
-                    $response, $this->entity, $args['id'], $this
+                    $response, $args['id'], $provider
                 );
             }
         );
         
         if ($access) {
-            $get->add($access($this->entity, 'api_read'));
-            $post->add($access($this->entity, 'api_create'));
-            $put->add($access($this->entity, 'api_edit'));
-            $delete->add($access($this->entity, 'api_delete'));
+            $get->add(
+                $access($this->entity, Rights::API_READ)
+            );
+
+            $post->add(
+                $access($this->entity, Rights::API_CREATE)
+            );
+
+            $put->add(
+                $access($this->entity, Rights::API_EDIT)
+            );
+
+            $delete->add(
+                $access($this->entity, Rights::API_DELETE)
+            );
         }
     }
 
@@ -238,18 +254,19 @@ class EntityGenerator extends Contained
     public function generateAdminPageRoute(App $app, \Closure $access) : void
     {
         $options = $this->getOptions();
+        $provider = $this;
 
         $uri = $options['admin_uri'] ?? $options['uri'] ?? $this->entity;
         $adminArgs = $options['admin_args'] ?? null;
 
         $route = $app->get(
             '/' . $uri,
-            function ($request, $response, $args) use ($options, $adminArgs) {
+            function ($request, $response, $args) use ($provider, $options, $adminArgs) {
                 $templateName = isset($options['admin_template'])
                     ? ('entities/' . $options['admin_template'])
                     : 'entity';
 
-                $params = $this->getAdminParams($args);
+                $params = $provider->getAdminParams($args);
                 
                 $action = $request->getQueryParam('action', null);
                 $id = $request->getQueryParam('id', null);
@@ -271,7 +288,7 @@ class EntityGenerator extends Contained
             }
         );
         
-        $route->add($access($this->entity, 'read_own', 'admin.index'));
+        $route->add($access($this->entity, Rights::READ_OWN, 'admin.index'));
         $route->setName('admin.entities.' . $this->entity);
     }
 }

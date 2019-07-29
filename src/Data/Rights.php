@@ -7,6 +7,9 @@ use Plasticode\Auth\Access;
 class Rights
 {
     const API_READ = 'api_read';
+    const API_CREATE = 'api_create';
+    const API_EDIT = 'api_edit';
+    const API_DELETE = 'api_delete';
 
     const READ = 'read';
     const READ_OWN = 'read_own';
