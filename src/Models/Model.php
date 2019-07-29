@@ -13,20 +13,71 @@ use Psr\Container\ContainerInterface;
 
 abstract class Model implements \ArrayAccess
 {
+    /**
+     * DI container wrapper (!)
+     *
+     * @var \Plasticode\Contained
+     */
     protected static $container;
     
+    /**
+     * Db
+     *
+     * @var \Plasticode\Data\Db
+     */
     protected static $db;
+
+    /**
+     * Auth
+     *
+     * @var \Plasticode\Auth\Auth
+     */
     protected static $auth;
+
+    /**
+     * Linker
+     *
+     * @var \Plasticode\Core\Linker
+     */
     protected static $linker;
+
+    /**
+     * Cases
+     *
+     * @var \Plasticode\Util\Cases
+     */
     protected static $cases;
+
+    /**
+     * Parser
+     *
+     * @var \Plasticode\Core\Parser
+     */
     protected static $parser;
     
     protected static $userRepository;
     protected static $roleRepository;
     protected static $menuItemRepository;
 
+    /**
+     * Data array or \ORM object
+     *
+     * @var array|\ORM
+     */
     protected $obj;
+
+    /**
+     * Instance cache
+     *
+     * @var \Plasticode\Core\Cache
+     */
     protected $objCache;
+
+    /**
+     * Static cache
+     *
+     * @var \Plasticode\Core\Cache
+     */
     protected static $staticCache;
 
     public static function init(ContainerInterface $container)
@@ -47,6 +98,11 @@ abstract class Model implements \ArrayAccess
         self::$staticCache = new Cache();
     }
 
+    /**
+     * Create instance
+     *
+     * @param array|\ORM $obj
+     */
     public function __construct($obj = null)
     {
         $this->obj = $obj ?? [];

@@ -69,9 +69,9 @@ final class Db extends Contained
         return $items->where($field, $args['id']);
     }
     
-    public function getEntityById(string $table, $id)
+    public function getEntityById(string $table, $id) : array
     {
-        $path = "data.{$table}.{$id}";
+        $path = 'data.' . $table . '.' . $id;
         $value = $this->cache->get($path);
 
         if (is_null($value)) {
@@ -79,42 +79,30 @@ final class Db extends Contained
                 ->findArray();
             
             foreach ($entities as $entity) {
-                $this->cache->set("data.{$table}.{$entity['id']}", $entity);
+                $this->cache->set(
+                    'data.' . $table . '.' . $entity['id'],
+                    $entity
+                );
             }
         }
 
         return $this->cache->get($path);
     }
     
-    public function getTableRights(string $table) : TableRights
+    public function getTableRights(string $table) : Rights
     {
-        return new TableRights($this->access, $table);
+        return new Rights($this->access, $table);
     }
     
-    public function can($table, $rights, $item = null)
+    public function enrichRights(string $table, array $item) : array
     {
-        $access = $this->getRights($table, $item);
-        return $access[$rights];
-    }
-    
-    public function getRights($table, $item = null)
-    {
-        $tableRights = $this->getTableRights($table);
-        return $tableRights->get($item);
-    }
-    
-    private function enrichRights($table, $item)
-    {
-        if (is_null($item)) {
-            return null;
-        }
-        
-        $tr = $this->getTableRights($table);
-        return $tr->enrichRights($item);
+        return $this->getTableRights($table)
+            ->enrichRights($item);
     }
     
     /**
-     * Returns new updated_at value for the table, if it has the corresponding field
+     * Returns new updated_at value for the table,
+     * if it has the corresponding field
      *
      * @param string $table
      * @return string|null
@@ -150,21 +138,40 @@ final class Db extends Contained
     }
     
     /**
-     * Returns entity as array enriched with access rights
+     * Adds user names for created_by / updated_by
      *
      * @param string $table
-     * @param mixed $id
+     * @param array $item
      * @return array
      */
-    public function get(string $table, $id) : array
+    public function addUserNames(string $table, array $item) : array
     {
-        $obj = $this->getObj($table, $id);
-        $item = $obj ? $obj->asArray() : null;
+        if ($this->hasField($table, 'created_by')) {
+            $creator = '[no data]';
+
+            if (isset($item['created_by'])) {
+                $created = $this->userRepository->get($item['created_by']);
+                $creator = $created->login ?? $item['created_by'];
+            }
+    
+            $item['created_by_name'] = $creator;
+        }
+
+        if ($this->hasField($table, 'updated_by')) {
+            $updater = '[no data]';
+
+            if (isset($item['updated_by'])) {
+                $updated = $this->userRepository->get($item['updated_by']);
+                $updater = $updated->login ?? $item['updated_by'];
+            }
+    
+            $item['updated_by_name'] = $updater;
+        }
         
-        return $this->enrichRights($table, $item);
+        return $item;
     }
     
-    public function getObj($table, $id, $where = null)
+    public function getObj(string $table, $id, \Closure $where = null) : \ORM
     {
         $query = $this
             ->forTable($table)
@@ -177,9 +184,10 @@ final class Db extends Contained
         return $query->findOne();
     }
 
-    public function isPublished($item) : bool
+    public function isPublished(array $item) : bool
     {
-        return isset($item['published_at']) && Date::happened($item['published_at']);
+        return isset($item['published_at'])
+            && Date::happened($item['published_at']);
     }
     
     /**
@@ -200,8 +208,11 @@ final class Db extends Contained
         return $item;
     }
     
-    public function isRecursiveParent(string $table, $id, $parentId, string $parentField = null) : bool
+    public function isRecursiveParent(
+        string $table, $id, $parentId, string $parentField = null
+    ) : bool
     {
+        $parentField = $parentField ?? 'parent_id';
         $recursive = false;
 
         while ($parentId != null) {
@@ -210,13 +221,13 @@ final class Db extends Contained
                 break;
             }
             
-            $parent = $this->get($table, $parentId);
+            $parent = $this->getObj($table, $parentId);
 
             if (!$parent) {
                 break;
             }
             
-            $parentId = $parent[$parentField ?? 'parent_id'];
+            $parentId = $parent[$parentField];
         }
 
         return $recursive;

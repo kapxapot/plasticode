@@ -2,56 +2,89 @@
 
 namespace Plasticode\Data;
 
+use Plasticode\Collection;
 use Plasticode\Contained;
 use Plasticode\Core\Response;
 use Plasticode\Exceptions\Http\NotFoundException;
 use Plasticode\Exceptions\Http\AuthorizationException;
+use Plasticode\Generators\EntityGenerator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Api extends Contained
 {
     /**
+     * Get access rights
+     *
+     * @param string $table
+     * @return Rights
+     */
+    private function getRights(string $table) : Rights
+    {
+        return $this->db->getTableRights($table);
+    }
+
+    /**
      * Get entity
      *
      * @param ResponseInterface $response
-     * @param string $table
      * @param mixed $id
-     * @param object $provider
+     * @param EntityGenerator $provider
      * @return ResponseInterface
      */
-    public function get(ResponseInterface $response, string $table, $id, object $provider) : ResponseInterface
+    public function get(
+        ResponseInterface $response,
+        $id,
+        EntityGenerator $provider
+    ) : ResponseInterface
     {
-        $e = $this->db->get($table, $id);
+        $table = $provider->getEntity();
 
-        if (!$e) {
+        $obj = $this->db->getObj($table, $id);
+
+        if (is_null($obj)) {
             throw new NotFoundException();
         }
 
-        if (!$this->db->can($table, 'api_read', $e)) {
-            $this->logger->info("Unauthorized read attempt on {$table}: {$e['id']}");
+        $rights = $this->getRights($table);
+        $item = $obj->asArray();
+
+        if (!$rights->canEntity($item, Rights::API_READ)) {
+            $this->logger->info(
+                'Unauthorized read attempt on ' . $table . ': ' . $item['id']
+            );
 
             throw new AuthorizationException();
         }
-        
-        $e = $provider->afterLoad($e);
 
-        return Response::json($response, $e);
+        $item = $provider->afterLoad($item);
+        $item = $this->db->addUserNames($table, $item);
+        $item = $this->db->enrichRights($table, $item);
+
+        return Response::json($response, $item);
     }
 
     /**
      * Get many entities
      *
      * @param ResponseInterface $response
-     * @param string $table
-     * @param object $provider
+     * @param EntityGenerator $provider
      * @param array $options
      * @return ResponseInterface
      */
-    public function getMany(ResponseInterface $response, string $table, object $provider, array $options = []) : ResponseInterface
+    public function getMany(
+        ResponseInterface $response,
+        EntityGenerator $provider,
+        array $options = []
+    ) : ResponseInterface
     {
-        if (!$this->db->can($table, 'api_read')) {
-            $this->logger->info("Unauthorized read attempt on {$table}");
+        $table = $provider->getEntity();
+        $rights = $this->getRights($table);
+
+        if (!$rights->can(Rights::API_READ)) {
+            $this->logger->info(
+                'Unauthorized read attempt on ' . $table
+            );
 
             throw new AuthorizationException();
         }
@@ -61,7 +94,9 @@ class Api extends Contained
         $items = $this->db->selectMany($table, $exclude);
 
         if (isset($options['filter'])) {
-            $items = $this->db->filterBy($items, $options['filter'], $options['args']);
+            $items = $this->db->filterBy(
+                $items, $options['filter'], $options['args']
+            );
         }
 
         $settings = $this->db->getTableSettings($table) ?? [];
@@ -73,48 +108,27 @@ class Api extends Contained
                 ? $items->orderByDesc($sortBy)
                 : $items->orderByAsc($sortBy);
         }
-        
+
+        // populate array
         $array = $items->findArray();
 
-        $tableRights = $this->db->getTableRights($table);
+        $items = Collection::make($array)
+            ->where(
+                function ($item) use ($rights) {
+                    return $rights->canEntity($item, Rights::READ);
+                }
+            )
+            ->map(
+                function ($item) use ($provider, $table, $rights) {
+                    $item = $provider->afterLoad($item);
+                    $item = $this->db->addUserNames($table, $item);
+                    $item = $rights->enrichRights($item);
 
-        $array = array_filter($array, array($tableRights, 'canRead'));
-        $array = array_map(array($provider, 'afterLoad'), $array);
-        $array = array_map(array($this, 'addUserNames'), $array);
-        $array = array_map(array($tableRights, 'enrichRights'), $array);
-
-        $items = array_values($array);
+                    return $item;
+                }
+            );
 
         return Response::json($response, $items, $options);
-    }
-    
-    /**
-     * Adds user names for created_by / updated_by
-     *
-     * @param array $item
-     * @return array
-     */
-    private function addUserNames(array $item) : array
-    {
-        $creator = '[no data]';
-
-        if (isset($item['created_by'])) {
-            $created = $this->userRepository->get($item['created_by']);
-            $creator = $created->login ?? $item['created_by'];
-        }
-
-        $item['created_by_name'] = $creator;
-
-        $updater = '[no data]';
-
-        if (isset($item['updated_by'])) {
-            $updated = $this->userRepository->get($item['updated_by']);
-            $updater = $updated->login ?? $item['updated_by'];
-        }
-
-        $item['updated_by_name'] = $updater;
-        
-        return $item;
     }
     
     /**
@@ -122,14 +136,22 @@ class Api extends Contained
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
-     * @param string $table
-     * @param object $provider
+     * @param EntityGenerator $provider
      * @return ResponseInterface
      */
-    public function create(ServerRequestInterface $request, ResponseInterface $response, string $table, object $provider) : ResponseInterface
+    public function create(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        EntityGenerator $provider
+    ) : ResponseInterface
     {
-        if (!$this->db->can($table, 'create')) {
-            $this->logger->info("Unauthorized create attempt on {$table}");
+        $table = $provider->getEntity();
+        $rights = $this->getRights($table);
+
+        if (!$rights->can(Rights::CREATE)) {
+            $this->logger->info(
+                'Unauthorized create attempt on ' . $table
+            );
 
             throw new AuthorizationException();
         }
@@ -143,14 +165,14 @@ class Api extends Contained
         
         $data = $provider->beforeSave($data);
 
-        $e = $this->db->create($table, $data);
-        $e->save();
+        $entity = $this->db->create($table, $data);
+        $entity->save();
         
-        $provider->afterSave($e, $original);
+        $provider->afterSave($entity->asArray(), $original);
 
-        $this->logger->info("Created {$table}: {$e->id}");
+        $this->logger->info('Created ' . $table . ': ' . $entity->id);
         
-        return $this->get($response, $table, $e->id, $provider)
+        return $this->get($response, $entity->id, $provider)
             ->withStatus(201);
     }
     
@@ -159,21 +181,30 @@ class Api extends Contained
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
-     * @param string $table
      * @param mixed $id
-     * @param object $provider
+     * @param EntityGenerator $provider
      * @return ResponseInterface
      */
-    public function update(ServerRequestInterface $request, ResponseInterface $response, string $table, $id, object $provider) : ResponseInterface
+    public function update(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        $id,
+        EntityGenerator $provider
+    ) : ResponseInterface
     {
-        $e = $this->db->getObj($table, $id);
+        $table = $provider->getEntity();
+        $rights = $this->getRights($table);
 
-        if (!$e) {
+        $entity = $this->db->getObj($table, $id);
+
+        if (!$entity) {
             throw new NotFoundException();
         }
 
-        if (!$this->db->can($table, 'edit', $e)) {
-            $this->logger->info("Unauthorized edit attempt on {$table}: {$e->id}");
+        if (!$rights->canEntity($entity->asArray(), Rights::EDIT)) {
+            $this->logger->info(
+                'Unauthorized edit attempt on ' . $table . ': ' . $entity->id
+            );
 
             throw new AuthorizationException();
         }
@@ -187,44 +218,56 @@ class Api extends Contained
         
         $data = $provider->beforeSave($data, $id);
 
-        $e->set($data);
-        $e->save();
+        $entity->set($data);
+        $entity->save();
         
-        $provider->afterSave($e, $original);
+        $provider->afterSave($entity->asArray(), $original);
         
-        $this->logger->info("Updated {$table}: {$e->id}");
+        $this->logger->info(
+            'Updated ' . $table . ': ' . $entity->id
+        );
         
-        return $this->get($response, $table, $e->id, $provider);
+        return $this->get($response, $entity->id, $provider);
     }
     
     /**
      * Delete entity
      *
      * @param ResponseInterface $response
-     * @param string $table
      * @param mixed $id
-     * @param object $provider
+     * @param EntityGenerator $provider
      * @return ResponseInterface
      */
-    public function delete(ResponseInterface $response, string $table, $id, object $provider) : ResponseInterface
+    public function delete(
+        ResponseInterface $response,
+        $id,
+        EntityGenerator $provider
+    ) : ResponseInterface
     {
-        $e = $this->db->getObj($table, $id);
+        $table = $provider->getEntity();
+        $rights = $this->getRights($table);
+
+        $entity = $this->db->getObj($table, $id);
         
-        if (!$e) {
+        if (!$entity) {
             throw new NotFoundException();
         }
 
-        if (!$this->db->can($table, 'delete', $e)) {
-            $this->logger->info("Unauthorized delete attempt on {$table}: {$e->id}");
+        if (!$rights->canEntity($entity->asArray(), Rights::DELETE)) {
+            $this->logger->info(
+                'Unauthorized delete attempt on ' . $table . ': ' . $entity->id
+            );
 
             throw new AuthorizationException();
         }
 
-        $e->delete();
+        $entity->delete();
         
-        $provider->afterDelete($e);
+        $provider->afterDelete($entity->asArray());
 
-        $this->logger->info("Deleted {$table}: {$e->id}");
+        $this->logger->info(
+            'Deleted ' . $table . ': ' . $entity->id
+        );
         
         return $response->withStatus(204);
     }
@@ -232,8 +275,11 @@ class Api extends Contained
     /**
      * Unset published if the user has no rights for it
      * 
-     * Currentl it just unsets published property, if the user has no rights to change it.
-     * This is a security check, alternatively ~NotAuthorized() exception can be thrown.
+     * Currently it just unsets published property,
+     * if the user has no rights to change it.
+     * 
+     * This is a security check,
+     * alternatively ~NotAuthorized() exception can be thrown.
      *
      * @param string $table
      * @param array $data
@@ -241,7 +287,8 @@ class Api extends Contained
      */
     private function securePublished(string $table, array $data) : array
     {
-        $canPublish = $this->db->can($table, 'publish');
+        $rights = $this->getRights($table);
+        $canPublish = $rights->can(Rights::PUBLISH);
         
         if (isset($data['published']) && !$canPublish) {
             unset($data['published']);

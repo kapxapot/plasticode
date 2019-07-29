@@ -47,11 +47,8 @@ class User extends DbModel
 
     public function gravatarUrl() : string
     {
-        return self::$linker->gravatarUrl($this->gravatarHash());
-    }
-
-    public function isOwnerOf(array $item) : bool
-    {
-        return ($item['created_by'] ?? null) == $this->getId();
+        return self::$linker->gravatarUrl(
+            $this->gravatarHash()
+        );
     }
 }

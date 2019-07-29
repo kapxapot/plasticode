@@ -4,51 +4,120 @@ namespace Plasticode\Models;
 
 use Plasticode\Collection;
 use Plasticode\Query;
+use Plasticode\Data\Rights;
 use Plasticode\Exceptions\InvalidOperationException;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\Util\Classes;
 use Plasticode\Util\Pluralizer;
 use Plasticode\Util\Strings;
+use Plasticode\Generators\EntityGenerator;
 
 abstract class DbModel extends Model implements SerializableInterface
 {
+    /**
+     * Table name
+     *
+     * @var string
+     */
     protected static $table;
     
+    /**
+     * Id field name
+     *
+     * @var string
+     */
     protected static $idField = 'id';
+
+    /**
+     * Tags field name
+     *
+     * @var string
+     */
     protected static $tagsField = 'tags';
 
+    /**
+     * Default sort order settings
+     * 
+     * If not set = by id asc
+     *
+     * @var array
+     */
     protected static $sortOrder = [];
+
+    /**
+     * Default sort field name
+     * 
+     * If not set = id
+     *
+     * @var string
+     */
     protected static $sortField = null;
+
+    /**
+     * Default sort direction
+     * 
+     * If not set = asc (reverse = false)
+     *
+     * @var boolean
+     */
     protected static $sortReverse = false;
 
     /**
-     * Wraps an existing database object or creates a new one using provided data
+     * Wraps an existing database object
+     * or creates a new one using provided data
      * 
      * If data is null, wraps an empty database object.
+     * 
+     * @param array|\ORM $obj
      */
     public function __construct($obj = null)
     {
         parent::__construct();
         
         if ($obj == null || is_array($obj)) {
+            // null or array - new entity
             $this->obj = self::$db->create(self::getTable(), $obj);
         } else {
+            // \ORM - existing entity
             $this->obj = $obj;
         }
     }
     
     /**
      * Static alias for new()
+     * 
+     * @param array|\ORM $obj
+     * @return self
      */
-    public static function create($obj = null)
+    public static function create($obj = null) : self
     {
         return new static($obj);
+    }
+
+    /**
+     * Wrapper for model creation
+     * 
+     * Checks if obj is null and doesn't create model for null.
+     * 
+     * @param \ORM $obj
+     * @return self|null
+     */
+    private static function fromDbObj(\ORM $obj) : ?self
+    {
+        if (!$obj) {
+            return null;
+        }
+        
+        return static::create($obj);
     }
     
     /**
      * create() + save()
+     * 
+     * @param array|\ORM $obj
+     * @return self
      */
-    public static function store($obj = null)
+    public static function store($obj = null) : self
     {
         $model = static::create($obj);
         return $model->save();
@@ -103,7 +172,7 @@ abstract class DbModel extends Model implements SerializableInterface
     /**
      * Returns entity generator for this model
      */
-    public static function getGenerator()
+    public static function getGenerator() : EntityGenerator
     {
         $plural = self::pluralClass();
         $gen = self::$container->generatorResolver->resolveEntity($plural);
@@ -114,7 +183,7 @@ abstract class DbModel extends Model implements SerializableInterface
     /**
      * Returns validation rules for this model
      */
-    public static function getRules($data)
+    public static function getRules($data) : array
     {
         $gen = self::getGenerator();
         $rules = $gen->getRules($data);
@@ -150,30 +219,16 @@ abstract class DbModel extends Model implements SerializableInterface
     /**
      * Was model saved or not
      */
-    public function isPersisted()
+    public function isPersisted() : bool
     {
         return $this->hasId();
     }
     
-    public function failIfNotPersisted()
+    public function failIfNotPersisted() : void
     {
         if (!$this->isPersisted()) {
             throw new InvalidOperationException('Object must be persisted.');
         }
-    }
-
-    /**
-     * Wrapper for model creation
-     * 
-     * Checks if obj is null and doesn't create model for null.
-     */
-    private static function fromDbObj($obj)
-    {
-        if (!$obj) {
-            return null;
-        }
-        
-        return static::create($obj);
     }
     
     /**
@@ -235,20 +290,27 @@ abstract class DbModel extends Model implements SerializableInterface
     }
 
     // rights
+
+    private static function tableRights() : Rights
+    {
+        return self::$db->getTableRights(
+            self::getTable()
+        );
+    }
     
     public static function tableAccess() : array
     {
-        return self::$db->getRights(self::getTable());
+        return self::tableRights()->forTable();
     }
     
     public static function can($rights) : bool
     {
-        return self::$db->can(self::getTable(), $rights);
+        return self::tableRights()->can($rights);
     }
     
     public function access() : array
     {
-        return self::$db->getRights(self::getTable(), $this->obj);
+        return self::tableRights()->forEntity($this->obj);
     }
     
     // instance methods
@@ -278,17 +340,18 @@ abstract class DbModel extends Model implements SerializableInterface
      * Equal means:
      *  - Same class.
      *  - Same id.
+     * 
+     * @param self|null $model
+     * @return boolean
      */
-    public function equals(object $obj) : bool
+    public function equals(?self $model) : bool
     {
-        return !is_null($obj) && ($obj instanceof self) && ($obj->getId() === $this->getId());
+        return !is_null($model)
+            && ($model->getId() === $this->getId());
     }
 
     public function toString() : string
     {
-        $class = static::class;
-        $id = $this->getId();
-        
-        return "[{$id}] {$class}";
+        return '[' . $this->getId() . '] ' . static::class;
     }
 }
