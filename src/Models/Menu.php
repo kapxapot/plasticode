@@ -3,8 +3,9 @@
 namespace Plasticode\Models;
 
 use Plasticode\Collection;
+use Plasticode\Models\Interfaces\LinkableInterface;
 
-class Menu extends DbModel
+class Menu extends DbModel implements LinkableInterface
 {
     protected static $sortField = 'position';
 
@@ -15,5 +16,10 @@ class Menu extends DbModel
         return self::$menuItemRepository
             ->getByMenu($this->id)
             ->all();
+    }
+
+    public function url() : ?string
+    {
+        return self::$linker->abs($this->link);
     }
 }

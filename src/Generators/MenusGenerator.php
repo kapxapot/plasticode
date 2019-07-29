@@ -2,6 +2,8 @@
 
 namespace Plasticode\Generators;
 
+use Plasticode\Models\Menu;
+
 class MenusGenerator extends EntityGenerator
 {
     public function getRules(array $data, $id = null) : array
@@ -13,5 +15,16 @@ class MenusGenerator extends EntityGenerator
         $rules['position'] = $this->rule('posInt');
         
         return $rules;
+    }
+
+    public function afterLoad(array $item) : array
+    {
+        $item = parent::afterLoad($item);
+
+        $menu = Menu::get($item['id']);
+
+        $item['url'] = $menu->url();
+
+        return $item;
     }
 }

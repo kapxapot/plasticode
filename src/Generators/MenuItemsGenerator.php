@@ -2,6 +2,8 @@
 
 namespace Plasticode\Generators;
 
+use Plasticode\Models\MenuItem;
+
 class MenuItemsGenerator extends EntityGenerator
 {
     public function getRules(array $data, $id = null) : array
@@ -23,6 +25,17 @@ class MenuItemsGenerator extends EntityGenerator
         $options['filter'] = 'menu_id';
         
         return $options;
+    }
+
+    public function afterLoad(array $item) : array
+    {
+        $item = parent::afterLoad($item);
+
+        $menuItem = MenuItem::get($item['id']);
+
+        $item['url'] = $menuItem->url();
+
+        return $item;
     }
     
     public function getAdminParams(array $args) : array
