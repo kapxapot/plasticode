@@ -9,7 +9,7 @@ class TaggableEntityGenerator extends EntityGenerator
 {
     protected $tagsField = 'tags';
 
-    public function afterSave($item, $data)
+    public function afterSave(array $item, array $data) : void
     {
         parent::afterSave($item, $data);
         
@@ -32,7 +32,7 @@ class TaggableEntityGenerator extends EntityGenerator
         }
     }
 
-    public function afterDelete($item)
+    public function afterDelete(array $item) : void
     {
         parent::afterDelete($item);
         

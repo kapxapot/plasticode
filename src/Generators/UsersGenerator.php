@@ -19,16 +19,16 @@ class UsersGenerator extends EntityGenerator
         return $rules;
     }
     
-    public function beforeSave($data, $id = null)
+    public function beforeSave(array $data, $id = null) : array
     {
         $data = parent::beforeSave($data, $id);
 
         if (array_key_exists('password', $data)) {
             $password = $data['password'];
+
             if (strlen($password) > 0) {
                 $data['password'] = Security::encodePassword($password);
-            }
-            else {
+            } else {
                 unset($data['password']);
             }
         }

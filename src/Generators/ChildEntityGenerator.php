@@ -7,10 +7,39 @@ use Psr\Container\ContainerInterface;
 
 class ChildEntityGenerator extends EntityGenerator
 {
+    /**
+     * Parent entity name
+     *
+     * @var string
+     */
     protected $parentName;
+
+    /**
+     * Child entity name
+     *
+     * @var string
+     */
     protected $name;
+
+    /**
+     * Parents label
+     *
+     * @var string
+     */
     protected $parentsLabel;
+
+    /**
+     * Children label
+     *
+     * @var string
+     */
     protected $namesLabel;
+
+    /**
+     * Parent name field
+     *
+     * @var string
+     */
     protected $parentNameField;
 
     public function __construct(ContainerInterface $container, string $entity, array $options)
@@ -24,16 +53,32 @@ class ChildEntityGenerator extends EntityGenerator
         $this->parentNameField = $options['parent']['name_field'] ?? 'name';
     }
 
+    /**
+     * Return plural form of the word
+     *
+     * @param string $word
+     * @return string
+     */
     protected function plural(string $word) : string
     {
         return Pluralizer::plural($word);
     }
     
+    /**
+     * Plural parents name
+     *
+     * @return string
+     */
     protected function parents() : string
     {
         return $this->plural($this->parentName);
     }
     
+    /**
+     * Plural children name
+     *
+     * @return string
+     */
     protected function names() : string
     {
         return $this->plural($this->name);

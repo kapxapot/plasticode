@@ -55,7 +55,9 @@ class GeneratorResolver
         }
         
         if (!class_exists($generatorClass)) {
-            throw new InvalidConfigurationException("Unable to resolve {$entity} generator class.");
+            throw new InvalidConfigurationException(
+                'Unable to resolve ' . $entity . ' generator class.'
+            );
         }
         
         $generator = new $generatorClass($this->container, $entity);
