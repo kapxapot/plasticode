@@ -6,6 +6,6 @@ use Plasticode\Collection;
 
 interface SearchableInterface
 {
-    public static function search($query) : Collection;
+    public static function search(string $searchQuery) : Collection;
     public function code() : string;
 }

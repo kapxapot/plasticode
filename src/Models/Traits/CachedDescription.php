@@ -57,7 +57,9 @@ trait CachedDescription
                     }
                     
                     if (is_array($parsed)) {
-                        $parsed['text'] = self::$parser->renderLinks($parsed['text']);
+                        $parsed['text'] = self::$parser->renderLinks(
+                            $parsed['text']
+                        );
                     }
                 }
 
@@ -76,4 +78,3 @@ trait CachedDescription
         $this->resetLazy('parsedDescription');
     }
 }
-

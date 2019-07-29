@@ -45,7 +45,7 @@ class Tag extends DbModel implements LinkableInterface, SearchableInterface, Ser
     
     // interfaces
     
-    public function url() : string
+    public function url() : ?string
     {
         return self::$linker->tag($this->tag);
     }
