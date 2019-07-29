@@ -109,7 +109,7 @@ class Query
         if (!$obj) {
             return null;
         }
-        
+
         $func = $this->createModel;
         
         return $func($obj);
@@ -151,22 +151,44 @@ class Query
         return $this->query->deleteMany();
     }
     
-    // mmm
-    
-    private function branch(\Closure $queryModifier) : self
+    /**
+     * Creates new Query based on the current one
+     * plus applied modification
+     *
+     * @param \Closure $queryModifier
+     * @return mixed
+     */
+    private function branch(\Closure $queryModifier)
     {
         if ($this->isEmpty()) {
             return $this;
         }
 
-        $query = $queryModifier($this->query);
+        $result = $queryModifier($this->query);
+
+        if (!($result instanceof \ORM)) {
+            // if query resulted in any final result (!= query)
+            // return it as is
+            return $result;
+        }
         
-        return new Query($query, $this->createModel, $this->find);
+        // if query modification resulted in another query
+        // wrap it and return
+        return new Query(
+            $result, $this->createModel, $this->find
+        );
     }
     
     // idiorm funcs
     
-    public function __call($name, array $args) : self
+    /**
+     * Delegates method call to underlying \ORM query
+     *
+     * @param string $name
+     * @param array $args
+     * @return mixed
+     */
+    public function __call(string $name, array $args)
     {
         return $this->branch(
             function ($q) use ($name, $args) {
