@@ -1,23 +1,25 @@
 {% extends 'main/layout.twig' %}
 
 {% block content %}
-	<div class="panel panel-primary">
-		<div class="panel-heading panel-title">
-			<header>{{ title }}</header>
-		</div>
-		{% if not no_breadcrumbs %}
-    	  	<div class="panel-body breadcrumbs">
-    	  		<ol class="breadcrumb">
-    	  			<li><a href="{{ root }}/">{{ site_name }}</a></li>
-    	  			{% for b in breadcrumbs %}
-    	  				<li>{{ link|raw }}</li>
-    	  			{% endfor %}
-    	  			<li class="active">{{ title }}</li>
-    			</ol>
-    		</div>
-		{% endif %}
-	  	<div class="panel-body">
-	  		{{ text }}
-	    </div>
-	</div>
+    <div class="panel panel-primary">
+        <div class="panel-heading panel-title">
+            <header>{{ title }}</header>
+        </div>
+
+        {% if not no_breadcrumbs %}
+            <div class="panel-body breadcrumbs">
+                <ol class="breadcrumb">
+                    <li><a href="{{ root }}/">{{ site_name }}</a></li>
+                    {% for b in breadcrumbs %}
+                        <li>{{ link|raw }}</li>
+                    {% endfor %}
+                    <li class="active">{{ title }}</li>
+                </ol>
+            </div>
+        {% endif %}
+
+        <div class="panel-body">
+            {{ text }}
+        </div>
+    </div>
 {% endblock %}

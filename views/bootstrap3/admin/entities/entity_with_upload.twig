@@ -1,13 +1,13 @@
 {% extends 'admin/entity.twig' %}
 
 {% set more_modals %}
-	{% include 'modals/upload.twig' %}
+    {% include 'modals/upload.twig' %}
 {% endset %}
 
 {% set more_table_actions %}
-	case 'upload':
-		$scope.upload(data);
-		break;
+    case 'upload':
+        $scope.upload(data);
+        break;
 {% endset %}
 
 {% set on_change %}
@@ -21,27 +21,27 @@
 {% endset %}
 
 {% set entity_more_angular %}
-	var uFormControls = $('#uploadForm').find('.form-control');
-	uFormControls.change($scope.onChange);
+    var uFormControls = $('#uploadForm').find('.form-control');
+    uFormControls.change($scope.onChange);
 
-	$scope.upload = function(data, refresh = false) {
-	    $scope.uploadContext = data || {};
-	    $scope.uploadContext.refresh = refresh;
-	    
-	    resetForm('upload');
-	    $('#u_filename').html('');
-	    
-		showModal('upload');
-	};
+    $scope.upload = function(data, refresh = false) {
+        $scope.uploadContext = data || {};
+        $scope.uploadContext.refresh = refresh;
+        
+        resetForm('upload');
+        $('#u_filename').html('');
+        
+        showModal('upload');
+    };
 
-	$('#uploadForm').submit(function(e) {
-		$scope.prePost(e);
+    $('#uploadForm').submit(function(e) {
+        $scope.prePost(e);
         
-    	const obj = $scope.uploadContext;
+        const obj = $scope.uploadContext;
         
-    	var formData = new FormData();
+        var formData = new FormData();
         
-    	for (var i = 0; i < $scope.uploadFiles.length; i++) {
+        for (var i = 0; i < $scope.uploadFiles.length; i++) {
             var file = $scope.uploadFiles[i];
             formData.append('files[]', file, file.name);
         }
@@ -51,16 +51,16 @@
         }
         
         let params = {
-    		url: '{{ path_for(args.upload_path) }}',
+            url: '{{ path_for(args.upload_path) }}',
             headers: { 'Content-Type': undefined },
             data: formData,
-    		view: 'upload'
-    	};
-    	
-    	if (obj.refresh == true) {
-    	    params.onSuccess = $scope.refresh;
+            view: 'upload'
+        };
+        
+        if (obj.refresh == true) {
+            params.onSuccess = $scope.refresh;
         }
 
-    	$scope.ajax(params);
+        $scope.ajax(params);
     });
 {% endset %}

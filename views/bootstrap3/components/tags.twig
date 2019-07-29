@@ -1,8 +1,8 @@
 {% if tags|length > 0 %}
-	<div class="glyphicon-block"{# title="{{ title ?? 'Теги' }}"#}>
-		<i class="fas fa-tags"></i>
-		{% for t in tags %}
-			<a href="{{ t.url }}" class="label label-default">{{ t.text }}</a>
-		{% endfor %}
-	</div>
+    <div class="glyphicon-block"{# title="{{ title ?? 'Теги' }}"#}>
+        <i class="fas fa-tags"></i>
+        {% for t in tags %}
+            <a href="{{ t.url }}" class="label label-default">{{ t.text }}</a>
+        {% endfor %}
+    </div>
 {% endif %}

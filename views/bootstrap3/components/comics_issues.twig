@@ -1,12 +1,12 @@
 {% if comics|length > 0 %}
     <div class="flex-wrapper comics">
-    	{% for c in comics %}
-    		<div class="flex-item flex-item-shaded overlay-wrapper comic-image">
-    			<a href="{{ c.page_url }}">
-    				<img src="{{ c.cover.thumb_url }}" class="card-image" />
-    				<span class="overlay overlay-full">{% if global_context %}{{ c.series.name }}{% else %}Выпуск{% endif %}&nbsp;{{ c.number_str }}</span>
-    			</a>
-    		</div>
-    	{% endfor %}
+        {% for c in comics %}
+            <div class="flex-item flex-item-shaded overlay-wrapper comic-image">
+                <a href="{{ c.page_url }}">
+                    <img src="{{ c.cover.thumb_url }}" class="card-image" />
+                    <span class="overlay overlay-full">{% if global_context %}{{ c.series.name }}{% else %}Выпуск{% endif %}&nbsp;{{ c.number_str }}</span>
+                </a>
+            </div>
+        {% endfor %}
     </div>
 {% endif %}

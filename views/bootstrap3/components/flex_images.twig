@@ -1,14 +1,14 @@
 {% if images|length > 0 %}
-	<div class="flex-wrapper">
-		{% for i in images %}
-			<div class="flex-item flex-item-shaded overlay-wrapper">
-				<a href="{{ i.page_url }}">
-					<img src="{{ i.thumb }}" class="card-image" />
-					{% if not no_labels %}
-					    <span class="overlay">{{ i.title }}</span>
-					{% endif %}
-				</a>
-			</div>
-		{% endfor %}
-	</div>
+    <div class="flex-wrapper">
+        {% for i in images %}
+            <div class="flex-item flex-item-shaded overlay-wrapper">
+                <a href="{{ i.page_url }}">
+                    <img src="{{ i.thumb }}" class="card-image" />
+                    {% if not no_labels %}
+                        <span class="overlay">{{ i.title }}</span>
+                    {% endif %}
+                </a>
+            </div>
+        {% endfor %}
+    </div>
 {% endif %}

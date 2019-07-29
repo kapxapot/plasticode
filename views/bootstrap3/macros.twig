@@ -1,14 +1,14 @@
 {% macro tree(items, field = 'items') %}
     {% import _self as m %}
-	{% if items %}
-		<ul>
-		    {% for i in items %}
-		        <li>
-		            <a href="{{ i.url }}">{{ i.title }}</a>
-	                {{ m.tree(i[field], field) }}
-		        </li>
-		    {% endfor %}
-    	</ul>
+    {% if items %}
+        <ul>
+            {% for i in items %}
+                <li>
+                    <a href="{{ i.url }}">{{ i.title }}</a>
+                    {{ m.tree(i[field], field) }}
+                </li>
+            {% endfor %}
+        </ul>
     {% endif %}
 {% endmacro %}
 

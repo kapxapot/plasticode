@@ -3,7 +3,7 @@
 {% if pictures|length > 0 %}
     {% set grid_id = grid_id ?? 'gallery-grid' %}
     <div class="grid gallery-grid" id="{{ grid_id }}">
-		{% include 'components/gallery_chunk.twig' %}
+        {% include 'components/gallery_chunk.twig' %}
     </div>
     {% if not final %}
         <div class="center mt-3" ng-show="gallery_loading">

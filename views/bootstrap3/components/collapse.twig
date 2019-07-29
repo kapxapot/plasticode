@@ -5,10 +5,10 @@
     
     <a role="button" data-toggle="collapse" href="#{{ c_id }}" aria-expanded="{{ visible ? 'true' : 'false' }}" aria-controls="{{ c_id }}" class="collapse__header">
         {{ title }}
-	    {{ gm.gi('chevron-right collapse--hidden') }}
-	    {{ gm.gi('chevron-down collapse--visible') }}
+        {{ gm.gi('chevron-right collapse--hidden') }}
+        {{ gm.gi('chevron-down collapse--visible') }}
     </a>
     <div class="collapse{% if visible %} in{% endif %} mt-2" id="{{ c_id }}">
-	    {{ body|raw }}
+        {{ body|raw }}
     </div>
 {% endif %}

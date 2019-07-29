@@ -1,12 +1,12 @@
 {% if items %}
-	<div class="panel-body contents">
-  		<div class="contents--header">Содержание:</div>
-  		<div class="contents--body mt-2">
-  			{% for i in items %}
-  				<div class="contents--level{{ i.level }}">
-  				    <a href="#{{ i.label }}">{{ i.text }}</a>
-  				</div>
-  			{% endfor %}
-  		</div>
-	</div>
+    <div class="panel-body contents">
+        <div class="contents--header">Содержание:</div>
+        <div class="contents--body mt-2">
+            {% for i in items %}
+                <div class="contents--level{{ i.level }}">
+                    <a href="#{{ i.label }}">{{ i.text }}</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endif %}
