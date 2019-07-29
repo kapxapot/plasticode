@@ -2,6 +2,7 @@
 
 namespace Plasticode;
 
+use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Util\Strings;
 
 class Query
@@ -36,16 +37,30 @@ class Query
         $this->query = $query;
         
         if (is_null($createModel)) {
-            throw new \InvalidArgumentException('Query requires createModel function!');
+            throw new InvalidArgumentException(
+                'Query requires createModel function!'
+            );
         }
     
         $this->createModel = $createModel;
 
         if (is_null($find)) {
-            throw new \InvalidArgumentException('Query requires find function!');
+            throw new InvalidArgumentException(
+                'Query requires find function!'
+            );
         }
     
         $this->find = $find;
+    }
+
+    /**
+     * Get underlying \ORM query
+     *
+     * @return \ORM|null
+     */
+    public function getOrmQuery() : ?\ORM
+    {
+        return $this->query;
     }
     
     public static function empty() : self
@@ -133,7 +148,7 @@ class Query
     
     // mmm
     
-    private function branch(callable $queryModifier) : self
+    private function branch(\Closure $queryModifier) : self
     {
         if ($this->isEmpty()) {
             return $this;
@@ -148,9 +163,11 @@ class Query
     
     public function __call($name, array $args) : self
     {
-        return $this->branch(function ($q) use ($name, $args) {
-           return $q->{$name}(...$args); 
-        });
+        return $this->branch(
+            function ($q) use ($name, $args) {
+                return $q->{$name}(...$args);
+            }
+        );
     }
 
     public function whereIn($field, $values) : self
@@ -160,7 +177,9 @@ class Query
         }
         
         if (!is_array($values)) {
-            throw new \InvalidArgumentException('WhereIn error: values must be a Collection or an array.');
+            throw new InvalidArgumentException(
+                'WhereIn error: values must be a Collection or an array.'
+            );
         }
         
         return $this->branch(function ($q) use ($field, $values) {
@@ -175,12 +194,15 @@ class Query
         }
         
         if (!is_array($values)) {
-            throw new \InvalidArgumentException('WhereNotIn error: values must be a Collection or an array.');
+            throw new InvalidArgumentException(
+                'WhereNotIn error: values must be a Collection or an array.'
+            );
         }
         
-        return $this->branch(function ($q) use ($field, $values) {
-            return $q->whereNotIn($field, $values);
-        });
+        return $this->branch(
+            function ($q) use ($field, $values) {
+                return $q->whereNotIn($field, $values);
+            });
     }
 
     public function offset(int $offset) : self
@@ -189,9 +211,11 @@ class Query
             return $this;
         }
         
-        return $this->branch(function ($q) use ($offset) {
-            return $q->offset($offset);
-        });
+        return $this->branch(
+            function ($q) use ($offset) {
+                return $q->offset($offset);
+            }
+        );
     }
     
     public function limit(int $limit) : self
@@ -200,9 +224,11 @@ class Query
             return $this;
         }
         
-        return $this->branch(function ($q) use ($limit) {
-            return $q->limit($limit);
-        });
+        return $this->branch(
+            function ($q) use ($limit) {
+                return $q->limit($limit);
+            }
+        );
     }
     
     public function slice(int $offset, int $limit) : self
@@ -214,16 +240,18 @@ class Query
     
     public function search(string $searchQuery, string $where, int $paramCount = 1) : self
     {
-        return $this->branch(function ($q) use ($searchQuery, $where, $paramCount) {
-            $words = Strings::toWords($searchQuery);
-            
-            foreach ($words as $word) {
-                $wrapped = '%' . $word . '%';
-                $params = array_fill(0, $paramCount, $wrapped);
-                $q = $q->whereRaw($where, $params);
+        return $this->branch(
+            function ($q) use ($searchQuery, $where, $paramCount) {
+                $words = Strings::toWords($searchQuery);
+                
+                foreach ($words as $word) {
+                    $wrapped = '%' . $word . '%';
+                    $params = array_fill(0, $paramCount, $wrapped);
+                    $q = $q->whereRaw($where, $params);
+                }
+        
+                return $q;
             }
-    
-            return $q;
-        });
+        );
     }
 }
