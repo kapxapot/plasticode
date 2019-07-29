@@ -3,6 +3,7 @@
 namespace Plasticode\Core;
 
 use Plasticode\Contained;
+use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\IO\Image;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\Numbers;
@@ -76,7 +77,7 @@ class Parser extends Contained
         );
     }
     
-    public function parseCut($text, $url = null, $full = true)
+    public function parseCut(string $text, string $url = null, bool $full = true, string $label = null) : string
     {
         $cut = '[cut]';
         $cutpos = strpos($text, $cut);
@@ -87,7 +88,9 @@ class Parser extends Contained
                 $text = Text::trimBrs($text);
                 
                 if (strlen($url) == 0) {
-                    throw new \InvalidArgumentException('Non-empty url required for parseCut() in short mode.');
+                    throw new InvalidArgumentException(
+                        'Non-empty url required for parseCut() in short mode.'
+                    );
                 }
 
                 $text .= $this->render('read_more', [ 'url' => $url, 'label' => $label ]);
@@ -118,12 +121,12 @@ class Parser extends Contained
      * 
      * Не используется?
      */
-    public function stripTags($text)
+    public function stripTags($text) : string
     {
         return preg_replace('/\[(.*)\](.*)\[\/(.*)\]/U', '\$2', $text);
     }
     
-    private function cleanMarkup($text)
+    private function cleanMarkup($text) : string
     {
         $replaces = $this->config->getCleanupReplaces();
 

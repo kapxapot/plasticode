@@ -9,7 +9,7 @@ use Plasticode\Util\Strings;
 
 trait Tags
 {
-    protected static function getTagsEntityType()
+    protected static function getTagsEntityType() : string
     {
         return static::getTable();
     }
@@ -24,22 +24,25 @@ trait Tags
         return Strings::explode($tags);
     }
     
-    public function tagLinks()
+    public function tagLinks() : array
     {
         $tab = static::getTagsEntityType();
         $tags = $this->getTags();
         
-        return array_map(function($t) use ($tab) {
-            return new TagLink($t, $tab);
-        }, $tags);
+        return array_map(
+            function($t) use ($tab) {
+                return new TagLink($t, $tab);
+            },
+            $tags
+        );
     }
 
-    public static function getBaseByTag($tag) : Query
+    public static function getBaseByTag(string $tag) : Query
     {
         return static::getByTag($tag, self::baseQuery());
     }
 
-    public static function getByTag($tag, Query $baseQuery = null) : Query
+    public static function getByTag(string $tag, Query $baseQuery = null) : Query
     {
         $tag = Strings::normalize($tag);
         $ids = Tag::getIdsByTag(static::getTable(), $tag);
@@ -54,7 +57,7 @@ trait Tags
         if (method_exists(static::class, 'tagsWhere')) {
             $query = static::tagsWhere($query);
         }
-            
+        
         return $query;
     }
 }
