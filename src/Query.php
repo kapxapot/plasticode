@@ -105,6 +105,11 @@ class Query
         }
         
         $obj = $this->query->findOne();
+
+        if (!$obj) {
+            return null;
+        }
+        
         $func = $this->createModel;
         
         return $func($obj);
