@@ -310,7 +310,7 @@ abstract class DbModel extends Model implements SerializableInterface
     
     public function access() : array
     {
-        return self::tableRights()->forEntity($this->obj);
+        return self::tableRights()->forEntity($this->obj->asArray());
     }
     
     // instance methods
