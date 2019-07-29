@@ -181,7 +181,7 @@ class Bootstrap
             
             'captcha' => function (ContainerInterface $container) {
                 return new \Plasticode\Auth\Captcha(
-                    $container,
+                    $container->session,
                     $container->captchaConfig->getReplaces()
                 );
             },
@@ -312,8 +312,7 @@ class Bootstrap
                 $dbs = $this->dbSettings;
                 
                 \ORM::configure(
-                    'mysql:host=' . $dbs['host'] .
-                    ';dbname=' . $dbs['database']
+                    'mysql:host=' . $dbs['host'] . ';dbname=' . $dbs['database']
                 );
                 
                 \ORM::configure('username', $dbs['user']);

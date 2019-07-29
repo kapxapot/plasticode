@@ -4,7 +4,7 @@ namespace Plasticode\Config;
 
 class Captcha
 {
-    public function getReplaces()
+    public function getReplaces() : array
     {
         return [
             'а' => [ '4' ],
