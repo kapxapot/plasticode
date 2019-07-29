@@ -27,7 +27,7 @@ class Linker extends Contained
 
     public function rel(string $url = null) : string
     {
-        return $this->root() . $url;
+        return $this->root() . rtrim($url, '/');
     }
     
     public function root() : string
