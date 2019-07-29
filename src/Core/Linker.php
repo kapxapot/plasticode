@@ -24,6 +24,11 @@ class Linker extends Contained
         
         return $url;
     }
+
+    public function rel(string $url = null) : string
+    {
+        return $this->root() . $url;
+    }
     
     public function root() : string
     {

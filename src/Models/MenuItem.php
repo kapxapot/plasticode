@@ -24,6 +24,6 @@ class MenuItem extends DbModel implements LinkableInterface
 
     public function url() : ?string
     {
-        return self::$linker->abs($this->link);
+        return self::$linker->rel($this->link);
     }
 }
