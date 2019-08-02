@@ -251,7 +251,7 @@ function deleteCookie(name) {
 
 function getHeaders() {
     return {
-        Authorization: 'Basic ' + loadToken(),
+        Authorization: 'Bearer ' + loadToken(),
     };
 }
 
