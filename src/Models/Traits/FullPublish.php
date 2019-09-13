@@ -13,6 +13,7 @@ trait FullPublish
     use Publish
     {
         Publish::wherePublished as protected parentWherePublished;
+        publish as protected parentPublish;
         isPublished as protected parentIsPublished;
     }
 
@@ -44,12 +45,21 @@ trait FullPublish
         return $query->whereRaw($published);
     }
 
-    // props
+    // props & funcs
 
     protected static function wherePublished(Query $query) : Query
     {
         return self::parentWherePublished($query)
             ->whereRaw('(published_at < now())');
+    }
+
+    public function publish()
+    {
+        $this->parentPublish();
+
+        if ($this->publishedAt === null) {
+            $this->publishedAt = Date::dbNow();
+        }
     }
     
     public function isPublished() : bool
