@@ -6,6 +6,8 @@ class Twitch
 {
     private $settings;
 
+    private $baseUrl = 'https://api.twitch.tv/helix/';
+
     public function __construct(array $settings)
     {
         $this->settings = $settings;
@@ -13,21 +15,37 @@ class Twitch
 
     public function getStreamData(string $id) : array
     {
-        $clientId = $this->settings['client_id'];
+        $url = $this->baseUrl . 'streams?user_login=' . $id;
+        return $this->getData($url);
+    }
+    
+    public function getGameData($id) : array
+    {
+        $url = $this->baseUrl . 'games?id' . $id;
+        return $this->getData($url);
+    }
+    
+    public function getUserData($id) : array
+    {
+        $url = $this->baseUrl . 'users?id=' . $id;
+        return $this->getData($url);
+    }
 
-        $url = 'https://api.twitch.tv/kraken/streams?channel=' . $id;
-
-        $data = $this->curlGet($url, $clientId);
+    private function getData(string $url) : array
+    {
+        $data = $this->curlGet($url);
         $json = json_decode($data, true);
 
         return $json;
     }
 
-    private function curlGet(string $url, string $clientId)
+    private function curlGet(string $url)
     {
         $ch = curl_init();
 
-        $headers = ['Client-ID: ' . $clientId];
+        $headers = [
+            'Client-ID: ' . $this->getClientId()
+        ];
     
         curl_setopt($ch, CURLOPT_AUTOREFERER, true);
         curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -40,5 +58,10 @@ class Twitch
         curl_close($ch);
         
         return $data;
+    }
+
+    private function getClientId() : string
+    {
+        return $this->settings['client_id'];
     }
 }
