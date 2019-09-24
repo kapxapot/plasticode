@@ -32,4 +32,13 @@ class Cache
             unset($this->cache[$path]);
         }
     }
+    
+    public function getCached(string $path, \Closure $func)
+    {
+        if (!$this->exists($path)) {
+            $this->set($path, $func());
+        }
+        
+        return $this->get($path);
+    }
 }
