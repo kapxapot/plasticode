@@ -39,10 +39,6 @@ trait Publish
 
     public function publish()
     {
-        if ($this->publishedAt === null) {
-            $this->publishedAt = Date::dbNow();
-        }
-        
         $this->published = 1;
     }
     
