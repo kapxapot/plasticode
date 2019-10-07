@@ -37,8 +37,6 @@ abstract class DbModel extends Model implements SerializableInterface
 
     /**
      * Default sort order settings
-     * 
-     * If not set = by id asc
      *
      * @var array
      */
@@ -46,8 +44,6 @@ abstract class DbModel extends Model implements SerializableInterface
 
     /**
      * Default sort field name
-     * 
-     * If not set = id
      *
      * @var string
      */
@@ -55,8 +51,6 @@ abstract class DbModel extends Model implements SerializableInterface
 
     /**
      * Default sort direction
-     * 
-     * If not set = asc (reverse = false)
      *
      * @var boolean
      */
@@ -162,7 +156,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Base query with applied sort order
+     * Base query with applied sort order (if it is present)
      */
     public static function query() : Query
     {
@@ -259,20 +253,6 @@ abstract class DbModel extends Model implements SerializableInterface
             $ignoreCache
         );
     }
-
-    private static function buildSortOrder() : array
-    {
-        $order = static::$sortOrder;
-        
-        if (empty($order) && strlen(static::$sortField) > 0) {
-            $order[] = [
-                'field' => static::$sortField,
-                'reverse' => static::$sortReverse,
-            ];
-        }
-        
-        return $order;
-    }
     
     private static function applySortOrder(Query $query) : Query
     {
@@ -287,6 +267,20 @@ abstract class DbModel extends Model implements SerializableInterface
         }
         
         return $query;
+    }
+
+    private static function buildSortOrder() : array
+    {
+        $order = static::$sortOrder;
+        
+        if (empty($order) && strlen(static::$sortField) > 0) {
+            $order[] = [
+                'field' => static::$sortField,
+                'reverse' => static::$sortReverse,
+            ];
+        }
+        
+        return $order;
     }
 
     // rights
