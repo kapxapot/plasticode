@@ -8,7 +8,11 @@ use Plasticode\IO\Image;
 class SquareThumbStrategy implements ThumbStrategyInterface
 {
     /**
-     * Size to resize to. Final thumb size.
+     * Size to resize to
+     * 
+     * Final thumb size.
+     * 
+     * @var int $thumbSize
      */
     private $thumbSize;
     
@@ -17,34 +21,40 @@ class SquareThumbStrategy implements ThumbStrategyInterface
         $this->thumbSize = $thumbSize;
     }
     
-	/**
-	 * Get thumb from save data (API call).
-	 * 
-	 * @return Image|null
-	 */
-	public function getThumb(Gallery $gallery, $item, $data)
-	{
-	    $thumb = $data[$gallery->thumbField] ?? null;
-	    
-		return $thumb
-		    ? Image::parseBase64($thumb)
-		    : null;
-	}
+    /**
+     * Get thumb from save data (API call)
+     * 
+     * @return Image|null
+     */
+    public function getThumb(Gallery $gallery, \ORM $item, array $data) : ?Image
+    {
+        $thumb = $data[$gallery->thumbField] ?? null;
+        
+        return $thumb
+            ? Image::parseBase64($thumb)
+            : null;
+    }
     
-	public function createThumb($image)
-	{
-	    $width = imagesx($image);
-	    $height = imagesy($image);
+    /**
+     * Creates GD image for thumb
+     *
+     * @param resource $image
+     * @return resource
+     */
+    public function createThumb($image)
+    {
+        $width = imagesx($image);
+        $height = imagesy($image);
 
-		$srcSize = min($width, $height);
-		$thumbSize = min($this->thumbSize ?? $srcSize, $srcSize);
+        $srcSize = min($width, $height);
+        $thumbSize = min($this->thumbSize ?? $srcSize, $srcSize);
 
-		$xOffset = intdiv($width - $srcSize, 2);
-		$yOffset = intdiv($height - $srcSize, 2);
+        $xOffset = intdiv($width - $srcSize, 2);
+        $yOffset = intdiv($height - $srcSize, 2);
 
-		$thumbImage = imagecreatetruecolor($thumbSize, $thumbSize);
-		imagecopyresampled($thumbImage, $image, 0, 0, $xOffset, $yOffset, $thumbSize, $thumbSize, $srcSize, $srcSize);
-		
-		return $thumbImage;
-	}
+        $thumbImage = imagecreatetruecolor($thumbSize, $thumbSize);
+        imagecopyresampled($thumbImage, $image, 0, 0, $xOffset, $yOffset, $thumbSize, $thumbSize, $srcSize, $srcSize);
+        
+        return $thumbImage;
+    }
 }

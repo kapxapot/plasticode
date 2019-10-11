@@ -2,11 +2,11 @@
     
 {% if entity %}
     <div class="glyphicon-block" title="Дата публикации" ng-cloak>
-    	<i class="far fa-clock"></i>
-    	{% if entity.published %}
-    	    {{ gm.moment_local(entity.published_at_iso) }}
-    	{% else %}
-    	    Не опубликовано!
-    	{% endif %}
+        <i class="far fa-clock"></i>
+        {% if entity.published %}
+            {{ gm.moment_local(entity.published_at_iso) }}
+        {% else %}
+            Не опубликовано!
+        {% endif %}
     </div>
 {% endif %}

@@ -2,35 +2,32 @@
 
 namespace Plasticode\Controllers\Admin;
 
-use Plasticode\Core\Core;
+use Plasticode\Core\Response;
 use Plasticode\Controllers\Controller;
-use Plasticode\Exceptions\BadRequestException;
+use Plasticode\Exceptions\Http\BadRequestException;
 use Plasticode\IO\Image;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 abstract class ImageUploadController extends Controller
 {
-	public function upload($request, $response, $args)
-	{
-	    $context = $request->getParam('context', null);
-	    
-	    /*if (empty($context)) {
-	        throw new BadRequestException('You must provide a context.');
-	    }*/
-
-	    $files = $request->getUploadedFiles()['files'] ?? null;
+    public function upload(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
+    {
+        $context = $request->getParam('context', null);
+        $files = $request->getUploadedFiles()['files'] ?? null;
 
         if (empty($files)) {
-	        throw new BadRequestException('No files provided.');
+            throw new BadRequestException('No files provided.');
         }
 
-	    foreach ($files as $file) {
-	        $error = $file->getError();
-	        
+        foreach ($files as $file) {
+            $error = $file->getError();
+            
             if ($error !== UPLOAD_ERR_OK) {
                 $fileName = $file->getClientFilename();
                 $this->logger->error("File upload error: {$fileName}, {$error}.");
                 
-    	        throw new BadRequestException('Upload error (see log for details).');
+                throw new BadRequestException('Upload error (see log for details).');
             }
         }
         
@@ -38,26 +35,30 @@ abstract class ImageUploadController extends Controller
             $fileName = $file->getClientFilename();
             $this->logger->info("Uploaded file: {$fileName}.");
             
-            $images = $this->extractAndProcessImages($file->file, function (Image $image, $imageFileName) use ($context) {
-                $this->addImage($context, $image, $imageFileName);
-            });
-	    }
-	    
-		return Core::json($response, [
-		    'message' => $this->translate('Upload successful.'),
-		]);
-	}
+            $this->extractAndProcessImages(
+                $file->file,
+                function (Image $image, string $imageFileName) use ($context) {
+                    $this->addImage($context, $image, $imageFileName);
+                }
+            );
+        }
+        
+        return Response::json(
+            $response,
+            ['message' => $this->translate('Upload successful.')]
+        );
+    }
 
     /**
-     * Extracts and processes images from ZIP-archive.
+     * Extracts and processes images from ZIP-archive
      */
-	protected function extractAndProcessImages($zipName, $process)
-	{
-	    $images = [];
-	    
-	    $zip = new \ZipArchive;
-	    $result = $zip->open($zipName);
-	    
+    protected function extractAndProcessImages(string $zipName, \Closure $process) : array
+    {
+        $images = [];
+        
+        $zip = new \ZipArchive;
+        $result = $zip->open($zipName);
+        
         if ($result === true) {
             for ($i = 0; $i < $zip->numFiles; $i++) {
                 $fileName = $zip->getNameIndex($i);
@@ -82,12 +83,12 @@ abstract class ImageUploadController extends Controller
 
             $zip->close();
         }
-	    
-	    return $images;
-	}
-	
-	/**
-	 * Adds image.
-	 */
-	protected abstract function addImage($context, Image $image, $fileName);
+        
+        return $images;
+    }
+    
+    /**
+     * Adds image
+     */
+    protected abstract function addImage(array $context, Image $image, string $fileName);
 }

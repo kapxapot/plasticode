@@ -6,33 +6,33 @@ use Plasticode\Core\Security;
 
 class UsersGenerator extends EntityGenerator
 {
-	public function getRules($data, $id = null)
-	{
-	    $rules = parent::getRules($data, $id);
-	    
-	    $table = $this->userRepository->getTable();
-	    
-		$rules['login'] = $this->rule('login')->loginAvailable($table, $id);
-		$rules['email'] = $this->rule('url')->email()->emailAvailable($table, $id);
-		$rules['password'] = $this->rule('password', $id);
-		
-		return $rules;
-	}
-	
-	public function beforeSave($data, $id = null)
-	{
-	    $data = parent::beforeSave($data, $id);
+    public function getRules(array $data, $id = null) : array
+    {
+        $rules = parent::getRules($data, $id);
+        
+        $table = $this->userRepository->getTable();
+        
+        $rules['login'] = $this->rule('login')->loginAvailable($table, $id);
+        $rules['email'] = $this->rule('url')->email()->emailAvailable($table, $id);
+        $rules['password'] = $this->rule('password', $id);
+        
+        return $rules;
+    }
+    
+    public function beforeSave(array $data, $id = null) : array
+    {
+        $data = parent::beforeSave($data, $id);
 
-		if (array_key_exists('password', $data)) {
-			$password = $data['password'];
-			if (strlen($password) > 0) {
-				$data['password'] = Security::encodePassword($password);
-			}
-			else {
-				unset($data['password']);
-			}
-		}
+        if (array_key_exists('password', $data)) {
+            $password = $data['password'];
 
-		return $data;
-	}
+            if (strlen($password) > 0) {
+                $data['password'] = Security::encodePassword($password);
+            } else {
+                unset($data['password']);
+            }
+        }
+
+        return $data;
+    }
 }

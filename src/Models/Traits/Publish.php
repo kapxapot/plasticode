@@ -20,34 +20,30 @@ trait Publish
 
     // queries
     
-	public static function getBasePublished() : Query
-	{
-	    return self::wherePublished(self::baseQuery());
-	}
+    public static function getBasePublished() : Query
+    {
+        return self::wherePublished(self::baseQuery());
+    }
     
-	public static function getPublished() : Query
-	{
-	    return self::wherePublished(self::query());
-	}
+    public static function getPublished() : Query
+    {
+        return self::wherePublished(self::query());
+    }
     
     protected static function wherePublished(Query $query) : Query
     {
         return $query->where('published', 1);
     }
-	
-	// props & funcs
+    
+    // props & funcs
 
     public function publish()
     {
-        if ($this->publishedAt === null) {
-            $this->publishedAt = Date::dbNow();
-        }
-        
         $this->published = 1;
     }
-	
-	public function isPublished() : bool
-	{
-	    return $this->published == 1;
-	}
+    
+    public function isPublished() : bool
+    {
+        return $this->published == 1;
+    }
 }

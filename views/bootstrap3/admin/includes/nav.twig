@@ -1,49 +1,49 @@
 <nav class="navbar navbar-default">
-	<div class="container-fluid">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<span class="navbar-brand">
-				<a href="{{ path_for('main.index') }}">{{ site_name }}</a> / <a href="{{ path_for('admin.index') }}">{{ admin_title }}</a>
-			</span>
-		</div>
-		<div id="navbar" class="navbar-collapse collapse">
-			{% if auth.user %}
-				<ul class="nav navbar-nav">
-					{% for entry in admin_menu %}
-						{% if entry is iterable %}
-							{% set visible_items = [] %}
-							{% for entity in entry.group.items %}
-								{% if can(entity, 'read_own') %}
-  									{% set visible_items = visible_items|merge([entity]) %}
-								{% endif %}
-  							{% endfor %}
-  							{% if visible_items is not empty %}
-								<li class="dropdown">
-						  			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ entry.group.title }} <span class="caret"></span></a>
-									<ul class="dropdown-menu">
-										{% for entity in visible_items %}
-											<li{% if alias == entity %} class="active"{% endif %}><a href="{{ path_for('admin.entities.' ~ entity) }}">{{ entities[entity].title }}</a></li>
-										{% endfor %}
-	 								</ul>
-	 							</li>
- 							{% endif %}
-						{% else %}
-							{% set entity = entry %}
-							{% if can(entity, 'read_own') %}
-								<li{% if alias == entity %} class="active"{% endif %}><a href="{{ path_for('admin.entities.' ~ entity) }}">{{ entities[entity].title }}</a></li>
-							{% endif %}
-						{% endif %}
-					{% endfor %}
-				</ul>
-			{% endif %}
-			<ul class="nav navbar-nav navbar-right">
-				{% include 'usernav.twig' %}
-			</ul>
-		</div>
-	</div>
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <span class="navbar-brand">
+                <a href="{{ path_for('main.index') }}">{{ site_name }}</a> / <a href="{{ path_for('admin.index') }}">{{ admin_title }}</a>
+            </span>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            {% if auth.user %}
+                <ul class="nav navbar-nav">
+                    {% for entry in admin_menu %}
+                        {% if entry is iterable %}
+                            {% set visible_items = [] %}
+                            {% for entity in entry.group.items %}
+                                {% if can(entity, 'read_own') %}
+                                      {% set visible_items = visible_items|merge([entity]) %}
+                                {% endif %}
+                              {% endfor %}
+                              {% if visible_items is not empty %}
+                                <li class="dropdown">
+                                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ entry.group.title }} <span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        {% for entity in visible_items %}
+                                            <li{% if alias == entity %} class="active"{% endif %}><a href="{{ path_for('admin.entities.' ~ entity) }}">{{ entities[entity].title }}</a></li>
+                                        {% endfor %}
+                                     </ul>
+                                 </li>
+                             {% endif %}
+                        {% else %}
+                            {% set entity = entry %}
+                            {% if can(entity, 'read_own') %}
+                                <li{% if alias == entity %} class="active"{% endif %}><a href="{{ path_for('admin.entities.' ~ entity) }}">{{ entities[entity].title }}</a></li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <ul class="nav navbar-nav navbar-right">
+                {% include 'usernav.twig' %}
+            </ul>
+        </div>
+    </div>
 </nav>			

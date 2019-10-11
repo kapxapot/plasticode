@@ -1,48 +1,48 @@
 {% if streams|length > 0 %}
     {% import 'macros.twig' as gm %}
     <div class="flex-wrapper streams">
-    	{% for s in streams %}
-    		<div class="flex-item flex-item-shaded">
-    		    {% if s.remote_online and s.large_img_url %}
-    		    	<div class="overlay-wrapper stream-image">
-    			    	<a href="{{ s.page_url }}">
-    			    		<img class="card-image" src="{{ s.large_img_url }}" />
-    			    		<span class="overlay">
-    			    			{{ gm.gi('user') }}
-    			    			{{ s.remote_viewers }}
-    			    		</span>
-    			    	</a>
-    		    	</div>
-    		    {% endif %}
-    			<div class="card-body">
-    		    	<p>
-    		    		<a href="{{ s.page_url }}">{{ s.title }}</a>
-    		    		{% if s.channel %}
-    		    			{% if s.remote_status %}
-    				    		{% if s.remote_online %}
-    				    			транслирует
-    				    		{% else %}
-    				    			{{ s.remote_online_ago }} {{ s.broadcasted }}
-    				    		{% endif %}
-    				    		<b>{{ s.remote_status }}</b>
-    				    	{% else %}
-    				    		{% if s.remote_online %}
-    				    			ведет трансляцию
-    				    		{% else %}
-    				    			{{ s.held }} трансляцию {{ s.remote_online_ago }}
-    				    		{% endif %}
-    				    	{% endif %}
-    		    		{% else %}
-    			    		{% if s.remote_online %}
-    			    			играет
-    			    		{% else %}
-    			    			{{ s.remote_online_ago }} {{ s.played }}
-    			    		{% endif %}
-    			    		в <b>{{ s.remote_game }}</b>
-    		    		{% endif %}
-    		    	</p>
-    			</div>
-    		</div>
-    	{% endfor %}
+        {% for s in streams %}
+            <div class="flex-item flex-item-shaded">
+                {% if s.remote_online and s.large_img_url %}
+                    <div class="overlay-wrapper stream-image">
+                        <a href="{{ s.page_url }}">
+                            <img class="card-image" src="{{ s.large_img_url }}" />
+                            <span class="overlay">
+                                {{ gm.gi('user') }}
+                                {{ s.remote_viewers }}
+                            </span>
+                        </a>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <p>
+                        <a href="{{ s.page_url }}">{{ s.title }}</a>
+                        {% if s.channel %}
+                            {% if s.remote_status %}
+                                {% if s.remote_online %}
+                                    транслирует
+                                {% else %}
+                                    {{ s.remote_online_ago }} {{ s.broadcasted }}
+                                {% endif %}
+                                <b>{{ s.remote_status }}</b>
+                            {% else %}
+                                {% if s.remote_online %}
+                                    ведет трансляцию
+                                {% else %}
+                                    {{ s.held }} трансляцию {{ s.remote_online_ago }}
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            {% if s.remote_online %}
+                                играет
+                            {% else %}
+                                {{ s.remote_online_ago }} {{ s.played }}
+                            {% endif %}
+                            в <b>{{ s.remote_game }}</b>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 {% endif %}

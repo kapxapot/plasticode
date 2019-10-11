@@ -9,8 +9,10 @@ namespace Plasticode\RSS;
  * @since 1.3
  * @author Kai Blankenhorn <kaib@bitfolge.de>
  */
-class RSSCreator20 extends RSSCreator091 {
-    function __construct() {
+class RSSCreator20 extends RSSCreator091
+{
+    function __construct()
+    {
         parent::_setRSSVersion("2.0");
     }
 }

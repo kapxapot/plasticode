@@ -2,37 +2,70 @@
 
 namespace Plasticode;
 
+use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Util\Strings;
 
 class Query
 {
+    /**
+     * ORM query
+     *
+     * @var \ORM
+     */
     private $query;
     
-    private $createModel; // func
-    private $find; // func
+    /**
+     * Method for model creation
+     *
+     * @var \Closure
+     */
+    private $createModel;
+
+    /**
+     * Method for finding a model
+     *
+     * @var \Closure
+     */
+    private $find;
     
-    public function __construct($query, callable $createModel = null, callable $find = null)
+    public function __construct(\ORM $query = null, \Closure $createModel = null, \Closure $find = null)
     {
+        if (is_null($query)) {
+            return;
+        }
+
         $this->query = $query;
         
-        if (!$this->isEmpty()) {
-            if ($createModel === null) {
-                throw new \InvalidArgumentException('Query requires createModel function!');
-            }
-        
-            $this->createModel = $createModel;
-
-            if ($find === null) {
-                throw new \InvalidArgumentException('Query requires find function!');
-            }
-        
-            $this->find = $find;
+        if (is_null($createModel)) {
+            throw new InvalidArgumentException(
+                'Query requires createModel function!'
+            );
         }
+    
+        $this->createModel = $createModel;
+
+        if (is_null($find)) {
+            throw new InvalidArgumentException(
+                'Query requires find function!'
+            );
+        }
+    
+        $this->find = $find;
+    }
+
+    /**
+     * Get underlying \ORM query
+     *
+     * @return \ORM|null
+     */
+    public function getOrmQuery() : ?\ORM
+    {
+        return $this->query;
     }
     
     public static function empty() : self
     {
-        return new static(null, null, null);
+        return new static();
     }
     
     public function isEmpty() : bool
@@ -50,12 +83,12 @@ class Query
         
         $objs = $this->query->findMany();
         
-	    $all = array_map(function ($obj) {
+        $all = array_map(function ($obj) {
             $func = $this->createModel;
             return $func($obj);
-	    }, $objs ?? []);
-	    
-	    return Collection::make($all);
+        }, $objs ?? []);
+        
+        return Collection::make($all);
     }
     
     public function find($id)
@@ -72,6 +105,11 @@ class Query
         }
         
         $obj = $this->query->findOne();
+
+        if (!$obj) {
+            return null;
+        }
+
         $func = $this->createModel;
         
         return $func($obj);
@@ -113,26 +151,50 @@ class Query
         return $this->query->deleteMany();
     }
     
-    // mmm
-    
-    private function branch(callable $queryModifier) : self
+    /**
+     * Creates new Query based on the current one
+     * plus applied modification
+     *
+     * @param \Closure $queryModifier
+     * @return mixed
+     */
+    private function branch(\Closure $queryModifier)
     {
         if ($this->isEmpty()) {
             return $this;
         }
 
-        $query = $queryModifier($this->query);
+        $result = $queryModifier($this->query);
+
+        if (!($result instanceof \ORM)) {
+            // if query resulted in any final result (!= query)
+            // return it as is
+            return $result;
+        }
         
-        return new Query($query, $this->createModel, $this->find);
+        // if query modification resulted in another query
+        // wrap it and return
+        return new Query(
+            $result, $this->createModel, $this->find
+        );
     }
     
     // idiorm funcs
     
-    public function __call($name, array $args) : self
+    /**
+     * Delegates method call to underlying \ORM query
+     *
+     * @param string $name
+     * @param array $args
+     * @return mixed
+     */
+    public function __call(string $name, array $args)
     {
-        return $this->branch(function ($q) use ($name, $args) {
-           return $q->{$name}(...$args); 
-        });
+        return $this->branch(
+            function ($q) use ($name, $args) {
+                return $q->{$name}(...$args);
+            }
+        );
     }
 
     public function whereIn($field, $values) : self
@@ -142,7 +204,9 @@ class Query
         }
         
         if (!is_array($values)) {
-            throw new \InvalidArgumentException('WhereIn error: values must be a Collection or an array.');
+            throw new InvalidArgumentException(
+                'WhereIn error: values must be a Collection or an array.'
+            );
         }
         
         return $this->branch(function ($q) use ($field, $values) {
@@ -157,12 +221,15 @@ class Query
         }
         
         if (!is_array($values)) {
-            throw new \InvalidArgumentException('WhereNotIn error: values must be a Collection or an array.');
+            throw new InvalidArgumentException(
+                'WhereNotIn error: values must be a Collection or an array.'
+            );
         }
         
-        return $this->branch(function ($q) use ($field, $values) {
-            return $q->whereNotIn($field, $values);
-        });
+        return $this->branch(
+            function ($q) use ($field, $values) {
+                return $q->whereNotIn($field, $values);
+            });
     }
 
     public function offset(int $offset) : self
@@ -171,9 +238,11 @@ class Query
             return $this;
         }
         
-        return $this->branch(function ($q) use ($offset) {
-            return $q->offset($offset);
-        });
+        return $this->branch(
+            function ($q) use ($offset) {
+                return $q->offset($offset);
+            }
+        );
     }
     
     public function limit(int $limit) : self
@@ -182,9 +251,11 @@ class Query
             return $this;
         }
         
-        return $this->branch(function ($q) use ($limit) {
-            return $q->limit($limit);
-        });
+        return $this->branch(
+            function ($q) use ($limit) {
+                return $q->limit($limit);
+            }
+        );
     }
     
     public function slice(int $offset, int $limit) : self
@@ -196,16 +267,18 @@ class Query
     
     public function search(string $searchQuery, string $where, int $paramCount = 1) : self
     {
-        return $this->branch(function ($q) use ($searchQuery, $where, $paramCount) {
-    		$words = Strings::toWords($searchQuery);
-    		
-    		foreach ($words as $word) {
-    			$wrapped = '%' . $word . '%';
-    			$params = array_fill(0, $paramCount, $wrapped);
-    			$q = $q->whereRaw($where, $params);
-    		}
-    
-            return $q;
-        });
+        return $this->branch(
+            function ($q) use ($searchQuery, $where, $paramCount) {
+                $words = Strings::toWords($searchQuery);
+                
+                foreach ($words as $word) {
+                    $wrapped = '%' . $word . '%';
+                    $params = array_fill(0, $paramCount, $wrapped);
+                    $q = $q->whereRaw($where, $params);
+                }
+        
+                return $q;
+            }
+        );
     }
 }

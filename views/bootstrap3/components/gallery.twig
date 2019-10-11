@@ -1,12 +1,12 @@
 {% if pictures|length > 0 %}
     <div class="flex-wrapper gallery">
-    	{% for p in pictures %}
-    		<div class="flex-item flex-item-shaded overlay-wrapper">
-    			<a{% if lightbox %} href="{{ p.url }}" class="colorbox"{% else %} href="{{ p.page_url }}"{% endif %}{% if not no_tooltips %} title="{{ p.comment }}, автор: {{ p.author.full_name }}"{% endif %}>
-    				<img src="{{ p.thumb_url }}" alt="{{ p.comment }}" class="card-image" />
-    				<span class="overlay overlay-full">{{ p.comment }}</span>
-    			</a>
-    		</div>
-    	{% endfor %}
+        {% for p in pictures %}
+            <div class="flex-item flex-item-shaded overlay-wrapper">
+                <a{% if lightbox %} href="{{ p.url }}" class="colorbox"{% else %} href="{{ p.page_url }}"{% endif %}{% if not no_tooltips %} title="{{ p.comment }}, автор: {{ p.author.full_name }}"{% endif %}>
+                    <img src="{{ p.thumb_url }}" alt="{{ p.comment }}" class="card-image" />
+                    <span class="overlay overlay-full">{{ p.comment }}</span>
+                </a>
+            </div>
+        {% endfor %}
     </div>
 {% endif %}

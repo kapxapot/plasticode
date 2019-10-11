@@ -4,7 +4,7 @@ namespace Plasticode\Models;
 
 class TagLink extends Model
 {
-    public function __construct($tag, $tab)
+    public function __construct(string $tag, string $tab)
     {
         parent::__construct();
         
@@ -14,12 +14,12 @@ class TagLink extends Model
     
     // PROPS
     
-    public function text()
+    public function text() : string
     {
         return $this->tag;
     }
     
-    public function url()
+    public function url() : string
     {
         return self::$linker->tag($this->tag, $this->tab);
     }

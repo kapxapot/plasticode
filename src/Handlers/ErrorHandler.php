@@ -3,28 +3,14 @@
 namespace Plasticode\Handlers;
 
 use Plasticode\Contained;
-use Plasticode\Core\Core;
-use Plasticode\Util\Strings;
+use Plasticode\Core\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ErrorHandler extends Contained
 {
-    private $debug;
-    
-    public function __construct($container, $debug = false)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, \Exception $exception) : ResponseInterface
     {
-        parent::__construct($container);
-        
-        $this->debug = $debug;
+        return Response::error($this->container, $request, $response, $exception);
     }
-    
-	public function __invoke($request, $response, $exception)
-	{
-		$contentType = $request->getHeaderLine('Accept');
-
-    	if ($this->debug && Strings::startsWith($contentType, 'text/html')) {
-    	    throw $exception;
-    	}
-    	
-    	return Core::error($this->container, $response, $exception, $this->debug);
-	}
 }

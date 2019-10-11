@@ -2,30 +2,36 @@
 
 namespace Plasticode\Twig\Extensions;
 
-class AccessRightsExtension extends \Twig_Extension {
-    private $container;
+use Plasticode\Auth\Access;
 
-    public function __construct($container) {
-        $this->container = $container;
+class AccessRightsExtension extends \Twig_Extension
+{
+    /**
+     * Access rights
+     *
+     * @var Plasticode\Auth\Access
+     */
+    private $access;
+
+    public function __construct(Access $access)
+    {
+        $this->access = $access;
     }
     
-    public function getName() {
-    	return "accessRights";
+    public function getName() : string
+    {
+        return 'accessRights';
     }
     
-    public function getFunctions() {
+    public function getFunctions() : array
+    {
         return [
             new \Twig_SimpleFunction('can', array($this, 'can')),
         ];
     }
     
-    public function can($entity, $action) {
-    	$can = !$action;
-    	if (!$can) {
-	    	$access = $this->container->access;
-	    	$can = $access->checkRights($entity, $action);
-    	}
-    	
-    	return $can;
+    public function can(string $entity, string $action) : bool
+    {
+        return $this->access->checkRights($entity, $action);
     }
 }

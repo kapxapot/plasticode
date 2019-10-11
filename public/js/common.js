@@ -10,11 +10,11 @@ const lozadObserver = lozad(); // lazy loads elements with default selector as '
 lozadObserver.observe();
 
 function updateUI() {
-	// colorbox
-	if (typeof colorbox !== 'undefined' && colorbox instanceof HTMLDivElement) {
-	    //console.log('colorbox detected');
+    // colorbox
+    if (typeof colorbox !== 'undefined' && colorbox instanceof HTMLDivElement) {
+        //console.log('colorbox detected');
         $('.colorbox').colorbox({rel:'colorbox', maxWidth: '90%', scalePhotos: 'true'});
-	}
+    }
     
     $('[data-toggle="tooltip"]').tooltip();
     $('.carousel').carousel();
@@ -25,7 +25,7 @@ function updateUI() {
 }
 
 $(function() {
-	focusOnModals();
+    focusOnModals();
     hideAlerts();
 
     $('[data-hide]').on('click', function() {
@@ -47,13 +47,11 @@ function findCarousel(element) {
 
 function initSwipes() {
     // check if swipes are enabled
-	if (typeof Hammer !== 'function') {
-	    return;
-	}
+    if (typeof Hammer !== 'function') {
+        return;
+    }
 
     $('.swipable').each((index, swipable) => {
-        console.log(swipable);
-        
         const mc = new Hammer(swipable);
     
         // listen to events...
@@ -102,21 +100,21 @@ function focusOnModals() {
 }
 
 function showAlert(selector, delay = null) {
-	$(selector).show();
-	
-	if (delay) {
-		$(selector).fadeTo(delay, 0.8).slideUp(500, function() {
-	        $(this).slideUp(500);
-	    });
-	}
+    $(selector).show();
+    
+    if (delay) {
+        $(selector).fadeTo(delay, 0.8).slideUp(500, function() {
+            $(this).slideUp(500);
+        });
+    }
 }
 
 function showAlertSuccess() {
-	showAlert('.alert-success', 2000);
+    showAlert('.alert-success', 2000);
 }
 
 function showAlertError() {
-	showAlert('.alert-danger');
+    showAlert('.alert-danger');
 }
 
 function showModalAlertError() {
@@ -132,7 +130,7 @@ function hideAlertSuccess() {
 }
 
 function hideAlertError() {
-	hideAlert('.alert-danger');
+    hideAlert('.alert-danger');
 }
 
 function hideAlerts() {
@@ -146,12 +144,12 @@ function hideModalAlerts() {
 }
 
 function showModal(name) {
-	hideAlerts();
-	$('#' + name + 'View').modal('show');
+    hideAlerts();
+    $('#' + name + 'View').modal('show');
 }
 
 function hideModal(name) {
-	$('#' + name + 'View').modal('hide');
+    $('#' + name + 'View').modal('hide');
 }
 
 function resetForm(name) {
@@ -159,139 +157,145 @@ function resetForm(name) {
 }
 
 function reloadWindow() {
-	location.reload();
+    location.reload();
 }
 
 function signedIn(data, targetUrl, withCookie) {
-	saveToken(data['token'], withCookie);
+    const token = data['token'];
 
-	if (targetUrl) {
-		location.href = targetUrl;
-	}
-	else {
-		reloadWindow();
-	}
+    if (!token) {
+        throw "Invalid auth token!";
+    }
+
+    saveToken(token, withCookie);
+
+    if (targetUrl) {
+        location.href = targetUrl;
+    }
+    else {
+        reloadWindow();
+    }
 }
 
 function signedOut(data) {
-	deleteToken();
-	reloadWindow();
+    deleteToken();
+    reloadWindow();
 }
 
 var authTokenKey = 'auth_token';
 var authTokenCookieTtl = 365; // days
 
 function getAuthTokenKey() {
-	return authTokenKey;
+    return authTokenKey;
 }
 
 function saveToken(token, cookie = false) {
-	let key = getAuthTokenKey();
-	
-	localStorage.setItem(key, token);
-	
-	if (cookie) {
-		saveCookie(key, token, authTokenCookieTtl);
-	}
+    let key = getAuthTokenKey();
+    
+    localStorage.setItem(key, token);
+    
+    if (cookie) {
+        saveCookie(key, token, authTokenCookieTtl);
+    }
 }
 
 function loadToken() {
-	let key = getAuthTokenKey();
-	let item = localStorage.getItem(key);
+    let key = getAuthTokenKey();
+    let item = localStorage.getItem(key);
 
-	return item;
+    return item;
 }
 
 function deleteToken() {
-	let key = getAuthTokenKey();
-	
-	localStorage.removeItem(key);
-	
-	deleteCookie(key);
+    let key = getAuthTokenKey();
+    
+    localStorage.removeItem(key);
+    
+    deleteCookie(key);
 }
 
 function hasToken() {
-	return loadToken();
+    return loadToken();
 }
 
 function saveCookie(name, value, days) {
-	let expires = "";
-	
-	if (days) {
-		let date = new Date();
-		date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-		expires = "; expires=" + date.toGMTString();
-	}
+    let expires = "";
+    
+    if (days) {
+        let date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toGMTString();
+    }
 
-	document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
+    document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
 }
 
 function loadCookie(name) {
-	let nameEq = encodeURIComponent(name) + "=";
-	let ca = document.cookie.split(';');
+    let nameEq = encodeURIComponent(name) + "=";
+    let ca = document.cookie.split(';');
 
-	for (var i = 0; i < ca.length; i++) {
-		let c = ca[i];
-		while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-		if (c.indexOf(nameEq) === 0) {
-			return decodeURIComponent(c.substring(nameEq.length, c.length));
-		}
-	}
-	
-	return null;
+    for (var i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEq) === 0) {
+            return decodeURIComponent(c.substring(nameEq.length, c.length));
+        }
+    }
+    
+    return null;
 }
 
 function deleteCookie(name) {
-	saveCookie(name, "", -1);
+    saveCookie(name, "", -1);
 }
 
 function getHeaders() {
-	return {
-		Authorization: 'Basic ' + loadToken(),
-	};
+    return {
+        Authorization: 'Bearer ' + loadToken(),
+    };
 }
 
 function getById(items, id) {
-	if (items) {
-		let results = $.grep(items, function(e) {
-			return e.id === id;
-		});
-	
-		if (results.length > 0) {
-			return results[0];
-		}
-	}
-	
-	return null;
+    if (items) {
+        let results = $.grep(items, function(e) {
+            return e.id === id;
+        });
+    
+        if (results.length > 0) {
+            return results[0];
+        }
+    }
+    
+    return null;
 }
 
 function parseDate(input) {
-	if (input == null) {
-		return null;
-	}
+    if (input == null) {
+        return null;
+    }
 
-	let mainParts = input.split(' ');
-	let datePart = mainParts[0];
-	let timePart = mainParts[1];
+    let mainParts = input.split(' ');
+    let datePart = mainParts[0];
+    let timePart = mainParts[1];
 
-	let dateSubparts = datePart.split('-');
-	let timeSubparts = timePart.split(':');
+    let dateSubparts = datePart.split('-');
+    let timeSubparts = timePart.split(':');
 
-	return new Date(dateSubparts[0], dateSubparts[1] - 1, dateSubparts[2], timeSubparts[0], timeSubparts[1], timeSubparts[2]);
+    return new Date(dateSubparts[0], dateSubparts[1] - 1, dateSubparts[2], timeSubparts[0], timeSubparts[1], timeSubparts[2]);
 }
 
 function dateToString(date, withTime = false) {
-	if (date === null) {
-		return null;
-	}
-	
-	let dateStr = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
-	
-	if (withTime) {
-		dateStr += 'T' + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2);
-	}
-	
-	return dateStr;
+    if (date === null) {
+        return null;
+    }
+    
+    let dateStr = date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
+    
+    if (withTime) {
+        dateStr += 'T' + ('0' + date.getHours()).slice(-2) + ':' + ('0' + date.getMinutes()).slice(-2);
+    }
+    
+    return dateStr;
 }
 
 function escapeHtml(html) {
@@ -338,10 +342,10 @@ function momentDiff(start, end, unknownEnd, format = null, shortFormat = null) {
 }
 
 function getLastChild(id) {
-	const el = document.getElementById(id);
-	return el
-	    ? el.children[el.children.length - 1]
-	    : null;
+    const el = document.getElementById(id);
+    return el
+        ? el.children[el.children.length - 1]
+        : null;
 }
 
 function getRelLinks() {

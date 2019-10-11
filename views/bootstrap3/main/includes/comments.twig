@@ -2,12 +2,12 @@
 <div id="disqus_thread"></div>
 <script>
 var disqus_config = function () {
-	{% if disqus_url %}
-		this.page.url = '{{ disqus_url }}';
-	{% endif %}
-	{% if disqus_id %}
-		this.page.identifier = '{{ disqus_id }}';
-	{% endif %}
+    {% if disqus_url %}
+        this.page.url = '{{ disqus_url }}';
+    {% endif %}
+    {% if disqus_id %}
+        this.page.identifier = '{{ disqus_id }}';
+    {% endif %}
 };
 
 (function() {

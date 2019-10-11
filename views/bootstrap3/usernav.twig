@@ -1,30 +1,30 @@
 {% if auth.user %}
-	<li class="dropdown">
-	  	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user-circle mr-1" aria-hidden="true"></i> {{ auth.user.display_name }}{# ({{ auth.role.name }})#} <span class="caret"></span></a>
-		<ul class="dropdown-menu">
-			{% if user_actions %}
-				{% for type, actions in user_actions %}
-					{% if type == 'create' %}
-						{% for key, value in actions %}
-							<li><a href="{{ path_for('admin.entities.' ~ key) ~ '?action=create' }}">{{ value }}</a></li>
-						{% endfor %}
-					{% endif %}
-				{% endfor %}
- 				<li role="separator" class="divider"></li>
-			{% endif %}
-			{% if not no_admin_link %}
-			    <li><a href="{{ path_for('admin.index') }}">{{ admin_title ?? 'Админ' }}</a></li>
-			{% endif %}
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle usermenu" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="usermenu__username b">{{ auth.user.display_name }}{# ({{ auth.role.name }})#}</span> <img src="{{ auth.avatar }}" class="avatar usermenu__avatar"> <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            {% if user_actions %}
+                {% for type, actions in user_actions %}
+                    {% if type == 'create' %}
+                        {% for key, value in actions %}
+                            <li><a href="{{ path_for('admin.entities.' ~ key) ~ '?action=create' }}">{{ value }}</a></li>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                 <li role="separator" class="divider"></li>
+            {% endif %}
+            {% if not no_admin_link %}
+                <li><a href="{{ path_for('admin.index') }}">{{ admin_title ?? 'Админ' }}</a></li>
+            {% endif %}
             {% include 'usernav_ext.twig' %}
             {% if with_auth %}
-    			<li><a href="javascript:void(0);" ng-click="passwordChange();">Смена пароля</a></li>
-    			<li><a href="javascript:void(0);" ng-click="signOut();">Выход</a></li>
-			{% endif %}
- 		</ul>
-	</li>
+                <li><a href="javascript:void(0);" ng-click="passwordChange();">Смена пароля</a></li>
+                <li><a href="javascript:void(0);" ng-click="signOut();">Выход</a></li>
+            {% endif %}
+         </ul>
+    </li>
 {% else %}
     {% if with_auth %}
-    	{#<li><a href="javascript:void(0);" ng-click="signUp();">Регистрация</a></li>#}
-    	<li><a href="javascript:void(0);" ng-click="signIn();"><i class="fas fa-sign-in-alt mr-1" aria-hidden="true"></i> Вход</a></li>
-	{% endif %}
+        {#<li><a href="javascript:void(0);" ng-click="signUp();">Регистрация</a></li>#}
+        <li><a href="javascript:void(0);" ng-click="signIn();"><i class="fas fa-sign-in-alt mr-1" aria-hidden="true"></i> Вход</a></li>
+    {% endif %}
 {% endif %}

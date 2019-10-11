@@ -13,29 +13,29 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         $this->data = $data;
     }
     
-    public static function make(array $data = null)
+    public static function make(array $data = null) : self
     {
         return new static($data ?? []);
     }
     
-    public static function makeEmpty()
+    public static function makeEmpty() : self
     {
         return self::make();
     }
     
-    public function add($item)
+    public function add($item) : self
     {
         $col = self::make([ $item ]);
         return $this->concat($col);
     }
     
-    public function concat(Collection $other)
+    public function concat(Collection $other) : self
     {
         $data = array_merge($this->data, $other->toArray());
         return self::make($data);
     }
     
-    public static function merge(...$collections)
+    public static function merge(...$collections) : self
     {
         $merged = self::makeEmpty();
         
@@ -51,7 +51,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
      * 
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      */
-    public function distinct($by = null)
+    public function distinct($by = null) : self
     {
         $data = Arrays::distinctBy($this->data, $by ?? 'id');
         return self::make($data);
@@ -77,10 +77,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
      * Groups collection by column/property or callable.
      * 
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
-     * @return Returns associative array of collections.
+     * @return array Returns associative array of collections.
      */
-    public function group($by = null)
+    public function group($by = null) : array
     {
+        $result = [];
+
         $groups = Arrays::groupBy($this->data, $by ?? 'id');
         
         foreach ($groups as $key => $group) {
@@ -93,7 +95,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     /**
      * Flattens a collection of elements, arrays and collections one level
      */
-    public function flatten()
+    public function flatten() : self
     {
         $data = [];
         
@@ -114,7 +116,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     /**
      * Skips $offset elements from the start and returns the remaining collection.
      */
-    public function skip(int $offset)
+    public function skip(int $offset) : self
     {
         $data = Arrays::skip($this->data, $offset);
         return self::make($data);
@@ -123,7 +125,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     /**
      * Returns first $limit elements
      */
-    public function take(int $limit)
+    public function take(int $limit) : self
     {
         $data = Arrays::take($this->data, $limit);
         return self::make($data);
@@ -132,12 +134,17 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     /**
      * Skips $offset elements and takes $limit elements
      */
-    public function slice(int $offset, int $limit)
+    public function slice(int $offset, int $limit) : self
     {
         $data = Arrays::slice($this->data, $offset, $limit);
         return self::make($data);
     }
     
+    /**
+     * Return random item.
+     * 
+     * @return mixed
+     */
     public function random()
     {
         $count = $this->count();
@@ -154,7 +161,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     /**
      * Extracts non-null 'id' column/property values.
      */
-    public function ids()
+    public function ids() : self
     {
         return $this->extract('id');
     }
@@ -162,29 +169,37 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     /**
      * Extracts non-null column/property values from collection.
      */
-    public function extract($column)
+    public function extract($column) : self
     {
         $data = Arrays::extract($this->data, $column);
         return self::make($data);
     }
     
-    public function any()
+    public function any($by = null, $value = null) : bool
     {
+        if ($by !== null) {
+            return $this
+                ->where($by, $value)
+                ->any();
+        }
+
         return !$this->empty();
     }
 
-    public function empty()
+    public function empty() : bool
     {
         return $this->count() == 0;
     }
     
-    public function contains($value)
+    public function contains($value) : bool
     {
         return in_array($value, $this->data);
     }
 
     /**
      * Filters collection by column/property value or callable, then returns first item or null.
+     * 
+     * @return mixed
      */
     public function first($by = null, $value = null)
     {
@@ -195,6 +210,8 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
 
     /**
      * Filters collection by column/property value or callable, then returns last item or null.
+     * 
+     * @return mixed
      */
     public function last($by = null, $value = null)
     {
@@ -206,13 +223,13 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     /**
      * Filters collection by column/property value or callable.
      */
-    public function where($by, $value = null)
+    public function where($by, $value = null) : self
     {
         $data = Arrays::filter($this->data, $by, $value);
         return self::make($data);
     }
     
-    public function whereIn($column, $values)
+    public function whereIn($column, $values) : self
     {
         if ($values instanceof Collection) {
             $values = $values->toArray();
@@ -222,7 +239,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         return self::make($data);
     }
     
-    public function whereNotIn($column, $values)
+    public function whereNotIn($column, $values) : self
     {
         if ($values instanceof Collection) {
             $values = $values->toArray();
@@ -232,72 +249,80 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         return self::make($data);
     }
 
-    public function map($func)
+    public function map(\Closure $func) : self
     {
         $data = array_map($func, $this->data);
         return self::make($data);
     }
     
-    public function apply($func)
+    public function apply(\Closure $func) : void
     {
         array_walk($this->data, $func);
     }
     
-    public function asc($column, $type = null)
+    public function asc($column, $type = null) : self
     {
         return $this->orderBy($column, null, $type);
     }
     
-    public function desc($column, $type = null)
+    public function desc($column, $type = null) : self
     {
         $data = Arrays::orderByDesc($this->data, $column, $type);
         return self::make($data);
     }
 
-    public function orderBy($column, $dir = null, $type = null)
+    public function orderBy(string $column, string $dir = null, string $type = null) : self
     {
         $data = Arrays::orderBy($this->data, $column, $dir, $type);
         return self::make($data);
     }
     
-    public function ascStr($column)
+    public function ascStr($column) : self
     {
         return $this->orderByStr($column);
     }
     
-    public function descStr($column)
+    public function descStr($column) : self
     {
         $data = Arrays::orderByStrDesc($this->data, $column);
         return self::make($data);
     }
 
-    public function orderByStr($column, $dir = null)
+    public function orderByStr($column, $dir = null) : self
     {
         $data = Arrays::orderByStr($this->data, $column, $dir);
         return self::make($data);
     }
     
-    public function multiSort($sorts)
+    public function multiSort($sorts) : self
     {
         $data = Arrays::multiSort($this->data, $sorts);
         return self::make($data);
     }
+
+    public function orderByFunc(\Closure $func) : self
+    {
+        $data = $this->data; // cloning
+        usort($data, $func);
+
+        return self::make($data);
+    }
     
-    public function reverse()
+    public function reverse() : self
     {
         $data = array_reverse($this->data);
         return self::make($data);
     }
 
-    public function serialize()
+    public function serialize() : self
     {
         return $this->map(function ($item) {
             return $item->serialize();
         });
     }
-	
-	// ArrayAccess
-	
+    
+    // ArrayAccess
+    
     public function offsetSet($offset, $value) {
         if (is_null($offset)) {
             throw new \InvalidArgumentException('$offset cannot be null.');

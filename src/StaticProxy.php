@@ -2,32 +2,30 @@
 
 namespace Plasticode;
 
+use Plasticode\Exceptions\InvalidArgumentException;
+use Plasticode\Exceptions\InvalidConfigurationException;
+
 class StaticProxy
 {
     protected $modelClass;
     
-    public function __construct($modelClass)
+    public function __construct(string $modelClass)
     {
+        if (strlen($modelClass) == 0) {
+            throw new InvalidArgumentException('Model class not set.');
+        }
+
         $this->modelClass = $modelClass;
     }
     
-    protected function getModelClass()
+    public function __call(string $method, array $args)
     {
-        $class = $this->modelClass ?? null;
-        
-        if (strlen($class) == 0) {
-            throw new \Exception('Model class not set for proxy ' . static::class);
-        }
-        
-        return $class;
-    }
-    
-    public function __call($method, $args)
-    {
-        $class = self::getModelClass();
+        $class = $this->modelClass;
         
         if (!method_exists($class, $method)) {
-            throw new \Exception("Class {$class} doesn't have method {$method}.");
+            throw new InvalidConfigurationException(
+                'Class ' . $class . ' doesn\'t have method ' . $method . '.'
+            );
         }
         
         return $class::$method(...$args);

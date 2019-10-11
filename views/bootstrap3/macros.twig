@@ -1,14 +1,14 @@
 {% macro tree(items, field = 'items') %}
     {% import _self as m %}
-	{% if items %}
-		<ul>
-		    {% for i in items %}
-		        <li>
-		            <a href="{{ i.url }}">{{ i.title }}</a>
-	                {{ m.tree(i[field], field) }}
-		        </li>
-		    {% endfor %}
-    	</ul>
+    {% if items %}
+        <ul>
+            {% for i in items %}
+                <li>
+                    <a href="{{ i.url }}">{{ i.title }}</a>
+                    {{ m.tree(i[field], field) }}
+                </li>
+            {% endfor %}
+        </ul>
     {% endif %}
 {% endmacro %}
 
@@ -16,9 +16,9 @@
 
 {% macro moment(date, format = 'DD.MM.Y HH:mm') %}{% import _self as m %}{{ m.ng_cloak("{{moment('" ~ date ~ "').format('" ~ format ~ "')}}") }}{% endmacro %}
 
-{% macro moment_local(date) %}{% import _self as m %}{{ m.moment(date, 'D MMMM Y, HH:mm') }}{% endmacro %}
+{% macro moment_local(date, default = null) %}{% import _self as m %}{{ date ? m.moment(date, 'D MMMM Y, HH:mm') : default ?? 'no date' }}{% endmacro %}
 
-{% macro moment_local_short(date) %}{% import _self as m %}{{ m.moment(date, 'D MMMM Y') }}{% endmacro %}
+{% macro moment_local_short(date, default = null) %}{% import _self as m %}{{ date ? m.moment(date, 'D MMMM Y') : default ?? 'no date' }}{% endmacro %}
 
 {% macro moment_smart(date) %}{% import _self as m %}{{ date.has_time ? m.moment_local(date.iso) : m.moment_local_short(date) }}{% endmacro %}
 
