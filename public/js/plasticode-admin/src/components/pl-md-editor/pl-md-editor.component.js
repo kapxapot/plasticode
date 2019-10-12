@@ -88,7 +88,8 @@ function plMdEditorController($element, scope, mdEditorService, plDataService, $
             });
 
             if(vm.onSearch && typeof vm.onSearch === 'function')
-                mde.codemirror.on('cursorActivity', (editor) => {
+                mde.codemirror.on('change', (editor) => {
+                    console.log('changeEvent');
                     throttle(editor);
                 });
 
@@ -116,6 +117,7 @@ function plMdEditorController($element, scope, mdEditorService, plDataService, $
         let keyMap = {};
         keyMap['Home'] = "goLineLeft";
         keyMap['End'] = 'goLineRight';
+        keyMap['Ctrl'] = () => throttle(mde.codemirror);
         if(mde.toolbar) {
             mde.toolbar.forEach(button => {
                 if (button.binding !== null) {
@@ -139,7 +141,7 @@ function plMdEditorController($element, scope, mdEditorService, plDataService, $
             hint: function () {
                 let pos = linkMarker.find();
                 if(!pos) return;
-                console.log('!', pos);
+                //console.log('!', pos);
                 //todo: this is hack, should change pos in other parts of code
                 pos.from.ch -= 2;
                 pos.to.ch += 2;
