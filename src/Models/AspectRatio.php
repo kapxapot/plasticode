@@ -38,30 +38,40 @@ class AspectRatio extends Model
         return !$this->isHorizontal();
     }
     
-    public function ratioExact() : float
+    /**
+     * Exact ratio as a float value
+     *
+     * @return float
+     */
+    private function exact() : float
     {
         return $this->isHorizontal()
             ? $this->width / $this->height
             : $this->height / $this->width;
     }
     
-    public function ratioApprox() : array
+    /**
+     * Closest supported ratio as [x, y]
+     *
+     * @return array
+     */
+    private function closest() : array
     {
-        $ratio = $this->ratioExact();
+        $ratio = $this->exact();
 
         $minDelta = null;
         $minRatios = [];
 
-        foreach ($this->supportedRatios as $supRatio) {
-            $delta = abs($ratio - ($supRatio[0] / $supRatio[1]));
+        foreach ($this->supportedRatios as $sup) {
+            $delta = abs($ratio - ($sup[0] / $sup[1]));
     
-            if ($minDelta === null || $minDelta >= $delta) {
+            if (is_null($minDelta) || $minDelta >= $delta) {
                 if ($delta !== $minDelta) {
                     $minDelta = $delta;
                     $minRatios = [];
                 }
 
-                $minRatios[] = $supRatio;
+                $minRatios[] = $sup;
             }
         }
 
@@ -91,7 +101,7 @@ class AspectRatio extends Model
 
     public function cssClasses() : string
     {
-        $ratio = $this->ratioApprox();
+        $ratio = $this->closest();
         $max = $this->maxRatio();
         
         if ($ratio[0] / $ratio[1] > $max[0] / $max[1]) {
