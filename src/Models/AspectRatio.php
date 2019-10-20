@@ -11,17 +11,9 @@ class AspectRatio extends Model
         [ 1, 1 ],
         [ 2, 1 ],
         [ 3, 1 ],
-        //[ 4, 1 ],
-        //[ 5, 1 ],
         [ 3, 2 ],
-        //[ 4, 3 ],
-        //[ 5, 2 ],
-        //[ 5, 3 ],
     ];
     
-    /**
-     * Creates AspectRatio object
-     */
     public function __construct(int $width, int $height, array $supportedRatios = null)
     {
         if ($width <= 0 || $height <= 0) {
@@ -86,24 +78,24 @@ class AspectRatio extends Model
     
     private function maxRatio() : array
     {
-        $maxRatio = null;
+        $max = null;
         
-        foreach ($this->supportedRatios as $supRatio) {
-            if ($maxRatio === null || ($maxRatio[0] / $maxRatio[1]) < ($supRatio[0] / $supRatio[1])) {
-                $maxRatio = $supRatio;
+        foreach ($this->supportedRatios as $sup) {
+            if (is_null($max) || ($max[0] / $max[1]) < ($sup[0] / $sup[1])) {
+                $max = $sup;
             }
         }
         
-        return $maxRatio;
+        return $max;
     }
 
     public function cssClasses() : string
     {
         $ratio = $this->ratioApprox();
-        $maxRatio = $this->maxRatio();
+        $max = $this->maxRatio();
         
-        if ($ratio[0] / $ratio[1] > $maxRatio[0] / $maxRatio[1]) {
-            $ratio = $maxRatio;
+        if ($ratio[0] / $ratio[1] > $max[0] / $max[1]) {
+            $ratio = $max;
         }
 
         $hor = $this->isHorizontal();
