@@ -7,6 +7,11 @@ class AspectRatio extends Model
     private $width;
     private $height;
 
+    /**
+     * Ratios must have bigger value first, smaller value second (to be >= 1)
+     *
+     * @var array
+     */
     private $supportedRatios = [
         [ 1, 1 ],
         [ 2, 1 ],
@@ -23,9 +28,15 @@ class AspectRatio extends Model
         $this->width = $width;
         $this->height = $height;
         
-        if (is_array($supportedRatios)) {
-            $this->supportedRatios = $supportedRatios;
+        if (!empty($supportedRatios)) {
+            $this->setSupportedRatios($supportedRatios);
         }
+    }
+
+    private function setSupportedRatios(array $ratios)
+    {
+        // to do: validate input!
+        $this->supportedRatios = $ratios;
     }
 
     private function isHorizontal() : bool
@@ -40,6 +51,8 @@ class AspectRatio extends Model
     
     /**
      * Exact ratio as a float value
+     * 
+     * Ratio is calculated as (bigger size / smaller size) and is always >= 1
      *
      * @return float
      */
@@ -75,23 +88,29 @@ class AspectRatio extends Model
             }
         }
 
-        $resultRatio = null;
+        $result = null;
 
-        foreach ($minRatios as $minRatio) {
-            if ($resultRatio === null || $minRatio[0] < $resultRatio[0]) {
-                $resultRatio = $minRatio;
+        // looking for the smallest ratio with the same delta
+        foreach ($minRatios as $min) {
+            if (is_null($result) || $min[0] < $result[0]) {
+                $result = $min;
             }
         }
         
-        return $resultRatio;
+        return $result;
     }
     
-    private function maxRatio() : array
+    /**
+     * Returns the maximum ratio (x / y)
+     *
+     * @return array
+     */
+    private function max() : array
     {
         $max = null;
         
         foreach ($this->supportedRatios as $sup) {
-            if (is_null($max) || ($max[0] / $max[1]) < ($sup[0] / $sup[1])) {
+            if (is_null($max) || ($max[0] / $max[1] < $sup[0] / $sup[1])) {
                 $max = $sup;
             }
         }
@@ -102,14 +121,17 @@ class AspectRatio extends Model
     public function cssClasses() : string
     {
         $ratio = $this->closest();
-        $max = $this->maxRatio();
+        $max = $this->max();
         
+        // what is this for?
         if ($ratio[0] / $ratio[1] > $max[0] / $max[1]) {
             $ratio = $max;
         }
 
         $hor = $this->isHorizontal();
 
-        return 'ratio-w' . ($hor ? $ratio[0] : $ratio[1]) . ' ratio-h' . ($hor ? $ratio[1] : $ratio[0]);
+        return
+            'ratio-w' . ($hor ? $ratio[0] : $ratio[1]) . ' ' .
+            'ratio-h' . ($hor ? $ratio[1] : $ratio[0]);
     }
 }
