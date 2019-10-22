@@ -2,6 +2,8 @@
 
 PHP framework on top of Slim framework.
 
+![](https://travis-ci.com/kapxapot/plasticode.svg?branch=master)
+
 Sites built on **Plasticode**:
 
 - https://warcry.ru (GitHub: [kapxapot/plasticode-warcry](https://github.com/kapxapot/plasticode-warcry))
