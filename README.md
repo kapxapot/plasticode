@@ -38,3 +38,7 @@ Rollback one migration:
 Create new migration:
 
 *vendor/bin/phinx create NameOfMigration*
+
+### Run tests
+
+vendor/bin/phpunit --bootstrap ./vendor/autoload.php tests
