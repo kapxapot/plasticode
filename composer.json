@@ -20,7 +20,8 @@
         "symfony/yaml": "^3.3",
         "slim/twig-view": "^2.2",
         "jublonet/codebird-php": "^3.1",
-        "vlucas/phpdotenv": "^2.4"
+        "vlucas/phpdotenv": "^2.4",
+        "webmozart/assert": "^1.5"
     },
     "autoload": {
         "psr-4": {
