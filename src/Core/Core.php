@@ -10,6 +10,10 @@ class Core
 {
     /**
      * Plasticode bootstrap
+     * 
+     * Initializes container with provided settings,
+     * initializes validation namespaces,
+     * initializes database models (they require container).
      *
      * @param ContainerInterface $container
      * @param array $settings
