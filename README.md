@@ -1,8 +1,8 @@
 # Plasticode
 
-PHP framework on top of Slim framework.
-
 ![](https://travis-ci.com/kapxapot/plasticode.svg?branch=master)
+
+PHP framework on top of Slim framework.
 
 Sites built on **Plasticode**:
 
