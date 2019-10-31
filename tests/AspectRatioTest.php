@@ -1,5 +1,7 @@
 <?php
 
+namespace Plasticode\Tests;
+
 use PHPUnit\Framework\TestCase;
 use Plasticode\Models\AspectRatio;
 
