@@ -28,9 +28,7 @@ final class AspectRatioTest extends TestCase
         $this->assertTrue($ratio->isVertical());
     }
 
-    /**
-     * @dataProvider exactProvider
-     */
+    /** @dataProvider exactProvider */
     public function testExact($width, $height, $expected): void
     {
         $ratio = new AspectRatio($width, $height);
@@ -46,9 +44,7 @@ final class AspectRatioTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider closestProvider
-     */
+    /** @dataProvider closestProvider */
     public function testClosest($width, $height, $expected): void
     {
         $ratio = new AspectRatio($width, $height);
@@ -64,9 +60,7 @@ final class AspectRatioTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider cssProvider
-     */
+    /** @dataProvider cssProvider */
     public function testCss($width, $height, $expected): void
     {
         $ratio = new AspectRatio($width, $height);
