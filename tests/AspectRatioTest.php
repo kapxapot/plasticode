@@ -9,7 +9,7 @@ final class AspectRatioTest extends TestCase
 {
     public function testInvalidDimensions(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         new AspectRatio(0, 10);
     }
