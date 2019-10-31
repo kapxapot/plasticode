@@ -93,7 +93,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     }
     
     /**
-     * Flattens a collection of elements, arrays and collections one level
+     * Flattens a collection of elements, arrays and collections one level.
+     * 
+     * Does not make collection distinct!
      */
     public function flatten() : self
     {
