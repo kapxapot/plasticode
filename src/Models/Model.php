@@ -78,7 +78,7 @@ abstract class Model implements \ArrayAccess
      *
      * @var \Plasticode\Core\Cache
      */
-    protected static $staticCache;
+    private static $staticCache;
 
     /** @var boolean */
     private static $initialized = false;
@@ -98,8 +98,6 @@ abstract class Model implements \ArrayAccess
             self::$userRepository = self::$container->userRepository;
             self::$roleRepository = self::$container->roleRepository;
             self::$menuItemRepository = self::$container->menuItemRepository;
-            
-            self::$staticCache = new Cache();
 
             self::$initialized = true;
         }
@@ -166,18 +164,29 @@ abstract class Model implements \ArrayAccess
     
     protected static function staticLazy(\Closure $loader, string $name = null, bool $ignoreCache = false)
     {
+        $cache = self::getStaticCache();
         $name = $name ?? self::getLazyFuncName();
         
-        if ($ignoreCache === true || !self::$staticCache->exists($name)) {
-            self::$staticCache->set($name, $loader());
+        if ($ignoreCache === true || !$cache->exists($name)) {
+            $cache->set($name, $loader());
         }
         
-        return self::$staticCache->get($name);
+        return $cache->get($name);
     }
     
     protected static function resetStaticLazy(string $name)
     {
-        self::$staticCache->delete($name);
+        $cache = self::getStaticCache();
+        $cache->delete($name);
+    }
+
+    private static function getStaticCache(): Cache
+    {
+        if (is_null(self::$staticCache)) {
+            self::$staticCache = new Cache();
+        }
+
+        return self::$staticCache;
     }
 
     // magic
