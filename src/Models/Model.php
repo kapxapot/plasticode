@@ -80,22 +80,29 @@ abstract class Model implements \ArrayAccess
      */
     protected static $staticCache;
 
+    /** @var boolean */
+    private static $initialized = false;
+
     public static function init(ContainerInterface $container)
     {
-        // hack for getSettings()
-        self::$container = new Contained($container);
-        
-        self::$db = self::$container->db;
-        self::$auth = self::$container->auth;
-        self::$linker = self::$container->linker;
-        self::$cases = self::$container->cases;
-        self::$parser = self::$container->parser;
-        
-        self::$userRepository = self::$container->userRepository;
-        self::$roleRepository = self::$container->roleRepository;
-        self::$menuItemRepository = self::$container->menuItemRepository;
-        
-        self::$staticCache = new Cache();
+        if (!self::$initialized) {
+            // hack for getSettings()
+            self::$container = new Contained($container);
+            
+            self::$db = self::$container->db;
+            self::$auth = self::$container->auth;
+            self::$linker = self::$container->linker;
+            self::$cases = self::$container->cases;
+            self::$parser = self::$container->parser;
+            
+            self::$userRepository = self::$container->userRepository;
+            self::$roleRepository = self::$container->roleRepository;
+            self::$menuItemRepository = self::$container->menuItemRepository;
+            
+            self::$staticCache = new Cache();
+
+            self::$initialized = true;
+        }
     }
 
     /**
