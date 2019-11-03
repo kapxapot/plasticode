@@ -8,11 +8,7 @@ use Slim\Collection;
 
 class Bootstrap
 {
-    /**
-     * Settings
-     *
-     * @var Slim\Collection
-     */
+    /** @var Slim\Collection */
     protected $settings;
 
     /**
@@ -83,7 +79,7 @@ class Bootstrap
     }
     
     /**
-     * Get mappings for DI container
+     * Get mappings for DI container.
      *
      * @return array
      */

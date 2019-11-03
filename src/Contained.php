@@ -25,7 +25,7 @@ class Contained
     }
     
     /**
-     * Returns object / array from container by property name
+     * Returns object / array from container by property name.
      *
      * @param string $property
      * @return mixed
@@ -40,7 +40,7 @@ class Contained
     }
     
     /**
-     * Returns settings value
+     * Returns settings value.
      *
      * @param string $path Path to settings value
      * @param mixed $default Default value
