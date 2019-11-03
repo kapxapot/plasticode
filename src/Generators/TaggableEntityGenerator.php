@@ -12,20 +12,24 @@ class TaggableEntityGenerator extends EntityGenerator
     public function afterSave(array $item, array $data) : void
     {
         parent::afterSave($item, $data);
-        
-        $tags = Strings::toTags($item->{$this->tagsField});
-    
-        if (!($item->id > 0)) {
-            throw new \InvalidArgumentException('Entity id must be positive.');
+
+        $tags = Strings::toTags($item[$this->tagsField]);
+
+        $id = $item[$this->idField] ?? null;
+
+        if (!$id) {
+            throw new \InvalidArgumentException(
+                'Entity id ("' . $this->idField . '" field) must be set.'
+            );
         }
         
-        Tag::deleteByEntity($this->entity, $item->id);
+        Tag::deleteByEntity($this->entity, $id);
 
         foreach ($tags as $tag) {
             if (strlen($tag) > 0) {
                 Tag::store([
                     'entity_type' => $this->entity,
-                    'entity_id' => $item->id,
+                    'entity_id' => $id,
                     'tag' => $tag,
                 ]);
             }
@@ -36,6 +40,6 @@ class TaggableEntityGenerator extends EntityGenerator
     {
         parent::afterDelete($item);
         
-        Tag::deleteByEntity($this->entity, $item->id);
+        Tag::deleteByEntity($this->entity, $item[$this->idField]);
     }
 }

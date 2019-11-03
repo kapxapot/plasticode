@@ -31,7 +31,7 @@ class MenuItemsGenerator extends EntityGenerator
     {
         $item = parent::afterLoad($item);
 
-        $menuItem = MenuItem::get($item['id']);
+        $menuItem = MenuItem::get($item[$this->idField]);
 
         $item['url'] = $menuItem->url();
 
@@ -48,9 +48,12 @@ class MenuItemsGenerator extends EntityGenerator
 
         $params['source'] = "menus/{$menuId}/menu_items";
         $params['breadcrumbs'] = [
-            [ 'text' => 'Menu', 'link' => $this->router->pathFor('admin.entities.menus') ],
-            [ 'text' => $menu->text ],
-            [ 'text' => 'Menu Items' ],
+            [
+                'text' => 'Menu',
+                'link' => $this->router->pathFor('admin.entities.menus')
+            ],
+            ['text' => $menu->text],
+            ['text' => 'Menu Items'],
         ];
         
         $params['hidden'] = [

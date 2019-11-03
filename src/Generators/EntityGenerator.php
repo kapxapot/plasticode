@@ -20,12 +20,17 @@ class EntityGenerator extends Contained
      */
     protected $entity;
 
-    /**
-     * Validation rules
-     *
-     * @var Plasticode\Validation\ValidationRules
-     */
+    /** @var Plasticode\Validation\ValidationRules */
     protected $rules;
+
+    /**
+     * Id field
+     * 
+     * 'id' by default. Override it if the id field is different.
+     *
+     * @var string
+     */
+    protected $idField = 'id';
 
     public function __construct(ContainerInterface $container, string $entity)
     {

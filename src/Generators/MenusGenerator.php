@@ -21,7 +21,7 @@ class MenusGenerator extends EntityGenerator
     {
         $item = parent::afterLoad($item);
 
-        $menu = Menu::get($item['id']);
+        $menu = Menu::get($item[$this->idField]);
 
         $item['url'] = $menu->url();
 
