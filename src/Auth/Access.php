@@ -103,8 +103,13 @@ class Access
         $grantAccess = false;
         
         $role = $this->auth->getRole();
+
+        if (is_null($role)) {
+            return false;
+        }
+
         $roleTag = $role->tag;
-        
+
         if (!isset($this->rights[$entity])) {
             throw new InvalidConfigurationException(
                 'You must configure access rights for entity "' . $entity . '"'
