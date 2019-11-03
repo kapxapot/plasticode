@@ -54,7 +54,7 @@ class Query
     }
 
     /**
-     * Get underlying \ORM query
+     * Get underlying \ORM query.
      *
      * @return \ORM|null
      */

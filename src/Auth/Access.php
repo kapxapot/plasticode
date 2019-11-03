@@ -16,11 +16,7 @@ class Access
      */
     private $auth;
 
-    /**
-     * Cache
-     *
-     * @var Plasticode\Core\Cache
-     */
+    /** @var Plasticode\Core\Cache */
     private $cache;
 
     /**
@@ -53,18 +49,13 @@ class Access
         $this->rights = $accessSettings['rights'];
     }
 
-    /**
-     * Get user
-     *
-     * @return User|null
-     */
     public function getUser() : ?User
     {
         return $this->auth->getUser();
     }
     
     /**
-     * Flattens action tree
+     * Flattens action tree.
      *
      * @param array $tree
      * @param array $path
@@ -97,7 +88,7 @@ class Access
 
     /**
      * Check entity rights for action (also inherited)
-     * for current user and role
+     * for current user and role.
      *
      * @param string $entity
      * @param string $action
@@ -136,7 +127,7 @@ class Access
     }
     
     /**
-     * Checks entity rights for exact action based on roleTag
+     * Checks entity rights for exact action based on roleTag.
      *
      * @param array $rights
      * @param string $action
@@ -169,8 +160,7 @@ class Access
     }
     
     /**
-     * Get all rights for the entity
-     * for current user and role
+     * Get all rights for the entity for current user and role.
      *
      * @param string $entity
      * @return array
