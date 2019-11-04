@@ -2,6 +2,8 @@
 
 namespace Plasticode\RSS;
 
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * RSSCreator20 is a FeedCreator that implements RDF Site Summary (RSS) 2.0.
  *
@@ -11,8 +13,9 @@ namespace Plasticode\RSS;
  */
 class RSSCreator20 extends RSSCreator091
 {
-    function __construct()
+    function __construct(ResponseInterface $response)
     {
+        parent::__construct($response);
         parent::_setRSSVersion("2.0");
     }
 }

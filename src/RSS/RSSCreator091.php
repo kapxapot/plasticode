@@ -2,6 +2,8 @@
 
 namespace Plasticode\RSS;
 
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * RSSCreator091 is a FeedCreator that implements RSS 0.91 Spec, revision 3.
  *
@@ -17,8 +19,10 @@ class RSSCreator091 extends FeedCreator
      */
     var $RSSVersion;
 
-    function __construct()
+    function __construct(ResponseInterface $response)
     {
+        parent::__construct($response);
+
         $this->_setRSSVersion("0.91");
         $this->contentType = "application/rss+xml";
     }

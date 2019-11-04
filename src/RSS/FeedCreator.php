@@ -2,6 +2,9 @@
 
 namespace Plasticode\RSS;
 
+use Psr\Http\Message\ResponseInterface;
+use Slim\Http\Stream;
+
 /**
  * FeedCreator is the abstract base implementation for concrete
  * implementations that implement a specific format of syndication.
@@ -65,7 +68,19 @@ class FeedCreator extends HtmlDescribable
      * the FeedCreator class used.
      */
     var $additionalElements = Array();
-   
+
+    /** @var \Psr\Http\Message\ResponseInterface */
+    private $response;
+    
+    public function __construct(ResponseInterface $response)
+    {
+        $this->response = $response;
+    }
+
+    public function getResponse() : ResponseInterface
+    {
+        return $this->response;
+    }
     
     /**
      * Adds an FeedItem to the feed.
@@ -201,10 +216,26 @@ class FeedCreator extends HtmlDescribable
         // HTTP redirect, some feed readers' simple HTTP implementations don't follow it
         //Header("Location: ".$filename);
 
-        Header("Content-Type: ".$this->contentType."; charset=".$this->encoding."; filename=".basename($filename));
-        Header("Content-Disposition: inline; filename=".basename($filename));
-        readfile($filename, "r");
-        die();
+        // Header("Content-Type: ".$this->contentType."; charset=".$this->encoding."; filename=".basename($filename));
+        // Header("Content-Disposition: inline; filename=".basename($filename));
+        // readfile($filename, "r");
+        // die();
+
+        $fh = fopen($filename, 'rb');
+        $stream = new Stream($fh); 
+
+        $this->response = $this->response
+            ->withHeader(
+                'Content-Type',
+                $this->contentType .
+                '; charset=' . $this->encoding .
+                '; filename=' . basename($filename)
+            )
+            ->withHeader(
+                'Content-Disposition',
+                'inline; filename=' . basename($filename)
+            )
+            ->withBody($stream);
     }
     
     /**
@@ -217,14 +248,19 @@ class FeedCreator extends HtmlDescribable
      * @param filename	string	optional	the filename where a recent version of the feed is saved. If not specified, the filename is $_SERVER["PHP_SELF"] with the extension changed to .xml (see _generateFilename()).
      * @param timeout	int		optional	the timeout in seconds before a cached version is refreshed (defaults to 3600 = 1 hour)
      */
-    function useCached($filename="", $timeout=3600) {
+    function useCached($filename="", $timeout=3600) : bool
+    {
         $this->_timeout = $timeout;
         if ($filename=="") {
             $filename = $this->_generateFilename();
         }
+
         if (file_exists($filename) AND (time()-filemtime($filename) < $timeout)) {
             $this->_redirect($filename);
+            return true;
         }
+
+        return false;
     }
     
     
