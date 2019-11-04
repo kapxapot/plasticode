@@ -111,8 +111,8 @@ class File
     }
 
     /**
-     * Checks if path is relative (starting from '/../') and appends
-     * base dir to it, otherwise doesn't change it
+     * Checks if path is relative (starting from '..') and appends
+     * base dir to it, otherwise doesn't change it.
      *
      * @param string $dir
      * @param string $path
