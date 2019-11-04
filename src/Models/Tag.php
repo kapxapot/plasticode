@@ -42,6 +42,13 @@ class Tag extends DbModel implements LinkableInterface, SearchableInterface, Ser
             ->where('entity_id', $entityId)
             ->delete();
     }
+
+    public static function exists(string $tag) : bool
+    {
+        return self::query()
+            ->where('tag', $tag)
+            ->any();
+    }
     
     // interfaces
     
