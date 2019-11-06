@@ -7,12 +7,8 @@ use Plasticode\Util\Strings;
 
 class Twitter
 {
-    /**
-     * Codebird
-     *
-     * @var Codebird\Codebird
-     */
-    private $cb;
+    /** @var \Codebird\Codebird */
+    private $codebird;
     
     public function __construct(array $settings)
     {
@@ -21,9 +17,9 @@ class Twitter
             $settings['consumer_secret']
         );
     
-        $this->cb = Codebird::getInstance();
+        $this->codebird = Codebird::getInstance();
 
-        $this->cb->setToken(
+        $this->codebird->setToken(
             $settings['access_token'],
             $settings['access_key']
         );
@@ -31,7 +27,7 @@ class Twitter
     
     public function tweet(string $message)
     {
-        return $this->cb->statuses_update(
+        return $this->codebird->statuses_update(
             ['status' => $message]
         );
     }
