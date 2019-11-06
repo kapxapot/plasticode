@@ -7,13 +7,13 @@ use Dotenv\Dotenv;
 class Env
 {
     /**
-     * Load environment variables from .env file
+     * Load environment variables from .env file.
      *
      * @param string $path
-     * @param string $appEnvVar
+     * @param null|string $appEnvVar
      * @return void
      */
-    public static function load(string $path, string $appEnvVar = null)
+    public static function load(string $path, string $appEnvVar = null) : void
     {
         $appEnvVar = $appEnvVar ?? 'APP_ENV';
 

@@ -366,10 +366,11 @@ class Bootstrap
             },
                 
             'eventLog' => function (ContainerInterface $container) {
-                $logger = new \Monolog\Logger($this->settings['event_log']['name']);
+                $logger = new \Monolog\Logger(
+                    $this->settings['event_log']['name']
+                );
                 
                 $path = $this->settings['event_log']['path'];
-                
                 $path = File::absolutePath($this->dir, $path);
 
                 $handler = new \Monolog\Handler\StreamHandler(
@@ -382,7 +383,6 @@ class Bootstrap
                 );
 
                 $handler->setFormatter($formatter);
-            
                 $logger->pushHandler($handler);
             
                 return $logger;

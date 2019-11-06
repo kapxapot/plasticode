@@ -32,7 +32,7 @@ class Twitter
         );
     }
     
-    public function buildMessage(string $text, string $url = null, array $tags = null) : string
+    public function buildMessage(string $text, string $url = null, array $tags = null, string $embedUrl = null) : string
     {
         $chunks = [];
         
@@ -44,6 +44,10 @@ class Twitter
         
         if (!empty($tags)) {
             $chunks[] = Strings::hashTags($tags);
+        }
+
+        if (strlen($embedUrl) > 0) {
+            $chunks[] = $embedUrl;
         }
         
         return implode(' ', $chunks);

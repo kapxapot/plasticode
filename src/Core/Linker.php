@@ -9,7 +9,7 @@ use Plasticode\Util\Strings;
 class Linker extends Contained
 {
     /**
-     * Makes url absolute. If no url provided, returns site url
+     * Makes url absolute. If no url provided, returns site url.
      *
      * @param string $url
      * @return string
@@ -41,7 +41,7 @@ class Linker extends Contained
     }
 
     /**
-     * For paging
+     * For paging.
      */
     function page(string $base, int $page) : string
     {
@@ -75,7 +75,7 @@ class Linker extends Contained
     
     public function twitch(string $id) : string
     {
-        return 'http://twitch.tv/' . $id;
+        return 'https://twitch.tv/' . $id;
     }
 
     // Gravatar
