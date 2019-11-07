@@ -57,7 +57,7 @@ class Parser extends Contained
         ];
     }
     
-    protected function parseBBContainer($text, $containerName, callable $map, callable $enrich = null, $componentName = null)
+    protected function parseBBContainer($text, $containerName, \Closure $map, \Closure $enrich = null, $componentName = null)
     {
         $componentName = $componentName ?? $containerName;
         
@@ -93,7 +93,7 @@ class Parser extends Contained
                     );
                 }
 
-                $text .= $this->render('read_more', [ 'url' => $url, 'label' => $label ]);
+                $text .= $this->render('read_more', ['url' => $url, 'label' => $label]);
             }
             else {
                 $text = str_replace($cut, '', $text);
@@ -158,7 +158,7 @@ class Parser extends Contained
         $text = $this->parseMarkdown($text);
 
         // \n -> br -> p
-        $text = str_replace([ "\r\n", "\r", "\n" ], '<br/>', $text);
+        $text = str_replace(['\r\n', '\r', '\n'], '<br/>', $text);
         
         $result['text'] = $text;
 
@@ -181,8 +181,9 @@ class Parser extends Contained
         $result['text'] = $this->cleanMarkup($text);
         
         // set proxy image fields
-        $result['large_image'] = Arrays::first($result['large_images']);
-        $result['image'] = Arrays::first($result['images']);
+        $result['large_image'] = Arrays::first($result['large_images'] ?? []);
+        $result['image'] = Arrays::first($result['images'] ?? []);
+        $result['video'] = Arrays::first($result['videos'] ?? []);
 
         return $result;
     }
@@ -229,7 +230,7 @@ class Parser extends Contained
                             }
                             
                             // parse
-                            $tempResult = $this->parseBrackets([ 'text' => $content ]); // render [ ]
+                            $tempResult = $this->parseBrackets(['text' => $content]); // render [ ]
                             $content = $tempResult['text'];
 
                             $content = $this->parseMore($content); // render [[ ]]
@@ -372,7 +373,7 @@ class Parser extends Contained
                         $slides[] = $slide;
                     }
                     
-                    $slide = [ 'src' => $part ];
+                    $slide = ['src' => $part];
                     $result['large_images'][] = $part;
                 } else {
                     $slide['caption'] = $part;
@@ -394,7 +395,7 @@ class Parser extends Contained
     
     private function randPic($width, $height)
     {
-        return "https://picsum.photos/{$width}/{$height}?" . Numbers::generate(6);
+        return 'https://picsum.photos/' . $width . '/' . $height . '?' . Numbers::generate(6);
     }
 
     protected function parseColorBB($text)
@@ -407,13 +408,14 @@ class Parser extends Contained
         });
     }
 
-    protected function parseQuoteBB($text, $quoteName, callable $enrich = null)
+    protected function parseQuoteBB($text, $quoteName, \Closure $enrich = null)
     {
-        return $this->parseBBContainer($text, $quoteName, [ $this, 'mapQuoteBB' ], $enrich, 'quote');
+        return $this->parseBBContainer($text, $quoteName, [$this, 'mapQuoteBB'], $enrich, 'quote');
     }
     
     protected function mapQuoteBB($content, $attrs)
     {
+        $author = null;
         $chunks = [];
 
         foreach ($attrs as $attr) {
@@ -434,13 +436,17 @@ class Parser extends Contained
         ];
     }
 
-    protected function parseYoutubeBB($text)
+    protected function parseYoutubeBB($result)
     {
-        return $this->parseBBContainer($text, 'youtube', function ($content, $attrs) {
+        $text = $result['text'];
+
+        $result['text'] = $this->parseBBContainer($text, 'youtube', function ($content, $attrs) use (&$result) {
             if (count($attrs) > 1) {
                 $width = $attrs[0];
                 $height = $attrs[1];
             }
+
+            $result['videos'][] = $this->linker->youtube($content);
 
             return [
                 'code' => $content,
@@ -448,6 +454,8 @@ class Parser extends Contained
                 'height' => $height ?? 0,
             ];
         });
+
+        return $result;
     }
 
     protected function parseSpoilerBB($text)
@@ -536,7 +544,7 @@ class Parser extends Contained
 
     protected function getBBContainerTags()
     {
-        return [ 'spoiler', 'list', 'quote' ];
+        return ['spoiler', 'list', 'quote'];
     }
     
     protected function buildBBContainerTree($text)
@@ -627,9 +635,9 @@ class Parser extends Contained
         $result = $this->parseImgBB($result, 'leftimg');
         $result = $this->parseImgBB($result, 'rightimg');
         $result = $this->parseCarousel($result);
+        $result = $this->parseYoutubeBB($result);
 
         $text = $result['text'];
-        $text = $this->parseYoutubeBB($text);
         $text = $this->parseColorBB($text);
         $text = $this->parseUrlBB($text);
 
@@ -686,13 +694,13 @@ class Parser extends Contained
     }
 
     /**
-     * Override this to render placeholder links (double brackets etc.)
+     * Override this to render placeholder links (double brackets etc.).
+     * 
+     * Example:
+     * $text = str_replace('%news%/', $this->linker->news(), $text);
      */
     public function renderLinks(string $text) : string
     {
-        // example:
-        // $text = str_replace('%news%/', $this->linker->news(), $text);
-        
         return $text;
     }
     
