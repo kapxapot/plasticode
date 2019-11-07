@@ -2,8 +2,9 @@
 
 namespace Plasticode;
 
-use Plasticode\Exceptions\InvalidArgumentException;
+use Plasticode\Models\DbModel;
 use Plasticode\Util\Strings;
+use Webmozart\Assert\Assert;
 
 class Query
 {
@@ -13,44 +14,55 @@ class Query
      * @var \ORM
      */
     private $query;
-    
-    /**
-     * Method for model creation
-     *
-     * @var \Closure
-     */
-    private $createModel;
 
     /**
-     * Method for finding a model
+     * Id field name
+     *
+     * @var string
+     */
+    private $idField;
+    
+    /**
+     * Method for conversion of dbObj to model
      *
      * @var \Closure
      */
-    private $find;
+    private $toModel;
+
+    /**
+     * Empty query
+     *
+     * @var self
+     */
+    private static $empty;
     
-    public function __construct(\ORM $query = null, \Closure $createModel = null, \Closure $find = null)
+    /**
+     * Constructor.
+     *
+     * @param \ORM $query The base query. Can be null for an empty query
+     * @param string $idField Must be provided for non-empty query
+     * @param \Closure $toModel Must be provided for non-empty query
+     */
+    public function __construct(\ORM $query = null, string $idField = null, \Closure $toModel = null)
     {
         if (is_null($query)) {
             return;
         }
 
         $this->query = $query;
-        
-        if (is_null($createModel)) {
-            throw new InvalidArgumentException(
-                'Query requires createModel function!'
-            );
-        }
-    
-        $this->createModel = $createModel;
 
-        if (is_null($find)) {
-            throw new InvalidArgumentException(
-                'Query requires find function!'
-            );
-        }
+        Assert::notNull(
+            $idField,
+            'Non-empty query requires $idField!'
+        );
+        
+        Assert::notNull(
+            $toModel,
+            'Non-empty query requires toModel() function!'
+        );
     
-        $this->find = $find;
+        $this->idField = $idField;
+        $this->toModel = $toModel;
     }
 
     /**
@@ -63,18 +75,38 @@ class Query
         return $this->query;
     }
     
+    /**
+     * Returns "empty" query (without table and filters).
+     *
+     * @return self
+     */
     public static function empty() : self
     {
-        return new static();
+        if (is_null(self::$empty)) {
+            self::$empty = new static();
+        }
+
+        return self::$empty;
     }
     
+    /**
+     * Checks if the query is empty (without table and filters).
+     *
+     * @return boolean
+     */
     public function isEmpty() : bool
     {
         return $this->query === null;
     }
     
-    // renderers
-    
+    /**
+     * Executes query and returns all records.
+     * 
+     * "Select all".
+     * In case of empty Query returns empty collection.
+     *
+     * @return Collection
+     */
     public function all() : Collection
     {
         if ($this->isEmpty()) {
@@ -83,39 +115,56 @@ class Query
         
         $objs = $this->query->findMany();
         
-        $all = array_map(function ($obj) {
-            $func = $this->createModel;
-            return $func($obj);
-        }, $objs ?? []);
+        $all = array_map(
+            function ($obj) {
+                return ($this->toModel)($obj);
+            },
+            $objs ?? []
+        );
         
         return Collection::make($all);
     }
     
-    public function find($id)
+    /**
+     * Looks for a record with provided id.
+     *
+     * @param string|int $id
+     * @return null|\Plasticode\Models\DbModel
+     */
+    public function find($id) : ?DbModel
     {
-        $func = $this->find;
-        
-        return $func($this, $id)->one();
+        return $this
+            ->where($this->idField, $id)
+            ->one();
     }
     
-    public function one()
+    /**
+     * Executes query and returns the first record if any.
+     * 
+     * "Select one".
+     * In case of empty query returns null.
+     *
+     * @return null|\Plasticode\Models\DbModel
+     */
+    public function one() : ?DbModel
     {
         if ($this->isEmpty()) {
             return null;
         }
         
         $obj = $this->query->findOne();
-
-        if (!$obj) {
-            return null;
-        }
-
-        $func = $this->createModel;
         
-        return $func($obj);
+        return ($this->toModel)($obj);
     }
 
-    public function random()
+    /**
+     * Executes query and returns a random record.
+     *
+     * In case of empty query (or no records) returns null.
+     * 
+     * @return null|\Plasticode\Models\DbModel
+     */
+    public function random() : ?DbModel
     {
         $count = $this->count();
         
@@ -125,9 +174,19 @@ class Query
         
         $offset = rand(0, $count - 1);
         
-        return $this->slice($offset, 1)->one();
+        return $this
+            ->slice($offset, 1)
+            ->one();
     }
     
+    /**
+     * Executes query and returns record count.
+     * 
+     * "Select count(*)".
+     * In case of empty query returns 0.
+     *
+     * @return integer
+     */
     public function count() : int
     {
         if ($this->isEmpty()) {
@@ -137,12 +196,25 @@ class Query
         return $this->query->count();
     }
     
+    /**
+     * Executes query and checks if there are any records.
+     *
+     * @return bool
+     */
     public function any() : bool
     {
         return $this->count() > 0;
     }
     
-    public function delete()
+    /**
+     * Deletes records based on the query.
+     * 
+     * "Delete all".
+     * In case of empty query returns null.
+     *
+     * @return null|bool
+     */
+    public function delete() : ?bool
     {
         if ($this->isEmpty()) {
             return null;
@@ -153,7 +225,7 @@ class Query
     
     /**
      * Creates new Query based on the current one
-     * plus applied modification
+     * plus applied modification.
      *
      * @param \Closure $queryModifier
      * @return mixed
@@ -166,23 +238,21 @@ class Query
 
         $result = $queryModifier($this->query);
 
+        // if query resulted in any final result (!= query)
+        // return it as is
         if (!($result instanceof \ORM)) {
-            // if query resulted in any final result (!= query)
-            // return it as is
             return $result;
         }
         
         // if query modification resulted in another query
-        // wrap it and return
+        // wrap it and return as a new Query
         return new Query(
-            $result, $this->createModel, $this->find
+            $result, $this->idField, $this->toModel
         );
     }
     
-    // idiorm funcs
-    
     /**
-     * Delegates method call to underlying \ORM query
+     * Delegates method call to the underlying \ORM query.
      *
      * @param string $name
      * @param array $args
@@ -197,41 +267,68 @@ class Query
         );
     }
 
-    public function whereIn($field, $values) : self
+    /**
+     * Wrapper method for the underlying whereIn().
+     * 
+     * Allows passing an array or a Collection.
+     *
+     * @param string $field
+     * @param array|\Plasticode\Collection $values Array or Collection
+     * @return self
+     */
+    public function whereIn(string $field, $values) : self
     {
         if ($values instanceof Collection) {
             $values = $values->toArray();
         }
         
-        if (!is_array($values)) {
-            throw new InvalidArgumentException(
-                'WhereIn error: values must be a Collection or an array.'
-            );
-        }
+        Assert::isArray(
+            $values,
+            'WhereIn error: values must be a Collection or an array.'
+        );
         
-        return $this->branch(function ($q) use ($field, $values) {
-            return $q->whereIn($field, $values);
-        });
+        return $this->branch(
+            function ($q) use ($field, $values) {
+                return $q->whereIn($field, $values);
+            }
+        );
     }
 
-    public function whereNotIn($field, $values) : self
+    /**
+     * Wrapper method for the underlying whereNotIn().
+     *
+     * Allows passing an array or a Collection.
+     * 
+     * @param string $field
+     * @param array|\Plasticode\Collection $values Array or Collection
+     * @return self
+     */
+    public function whereNotIn(string $field, $values) : self
     {
         if ($values instanceof Collection) {
             $values = $values->toArray();
         }
         
-        if (!is_array($values)) {
-            throw new InvalidArgumentException(
-                'WhereNotIn error: values must be a Collection or an array.'
-            );
-        }
+        Assert::isArray(
+            $values,
+            'WhereNotIn error: values must be a Collection or an array.'
+        );
         
         return $this->branch(
             function ($q) use ($field, $values) {
                 return $q->whereNotIn($field, $values);
-            });
+            }
+        );
     }
 
+    /**
+     * Wrapper method for the underlying offset().
+     * 
+     * Applies only if $offset > 0.
+     *
+     * @param integer $offset
+     * @return self
+     */
     public function offset(int $offset) : self
     {
         if ($offset <= 0) {
@@ -245,6 +342,14 @@ class Query
         );
     }
     
+    /**
+     * Wrapper method for the underlying limit().
+     * 
+     * Applies only if $limit > 0.
+     *
+     * @param integer $limit
+     * @return self
+     */
     public function limit(int $limit) : self
     {
         if ($limit <= 0) {
@@ -258,18 +363,37 @@ class Query
         );
     }
     
+    /**
+     * Gets chunk based on offset and limit.
+     * 
+     * Shortcut for offset() + limit().
+     *
+     * @param integer $offset
+     * @param integer $limit
+     * @return self
+     */
     public function slice(int $offset, int $limit) : self
     {
-        return $this->offset($offset)->limit($limit);
+        return $this
+            ->offset($offset)
+            ->limit($limit);
     }
 
-    // extensions
-    
-    public function search(string $searchQuery, string $where, int $paramCount = 1) : self
+    /**
+     * Breaks the search string into words
+     * and applies where() with each of them
+     * using AND.
+     *
+     * @param string $searchStr One or several words
+     * @param string $where
+     * @param integer $paramCount How many times every word must be passed to where()
+     * @return self
+     */
+    public function search(string $searchStr, string $where, int $paramCount = 1) : self
     {
         return $this->branch(
-            function ($q) use ($searchQuery, $where, $paramCount) {
-                $words = Strings::toWords($searchQuery);
+            function ($q) use ($searchStr, $where, $paramCount) {
+                $words = Strings::toWords($searchStr);
                 
                 foreach ($words as $word) {
                     $wrapped = '%' . $word . '%';

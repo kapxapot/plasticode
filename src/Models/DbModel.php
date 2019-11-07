@@ -106,7 +106,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * create() + save()
+     * Shortcut for create() + save().
      * 
      * @param array|\ORM $obj
      * @return self
@@ -136,7 +136,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Bare query without sort
+     * Bare query without sort.
      * 
      * Use this query if you need any sort order different from default.
      */
@@ -144,19 +144,15 @@ abstract class DbModel extends Model implements SerializableInterface
     {
         $dbQuery = self::$db->forTable(self::getTable());
         
-        $createModel = function ($obj) {
+        $toModel = function ($obj) {
             return self::fromDbObj($obj);
         };
         
-        $find = function (Query $query, $id) {
-            return $query->where(static::$idField, $id);
-        };
-        
-        return new Query($dbQuery, $createModel, $find);
+        return new Query($dbQuery, static::$idField, $toModel);
     }
     
     /**
-     * Base query with applied sort order (if it is present)
+     * Base query with applied sort order (if it is present).
      */
     public static function query() : Query
     {
