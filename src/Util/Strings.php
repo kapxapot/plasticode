@@ -17,7 +17,7 @@ class Strings
      * @param string $space Custom character to replace, '_' by default
      * @return string
      */
-    public static function toSpaces(string $str, string $space = self::SPACE_CHAR) : string
+    public static function toSpaces(string $str = null, string $space = self::SPACE_CHAR) : string
     {
         $str = stripslashes($str);
         return preg_replace("/{$space}/", ' ', $str);
@@ -32,7 +32,7 @@ class Strings
      * @param string $space Custom replacement character, '_' by default
      * @return string
      */
-    public static function fromSpaces(string $str, string $space = self::SPACE_CHAR) : string
+    public static function fromSpaces(string $str = null, string $space = self::SPACE_CHAR) : string
     {
         return preg_replace('/\s+/u', $space, $str);
     }
