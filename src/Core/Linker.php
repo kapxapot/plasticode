@@ -65,17 +65,24 @@ class Linker extends Contained
     
     public function twitchImg(string $id) : string
     {
-        return "https://static-cdn.jtvnw.net/previews-ttv/live_user_{$id}-320x180.jpg";
+        return 'https://static-cdn.jtvnw.net/previews-ttv/live_user_' . $id . '-320x180.jpg';
     }
     
     public function twitchLargeImg(string $id) : string
     {
-        return "https://static-cdn.jtvnw.net/previews-ttv/live_user_{$id}-640x360.jpg";
+        return 'https://static-cdn.jtvnw.net/previews-ttv/live_user_' . $id . '-640x360.jpg';
     }
     
     public function twitch(string $id) : string
     {
         return 'https://twitch.tv/' . $id;
+    }
+
+    // YouTube
+
+    public function youtube(string $code) : string
+    {
+        return 'https://youtube.com/watch?v=' . $code;
     }
 
     // Gravatar

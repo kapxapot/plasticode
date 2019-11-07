@@ -214,7 +214,7 @@ class Arrays
     }
     
     /**
-     * Removes "" and nulls from array.
+     * Removes empty strings and nulls from array.
      */
     public static function clean(array $array) : array
     {

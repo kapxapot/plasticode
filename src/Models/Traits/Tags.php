@@ -15,9 +15,9 @@ trait Tags
     }
     
     /**
-     * Returns tags as an array of TRIMMED strings
+     * Returns tags as an array of TRIMMED strings.
      */
-    protected function getTags() : array
+    public function getTags() : array
     {
         $tags = $this->{static::$tagsField};
         
