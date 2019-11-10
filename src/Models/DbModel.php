@@ -9,6 +9,7 @@ use Plasticode\Exceptions\InvalidOperationException;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\Util\Classes;
 use Plasticode\Util\Pluralizer;
+use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;
 use Plasticode\Generators\EntityGenerator;
 
@@ -34,13 +35,6 @@ abstract class DbModel extends Model implements SerializableInterface
      * @var string
      */
     protected static $tagsField = 'tags';
-
-    /**
-     * Default sort order settings
-     *
-     * @var array
-     */
-    protected static $sortOrder = [];
 
     /**
      * Default sort field name
@@ -152,15 +146,32 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Base query with applied sort order (if it is present).
+     * Base query with sort order.
      */
     public static function query() : Query
     {
-        return self::applySortOrder(self::baseQuery());
+        $sortOrder = static::getSortOrder();
+        return self::baseQuery()->withSort($sortOrder);
+    }
+
+    /**
+     * Returns sort order.
+     *
+     * @return \Plasticode\Util\SortStep[]
+     */
+    protected static function getSortOrder() : array
+    {
+        if (strlen(static::$sortField) == 0) {
+            return [];
+        }
+
+        return [
+            new SortStep(static::$sortField, static::$sortReverse)
+        ];
     }
     
     /**
-     * Returns entity generator for this model
+     * Returns entity generator for this model.
      */
     public static function getGenerator() : EntityGenerator
     {
@@ -171,7 +182,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Returns validation rules for this model
+     * Returns validation rules for this model.
      */
     public static function getRules($data) : array
     {
@@ -182,7 +193,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Returns the id of the model
+     * Returns the id of the model.
      * 
      * Use getId() instead of id when $idField is custom.
      * It is recommended to use getId() always for safer code.
@@ -207,7 +218,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Was model saved or not
+     * Was model saved or not.
      */
     public function isPersisted() : bool
     {
@@ -248,35 +259,6 @@ abstract class DbModel extends Model implements SerializableInterface
             $name,
             $ignoreCache
         );
-    }
-    
-    private static function applySortOrder(Query $query) : Query
-    {
-        $sortOrder = self::buildSortOrder();
-        
-        foreach ($sortOrder as $sort) {
-            $field = $sort['field'];
-            
-            $query = ($sort['reverse'] ?? false)
-                ? $query->orderByDesc($field)
-                : $query->orderByAsc($field);
-        }
-        
-        return $query;
-    }
-
-    private static function buildSortOrder() : array
-    {
-        $order = static::$sortOrder;
-        
-        if (empty($order) && strlen(static::$sortField) > 0) {
-            $order[] = [
-                'field' => static::$sortField,
-                'reverse' => static::$sortReverse,
-            ];
-        }
-        
-        return $order;
     }
 
     // rights

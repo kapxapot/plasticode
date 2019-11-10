@@ -3,11 +3,24 @@
 namespace Plasticode;
 
 use Plasticode\Models\DbModel;
+use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
+/**
+ * Idiorm wrapper, integrated with DbModel.
+ * 
+ * @method self where(string $field, $value)
+ */
 class Query
 {
+    /**
+     * Empty query
+     *
+     * @var self
+     */
+    private static $empty;
+
     /**
      * ORM query
      *
@@ -30,11 +43,11 @@ class Query
     private $toModel;
 
     /**
-     * Empty query
+     * Array of sort settings
      *
-     * @var self
+     * @var \Plasticode\Util\SortStep[]
      */
-    private static $empty;
+    private $sortOrder;
     
     /**
      * Constructor.
@@ -42,8 +55,9 @@ class Query
      * @param \ORM $query The base query. Can be null for an empty query
      * @param string $idField Must be provided for non-empty query
      * @param \Closure $toModel Must be provided for non-empty query
+     * @param \Plasticode\Util\SortStep[] $sortOrder
      */
-    public function __construct(\ORM $query = null, string $idField = null, \Closure $toModel = null)
+    public function __construct(\ORM $query = null, string $idField = null, \Closure $toModel = null, array $sortOrder = [])
     {
         if (is_null($query)) {
             return;
@@ -63,6 +77,7 @@ class Query
     
         $this->idField = $idField;
         $this->toModel = $toModel;
+        $this->sortOrder = $sortOrder;
     }
 
     /**
@@ -113,7 +128,7 @@ class Query
             return Collection::makeEmpty();
         }
         
-        $objs = $this->query->findMany();
+        $objs = $this->getSortedQuery()->findMany();
         
         $all = array_map(
             function ($obj) {
@@ -152,9 +167,34 @@ class Query
             return null;
         }
         
-        $obj = $this->query->findOne();
+        $obj = $this->getSortedQuery()->findOne();
         
         return ($this->toModel)($obj);
+    }
+
+    /**
+     * Returns query with applied sort order.
+     *
+     * @return \ORM
+     */
+    private function getSortedQuery() : \ORM
+    {
+        $query = $this->query;
+
+        Assert::notNull(
+            $query,
+            'Cannot sort null query.'
+        );
+
+        foreach ($this->sortOrder as $sortStep) {
+            $field = $sortStep->getField();
+
+            $query = $sortStep->isDesc()
+                ? $query->orderByDesc($field)
+                : $query->orderByAsc($field);
+        }
+
+        return $query;
     }
 
     /**
@@ -228,26 +268,32 @@ class Query
      * plus applied modification.
      *
      * @param \Closure $queryModifier
+     * @param \Plasticode\Util\SortStep[] $sortOrder
      * @return mixed
      */
-    private function branch(\Closure $queryModifier)
+    private function branch(\Closure $queryModifier = null, array $sortOrder = null)
     {
         if ($this->isEmpty()) {
             return $this;
         }
 
-        $result = $queryModifier($this->query);
+        if (!is_null($queryModifier)) {
+            $result = $queryModifier($this->query);
 
-        // if query resulted in any final result (!= query)
-        // return it as is
-        if (!($result instanceof \ORM)) {
-            return $result;
+            // if query resulted in any final result (!= query)
+            // return it as is
+            if (!($result instanceof \ORM)) {
+                return $result;
+            }
         }
         
         // if query modification resulted in another query
         // wrap it and return as a new Query
         return new Query(
-            $result, $this->idField, $this->toModel
+            $result ?? $this->query,
+            $this->idField,
+            $this->toModel,
+            $sortOrder ?? $this->sortOrder
         );
     }
     
@@ -377,6 +423,75 @@ class Query
         return $this
             ->offset($offset)
             ->limit($limit);
+    }
+
+    /**
+     * Clears sorting and creates ASC sort step.
+     *
+     * @param string $field
+     * @return Query
+     */
+    public function orderByAsc(string $field) : Query
+    {
+        $sortOrder = [
+            SortStep::create($field)
+        ];
+
+        return $this->branch(null, $sortOrder);
+    }
+
+    /**
+     * Clears sorting and creates DESC sort step.
+     *
+     * @param string $field
+     * @return Query
+     */
+    public function orderByDesc(string $field) : Query
+    {
+        $sortOrder = [
+            SortStep::createDesc($field)
+        ];
+
+        return $this->branch(null, $sortOrder);
+    }
+
+    /**
+     * Adds ASC sort step.
+     *
+     * @param string $field
+     * @return Query
+     */
+    public function thenByAsc(string $field) : Query
+    {
+        $sortOrder = $this->sortOrder;
+        $sortOrder[] = SortStep::create($field);
+
+        return $this->branch(null, $sortOrder);
+    }
+
+    /**
+     * Adds DESC sort step.
+     *
+     * @param string $field
+     * @return Query
+     */
+    public function thenByDesc(string $field) : Query
+    {
+        $sortOrder = $this->sortOrder;
+        $sortOrder[] = SortStep::createDesc($field);
+
+        return $this->branch(null, $sortOrder);
+    }
+
+    /**
+     * Applies sort order as array.
+     *
+     * @param \Plasticode\Util\SortStep[] $sortOrder
+     * @return Query
+     */
+    public function withSort(array $sortOrder) : Query
+    {
+        return $this->branch(null, $sortOrder);
     }
 
     /**

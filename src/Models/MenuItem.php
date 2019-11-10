@@ -4,15 +4,20 @@ namespace Plasticode\Models;
 
 use Plasticode\Query;
 use Plasticode\Models\Interfaces\LinkableInterface;
+use Plasticode\Util\SortStep;
 
 class MenuItem extends DbModel implements LinkableInterface
 {
-    protected static $sortOrder = [
-        [ 'field' => 'position' ],
-        [ 'field' => 'text' ]
-    ];
-    
     protected static $parentIdField = 'menu_id';
+
+    /** @return \Plasticode\Util\SortStep[] */
+    protected static function getSortOrder() : array
+    {
+        return [
+            SortStep::create('position'),
+            SortStep::create('text')
+        ];
+    }
     
     // queries
     
