@@ -150,8 +150,12 @@ abstract class DbModel extends Model implements SerializableInterface
      */
     public static function query() : Query
     {
+        $query = self::baseQuery();
         $sortOrder = static::getSortOrder();
-        return self::baseQuery()->withSort($sortOrder);
+
+        return !empty($sortOrder)
+            ? $query->withSort($sortOrder)
+            : $query;
     }
 
     /**
