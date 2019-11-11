@@ -2,6 +2,7 @@
 
 namespace Plasticode\Models\Traits;
 
+use Plasticode\Models\DbModel;
 use Plasticode\Query;
 use Plasticode\Util\Date;
 
@@ -17,17 +18,20 @@ trait FullPublish
         isPublished as protected parentIsPublished;
     }
 
-    // queries
-    
-    public static function getBaseProtected() : Query
+    /**
+     * Looks for a protected record by id.
+     *
+     * @param int|string $id
+     * @return null|\Plasticode\Models\DbModel
+     */
+    public static function findProtected($id) : ?DbModel
     {
-        return self::getProtected(self::baseQuery());
+        return self::getProtected()->find($id);
     }
-    
-    public static function getProtected(Query $query = null) : Query
+
+    public static function getProtected() : Query
     {
-        $query = $query ?? self::query();
-        
+        $query = self::query();
         $editor = self::can('edit');
         
         if ($editor) {
@@ -35,7 +39,6 @@ trait FullPublish
         }
 
         $published = "(published = 1 and published_at < now())";
-
         $user = self::$auth->getUser();
 
         if ($user) {
@@ -44,8 +47,6 @@ trait FullPublish
         
         return $query->whereRaw($published);
     }
-
-    // props & funcs
 
     protected static function wherePublished(Query $query) : Query
     {

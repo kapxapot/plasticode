@@ -3,7 +3,6 @@
 namespace Plasticode\Models\Traits;
 
 use Plasticode\Query;
-use Plasticode\Util\Date;
 
 /**
  * Limited publish support: only published (no published_at).
@@ -18,13 +17,6 @@ trait Publish
         return self::wherePublished($query);
     }
 
-    // queries
-    
-    public static function getBasePublished() : Query
-    {
-        return self::wherePublished(self::baseQuery());
-    }
-    
     public static function getPublished() : Query
     {
         return self::wherePublished(self::query());
@@ -34,8 +26,6 @@ trait Publish
     {
         return $query->where('published', 1);
     }
-    
-    // props & funcs
 
     public function publish()
     {

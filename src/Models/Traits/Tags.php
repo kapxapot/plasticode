@@ -37,12 +37,7 @@ trait Tags
         );
     }
 
-    public static function getBaseByTag(string $tag) : Query
-    {
-        return static::getByTag($tag, self::baseQuery());
-    }
-
-    public static function getByTag(string $tag, Query $baseQuery = null) : Query
+    public static function getByTag(string $tag, Query $query = null) : Query
     {
         $tag = Strings::normalize($tag);
         $ids = Tag::getIdsByTag(static::getTable(), $tag);
@@ -51,7 +46,7 @@ trait Tags
             return Query::empty();
         }
         
-        $query = $baseQuery ?? self::query();
+        $query = $query ?? self::query();
         $query = $query->whereIn('id', $ids);
 
         if (method_exists(static::class, 'tagsWhere')) {

@@ -131,10 +131,8 @@ abstract class DbModel extends Model implements SerializableInterface
     
     /**
      * Bare query without sort.
-     * 
-     * Use this query if you need any sort order different from default.
      */
-    public static function baseQuery() : Query
+    private static function baseQuery() : Query
     {
         $dbQuery = self::$db->forTable(self::getTable());
         
@@ -146,7 +144,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Base query with sort order.
+     * Query with default sort.
      */
     public static function query() : Query
     {

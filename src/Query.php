@@ -8,9 +8,14 @@ use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
 /**
- * Idiorm wrapper, integrated with DbModel.
+ * Idiorm wrapper integrated with DbModel.
  * 
  * @method self where(string $field, $value)
+ * @method self whereAnyIs(array $conditions)
+ * @method self whereLt(string $field, $value)
+ * @method self whereGt(string $field, $value)
+ * @method self whereNotNull(string $field)
+ * @method self whereRaw(string $condition, array $params = null)
  */
 class Query
 {
