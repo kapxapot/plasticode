@@ -174,7 +174,9 @@ class Query
         
         $obj = $this->getSortedQuery()->findOne();
         
-        return ($this->toModel)($obj);
+        return $obj
+            ? ($this->toModel)($obj)
+            : null;
     }
 
     /**

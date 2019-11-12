@@ -72,7 +72,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Static alias for new()
+     * Static alias for new().
      * 
      * @param array|\ORM $obj
      * @return self
@@ -83,19 +83,13 @@ abstract class DbModel extends Model implements SerializableInterface
     }
 
     /**
-     * Wrapper for model creation
-     * 
-     * Checks if obj is null and doesn't create model for null.
+     * Wrapper for model creation.
      * 
      * @param \ORM $obj
-     * @return self|null
+     * @return self
      */
-    private static function fromDbObj(\ORM $obj) : ?self
+    private static function fromDbObj(\ORM $obj) : self
     {
-        if (!$obj) {
-            return null;
-        }
-        
         return static::create($obj);
     }
     
