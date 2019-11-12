@@ -10,7 +10,7 @@ class Strings
     /**
      * Replaces special characters with spaces.
      * 
-     * Replaces SPACE_CHAR (or $space) with ' '.
+     * Replaces SPACE_CHAR ('_' or $space) with ' '.
      * Also strips slashes.
      * 
      * @param string $str String to process
@@ -26,7 +26,7 @@ class Strings
     /**
      * Replaces spaces with special characters.
      * 
-     * Replaces '\s+' with SPACE_CHAR's (or $spaces).
+     * Replaces '\s+' with SPACE_CHAR ('_' or $spaces).
      * 
      * @param string $str String to process
      * @param string $space Custom replacement character, '_' by default
@@ -272,8 +272,26 @@ class Strings
         return mb_substr($str, -strlen($mask)) == $mask;
     }
     
+    /**
+     * Compares two strings case-insensitive.
+     *
+     * @param string $str1
+     * @param string $str2
+     * @return integer > 0, if str1 is bigger, < 0 if str2, 0 if equal
+     */
     public static function compare(string $str1, string $str2) : int
     {
         return strcasecmp($str1, $str2);
+    }
+
+    /**
+     * Removes all symbols from a string except letters, digits and '_'.
+     *
+     * @param null|string $str
+     * @return null|string
+     */
+    public static function toAlphaNum(?string $str) : ?string
+    {
+        return preg_replace('/[^\w]/u', '', $str);
     }
 }
