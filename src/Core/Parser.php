@@ -707,8 +707,12 @@ class Parser extends Contained
     /**
      * Lightweight parsing, just text.
      */
-    public function justText(string $text) : string
+    public function justText(?string $text) : string
     {
+        if (strlen($text) == 0) {
+            return $text;
+        }
+
         $parsed = $this->parse($text);
         $text = $parsed['text'];
         $text = $this->renderLinks($text);
