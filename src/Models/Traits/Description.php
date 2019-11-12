@@ -6,9 +6,6 @@ trait Description
 {
     public function parsedDescription()
     {
-        $text = self::$parser->justText($this->description);
-        $text = self::$parser->renderLinks($text);
-        
-        return $text;
+        return self::$parser->justText($this->description);
     }
 }
