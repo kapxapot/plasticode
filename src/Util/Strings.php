@@ -216,7 +216,7 @@ class Strings
             ' ',
             array_map(
                 function ($tag) {
-                    return '#' . str_replace(' ', '', $tag);
+                    return '#' . self::toAlphaNum($tag);
                 },
                 $tags
             )

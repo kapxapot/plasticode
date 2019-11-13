@@ -25,4 +25,21 @@ final class StringsTest extends TestCase
             ['русский yazyk!', 'русскийyazyk'],
         ];
     }
+
+    /** @dataProvider hashTagsProvider */
+    public function testHashTags(array $original, string $expected): void
+    {
+        $this->assertEquals(
+            Strings::hashTags($original),
+            $expected
+        );
+    }
+
+    public function hashTagsProvider()
+    {
+        return [
+            [['abc', 'def ghi'], '#abc #defghi'],
+            [['abc!!', '#def_1-2-3'], '#abc #def_123'],
+        ];
+    }
 }
