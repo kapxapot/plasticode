@@ -21,38 +21,22 @@ abstract class Model implements \ArrayAccess
     protected static $container;
     
     /**
-     * Db
+     * Db layer
      *
      * @var \Plasticode\Data\Db
      */
     protected static $db;
 
-    /**
-     * Auth
-     *
-     * @var \Plasticode\Auth\Auth
-     */
+    /** @var \Plasticode\Auth\Auth */
     protected static $auth;
 
-    /**
-     * Linker
-     *
-     * @var \Plasticode\Core\Linker
-     */
+    /** @var \Plasticode\Core\Linker */
     protected static $linker;
 
-    /**
-     * Cases
-     *
-     * @var \Plasticode\Util\Cases
-     */
+    /** @var \Plasticode\Util\Cases */
     protected static $cases;
 
-    /**
-     * Parser
-     *
-     * @var \Plasticode\Core\Parser
-     */
+    /** @var \Plasticode\Core\Parser */
     protected static $parser;
     
     protected static $userRepository;
@@ -118,8 +102,6 @@ abstract class Model implements \ArrayAccess
     {
         return self::$container->getSettings($path);
     }
-
-    // repositories
     
     protected static function getUser($id) : ?User
     {
@@ -131,18 +113,14 @@ abstract class Model implements \ArrayAccess
         return self::$roleRepository->get($id);
     }
     
-    // auth
-    
     protected static function getCurrentUser() : ?User
     {
         return self::$auth->getUser();
     }
-
-    // lazy
     
     private static function getLazyFuncName() : string
     {
-        list($one, $two, $caller) = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+        list(, , $caller) = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
         return $caller['function'];
     }
     
@@ -188,8 +166,6 @@ abstract class Model implements \ArrayAccess
 
         return self::$staticCache;
     }
-
-    // magic
     
     private function checkPropertyExists(string $property)
     {
@@ -263,8 +239,6 @@ abstract class Model implements \ArrayAccess
     {
         return static::class;
     }
-    
-    // array access
     
     public function offsetSet($offset, $value)
     {

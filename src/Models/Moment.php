@@ -6,21 +6,14 @@ use Plasticode\Util\Date;
 
 class Moment extends Model
 {
-    /**
-     * Date
-     *
-     * @var string
-     */
+    /** @var string */
     private $date;
 
     public function __construct(string $date)
     {
         parent::__construct();
-        
         $this->date = $date;
     }
-    
-    // PROPS
     
     public function iso() : string
     {
@@ -31,8 +24,6 @@ class Moment extends Model
     {
         return Date::hasTime($this->date);
     }
-    
-    // FUNCS
     
     public function toString() : string
     {

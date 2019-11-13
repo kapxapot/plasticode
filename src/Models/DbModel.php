@@ -5,13 +5,13 @@ namespace Plasticode\Models;
 use Plasticode\Collection;
 use Plasticode\Query;
 use Plasticode\Data\Rights;
-use Plasticode\Exceptions\InvalidOperationException;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\Util\Classes;
 use Plasticode\Util\Pluralizer;
 use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;
 use Plasticode\Generators\EntityGenerator;
+use Webmozart\Assert\Assert;
 
 abstract class DbModel extends Model implements SerializableInterface
 {
@@ -62,13 +62,18 @@ abstract class DbModel extends Model implements SerializableInterface
     {
         parent::__construct();
         
-        if ($obj == null || is_array($obj)) {
-            // null or array - new entity
-            $this->obj = self::$db->create(self::getTable(), $obj);
-        } else {
-            // \ORM - existing entity
+        // \ORM - existing entity
+        if ($obj instanceof \ORM) {
             $this->obj = $obj;
+            return;
         }
+        
+        if (!is_array($obj)) {
+            $obj = null;
+        }
+
+        // null or array - new entity
+        $this->obj = self::$db->create(self::getTable(), $obj);
     }
     
     /**
@@ -223,13 +228,14 @@ abstract class DbModel extends Model implements SerializableInterface
     
     public function failIfNotPersisted() : void
     {
-        if (!$this->isPersisted()) {
-            throw new InvalidOperationException('Object must be persisted.');
-        }
+        Assert::true(
+            $this->isPersisted(),
+            'Object must be persisted.'
+        );
     }
     
     /**
-     * Shortcut for getting all models with sort applied
+     * Shortcut for getting all models.
      */
     public static function getAll() : Collection
     {
@@ -242,7 +248,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
     
     /**
-     * Shortcut for getting model by id
+     * Shortcut for getting model by id.
      */
     public static function get($id, bool $ignoreCache = false) : ?self
     {
@@ -256,8 +262,6 @@ abstract class DbModel extends Model implements SerializableInterface
             $ignoreCache
         );
     }
-
-    // rights
 
     private static function tableRights() : Rights
     {
@@ -281,12 +285,9 @@ abstract class DbModel extends Model implements SerializableInterface
         return self::tableRights()->forEntity($this->obj->asArray());
     }
     
-    // instance methods
-    
     public function save() : self
     {
         $this->obj->save();
-        
         return $this;
     }
 
@@ -303,7 +304,7 @@ abstract class DbModel extends Model implements SerializableInterface
     }
 
     /**
-     * Checks if two objects are equal
+     * Checks if two objects are equal.
      * 
      * Equal means:
      *  - Same class.
