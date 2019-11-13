@@ -4,10 +4,21 @@ namespace Plasticode\Generators;
 
 use Plasticode\Models\Tag;
 use Plasticode\Util\Strings;
+use Respect\Validation\Validator;
 
 class TaggableEntityGenerator extends EntityGenerator
 {
     protected $tagsField = 'tags';
+
+    public function getRules(array $data, $id = null) : array
+    {
+        $rules = parent::getRules($data, $id);
+
+        $rules[$this->tagsField] =
+            $this->rules->optional(Validator::regex('/^[^\?#\+]+$/'));
+        
+        return $rules;
+    }
 
     public function afterSave(array $item, array $data) : void
     {
@@ -27,11 +38,13 @@ class TaggableEntityGenerator extends EntityGenerator
 
         foreach ($tags as $tag) {
             if (strlen($tag) > 0) {
-                Tag::store([
-                    'entity_type' => $this->entity,
-                    'entity_id' => $id,
-                    'tag' => $tag,
-                ]);
+                Tag::store(
+                    [
+                        'entity_type' => $this->entity,
+                        'entity_id' => $id,
+                        'tag' => $tag,
+                    ]
+                );
             }
         }
     }

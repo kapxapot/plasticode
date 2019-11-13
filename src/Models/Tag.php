@@ -10,8 +10,6 @@ use Plasticode\Models\Interfaces\SerializableInterface;
 
 class Tag extends DbModel implements LinkableInterface, SearchableInterface, SerializableInterface
 {
-    // queries
-    
     private static function entityQuery(string $entityType) : Query
     {
         return self::query()
@@ -24,8 +22,6 @@ class Tag extends DbModel implements LinkableInterface, SearchableInterface, Ser
             ->where('entity_id', $entityId);
     }
 
-    // getters
-    
     public static function getIdsByTag(string $entityType, string $tag) : Collection
     {
         return self::entityQuery($entityType)
@@ -34,8 +30,6 @@ class Tag extends DbModel implements LinkableInterface, SearchableInterface, Ser
             ->extract('entity_id');
     }
 
-    // ops
-    
     public static function deleteByEntity(string $entityType, $entityId) : bool
     {
         return self::entityQuery($entityType)
@@ -49,8 +43,6 @@ class Tag extends DbModel implements LinkableInterface, SearchableInterface, Ser
             ->where('tag', $tag)
             ->any();
     }
-    
-    // interfaces
     
     public function url() : ?string
     {

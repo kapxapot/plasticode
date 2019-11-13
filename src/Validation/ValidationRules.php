@@ -10,11 +10,7 @@ use Respect\Validation\Validator;
 
 class ValidationRules extends Contained
 {
-    /**
-     * Rules
-     *
-     * @var array
-     */
+    /** @var array */
     private $rules;
     
     public function __construct(ContainerInterface $container)
@@ -66,7 +62,8 @@ class ValidationRules extends Contained
                 return Validator::imageNotEmpty()->imageTypeAllowed();
             },
             'password' => function () use ($settings) {
-                return Validator::noWhitespace()->length($settings['password_min']);
+                return Validator::noWhitespace()
+                    ->length($settings['password_min']);
             },
             'login' => function () use ($alias, $settings) {
                 return $alias()->length(
