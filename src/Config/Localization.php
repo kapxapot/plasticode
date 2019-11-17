@@ -67,6 +67,7 @@ class Localization
             'Parent entity creates recursion.' => "Родительская сущность создает рекурсию.",
             'Data already changed. Please reload page.' => "Данные уже изменены. Перезагрузите страницу.",
             'Upload successful.' => "Загрузка успешно завершена.",
+            'Tags can\'t contain ?, # or + symbols.' => 'Теги не могут содержать символы ?, # или +.',
 
             // fields
             'login' => 'Логин',
