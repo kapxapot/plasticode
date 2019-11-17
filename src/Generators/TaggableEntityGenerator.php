@@ -14,8 +14,7 @@ class TaggableEntityGenerator extends EntityGenerator
     {
         $rules = parent::getRules($data, $id);
 
-        $rules[$this->tagsField] =
-            $this->rules->optional(Validator::regex('/^[^\?#\+]+$/'));
+        $rules[$this->tagsField] = Validator::tags();
         
         return $rules;
     }
