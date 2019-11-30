@@ -73,11 +73,15 @@ class Strings
     /**
      * Trims, converts to lower case and squishes spaces.
      *
-     * @param string $str
-     * @return string
+     * @param null|string $str
+     * @return null|string
      */
-    public static function normalize(string $str) : string
+    public static function normalize(?string $str) : ?string
     {
+        if (strlen($str) == 0) {
+            return $str;
+        }
+
         $str = trim($str);
         $str = mb_strtolower($str);
         $str = preg_replace('/\s+/', ' ', $str);

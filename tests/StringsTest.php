@@ -42,4 +42,22 @@ final class StringsTest extends TestCase
             [['abc!!', '#def_1-2-3'], '#abc #def_123'],
         ];
     }
+
+    /** @dataProvider normalizeProvider */
+    public function testNormalize(?string $original, ?string $expected) : void
+    {
+        $this->assertEquals(
+            Strings::normalize($original),
+            $expected
+        );
+    }
+
+    public function normalizeProvider()
+    {
+        return [
+            [null, null],
+            ['', ''],
+            [' aza ZA    uhuhuh ', 'aza za uhuhuh'],
+        ];
+    }
 }
