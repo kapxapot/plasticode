@@ -28,8 +28,7 @@ class Response
     {
         if ($data instanceof Collection) {
             $data = $data->toArray();
-        }
-        elseif ($data instanceof \ORM) {
+        } elseif ($data instanceof \ORM) {
             $data = $data->asArray();
         }
         

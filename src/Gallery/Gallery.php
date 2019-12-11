@@ -5,7 +5,7 @@ namespace Plasticode\Gallery;
 use Plasticode\Contained;
 use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\InvalidResultException;
-use Plasticode\Gallery\ThumbStrategies\ThumbStrategyInterface;
+use Plasticode\Gallery\ThumbStrategies\Interfaces\ThumbStrategyInterface;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
 use Psr\Container\ContainerInterface;
@@ -55,7 +55,9 @@ class Gallery extends Contained
     protected function getFolder(string $folder) : string
     {
         if (!isset($this->folders[$folder])) {
-            throw new InvalidArgumentException('Unknown image folder: ' . $folder);
+            throw new InvalidArgumentException(
+                'Unknown image folder: ' . $folder
+            );
         }
         
         return $this->folders[$folder];
@@ -70,7 +72,7 @@ class Gallery extends Contained
     }
     
     /**
-     * Get public picture url
+     * Get public picture url.
      * 
      * @param array $item
      * @return string
@@ -83,7 +85,7 @@ class Gallery extends Contained
     }
     
     /**
-     * Get public thumb url
+     * Get public thumb url.
      * 
      * @param array $item
      * @return string
@@ -96,7 +98,7 @@ class Gallery extends Contained
     }
 
     /**
-     * Build image's server path
+     * Build image's server path.
      */
     protected function buildImagePath(string $folder, string $name, string $imgType) : string
     {
@@ -107,7 +109,7 @@ class Gallery extends Contained
     }
     
     /**
-     * Get picture server path
+     * Get picture server path.
      */
     public function buildPicturePath(string $name, string $imgType) : string
     {
@@ -115,7 +117,7 @@ class Gallery extends Contained
     }
     
     /**
-     * Get thumb server path
+     * Get thumb server path.
      */
     public function buildThumbPath(string $name, string $imgType) : string
     {
@@ -137,7 +139,7 @@ class Gallery extends Contained
     }
     
     /**
-     * Get thumb from save data (API call)
+     * Get thumb from save data (API call).
      * 
      * @return Image|null
      */
@@ -147,16 +149,14 @@ class Gallery extends Contained
     }
     
     /**
-     * Save picture
+     * Save picture.
      * 
      * If we resave thumb, we don't need to save picture again.
      * In this scenario 'picture' is empty.
      * 
      * 'Thumb' can be null too, we don't resave it then.
-     * 
-     * @return void
      */
-    public function save(\ORM $item, array $data)
+    public function save(\ORM $item, array $data) : void
     {
         $picture = $this->getPicture($item, $data);
 
@@ -172,7 +172,6 @@ class Gallery extends Contained
                 $item->height = $picture->height;
             }
             
-            // set avg_color
             $item->avg_color = $this->getAvgColor($item, $picture);
         }
         
@@ -187,7 +186,7 @@ class Gallery extends Contained
         $item->save();
     }
 
-    protected function beforeSave(\ORM $item, Image $picture = null, Image $thumb = null)
+    protected function beforeSave(\ORM $item, ?Image $picture = null, ?Image $thumb = null) : \ORM
     {
         if ($picture && $picture->notEmpty()) {
             $item->{$this->pictureTypeField} = $picture->imgType;
@@ -212,13 +211,11 @@ class Gallery extends Contained
     }
 
     /**
-     * Save picture
+     * Save picture.
      * 
      * Clean previous version if extension was changed.
-     * 
-     * @return void
      */
-    protected function savePicture(\ORM $item, Image $picture)
+    protected function savePicture(\ORM $item, Image $picture) : void
     {
         $fileName = $this->buildPicturePath($item->id, $picture->imgType);
         $picture->save($fileName);
@@ -228,13 +225,11 @@ class Gallery extends Contained
     }
     
     /**
-     * Save thumb
+     * Save thumb.
      * 
      * Clean previous version if extension was changed.
-     * 
-     * @return void
      */
-    protected function saveThumb(\ORM $item, Image $thumb)
+    protected function saveThumb(\ORM $item, Image $thumb) : void
     {
         $fileName = $this->buildThumbPath($item->id, $thumb->imgType);
         $thumb->save($fileName);
@@ -244,11 +239,9 @@ class Gallery extends Contained
     }
     
     /**
-     * Saves image with auto-generated thumb
-     * 
-     * @return void
+     * Saves image with auto-generated thumb.
      */
-    public function saveImage(\ORM $item, Image $picture)
+    public function saveImage(\ORM $item, Image $picture) : void
     {
         if (!$picture || $picture->empty()) {
             throw new InvalidArgumentException(
@@ -259,7 +252,6 @@ class Gallery extends Contained
         $this->savePicture($item, $picture);
         
         $thumb = $this->createAndSaveThumb($item, $picture);
-
         $item = $this->beforeSave($item, $picture, $thumb);
 
         $item->save();
@@ -276,7 +268,7 @@ class Gallery extends Contained
         return $thumb;
     }
     
-    public function delete(\ORM $item)
+    public function delete(\ORM $item) : void
     {
         $pictureFileName = $this->buildPicturePath(
             $item->id,
@@ -294,7 +286,7 @@ class Gallery extends Contained
     }
 
     /**
-     * Generates thumb based on image
+     * Generates thumb based on image.
      */
     public function getThumbFromImage(Image $picture) : ?Image
     {
@@ -315,9 +307,9 @@ class Gallery extends Contained
     }
 
     /**
-     * Checks if thumb exists, creates it otherwise
+     * Checks if thumb exists, creates it otherwise.
      */
-    public function ensureThumbExists($item)
+    public function ensureThumbExists(\ORM $item) : void
     {
         $thumbPath = $this->buildThumbPath(
             $item->id,
@@ -333,11 +325,16 @@ class Gallery extends Contained
         $this->createAndSaveThumb($item, $picture);
     }
 
-    public function getAvgColor($item, $picture = null)
+    /**
+     * Calculates the average RBGA color for the picture.
+     *
+     * @param \ORM $item
+     * @param Image|null $picture
+     * @return string
+     */
+    public function getAvgColor(\ORM $item, ?Image $picture = null) : string
     {
-        if (!$picture) {
-            $picture = $this->loadPicture($item);
-        }
+        $picture = $picture ?? $this->loadPicture($item);
         
         try {
             $rgba = $picture->getAvgColor();

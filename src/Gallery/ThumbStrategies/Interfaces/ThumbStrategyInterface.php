@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Gallery\ThumbStrategies;
+namespace Plasticode\Gallery\ThumbStrategies\Interfaces;
 
 use Plasticode\Gallery\Gallery;
 use Plasticode\IO\Image;
@@ -8,14 +8,14 @@ use Plasticode\IO\Image;
 interface ThumbStrategyInterface
 {
     /**
-     * Get thumb from save data (API call)
+     * Get thumb from save data (API call).
      * 
      * @return Image|null
      */
     public function getThumb(Gallery $gallery, \ORM $item, array $data) : ?Image;
 
     /**
-     * Creates GD image for thumb
+     * Creates GD image for thumb.
      *
      * @param resource $image
      * @return resource

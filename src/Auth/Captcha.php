@@ -2,6 +2,7 @@
 
 namespace Plasticode\Auth;
 
+use Plasticode\Config\Interfaces\CaptchaConfigInterface;
 use Plasticode\Core\Session;
 use Plasticode\Util\Date;
 use Plasticode\Util\Numbers;
@@ -11,7 +12,7 @@ class Captcha
     /**
      * Session
      *
-     * @var Plasticode\Core\Session
+     * @var \Plasticode\Core\Session
      */
     private $session;
 
@@ -33,21 +34,28 @@ class Captcha
     private $replacements = [];
 
     /**
-     * Creates Captcha instance
+     * Creates Captcha instance.
      * 
-     * @param Plasticode\Core\Session
-     * @param array $replacements Your custom replacement rules. You MUST provide them
+     * @param \Plasticode\Core\Session
+     * @param \Plasticode\Config\Interfaces\CaptchaConfigInterface $config Your custom replacement config. You should provide it
      * @param int $ttl Time to live in minutes
      */
-    public function __construct(Session $session, array $replacements = [], int $ttl = 10)
+    public function __construct(
+        Session $session,
+        CaptchaConfigInterface $config = null,
+        int $ttl = 10
+    )
     {
         $this->session = $session;
         $this->ttl = $ttl;
-        $this->replacements = $replacements;
+
+        if (!is_null($config)) {
+            $this->replacements = $config->getReplaces();
+        }
     }
 
     /**
-     * Fuck up the string using replacements
+     * Fuck up the string using replacements.
      *
      * @param string $str
      * @return string
@@ -63,7 +71,7 @@ class Captcha
     }
 
     /**
-     * Generate captcha
+     * Generate captcha.
      *
      * @param integer $length
      * @param boolean $save
@@ -98,7 +106,7 @@ class Captcha
     }
     
     /**
-     * Save captcha to session
+     * Save captcha to session.
      *
      * @param array $captcha
      * @return void
@@ -112,7 +120,7 @@ class Captcha
 
     /**
      * Load captcha from session and destroy it in session
-     * so the captcha can be validated only once
+     * so the captcha can be validated only once.
      *
      * @return array
      */
@@ -122,7 +130,7 @@ class Captcha
     }
     
     /**
-     * Validate the provided number against previously generated captcha
+     * Validate the provided number against previously generated captcha.
      *
      * @param mixed $number
      * @return boolean

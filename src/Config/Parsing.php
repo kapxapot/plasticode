@@ -2,7 +2,9 @@
 
 namespace Plasticode\Config;
 
-class Parsing
+use Plasticode\Config\Interfaces\ParsingConfigInterface;
+
+class Parsing implements ParsingConfigInterface
 {
     public function getCleanupReplaces() : array
     {

@@ -2,28 +2,8 @@
 
 namespace Plasticode;
 
-use Plasticode\Util\Arrays;
-use Psr\Container\ContainerInterface;
-
-class Contained
+class Contained extends SettingsProvider
 {
-    /**
-     * DI container
-     *
-     * @var \Psr\Container\ContainerInterface
-     */
-    public $container;
-
-    /**
-     * Creates new Contained instance.
-     * 
-     * @param ContainerInterface $container Slim container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-    
     /**
      * Returns object / array from container by property name.
      *
@@ -37,23 +17,5 @@ class Contained
         ) {
             return $this->container->{$property};
         }
-    }
-    
-    /**
-     * Returns settings value.
-     *
-     * @param string $path Path to settings value
-     * @param mixed $default Default value
-     * @return mixed
-     */
-    public function getSettings(string $path = null, $default = null)
-    {
-        $result = $this->container->get('settings');
-
-        if ($path) {
-            $result = Arrays::get($result, $path);
-        }
-        
-        return $result ?? $default;
     }
 }

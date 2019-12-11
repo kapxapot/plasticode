@@ -3,12 +3,13 @@
 namespace Plasticode\Config;
 
 use Plasticode\IO\File;
+use Plasticode\Twig\Extensions\AccessRightsExtension;
 use Psr\Container\ContainerInterface;
 use Slim\Collection;
 
 class Bootstrap
 {
-    /** @var Slim\Collection */
+    /** @var \Slim\Collection */
     protected $settings;
 
     /**
@@ -33,7 +34,7 @@ class Bootstrap
     }
     
     /**
-     * Not used yet
+     * Not used yet.
      *
      * @return array
      */
@@ -56,7 +57,7 @@ class Bootstrap
     }
     
     /**
-     * Not used yet
+     * Not used yet.
      *
      * @return array
      */
@@ -125,13 +126,19 @@ class Bootstrap
             'menuItemRepository' => function (ContainerInterface $container) {
                 return new \Plasticode\StaticProxy($container->menuItemClass);
             },
+
+            'settingsProvider' => function (ContainerInterface $container) {
+                return new \Plasticode\SettingsProvider($container);
+            },
             
             'auth' => function (ContainerInterface $container) {
                 return new \Plasticode\Auth\Auth($container);
             },
             
             'logger' => function (ContainerInterface $container) {
-                $logger = new \Monolog\Logger($this->settings['logger']['name']);
+                $logger = new \Monolog\Logger(
+                    $this->settings['logger']['name']
+                );
             
                 $logger->pushProcessor(
                     function ($record) use ($container) {
@@ -152,7 +159,6 @@ class Bootstrap
                 );
 
                 $path = $this->settings['logger']['path'];
-                
                 $path = File::absolutePath($this->dir, $path);
 
                 $handler = new \Monolog\Handler\StreamHandler(
@@ -165,7 +171,6 @@ class Bootstrap
                 );
 
                 $handler->setFormatter($formatter);
-            
                 $logger->pushHandler($handler);
             
                 return $logger;
@@ -178,7 +183,7 @@ class Bootstrap
             'captcha' => function (ContainerInterface $container) {
                 return new \Plasticode\Auth\Captcha(
                     $container->session,
-                    $container->captchaConfig->getReplaces()
+                    $container->captchaConfig
                 );
             },
             
@@ -234,12 +239,11 @@ class Bootstrap
                 
                 $view->addExtension($twigExt);
 
-                $accessExt = new \Plasticode\Twig\Extensions\AccessRightsExtension(
+                $accessExt = new AccessRightsExtension(
                     $container->access
                 );
 
                 $view->addExtension($accessExt);
-
                 $view->addExtension(new \Twig\Extension\DebugExtension);
 
                 // set globals
@@ -348,9 +352,10 @@ class Bootstrap
             },
             
             'parser' => function (ContainerInterface $container) {
-                return new \Plasticode\Core\Parser(
-                    $container,
-                    $container->parserConfig
+                return new \Plasticode\Parsing\Parser(
+                    $container->parserConfig,
+                    $container->renderer,
+                    $container->linker
                 );
             },
 

@@ -239,6 +239,13 @@ abstract class Model implements \ArrayAccess
     {
         return static::class;
     }
+
+    public function toArray() : array
+    {
+        return $this->obj instanceof \ORM
+            ? $this->obj->asArray()
+            : $this->obj;
+    }
     
     public function offsetSet($offset, $value)
     {

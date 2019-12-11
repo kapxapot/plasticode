@@ -3,10 +3,12 @@
 namespace Plasticode\Core;
 
 use Plasticode\Contained;
+use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\IO\Image;
+use Plasticode\Util\Numbers;
 use Plasticode\Util\Strings;
 
-class Linker extends Contained
+class Linker extends Contained implements LinkerInterface
 {
     /**
      * Makes url absolute. If no url provided, returns site url.
@@ -97,5 +99,12 @@ class Linker extends Contained
     public function defaultGravatarUrl() : string
     {
         return $this->gravatarUrl();
+    }
+
+    // Misc
+
+    public function randPic(int $width, int $height) : string
+    {
+        return 'https://picsum.photos/' . $width . '/' . $height . '?' . Numbers::generate(6);
     }
 }

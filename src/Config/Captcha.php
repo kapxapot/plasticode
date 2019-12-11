@@ -2,7 +2,9 @@
 
 namespace Plasticode\Config;
 
-class Captcha
+use Plasticode\Config\Interfaces\CaptchaConfigInterface;
+
+class Captcha implements CaptchaConfigInterface
 {
     public function getReplaces() : array
     {

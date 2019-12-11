@@ -3,6 +3,7 @@
 namespace Plasticode\Gallery\ThumbStrategies;
 
 use Plasticode\Gallery\Gallery;
+use Plasticode\Gallery\ThumbStrategies\Interfaces\ThumbStrategyInterface;
 use Plasticode\IO\Image;
 
 class UniformThumbStrategy implements ThumbStrategyInterface
