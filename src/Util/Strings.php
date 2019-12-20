@@ -6,6 +6,8 @@ class Strings
 {
     /** @var string */
     const SPACE_CHAR = '_';
+    
+    private const TAG_PARTS_DELIMITER = '|';
 
     /**
      * Replaces special characters with spaces.
@@ -297,5 +299,31 @@ class Strings
     public static function toAlphaNum(?string $str) : ?string
     {
         return preg_replace('/[^\w]/u', '', $str);
+    }
+
+    /**
+     * Builds tag in format [[prefix:part1|part2]].
+     *
+     * @param string|null $prefix
+     * @param string ...$parts
+     * @return string
+     */
+    public static function doubleBracketsTag(?string $prefix, string ...$parts) : string
+    {
+        $prefixPart = $prefix ? $prefix . ':' : '';
+        $codePart = self::joinTagParts($parts);
+        
+        return '[[' . $prefixPart . $codePart . ']]';
+    }
+    
+    /**
+     * Joins strings with '|'.
+     *
+     * @param array $parts
+     * @return string
+     */
+    public static function joinTagParts(array $parts) : string
+    {
+        return implode(self::TAG_PARTS_DELIMITER, $parts);
     }
 }

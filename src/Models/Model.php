@@ -30,7 +30,7 @@ abstract class Model implements \ArrayAccess
     /** @var \Plasticode\Auth\Auth */
     protected static $auth;
 
-    /** @var \Plasticode\Core\Linker */
+    /** @var \Api\Core\Linker */
     protected static $linker;
 
     /** @var \Plasticode\Util\Cases */

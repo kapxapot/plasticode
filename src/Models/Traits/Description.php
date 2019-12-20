@@ -4,8 +4,11 @@ namespace Plasticode\Models\Traits;
 
 trait Description
 {
-    public function parsedDescription()
+    public function parsedDescription() : ?string
     {
-        return self::$parser->justText($this->description);
+        $context = self::$parser->parse($this->description);
+        $context = self::$parser->renderLinks($context);
+
+        return $context->text;
     }
 }

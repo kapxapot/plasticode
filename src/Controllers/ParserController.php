@@ -14,11 +14,11 @@ class ParserController extends Contained
         $data = $request->getParsedBody();
         $text = strip_tags($data['text']);
         
-        $text = $this->parser->justText($text);
-        $text = $this->parser->parseCut($text);
+        $context = $this->parser->parse($text);
+        $context = $this->parser->renderLinks($context);
 
-        return Response::json($response, [
-            'text' => $text,
-        ]);
+        $text = $this->parser->parseCut($context->text);
+
+        return Response::json($response, ['text' => $text]);
     }
 }

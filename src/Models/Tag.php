@@ -7,7 +7,15 @@ use Plasticode\Query;
 use Plasticode\Models\Interfaces\LinkableInterface;
 use Plasticode\Models\Interfaces\SearchableInterface;
 use Plasticode\Models\Interfaces\SerializableInterface;
+use Plasticode\Util\Strings;
 
+/**
+ * Tag class.
+ * 
+ * @property string $tag
+ * @property integer $entityId
+ * @property string $entityType
+ */
 class Tag extends DbModel implements LinkableInterface, SearchableInterface, SerializableInterface
 {
     private static function entityQuery(string $entityType) : Query
@@ -67,12 +75,6 @@ class Tag extends DbModel implements LinkableInterface, SearchableInterface, Ser
     
     public function code() : string
     {
-        $parts = [
-            "tag:{$this->tag}"
-        ];
-        
-        $code = self::$parser->joinTagParts($parts);
-        
-        return "[[{$code}]]";
+        return Strings::doubleBracketsTag('tag', $this->tag);
     }
 }

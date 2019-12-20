@@ -11,7 +11,7 @@ use Plasticode\Util\Strings;
 class Linker extends Contained implements LinkerInterface
 {
     /**
-     * Makes url absolute. If no url provided, returns site url.
+     * Makes url absolute. If no url provided, returns site url with trailing '/'.
      *
      * @param string $url
      * @return string

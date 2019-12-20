@@ -3,6 +3,7 @@
 namespace Plasticode\Config;
 
 use Plasticode\Config\Interfaces\ParsingConfigInterface;
+use Plasticode\Util\Text;
 
 class Parsing implements ParsingConfigInterface
 {
@@ -44,6 +45,7 @@ class Parsing implements ParsingConfigInterface
             '[/leftblock]' => '</div>',
             '[clear]' => '<div class="clearfix"></div>',
             ' -- ' => ' — ',
+            '[cut]' => Text::Cut,
         ];
     }
 }

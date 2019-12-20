@@ -3,6 +3,7 @@
 namespace Plasticode\Core;
 
 use Plasticode\Core\Interfaces\RendererInterface;
+use Plasticode\Models\Model;
 use Slim\Views\Twig;
 
 class Renderer implements RendererInterface
@@ -19,7 +20,7 @@ class Renderer implements RendererInterface
         $this->view = $view;
     }
     
-    public function text(string $text, string $style = null, $id = null) : string
+    public function text(string $text, ?string $style = null, ?string $id = null) : string
     {
         return $this->component(
             'text',
@@ -41,8 +42,12 @@ class Renderer implements RendererInterface
         return $this->component('prev');
     }
 
-    public function component(string $name, ?array $data = null) : string
+    public function component(string $name, $data = null) : string
     {
+        if ($data instanceof Model) {
+            $data = $data->toArray();
+        }
+
         return $this->view->fetch(
             'components/spaceless.twig',
             [

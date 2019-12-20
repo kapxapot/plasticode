@@ -4,7 +4,7 @@
         <div class="contents--body mt-2">
             {% for i in items %}
                 <div class="contents--level{{ i.level }}">
-                    <a href="#{{ i.label }}">{{ i.text }}</a>
+                    <a href="#{{ i.label }}">{{ i.display_text }}</a>
                 </div>
             {% endfor %}
         </div>
