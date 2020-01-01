@@ -6,14 +6,45 @@ use Dotenv\Dotenv;
 
 class Env
 {
+    private const DEV = 'dev';
+    private const STAGE = 'stage';
+    private const PROD = 'prod';
+
+    private $appEnv;
+
+    private function __construct(string $appEnv)
+    {
+        $this->appEnv = $appEnv;
+    }
+
+    public function is(string $appEnv) : bool
+    {
+        return $this->appEnv === $appEnv;
+    }
+
+    public function isDev() : bool
+    {
+        return $this->is(self::DEV);
+    }
+
+    public function isStage() : bool
+    {
+        return $this->is(self::STAGE);
+    }
+
+    public function isProd() : bool
+    {
+        return $this->is(self::PROD);
+    }
+
     /**
-     * Load environment variables from .env file.
+     * Loads environment variables from .env file.
      *
      * @param string $path
      * @param null|string $appEnvVar
      * @return void
      */
-    public static function load(string $path, string $appEnvVar = null) : void
+    public static function load(string $path, string $appEnvVar = null) : self
     {
         $appEnvVar = $appEnvVar ?? 'APP_ENV';
 
@@ -35,5 +66,7 @@ class Env
                 'set it to "dev"/"prod", etc.'
             );
         }
+
+        return new static($appEnv);
     }
 }
