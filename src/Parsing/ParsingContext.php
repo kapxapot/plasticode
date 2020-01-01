@@ -23,9 +23,6 @@ class ParsingContext
     /** @var string[] */
     public $videos = [];
 
-    /** @var array $data Arbitrary data */
-    public $data = [];
-
     /** @var string */
     public $updatedAt;
 

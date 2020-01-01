@@ -4,7 +4,7 @@ namespace Plasticode;
 
 use Plasticode\Util\Arrays;
 
-class Collection implements \ArrayAccess, \Iterator, \Countable
+class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializable
 {
     protected $data;
     
@@ -106,8 +106,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
                 foreach ($item as $subItem) {
                     $data[] = $subItem;
                 }
-            }
-            else {
+            } else {
                 $data[] = $item;
             }
         }
@@ -315,17 +314,11 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         $data = array_reverse($this->data);
         return self::make($data);
     }
-
-    public function serialize() : self
-    {
-        return $this->map(function ($item) {
-            return $item->serialize();
-        });
-    }
     
     // ArrayAccess
     
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value)
+    {
         if (is_null($offset)) {
             throw new \InvalidArgumentException('$offset cannot be null.');
         } else {
@@ -333,15 +326,18 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
         }
     }
 
-    public function offsetExists($offset) {
+    public function offsetExists($offset)
+    {
         return isset($this->data[$offset]);
     }
 
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset)
+    {
         unset($this->data[$offset]);
     }
 
-    public function offsetGet($offset) {
+    public function offsetGet($offset)
+    {
         return isset($this->data[$offset])
             ? $this->data[$offset]
             : null;
@@ -380,5 +376,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable
     public function count()
     {
         return count($this->data);
+    }
+
+    // JsonSerializable
+
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 }

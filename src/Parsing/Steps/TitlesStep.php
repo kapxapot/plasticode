@@ -44,7 +44,7 @@ class TitlesStep implements ParsingStepInterface
         return $context;
     }
 
-    private function parseLines(array $lines, Collection $contents) : array
+    private function parseLines(array $lines, Collection &$contents) : array
     {
         $results = [];
         $count = $this->initCount();
@@ -55,7 +55,7 @@ class TitlesStep implements ParsingStepInterface
             if (strlen($line) > 0) {
                 $line = preg_replace_callback(
                     $this->getPattern(),
-                    function ($matches) use ($contents, &$count) {
+                    function ($matches) use (&$contents, &$count) {
                         return $this->parseLine($matches, $contents, $count);
                     },
                     $line
@@ -85,7 +85,7 @@ class TitlesStep implements ParsingStepInterface
         return '/^(\|' . $r . '|#' . $r . '\s+)(.*)$/';
     }
 
-    private function parseLine(array $matches, Collection $contents, array &$count) : string
+    private function parseLine(array $matches, Collection &$contents, array &$count) : string
     {
         $sticks = trim($matches[1]);
         $content = trim($matches[2], ' |');
@@ -119,7 +119,7 @@ class TitlesStep implements ParsingStepInterface
         $contentsLine = new ContentsItem($level - 1, $label, $content->text);
 
         if ($withContents) {
-            $contents->add($contentsLine);
+            $contents = $contents->add($contentsLine);
         }
 
         return $this->renderer->component('subtitle', $contentsLine);
