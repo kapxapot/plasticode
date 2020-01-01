@@ -72,23 +72,24 @@ abstract class Model implements \ArrayAccess
         if (!self::$initialized) {
             // hack for getSettings()
             self::$container = new Contained($container);
-            
+
             self::$db = self::$container->db;
-            self::$auth = self::$container->auth;
-            self::$linker = self::$container->linker;
-            self::$cases = self::$container->cases;
-            self::$parser = self::$container->parser;
             
             self::$userRepository = self::$container->userRepository;
             self::$roleRepository = self::$container->roleRepository;
             self::$menuItemRepository = self::$container->menuItemRepository;
+            
+            self::$auth = self::$container->auth;
+            self::$linker = self::$container->linker;
+            self::$cases = self::$container->cases;
+            self::$parser = self::$container->parser;
 
             self::$initialized = true;
         }
     }
 
     /**
-     * Create instance
+     * Creates instance.
      *
      * @param array|\ORM $obj
      */
