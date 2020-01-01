@@ -11,7 +11,7 @@ use Plasticode\Models\User;
 use Plasticode\Util\Strings;
 use Psr\Container\ContainerInterface;
 
-abstract class Model implements \ArrayAccess
+class Model implements \ArrayAccess, \JsonSerializable
 {
     /**
      * DI container wrapper (!)
@@ -246,6 +246,11 @@ abstract class Model implements \ArrayAccess
         return $this->obj instanceof \ORM
             ? $this->obj->asArray()
             : $this->obj;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
     
     public function offsetSet($offset, $value)
