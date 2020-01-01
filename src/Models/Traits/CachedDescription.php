@@ -37,7 +37,7 @@ trait CachedDescription
                 }
 
                 if (strlen($cache) > 0) {
-                    $parsed = @json_decode($cache);
+                    $parsed = ParsingContext::fromJson($cache);
                 }
                 
                 if ($parsed instanceof ParsingContext) {

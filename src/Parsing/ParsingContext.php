@@ -32,6 +32,29 @@ class ParsingContext
         $this->contents = Collection::makeEmpty();
     }
 
+    public static function fromJson(string $json) : self
+    {
+        $array = @json_decode($json, true);
+
+        $context = new static($array['text'] ?? null);
+
+        $context->contents = Collection::make(
+            array_map(
+                function ($item) {
+                    return new ContentsItem(...array_values($item));
+                },
+                $array['contents'] ?? []
+            )
+        );
+
+        $context->largeImages = $array['largeImages'] ?? [];
+        $context->images = $array['images'] ?? [];
+        $context->videos = $array['videos'] ?? [];
+        $context->updatedAt = $array['updatedAt'] ?? null;
+
+        return $context;
+    }
+
     public function largeImage() : ?string
     {
         return Arrays::first($this->largeImages);
