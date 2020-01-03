@@ -38,41 +38,49 @@ final class TitlesStepTest extends TestCase
 
         $resultLines = $context->getLines();
 
+        $this->assertEquals(count($lines), count($resultLines));
+
         $this->assertEquals(
             [
-                count($lines),
                 '<p class="subtitle subtitle1" id="1">Title</p>',
                 '[b]Hello[/b]',
                 '<p class="subtitle subtitle1" id="2">Some more</p>',
-                'Yay text lol',
-                1,
-                '1',
-                'Title',
-                1,
-                '2',
-                'Some more',
-                0,
-                0,
-                0,
-                null
+                'Yay text lol'
             ],
+            $resultLines
+        );
+
+        $this->assertCount(2, $context->contents);
+
+        $contents1 = $context->contents[0];
+        $contents2 = $context->contents[1];
+
+        $this->assertEquals(
+            [1, '1', 'Title'],
             [
-                count($resultLines),
-                $resultLines[0],
-                $resultLines[1],
-                $resultLines[2],
-                $resultLines[3],
-                $context->contents->first()->level,
-                $context->contents->first()->label,
-                $context->contents->first()->text,
-                $context->contents->skip(1)->first()->level,
-                $context->contents->skip(1)->first()->label,
-                $context->contents->skip(1)->first()->text,
-                count($context->largeImages),
-                count($context->images),
-                count($context->videos),
-                $context->updatedAt
+                $contents1->level,
+                $contents1->label,
+                $contents1->text
             ]
         );
+
+        $this->assertEquals(
+            [1, '2', 'Some more'],
+            [
+                $contents2->level,
+                $contents2->label,
+                $contents2->text
+            ]
+        );
+
+        $this->assertEmpty($context->largeImages);
+        $this->assertEmpty($context->images);
+        $this->assertEmpty($context->videos);
+
+        $this->assertNull($context->largeImage());
+        $this->assertNull($context->image());
+        $this->assertNull($context->video());
+
+        $this->assertNull($context->updatedAt);
     }
 }

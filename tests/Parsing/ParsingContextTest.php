@@ -48,39 +48,40 @@ final class ParsingContextTest extends TestCase
 
         $context = ParsingContext::fromJson($json);
 
+        $this->assertEquals('some text', $context->text);
+
+        $this->assertCount(2, $context->contents);
+
+        $contents1 = $context->contents[0];
+        $contents2 = $context->contents[1];
+
         $this->assertEquals(
+            [1, '1', 'Hey'],
             [
-                'some text',
-                1,
-                '1',
-                'Hey',
-                1,
-                '2',
-                'Yay',
-                'largeImage1',
-                'largeImage2',
-                'image1',
-                'image2',
-                'video1',
-                'video2',
-                'imma date'
-            ],
-            [
-                $context->text,
-                $context->contents->first()->level,
-                $context->contents->first()->label,
-                $context->contents->first()->text,
-                $context->contents->skip(1)->first()->level,
-                $context->contents->skip(1)->first()->label,
-                $context->contents->skip(1)->first()->text,
-                $context->largeImages[0],
-                $context->largeImages[1],
-                $context->images[0],
-                $context->images[1],
-                $context->videos[0],
-                $context->videos[1],
-                $context->updatedAt
+                $contents1->level,
+                $contents1->label,
+                $contents1->text
             ]
         );
+
+        $this->assertEquals(
+            [1, '2', 'Yay'],
+            [
+                $contents2->level,
+                $contents2->label,
+                $contents2->text
+            ]
+        );
+
+        $this->assertEquals(['largeImage1', 'largeImage2'], $context->largeImages);
+        $this->assertEquals('largeImage1', $context->largeImage());
+
+        $this->assertEquals(['image1', 'image2'], $context->images);
+        $this->assertEquals('image1', $context->image());
+
+        $this->assertEquals(['video1', 'video2'], $context->videos);
+        $this->assertEquals('video1', $context->video());
+
+        $this->assertEquals('imma date', $context->updatedAt);
     }
 }
