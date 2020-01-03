@@ -7,7 +7,10 @@ use Plasticode\Collection;
 
 final class CollectionTest extends TestCase
 {
-    /** @dataProvider flattenProvider */
+    /**
+     * @covers Collection
+     * @dataProvider flattenProvider
+     */
     public function testFlatten(Collection $original, Collection $expected) : void
     {
         $actual = $original->flatten();
@@ -60,7 +63,10 @@ final class CollectionTest extends TestCase
         ];
     }
 
-    /** @dataProvider jsonEncodeProvider */
+    /**
+     * @covers Collection
+     * @dataProvider jsonEncodeProvider
+     */
     public function testJsonEncode(Collection $original, array $expected) : void
     {
         $actual = json_encode($original);

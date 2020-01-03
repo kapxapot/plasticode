@@ -12,6 +12,9 @@ use Slim\Views\Twig;
 
 final class TitlesStepTest extends TestCase
 {
+    /**
+     * @covers TitlesStep
+     */
     public function testParse() : void
     {
         $view = new Twig('views/bootstrap3/', ['debug' => true]);

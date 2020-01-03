@@ -7,7 +7,10 @@ use Plasticode\Util\Strings;
 
 final class StringsTest extends TestCase
 {
-    /** @dataProvider alphaNumProvider */
+    /**
+     * @covers Strings
+     * @dataProvider alphaNumProvider
+     */
     public function testToAlphaNum(?string $original, ?string $expected): void
     {
         $this->assertEquals(
@@ -26,7 +29,10 @@ final class StringsTest extends TestCase
         ];
     }
 
-    /** @dataProvider hashTagsProvider */
+    /**
+     * @covers Strings
+     * @dataProvider hashTagsProvider
+     */
     public function testHashTags(array $original, string $expected): void
     {
         $this->assertEquals(
@@ -43,7 +49,10 @@ final class StringsTest extends TestCase
         ];
     }
 
-    /** @dataProvider normalizeProvider */
+    /**
+     * @covers Strings
+     * @dataProvider normalizeProvider
+     */
     public function testNormalize(?string $original, ?string $expected) : void
     {
         $this->assertEquals(

@@ -7,7 +7,10 @@ use Plasticode\Util\Convert;
 
 final class ConvertTest extends TestCase
 {
-    /** @dataProvider toBitProvider */
+    /**
+     * @covers Convert
+     * @dataProvider toBitProvider
+     */
     public function testToBit(?bool $source, int $expected): void
     {
         $actual = Convert::toBit($source);

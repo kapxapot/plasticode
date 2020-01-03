@@ -7,7 +7,10 @@ use Plasticode\Models\Model;
 
 final class ModelTest extends TestCase
 {
-    /** @dataProvider jsonEncodeProvider */
+    /**
+     * @covers Model
+     * @dataProvider jsonEncodeProvider
+     */
     public function testJsonEncode(Model $original, array $expected) : void
     {
         $actual = json_encode($original);

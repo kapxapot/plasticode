@@ -7,7 +7,10 @@ use Plasticode\Util\Text;
 
 final class TextTest extends TestCase
 {
-    /** @dataProvider toLinesProvider */
+    /**
+     * @covers Text
+     * @dataProvider toLinesProvider
+     */
     public function testToLines(?string $original, array $expected): void
     {
         $this->assertEquals(
