@@ -8,6 +8,7 @@ use Plasticode\Parsing\ContentsItem;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Parser;
 use Plasticode\Parsing\ParsingContext;
+use Plasticode\Parsing\TitlesContext;
 
 class TitlesStep implements ParsingStepInterface
 {
@@ -33,21 +34,22 @@ class TitlesStep implements ParsingStepInterface
     {
         $context = clone $context;
 
-        $contents = Collection::makeEmpty();
+        $titlesContext = new TitlesContext(self::MIN_LEVEL, self::MAX_LEVEL);
 
-        $lines = $context->getLines();
-        $lines = $this->parseLines($lines, $contents);
+        $parsedLines = $this->parseLines(
+            $context->getLines(),
+            $titlesContext
+        );
         
-        $context->setLines($lines);
-        $context->contents = $contents;
+        $context->setLines($parsedLines);
+        $context->contents = $titlesContext->getContents();
         
         return $context;
     }
 
-    private function parseLines(array $lines, Collection &$contents) : array
+    private function parseLines(array $lines, TitlesContext &$context) : array
     {
         $results = [];
-        $count = $this->initCount();
 
         foreach ($lines as $line) {
             $line = trim($line);
@@ -55,8 +57,8 @@ class TitlesStep implements ParsingStepInterface
             if (strlen($line) > 0) {
                 $line = preg_replace_callback(
                     $this->getPattern(),
-                    function ($matches) use (&$contents, &$count) {
-                        return $this->parseLine($matches, $contents, $count);
+                    function ($matches) use (&$context) {
+                        return $this->parseLine($matches, $context);
                     },
                     $line
                 );
@@ -68,24 +70,13 @@ class TitlesStep implements ParsingStepInterface
         return $results;
     }
 
-    private function initCount() : array
-    {
-        $count = [];
-
-        for ($i = self::MIN_LEVEL; $i <= self::MAX_LEVEL; $i++) {
-            $count[$i] = 0;
-        }
-
-        return $count;
-    }
-
     private function getPattern() : string
     {
         $r = '{' . self::MIN_LEVEL . ',' . self::MAX_LEVEL . '}';
         return '/^(\|' . $r . '|#' . $r . '\s+)(.*)$/';
     }
 
-    private function parseLine(array $matches, Collection &$contents, array &$count) : string
+    private function parseLine(array $matches, TitlesContext &$context) : string
     {
         $sticks = trim($matches[1]);
         $content = trim($matches[2], ' |');
@@ -101,15 +92,11 @@ class TitlesStep implements ParsingStepInterface
         $label = null;
 
         if ($withContents) {
-            $count[$level]++;
-            
-            for ($i = $level + 1; $i <= self::MAX_LEVEL; $i++) {
-                $count[$i] = 0;
-            }
+            $context->incCount($level);
 
             $label = implode(
                 ContentsItem::LABEL_DELIMITER,
-                array_slice($count, 0, $level - self::MIN_LEVEL + 1)
+                $context->getCountSlice($level)
             );
         }
         
@@ -119,7 +106,7 @@ class TitlesStep implements ParsingStepInterface
         $contentsLine = new ContentsItem($level - 1, $label, $content->text);
 
         if ($withContents) {
-            $contents = $contents->add($contentsLine);
+            $context->addContents($contentsLine);
         }
 
         return $this->renderer->component('subtitle', $contentsLine);
