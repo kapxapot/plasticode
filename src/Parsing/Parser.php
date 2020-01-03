@@ -5,11 +5,6 @@ namespace Plasticode\Parsing;
 use Plasticode\Config\Interfaces\ParsingConfigInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
-use Plasticode\Parsing\Steps\BrsToPsStep;
-use Plasticode\Parsing\Steps\CleanupStep;
-use Plasticode\Parsing\Steps\ReplacesStep;
-use Plasticode\Parsing\Steps\TitlesStep;
-use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 use Plasticode\Util\Text;
 use Webmozart\Assert\Assert;
 
@@ -28,30 +23,6 @@ class Parser
     {
         $this->config = $config;
         $this->renderer = $renderer;
-
-        $this->initPipeline();
-    }
-
-    /**
-     * Init default parsing steps pipeline.
-     *
-     * @return self
-     */
-    protected function initPipeline() : self
-    {
-        return $this->setPipeline(
-            [
-                new TitlesStep($this->renderer, $this),
-                new MarkdownParser($this->renderer),
-                new NewLinesToBrsStep(),
-                //new BracketContainersParser(),
-                //new BracketsParser(),
-                new ReplacesStep($this->config),
-                //new DoubleBracketsParser(),
-                new BrsToPsStep(),
-                new CleanupStep($this->config)
-            ]
-        );
     }
 
     public function addStep(ParsingStepInterface $step) : self
@@ -131,7 +102,7 @@ class Parser
             return null;
         }
 
-        $context = new ParsingContext($text);
+        $context = ParsingContext::fromText($text);
 
         foreach ($this->pipeline as $step) {
             $context = $step->parse($context);

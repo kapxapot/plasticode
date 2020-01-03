@@ -26,17 +26,32 @@ class ParsingContext
     /** @var string */
     public $updatedAt;
 
-    public function __construct(?string $text)
+    private function __construct()
     {
-        $this->text = $text;
         $this->contents = Collection::makeEmpty();
+    }
+
+    public static function fromText(string $text) : self
+    {
+        $context = new static();
+        $context->text = $text;
+
+        return $context;
+    }
+
+    public static function fromLines(array $lines) : self
+    {
+        $context = new static();
+        $context->setLines($lines);
+
+        return $context;
     }
 
     public static function fromJson(string $json) : self
     {
         $array = @json_decode($json, true);
 
-        $context = new static($array['text'] ?? null);
+        $context = self::fromText($array['text']);
 
         $context->contents = Collection::make(
             array_map(

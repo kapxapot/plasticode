@@ -12,7 +12,8 @@ final class ParsingContextTest extends TestCase
 {
     public function testJsonEncode() : void
     {
-        $context = new ParsingContext('some text');
+        $context = ParsingContext::fromText('some text');
+        
         $context->contents = Collection::make(
             [
                 new ContentsItem(1, '1', 'Hey'),

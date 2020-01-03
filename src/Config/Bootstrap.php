@@ -3,13 +3,19 @@
 namespace Plasticode\Config;
 
 use Plasticode\IO\File;
+use Plasticode\Parsing\MarkdownParser;
+use Plasticode\Parsing\Steps\BrsToPsStep;
+use Plasticode\Parsing\Steps\CleanupStep;
+use Plasticode\Parsing\Steps\NewLinesToBrsStep;
+use Plasticode\Parsing\Steps\ReplacesStep;
+use Plasticode\Parsing\Steps\TitlesStep;
 use Plasticode\Twig\Extensions\AccessRightsExtension;
 use Psr\Container\ContainerInterface;
-use Slim\Collection;
+use Slim\Collection as SlimCollection;
 
 class Bootstrap
 {
-    /** @var \Slim\Collection */
+    /** @var SlimCollection */
     protected $settings;
 
     /**
@@ -26,7 +32,7 @@ class Bootstrap
      */
     protected $dir;
     
-    public function __construct(Collection $settings, string $dir)
+    public function __construct(SlimCollection $settings, string $dir)
     {
         $this->settings = $settings;
         $this->dbSettings = $this->settings['db'];
@@ -67,8 +73,6 @@ class Bootstrap
             'auth' => \Plasticode\Auth\Auth::class,
             'access' => \Plasticode\Auth\Access::class,
             'validator' => \Plasticode\Validation\Validator::class,
-            'decorator' => \Plasticode\Core\Decorator::class,
-            'builder' => \Plasticode\Core\Builder::class,
             'linker' => \Plasticode\Core\Linker::class,
 
             'twitch' => \Plasticode\External\Twitch::class,
@@ -350,13 +354,44 @@ class Bootstrap
             'parserConfig' => function (ContainerInterface $container) {
                 return new \Plasticode\Config\Parsing();
             },
+
+            'lineParser' => function (ContainerInterface $container) {
+                $parser = new \Plasticode\Parsing\Parser(
+                    $container->parserConfig,
+                    $container->renderer
+                );
+
+                $parser->setPipeline(
+                    [
+                        //new BracketsParser(),
+                        //new DoubleBracketsParser(),
+                    ]
+                );
+
+                return $parser;
+            },
             
             'parser' => function (ContainerInterface $container) {
-                return new \Plasticode\Parsing\Parser(
+                $parser = new \Plasticode\Parsing\Parser(
                     $container->parserConfig,
-                    $container->renderer,
-                    $container->linker
+                    $container->renderer
                 );
+
+                $parser->setPipeline(
+                    [
+                        new TitlesStep($container->renderer, $container->lineParser),
+                        new MarkdownParser($container->renderer),
+                        new NewLinesToBrsStep(),
+                        //new BracketContainersParser(),
+                        //new BracketsParser(),
+                        new ReplacesStep($container->parserConfig),
+                        //new DoubleBracketsParser(),
+                        new BrsToPsStep(),
+                        new CleanupStep($container->parserConfig)
+                    ]
+                );
+
+                return $parser;
             },
 
             'dispatcher' => function (ContainerInterface $container) {
