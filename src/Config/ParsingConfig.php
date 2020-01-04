@@ -5,7 +5,7 @@ namespace Plasticode\Config;
 use Plasticode\Config\Interfaces\ParsingConfigInterface;
 use Plasticode\Util\Text;
 
-class Parsing implements ParsingConfigInterface
+class ParsingConfig implements ParsingConfigInterface
 {
     public function getCleanupReplaces() : array
     {

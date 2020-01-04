@@ -52,13 +52,13 @@ class Bootstrap
             'authToken' => \Plasticode\Models\AuthToken::class,
             'menuItem' => \Plasticode\Models\MenuItem::class,
 
-            'captchaConfig' => \Plasticode\Config\Captcha::class,
-            'parserConfig' => \Plasticode\Config\Parsing::class,
+            'captchaConfig' => \Plasticode\Config\CaptchaConfig::class,
+            'parsingConfig' => \Plasticode\Config\ParsingConfig::class,
+            'localizationConfig' => \Plasticode\Config\LocalizationConfig::class,
 
             'db' => \Plasticode\Data\Db::class,
             'cache' => \Plasticode\Core\Cache::class,
             'cases' => \Plasticode\Util\Cases::class,
-            'localization' => \Plasticode\Config\Localization::class,
         ];
     }
     
@@ -181,7 +181,7 @@ class Bootstrap
             },
             
             'captchaConfig' => function (ContainerInterface $container) {
-                return new \Plasticode\Config\Captcha();
+                return new \Plasticode\Config\CaptchaConfig();
             },
             
             'captcha' => function (ContainerInterface $container) {
@@ -293,13 +293,13 @@ class Bootstrap
                 return new \Plasticode\Core\Session($name);
             },
             
-            'localization' => function (ContainerInterface $container) {
-                return new \Plasticode\Config\Localization();
+            'localizationConfig' => function (ContainerInterface $container) {
+                return new \Plasticode\Config\LocalizationConfig();
             },
             
             'translator' => function (ContainerInterface $container) {
                 $lang = $this->settings['view_globals']['lang'] ?? 'ru';
-                $loc = $container->localization->get($lang);
+                $loc = $container->localizationConfig->get($lang);
                 
                 return new \Plasticode\Core\Translator($loc);
             },
@@ -350,14 +350,10 @@ class Bootstrap
             'linker' => function (ContainerInterface $container) {
                 return new \Plasticode\Core\Linker($container);
             },
-            
-            'parserConfig' => function (ContainerInterface $container) {
-                return new \Plasticode\Config\Parsing();
-            },
 
             'lineParser' => function (ContainerInterface $container) {
                 $parser = new \Plasticode\Parsing\Parser(
-                    $container->parserConfig,
+                    $container->parsingConfig,
                     $container->renderer
                 );
 
@@ -371,9 +367,13 @@ class Bootstrap
                 return $parser;
             },
             
+            'parsingConfig' => function (ContainerInterface $container) {
+                return new \Plasticode\Config\ParsingConfig();
+            },
+            
             'parser' => function (ContainerInterface $container) {
                 $parser = new \Plasticode\Parsing\Parser(
-                    $container->parserConfig,
+                    $container->parsingConfig,
                     $container->renderer
                 );
 
@@ -384,10 +384,10 @@ class Bootstrap
                         new NewLinesToBrsStep(),
                         //new BracketContainersParser(),
                         //new BracketsParser(),
-                        new ReplacesStep($container->parserConfig),
+                        new ReplacesStep($container->parsingConfig),
                         //new DoubleBracketsParser(),
                         new BrsToPsStep(),
-                        new CleanupStep($container->parserConfig)
+                        new CleanupStep($container->parsingConfig)
                     ]
                 );
 

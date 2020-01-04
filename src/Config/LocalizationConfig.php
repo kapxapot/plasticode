@@ -4,7 +4,7 @@ namespace Plasticode\Config;
 
 use Plasticode\Exceptions\InvalidConfigurationException;
 
-class Localization
+class LocalizationConfig
 {
     /**
      * Get localization config for language

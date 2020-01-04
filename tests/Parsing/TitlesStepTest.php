@@ -2,29 +2,19 @@
 
 namespace Plasticode\Tests\Parsing;
 
-use PHPUnit\Framework\TestCase;
-use Plasticode\Config\Parsing as ParsingConfig;
-use Plasticode\Core\Renderer;
-use Plasticode\Parsing\Parser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\TitlesStep;
-use Slim\Views\Twig;
 
-final class TitlesStepTest extends TestCase
+final class TitlesStepTest extends ParsingTestCase
 {
     /**
      * @covers TitlesStep
      */
     public function testParse() : void
     {
-        $view = new Twig('views/bootstrap3/', ['debug' => true]);
+        $lineParser = $this->createParser(); // dummy parser for now
 
-        $renderer = new Renderer($view);
-
-        $config = new ParsingConfig();
-        $lineParser = new Parser($config, $renderer); // dummy parser for now
-
-        $step = new TitlesStep($renderer, $lineParser);
+        $step = new TitlesStep($this->renderer, $lineParser);
 
         $lines = [
             '## Title',
