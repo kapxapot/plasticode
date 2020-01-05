@@ -11,11 +11,11 @@ final class StringsTest extends TestCase
      * @covers Strings
      * @dataProvider alphaNumProvider
      */
-    public function testToAlphaNum(?string $original, ?string $expected): void
+    public function testToAlphaNum(?string $original, ?string $expected) : void
     {
         $this->assertEquals(
-            Strings::toAlphaNum($original),
-            $expected
+            $expected,
+            Strings::toAlphaNum($original)
         );
     }
 
@@ -33,11 +33,11 @@ final class StringsTest extends TestCase
      * @covers Strings
      * @dataProvider hashTagsProvider
      */
-    public function testHashTags(array $original, string $expected): void
+    public function testHashTags(array $original, string $expected) : void
     {
         $this->assertEquals(
-            Strings::hashTags($original),
-            $expected
+            $expected,
+            Strings::hashTags($original)
         );
     }
 
@@ -56,8 +56,8 @@ final class StringsTest extends TestCase
     public function testNormalize(?string $original, ?string $expected) : void
     {
         $this->assertEquals(
-            Strings::normalize($original),
-            $expected
+            $expected,
+            Strings::normalize($original)
         );
     }
 

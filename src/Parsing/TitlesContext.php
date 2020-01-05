@@ -24,6 +24,9 @@ class TitlesContext
 
     public function __construct(int $minLevel, int $maxLevel)
     {
+        Assert::greaterThan($minLevel, 0);
+        Assert::greaterThanEq($maxLevel, $minLevel);
+
         $this->minLevel = $minLevel;
         $this->maxLevel = $maxLevel;
 

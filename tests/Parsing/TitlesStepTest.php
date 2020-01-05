@@ -2,6 +2,7 @@
 
 namespace Plasticode\Tests\Parsing;
 
+use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\TitlesStep;
 
@@ -24,17 +25,23 @@ final class TitlesStepTest extends ParsingTestCase
 
     protected function tearDown() : void
     {
+        unset($this->step);
         unset($this->lineParser);
 
         parent::tearDown();
     }
 
-    private function parseLines(array $lines) : ParsingContext
+    protected function step() : ParsingStepInterface
     {
-        $context = ParsingContext::fromLines($lines);
-        $context = $this->step->parse($context);
+        return $this->step;
+    }
 
-        return $context;
+    /**
+     * @covers TitlesStep
+     */
+    public function testContextIsImmutable() : void
+    {
+        $this->assertContextIsImmutable();
     }
 
     /**
@@ -139,7 +146,6 @@ final class TitlesStepTest extends ParsingTestCase
 
         $context = $this->parseLines($lines);
         $resultLines = $context->getLines();
-
 
         $this->assertEquals(
             [

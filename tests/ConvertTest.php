@@ -11,11 +11,11 @@ final class ConvertTest extends TestCase
      * @covers Convert
      * @dataProvider toBitProvider
      */
-    public function testToBit(?bool $source, int $expected): void
+    public function testToBit(?bool $source, int $expected) : void
     {
         $actual = Convert::toBit($source);
 
-        $this->assertEquals($actual, $expected);
+        $this->assertEquals($expected, $actual);
     }
 
     public function toBitProvider()

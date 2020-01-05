@@ -5,7 +5,9 @@ namespace Plasticode\Tests\Parsing;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Config\ParsingConfig;
 use Plasticode\Core\Renderer;
+use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Parser;
+use Plasticode\Parsing\ParsingContext;
 use Slim\Views\Twig;
 
 abstract class ParsingTestCase extends TestCase
@@ -24,6 +26,7 @@ abstract class ParsingTestCase extends TestCase
         parent::setUp();
 
         $this->config = new ParsingConfig();
+        
         $this->view = new Twig('views/bootstrap3/', ['debug' => true]);
         $this->renderer = new Renderer($this->view);
     }
@@ -40,5 +43,23 @@ abstract class ParsingTestCase extends TestCase
     protected function createParser() : Parser
     {
         return new Parser($this->config, $this->renderer);
+    }
+
+    protected function parseLines(array $lines) : ParsingContext
+    {
+        $context = ParsingContext::fromLines($lines);
+        $context = $this->step()->parse($context);
+
+        return $context;
+    }
+
+    protected abstract function step() : ParsingStepInterface;
+
+    protected function assertContextIsImmutable() : void
+    {
+        $context = ParsingContext::fromText('');
+        $newContext = $this->step()->parse($context);
+
+        $this->assertNotSame($context, $newContext);
     }
 }

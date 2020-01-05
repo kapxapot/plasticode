@@ -11,11 +11,11 @@ final class TextTest extends TestCase
      * @covers Text
      * @dataProvider toLinesProvider
      */
-    public function testToLines(?string $original, array $expected): void
+    public function testToLines(?string $original, array $expected) : void
     {
         $this->assertEquals(
-            Text::toLines($original),
-            $expected
+            $expected,
+            Text::toLines($original)
         );
     }
 
@@ -28,5 +28,16 @@ final class TextTest extends TestCase
             ['aba', ['aba']],
             ['aba' . PHP_EOL . 'baba', ['aba', 'baba']],
         ];
+    }
+
+    /** @covers Text */
+    public function testNewLinesToBrs() : void
+    {
+        $this->assertEquals(
+            'one<br/>two',
+            Text::newLinesToBrs(
+                Text::fromLines(['one', 'two'])
+            )
+        );
     }
 }

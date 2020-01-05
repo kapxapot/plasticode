@@ -83,7 +83,7 @@ class Text
      */
     public static function newLinesToBrs(string $text) : string
     {
-        return str_replace(['\r\n', '\r', '\n'], self::Br, $text);
+        return str_replace(["\r\n", "\r", "\n"], self::Br, $text);
     }
 
     /**
