@@ -3,7 +3,6 @@
 namespace Plasticode\Tests\Parsing;
 
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
-use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\TitlesStep;
 
 final class TitlesStepTest extends ParsingTestCase
