@@ -45,6 +45,11 @@ abstract class ParsingTestCase extends TestCase
         return new Parser($this->config, $this->renderer);
     }
 
+    protected function parse(string $text) : ParsingContext
+    {
+        return $this->parseLines([$text]);
+    }
+
     protected function parseLines(array $lines) : ParsingContext
     {
         $context = ParsingContext::fromLines($lines);
