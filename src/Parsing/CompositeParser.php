@@ -18,12 +18,21 @@ class CompositeParser extends BaseStep
     protected $renderer;
 
     /** @var ParsingStepInterface[] */
-    private $pipeline = [];
+    private $pipeline;
 
-    public function __construct(ParsingConfigInterface $config, RendererInterface $renderer)
+    /**
+     * Creates composite parser without any steps by default.
+     *
+     * @param ParsingConfigInterface $config
+     * @param RendererInterface $renderer
+     * @param ParsingStepInterface[]|null $pipeline
+     */
+    public function __construct(ParsingConfigInterface $config, RendererInterface $renderer, ?array $pipeline = null)
     {
         $this->config = $config;
         $this->renderer = $renderer;
+
+        $this->setPipeline($pipeline ?? []);
     }
 
     public function addStep(ParsingStepInterface $step) : self

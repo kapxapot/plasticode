@@ -350,34 +350,26 @@ class Bootstrap
             'linker' => function (ContainerInterface $container) {
                 return new \Plasticode\Core\Linker($container);
             },
+            
+            'parsingConfig' => function (ContainerInterface $container) {
+                return new \Plasticode\Config\ParsingConfig();
+            },
 
             'lineParser' => function (ContainerInterface $container) {
-                $parser = new \Plasticode\Parsing\CompositeParser(
+                return new \Plasticode\Parsing\CompositeParser(
                     $container->parsingConfig,
-                    $container->renderer
-                );
-
-                $parser->setPipeline(
+                    $container->renderer,
                     [
                         //new BracketsParser(),
                         //new DoubleBracketsParser(),
                     ]
                 );
-
-                return $parser;
-            },
-            
-            'parsingConfig' => function (ContainerInterface $container) {
-                return new \Plasticode\Config\ParsingConfig();
             },
             
             'parser' => function (ContainerInterface $container) {
-                $parser = new \Plasticode\Parsing\CompositeParser(
+                return new \Plasticode\Parsing\CompositeParser(
                     $container->parsingConfig,
-                    $container->renderer
-                );
-
-                $parser->setPipeline(
+                    $container->renderer,
                     [
                         new TitlesStep($container->renderer, $container->lineParser),
                         new MarkdownParser($container->renderer),
@@ -390,8 +382,6 @@ class Bootstrap
                         new CleanupStep($container->parsingConfig)
                     ]
                 );
-
-                return $parser;
             },
 
             'dispatcher' => function (ContainerInterface $container) {
