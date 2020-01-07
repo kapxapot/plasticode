@@ -13,14 +13,12 @@ class ParsingConfig implements ParsingConfigInterface
             '</p><br/>' => '</p><p>',
             '(<p>)+<p' => '<p',
             '(</p>)+' => '</p>',
-            '<p><div' => '<div',
-            '</div></p>' => '</div>',
+            '<p><(div|figure)' => '<$2',
+            '</(div|figure)></p>' => '</$2>',
             '<br/><div' => '<div',
             '</div><br/>' => '</div>',
-            '<p><ul>' => '<ul>',
-            '</ul></p>' => '</ul>',
-            '<p><figure' => '<figure',
-            '</figure></p>' => '</figure>',
+            '<p><(u|o)l>' => '<$2l>',
+            '</(u|o)l></p>' => '</$2l>',
         ];
     }
 

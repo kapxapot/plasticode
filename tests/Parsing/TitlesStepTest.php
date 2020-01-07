@@ -115,6 +115,7 @@ final class TitlesStepTest extends ParsingTestCase
             '##### Title',
             '###### Title',
             '####### Title',
+            //'## Ima new cool subtitle with [[Tag]]',
         ];
 
         $context = $this->parseLines($lines);
@@ -153,7 +154,7 @@ final class TitlesStepTest extends ParsingTestCase
             $resultLines
         );
 
-        $this->assertCount(0, $context->contents);
+        $this->assertEmpty($context->contents);
     }
 
     /**
@@ -172,6 +173,9 @@ final class TitlesStepTest extends ParsingTestCase
             '|||||Title||',
             '||||||Title||',
             '|||||||Title||',
+            //'||Subtitle ||||| with [[Tag]]||',
+            //'|||Sub | title2||',
+            //'|||Subtitle2 with [[Tag]]||',
         ];
 
         $context = $this->parseLines($lines);

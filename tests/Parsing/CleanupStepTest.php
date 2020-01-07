@@ -47,7 +47,9 @@ final class CleanupStepTest extends ParsingTestCase
                 '<p><p><p>',
                 '</p></p></p>',
                 '<p><ul></ul></p>',
+                '<p><ol></ol></p>',
                 '<p><div></div></p>',
+                '<p><figure></figure></p>',
                 '<br/><div></div><br/>'
             ]
         );
@@ -57,7 +59,9 @@ final class CleanupStepTest extends ParsingTestCase
                 '<p>',
                 '</p>',
                 '<ul></ul>',
+                '<ol></ol>',
                 '<div></div>',
+                '<figure></figure>',
                 '<div></div>'
             ],
             $context->getLines()

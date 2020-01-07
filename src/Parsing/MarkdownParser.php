@@ -60,7 +60,7 @@ class MarkdownParser implements ParsingStepInterface
             if (preg_match('/^(\*|-|\+|(\d+)\.)\s+(.*)$/', trim($line), $matches)) {
                 $itemOrdered = strlen($matches[2]) > 0;
 
-                if (count($list) > 0 && $ordered !== $itemOrdered) {
+                if (!empty($list) && $ordered !== $itemOrdered) {
                     $flush();
                 }
                 
