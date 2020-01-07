@@ -2,13 +2,12 @@
 
 namespace Plasticode\Parsing\Steps;
 
-use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Util\Text;
 
-class BrsToPsStep implements ParsingStepInterface
+class BrsToPsStep extends BaseStep
 {
-    public function parse(ParsingContext $context) : ParsingContext
+    public function parseContext(ParsingContext $context) : ParsingContext
     {
         $context = clone $context;
 

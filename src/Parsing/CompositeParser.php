@@ -5,18 +5,19 @@ namespace Plasticode\Parsing;
 use Plasticode\Config\Interfaces\ParsingConfigInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
+use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Util\Text;
 use Webmozart\Assert\Assert;
 
-class CompositeParser
+class CompositeParser extends BaseStep
 {
-    /** @var \Plasticode\Config\Interfaces\ParsingConfigInterface */
+    /** @var ParsingConfigInterface */
     protected $config;
 
-    /** @var \Plasticode\Core\Interfaces\RendererInterface */
+    /** @var RendererInterface */
     protected $renderer;
 
-    /** @var \Plasticode\Parsing\Interfaces\ParsingStepInterface[] */
+    /** @var ParsingStepInterface[] */
     private $pipeline = [];
 
     public function __construct(ParsingConfigInterface $config, RendererInterface $renderer)
@@ -34,7 +35,7 @@ class CompositeParser
     /**
      * Sets parsing steps pipeline.
      *
-     * @param \Plasticode\Parsing\Interfaces\ParsingStepInterface[] $pipeline
+     * @param ParsingStepInterface[] $pipeline
      * @return self
      */
     public function setPipeline(array $pipeline) : self
@@ -44,14 +45,10 @@ class CompositeParser
     }
     
     /**
+     * TODO: This function must be extracted into a separate parser.
+     * 
      * Cuts the already parsed text by [cut] tag and inserts the link to full text.
      * Otherwise just removes the [cut] tag.
-     *
-     * @param string $text
-     * @param string $url
-     * @param boolean $full
-     * @param string $label
-     * @return string
      */
     public function parseCut(string $text, string $url = null, bool $full = true, string $label = null) : string
     {
@@ -89,20 +86,11 @@ class CompositeParser
     }
 
     /**
-     * Parses text, returns parsing context.
-     * 
-     * This parsing is not final.
-     *
-     * @param string|null $text
-     * @return ParsingContext|null
+     * Executes all parsing steps on the contex one-by-one.
      */
-    public function parse(?string $text) : ?ParsingContext
+    public function parseContext(ParsingContext $context) : ParsingContext
     {
-        if (strlen($text) == 0) {
-            return null;
-        }
-
-        $context = ParsingContext::fromText($text);
+        $context = clone $context;
 
         foreach ($this->pipeline as $step) {
             $context = $step->parse($context);
@@ -112,6 +100,8 @@ class CompositeParser
     }
 
     /**
+     * TODO: This function must be extracted into a separate parser.
+     * 
      * Override this to render placeholder links (double brackets, etc.).
      * 
      * Example:

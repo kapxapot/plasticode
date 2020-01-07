@@ -8,7 +8,6 @@ use Plasticode\Config\ParsingConfig;
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Core\Renderer;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
-use Plasticode\Parsing\CompositeParser;
 use Plasticode\Parsing\ParsingContext;
 use Slim\Views\Twig;
 
@@ -42,22 +41,16 @@ abstract class ParsingTestCase extends TestCase
         parent::tearDown();
     }
 
-    protected function createParser() : CompositeParser
-    {
-        return new CompositeParser($this->config, $this->renderer);
-    }
-
     protected function parse(string $text) : ParsingContext
     {
-        return $this->parseLines([$text]);
+        return $this->step()->parse($text);
     }
 
     protected function parseLines(array $lines) : ParsingContext
     {
         $context = ParsingContext::fromLines($lines);
-        $context = $this->step()->parse($context);
 
-        return $context;
+        return $this->step()->parseContext($context);
     }
 
     protected abstract function step() : ParsingStepInterface;
@@ -65,7 +58,7 @@ abstract class ParsingTestCase extends TestCase
     protected function assertContextIsImmutable() : void
     {
         $context = ParsingContext::fromText('');
-        $newContext = $this->step()->parse($context);
+        $newContext = $this->step()->parseContext($context);
 
         $this->assertNotSame($context, $newContext);
     }

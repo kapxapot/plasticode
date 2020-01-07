@@ -7,7 +7,7 @@ use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 
 final class NewLinesToBrsStepTest extends ParsingTestCase
 {
-    /** @var \Plasticode\Parsing\Steps\NewLinesToBrsStep */
+    /** @var NewLinesToBrsStep */
     private $step;
 
     protected function setUp() : void

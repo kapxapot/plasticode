@@ -3,11 +3,11 @@
 namespace Plasticode\Parsing;
 
 use Plasticode\Core\Interfaces\RendererInterface;
-use Plasticode\Parsing\Interfaces\ParsingStepInterface;
+use Plasticode\Parsing\Steps\BaseStep;
 
-class MarkdownParser implements ParsingStepInterface
+class MarkdownParser extends BaseStep
 {
-    /** @var \Plasticode\Core\Interfaces\RendererInterface */
+    /** @var RendererInterface */
     private $renderer;
 
     public function __construct(RendererInterface $renderer)
@@ -15,7 +15,7 @@ class MarkdownParser implements ParsingStepInterface
         $this->renderer = $renderer;
     }
 
-    public function parse(ParsingContext $context) : ParsingContext
+    public function parseContext(ParsingContext $context) : ParsingContext
     {
         $context = clone $context;
 

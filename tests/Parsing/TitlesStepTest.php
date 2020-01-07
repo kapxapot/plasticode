@@ -8,7 +8,7 @@ use Plasticode\Parsing\Steps\TitlesStep;
 
 final class TitlesStepTest extends ParsingTestCase
 {
-    /** @var CompositeParser */
+    /** @var ParsingStepInterface */
     private $lineParser;
 
     /** @var TitlesStep */
@@ -18,7 +18,8 @@ final class TitlesStepTest extends ParsingTestCase
     {
         parent::setUp();
 
-        $this->lineParser = $this->createParser(); // dummy parser for now
+        // dummy parser for now
+        $this->lineParser = new CompositeParser($this->config, $this->renderer);
 
         $this->step = new TitlesStep($this->renderer, $this->lineParser);
     }

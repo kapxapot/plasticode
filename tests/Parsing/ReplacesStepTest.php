@@ -7,7 +7,7 @@ use Plasticode\Parsing\Steps\ReplacesStep;
 
 final class ReplacesStepTest extends ParsingTestCase
 {
-    /** @var \Plasticode\Parsing\Steps\ReplacesStep */
+    /** @var ReplacesStep */
     private $step;
 
     protected function setUp() : void

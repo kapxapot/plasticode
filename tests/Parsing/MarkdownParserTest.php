@@ -7,7 +7,7 @@ use Plasticode\Parsing\MarkdownParser;
 
 final class MarkdownParserTest extends ParsingTestCase
 {
-    /** @var \Plasticode\Parsing\MarkdownParser */
+    /** @var MarkdownParser */
     private $parser;
 
     protected function setUp() : void

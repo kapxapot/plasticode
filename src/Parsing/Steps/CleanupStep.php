@@ -3,13 +3,12 @@
 namespace Plasticode\Parsing\Steps;
 
 use Plasticode\Config\Interfaces\ParsingConfigInterface;
-use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Util\Text;
 
-class CleanupStep implements ParsingStepInterface
+class CleanupStep extends BaseStep
 {
-    /** @var \Plasticode\Config\Interfaces\ParsingConfigInterface */
+    /** @var ParsingConfigInterface */
     protected $config;
 
     public function __construct(ParsingConfigInterface $config)
@@ -17,7 +16,7 @@ class CleanupStep implements ParsingStepInterface
         $this->config = $config;
     }
 
-    public function parse(ParsingContext $context) : ParsingContext
+    public function parseContext(ParsingContext $context) : ParsingContext
     {
         $context = clone $context;
 

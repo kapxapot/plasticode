@@ -5,11 +5,10 @@ namespace Plasticode\Parsing\Steps;
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\ContentsItem;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
-use Plasticode\Parsing\CompositeParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\TitlesContext;
 
-class TitlesStep implements ParsingStepInterface
+class TitlesStep extends BaseStep
 {
     private const MIN_LEVEL = 2;
     private const MAX_LEVEL = 6;
@@ -17,19 +16,19 @@ class TitlesStep implements ParsingStepInterface
     /** @var RendererInterface */
     private $renderer;
 
-    /** @var CompositeParser */
+    /** @var ParsingStepInterface */
     private $lineParser;
 
     /**
-     * @param CompositeParser $lineParser Parser of [] and [[]] brackets
+     * @param ParsingStepInterface $lineParser Parser of [] and [[]] brackets
      */
-    public function __construct(RendererInterface $renderer, CompositeParser $lineParser)
+    public function __construct(RendererInterface $renderer, ParsingStepInterface $lineParser)
     {
         $this->renderer = $renderer;
         $this->lineParser = $lineParser;
     }
 
-    public function parse(ParsingContext $context) : ParsingContext
+    public function parseContext(ParsingContext $context) : ParsingContext
     {
         $context = clone $context;
 
@@ -100,9 +99,9 @@ class TitlesStep implements ParsingStepInterface
         }
         
         // parse brackets (!)
-        $content = $this->lineParser->parse($content);
+        $parsedContent = $this->lineParser->parse($content);
 
-        $contentsLine = new ContentsItem($level - 1, $label, $content->text);
+        $contentsLine = new ContentsItem($level - 1, $label, $parsedContent->text);
 
         if ($withContents) {
             $context->addContents($contentsLine);

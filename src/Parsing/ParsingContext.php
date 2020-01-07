@@ -31,9 +31,17 @@ class ParsingContext
         $this->contents = Collection::makeEmpty();
     }
 
-    public static function fromText(string $text) : self
+    /**
+     * Creates empty context with null text.
+     */
+    private static function empty() : self
     {
-        $context = new static();
+        return new static();
+    }
+
+    public static function fromText(?string $text) : self
+    {
+        $context = self::empty();
         $context->text = $text;
 
         return $context;
@@ -41,7 +49,7 @@ class ParsingContext
 
     public static function fromLines(array $lines) : self
     {
-        $context = new static();
+        $context = self::empty();
         $context->setLines($lines);
 
         return $context;
@@ -68,6 +76,11 @@ class ParsingContext
         $context->updatedAt = $array['updatedAt'] ?? null;
 
         return $context;
+    }
+
+    public function isEmpty() : bool
+    {
+        return is_null($this->text);
     }
 
     public function largeImage() : ?string

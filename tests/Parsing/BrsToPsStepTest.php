@@ -7,7 +7,7 @@ use Plasticode\Parsing\Steps\BrsToPsStep;
 
 final class BrsToPsStepTest extends ParsingTestCase
 {
-    /** @var \Plasticode\Parsing\Steps\BrsToPsStep */
+    /** @var BrsToPsStep */
     private $step;
 
     protected function setUp() : void
