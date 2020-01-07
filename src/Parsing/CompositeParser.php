@@ -8,7 +8,7 @@ use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Util\Text;
 use Webmozart\Assert\Assert;
 
-class Parser
+class CompositeParser
 {
     /** @var \Plasticode\Config\Interfaces\ParsingConfigInterface */
     protected $config;

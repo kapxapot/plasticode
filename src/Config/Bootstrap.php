@@ -352,7 +352,7 @@ class Bootstrap
             },
 
             'lineParser' => function (ContainerInterface $container) {
-                $parser = new \Plasticode\Parsing\Parser(
+                $parser = new \Plasticode\Parsing\CompositeParser(
                     $container->parsingConfig,
                     $container->renderer
                 );
@@ -372,7 +372,7 @@ class Bootstrap
             },
             
             'parser' => function (ContainerInterface $container) {
-                $parser = new \Plasticode\Parsing\Parser(
+                $parser = new \Plasticode\Parsing\CompositeParser(
                     $container->parsingConfig,
                     $container->renderer
                 );

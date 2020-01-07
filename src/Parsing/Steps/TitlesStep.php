@@ -2,11 +2,10 @@
 
 namespace Plasticode\Parsing\Steps;
 
-use Plasticode\Collection;
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\ContentsItem;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
-use Plasticode\Parsing\Parser;
+use Plasticode\Parsing\CompositeParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\TitlesContext;
 
@@ -15,16 +14,16 @@ class TitlesStep implements ParsingStepInterface
     private const MIN_LEVEL = 2;
     private const MAX_LEVEL = 6;
 
-    /** @var \Plasticode\Core\Interfaces\RendererInterface */
+    /** @var RendererInterface */
     private $renderer;
 
-    /** @var \Plasticode\Parsing\Parser */
+    /** @var CompositeParser */
     private $lineParser;
 
     /**
-     * @param Parser $lineParser Parser of [] and [[]] brackets
+     * @param CompositeParser $lineParser Parser of [] and [[]] brackets
      */
-    public function __construct(RendererInterface $renderer, Parser $lineParser)
+    public function __construct(RendererInterface $renderer, CompositeParser $lineParser)
     {
         $this->renderer = $renderer;
         $this->lineParser = $lineParser;

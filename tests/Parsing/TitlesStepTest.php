@@ -2,15 +2,16 @@
 
 namespace Plasticode\Tests\Parsing;
 
+use Plasticode\Parsing\CompositeParser;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Steps\TitlesStep;
 
 final class TitlesStepTest extends ParsingTestCase
 {
-    /** @var \Plasticode\Parsing\Parser */
+    /** @var CompositeParser */
     private $lineParser;
 
-    /** @var \Plasticode\Parsing\Steps\TitlesStep */
+    /** @var TitlesStep */
     private $step;
 
     protected function setUp() : void

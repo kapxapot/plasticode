@@ -3,22 +3,24 @@
 namespace Plasticode\Tests\Parsing;
 
 use PHPUnit\Framework\TestCase;
+use Plasticode\Config\Interfaces\ParsingConfigInterface;
 use Plasticode\Config\ParsingConfig;
+use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Core\Renderer;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
-use Plasticode\Parsing\Parser;
+use Plasticode\Parsing\CompositeParser;
 use Plasticode\Parsing\ParsingContext;
 use Slim\Views\Twig;
 
 abstract class ParsingTestCase extends TestCase
 {
-    /** @var \Plasticode\Config\Interfaces\ParsingConfigInterface */
+    /** @var ParsingConfigInterface */
     protected $config;
 
-    /** @var \Slim\Views\Twig */
+    /** @var Twig */
     private $view;
 
-    /** @var \Plasticode\Core\Interfaces\RendererInterface */
+    /** @var RendererInterface */
     protected $renderer;
 
     protected function setUp() : void
@@ -40,9 +42,9 @@ abstract class ParsingTestCase extends TestCase
         parent::tearDown();
     }
 
-    protected function createParser() : Parser
+    protected function createParser() : CompositeParser
     {
-        return new Parser($this->config, $this->renderer);
+        return new CompositeParser($this->config, $this->renderer);
     }
 
     protected function parse(string $text) : ParsingContext
