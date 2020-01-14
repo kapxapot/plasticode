@@ -19,7 +19,7 @@ final class TitlesStepTest extends ParsingStepTestCase
         parent::setUp();
 
         // dummy parser for now
-        $this->lineParser = new CompositeParser($this->config, $this->renderer);
+        $this->lineParser = new CompositeParser();
 
         $this->step = new TitlesStep($this->renderer, $this->lineParser);
     }

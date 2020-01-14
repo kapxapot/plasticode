@@ -357,16 +357,11 @@ class Bootstrap
             },
 
             'cleanupParser' => function (ContainerInterface $container) {
-                return new CleanupParser(
-                    $container->parsingConfig,
-                    $container->renderer
-                );
+                return new CleanupParser($container->parsingConfig);
             },
 
             'lineParser' => function (ContainerInterface $container) {
                 return new CompositeParser(
-                    $container->parsingConfig,
-                    $container->renderer,
                     [
                         //new BracketsParser(),
                         //new DoubleBracketsParser(),
@@ -376,8 +371,6 @@ class Bootstrap
             
             'parser' => function (ContainerInterface $container) {
                 return new CompositeParser(
-                    $container->parsingConfig,
-                    $container->renderer,
                     [
                         new TitlesStep($container->renderer, $container->lineParser),
                         new MarkdownParser($container->renderer),
@@ -392,11 +385,8 @@ class Bootstrap
             },
 
             'cutParser' => function (ContainerInterface $container) {
-                return new CutParser(
-                    $container->parsingConfig,
-                    $container->renderer,
-                );
-            };
+                return new CutParser($container->cleanupParser);
+            },
 
             'dispatcher' => function (ContainerInterface $container) {
                 return new \Plasticode\Events\EventDispatcher(

@@ -2,35 +2,22 @@
 
 namespace Plasticode\Parsing\Parsers;
 
-use Plasticode\Config\Interfaces\ParsingConfigInterface;
-use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 
 class CompositeParser extends BaseStep
 {
-    /** @var ParsingConfigInterface */
-    protected $config;
-
-    /** @var RendererInterface */
-    protected $renderer;
-
     /** @var ParsingStepInterface[] */
     private $pipeline;
 
     /**
      * Creates composite parser without any steps by default.
      *
-     * @param ParsingConfigInterface $config
-     * @param RendererInterface $renderer
      * @param ParsingStepInterface[]|null $pipeline
      */
-    public function __construct(ParsingConfigInterface $config, RendererInterface $renderer, ?array $pipeline = null)
+    public function __construct(?array $pipeline = null)
     {
-        $this->config = $config;
-        $this->renderer = $renderer;
-
         $this->setPipeline($pipeline ?? []);
     }
 
