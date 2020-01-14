@@ -1,8 +1,9 @@
 <?php
 
-namespace Plasticode\Parsing;
+namespace Plasticode\Parsing\Parsers;
 
 use Plasticode\Core\Interfaces\RendererInterface;
+use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 
 class MarkdownParser extends BaseStep

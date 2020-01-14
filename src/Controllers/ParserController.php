@@ -17,7 +17,7 @@ class ParserController extends Contained
         $context = $this->parser->parse($text);
         $context = $this->parser->renderLinks($context);
 
-        $text = $this->parser->parseCut($context->text);
+        $text = $this->cutParser->full($context->text);
 
         return Response::json($response, ['text' => $text]);
     }

@@ -1,12 +1,12 @@
 <?php
 
-namespace Plasticode\Tests\Parsing;
+namespace Plasticode\Tests\Parsing\Steps;
 
-use Plasticode\Parsing\CompositeParser;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
+use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Parsing\Steps\TitlesStep;
 
-final class TitlesStepTest extends ParsingTestCase
+final class TitlesStepTest extends ParsingStepTestCase
 {
     /** @var ParsingStepInterface */
     private $lineParser;

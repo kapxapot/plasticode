@@ -7,11 +7,9 @@ use Plasticode\Config\Interfaces\ParsingConfigInterface;
 use Plasticode\Config\ParsingConfig;
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Core\Renderer;
-use Plasticode\Parsing\Interfaces\ParsingStepInterface;
-use Plasticode\Parsing\ParsingContext;
 use Slim\Views\Twig;
 
-abstract class ParsingTestCase extends TestCase
+abstract class BaseRenderTestCase extends TestCase
 {
     /** @var ParsingConfigInterface */
     protected $config;
@@ -39,27 +37,5 @@ abstract class ParsingTestCase extends TestCase
         unset($this->config);
 
         parent::tearDown();
-    }
-
-    protected function parse(string $text) : ParsingContext
-    {
-        return $this->step()->parse($text);
-    }
-
-    protected function parseLines(array $lines) : ParsingContext
-    {
-        $context = ParsingContext::fromLines($lines);
-
-        return $this->step()->parseContext($context);
-    }
-
-    protected abstract function step() : ParsingStepInterface;
-
-    protected function assertContextIsImmutable() : void
-    {
-        $context = ParsingContext::fromText('');
-        $newContext = $this->step()->parseContext($context);
-
-        $this->assertNotSame($context, $newContext);
     }
 }

@@ -1,20 +1,20 @@
 <?php
 
-namespace Plasticode\Tests\Parsing;
+namespace Plasticode\Tests\Parsing\Steps;
 
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
-use Plasticode\Parsing\Steps\CleanupStep;
+use Plasticode\Parsing\Steps\ReplacesStep;
 
-final class CleanupStepTest extends ParsingTestCase
+final class ReplacesStepTest extends ParsingStepTestCase
 {
-    /** @var CleanupStep */
+    /** @var ReplacesStep */
     private $step;
 
     protected function setUp() : void
     {
         parent::setUp();
 
-        $this->step = new CleanupStep($this->config);
+        $this->step = new ReplacesStep($this->config);
     }
 
     protected function tearDown() : void
@@ -30,7 +30,7 @@ final class CleanupStepTest extends ParsingTestCase
     }
 
     /**
-     * @covers CleanupStep
+     * @covers ReplacesStep
      */
     public function testContextIsImmutable() : void
     {
@@ -38,31 +38,25 @@ final class CleanupStepTest extends ParsingTestCase
     }
 
     /**
-     * @covers CleanupStep
+     * @covers ReplacesStep
      */
     public function testParse() : void
     {
         $context = $this->parseLines(
             [
-                '<p><p><p>',
-                '</p></p></p>',
-                '<p><ul></ul></p>',
-                '<p><ol></ol></p>',
-                '<p><div></div></p>',
-                '<p><figure></figure></p>',
-                '<br/><div></div><br/>'
+                '[b]Some[/b] text',
+                '[i]with[/i]',
+                'a -- b',
+                'line [s]breaks[/s]'
             ]
         );
 
         $this->assertEquals(
             [
-                '<p>',
-                '</p>',
-                '<ul></ul>',
-                '<ol></ol>',
-                '<div></div>',
-                '<figure></figure>',
-                '<div></div>'
+                '<b>Some</b> text',
+                '<i>with</i>',
+                'a — b',
+                'line <strike>breaks</strike>'
             ],
             $context->getLines()
         );

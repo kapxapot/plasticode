@@ -1,20 +1,20 @@
 <?php
 
-namespace Plasticode\Tests\Parsing;
+namespace Plasticode\Tests\Parsing\Steps;
 
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
-use Plasticode\Parsing\Steps\ReplacesStep;
+use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 
-final class ReplacesStepTest extends ParsingTestCase
+final class NewLinesToBrsStepTest extends ParsingStepTestCase
 {
-    /** @var ReplacesStep */
+    /** @var NewLinesToBrsStep */
     private $step;
 
     protected function setUp() : void
     {
         parent::setUp();
 
-        $this->step = new ReplacesStep($this->config);
+        $this->step = new NewLinesToBrsStep();
     }
 
     protected function tearDown() : void
@@ -30,7 +30,7 @@ final class ReplacesStepTest extends ParsingTestCase
     }
 
     /**
-     * @covers ReplacesStep
+     * @covers NewLinesToBrsStep
      */
     public function testContextIsImmutable() : void
     {
@@ -38,27 +38,22 @@ final class ReplacesStepTest extends ParsingTestCase
     }
 
     /**
-     * @covers ReplacesStep
+     * @covers NewLinesToBrsStep
      */
     public function testParse() : void
     {
         $context = $this->parseLines(
             [
-                '[b]Some[/b] text',
-                '[i]with[/i]',
-                'a -- b',
-                'line [s]breaks[/s]'
+                'Some text',
+                'with',
+                '',
+                'line breaks'
             ]
         );
 
         $this->assertEquals(
-            [
-                '<b>Some</b> text',
-                '<i>with</i>',
-                'a — b',
-                'line <strike>breaks</strike>'
-            ],
-            $context->getLines()
+            'Some text<br/>with<br/><br/>line breaks',
+            $context->text
         );
     }
 }

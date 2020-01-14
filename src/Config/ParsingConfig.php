@@ -43,7 +43,6 @@ class ParsingConfig implements ParsingConfigInterface
             '[/leftblock]' => '</div>',
             '[clear]' => '<div class="clearfix"></div>',
             ' -- ' => ' — ',
-            '[cut]' => Text::Cut,
         ];
     }
 }

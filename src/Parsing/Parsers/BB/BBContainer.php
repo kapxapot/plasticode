@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing;
+namespace Plasticode\Parsing\Parsers\BB;
 
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\Interfaces\MapperInterface;
@@ -12,7 +12,7 @@ use Webmozart\Assert\Assert;
 
 class BBContainer
 {
-    /** @var \Plasticode\Core\Interfaces\RendererInterface */
+    /** @var RendererInterface */
     private $renderer;
 
     /** @var array */
@@ -33,7 +33,7 @@ class BBContainer
         Assert::alnum($tag, 'Tag can contain only alphanumeric characters.');
         Assert::notNull($mapper, 'Mapper can\'t be null.');
 
-        $this->map['$tag'] = $mapper;
+        $this->map[$tag] = $mapper;
     }
 
     private function getMapper(string $tag) : MapperInterface
@@ -49,6 +49,16 @@ class BBContainer
     private function getPattern(string $tag) : string
     {
         return "/\[{$tag}([^\[]*)\](.*)\[\/{$tag}\]/Uis";
+    }
+
+    /**
+     * Returns registered tags.
+     *
+     * @return string[]
+     */
+    public function getTags() : array
+    {
+        return array_keys($this->map);
     }
 
     public function isKnownTag(string $tag) : bool

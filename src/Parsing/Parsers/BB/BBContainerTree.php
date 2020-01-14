@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing;
+namespace Plasticode\Parsing\Parsers\BB;
 
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Util\Arrays;
@@ -8,10 +8,10 @@ use Plasticode\Util\Text;
 
 class BBContainerTree
 {
-    /** @var \Plasticode\Parsing\BBContainer */
+    /** @var BBContainer */
     private $container;
 
-    /** @var \Plasticode\Core\Interfaces\RendererInterface */
+    /** @var RendererInterface */
     protected $renderer;
 
     public function __construct(BBContainer $container, RendererInterface $renderer)
@@ -125,7 +125,7 @@ class BBContainerTree
         foreach ($tree as $node) {
             if (is_array($node)) {
                 $node['text'] = $this->render($node['content']);
-                $parts[] = $this->container->render($node);
+                $parts[] = $this->container->renderNode($node);
             } else {
                 $parts[] = $this->renderer->text($node);
             }

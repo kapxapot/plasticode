@@ -3,9 +3,10 @@
 namespace Plasticode\Tests\Parsing;
 
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
-use Plasticode\Parsing\MarkdownParser;
+use Plasticode\Parsing\Parsers\MarkdownParser;
+use Plasticode\Tests\Parsing\Steps\ParsingStepTestCase;
 
-final class MarkdownParserTest extends ParsingTestCase
+final class MarkdownParserTest extends ParsingStepTestCase
 {
     /** @var MarkdownParser */
     private $parser;

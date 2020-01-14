@@ -3,9 +3,10 @@
 namespace Plasticode\Config;
 
 use Plasticode\IO\File;
-use Plasticode\Parsing\MarkdownParser;
-use Plasticode\Parsing\Steps\BrsToPsStep;
-use Plasticode\Parsing\Steps\CleanupStep;
+use Plasticode\Parsing\Parsers\CleanupParser;
+use Plasticode\Parsing\Parsers\CompositeParser;
+use Plasticode\Parsing\Parsers\CutParser;
+use Plasticode\Parsing\Parsers\MarkdownParser;
 use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 use Plasticode\Parsing\Steps\ReplacesStep;
 use Plasticode\Parsing\Steps\TitlesStep;
@@ -355,8 +356,15 @@ class Bootstrap
                 return new \Plasticode\Config\ParsingConfig();
             },
 
+            'cleanupParser' => function (ContainerInterface $container) {
+                return new CleanupParser(
+                    $container->parsingConfig,
+                    $container->renderer
+                );
+            },
+
             'lineParser' => function (ContainerInterface $container) {
-                return new \Plasticode\Parsing\CompositeParser(
+                return new CompositeParser(
                     $container->parsingConfig,
                     $container->renderer,
                     [
@@ -367,7 +375,7 @@ class Bootstrap
             },
             
             'parser' => function (ContainerInterface $container) {
-                return new \Plasticode\Parsing\CompositeParser(
+                return new CompositeParser(
                     $container->parsingConfig,
                     $container->renderer,
                     [
@@ -378,11 +386,17 @@ class Bootstrap
                         //new BracketsParser(),
                         new ReplacesStep($container->parsingConfig),
                         //new DoubleBracketsParser(),
-                        new BrsToPsStep(),
-                        new CleanupStep($container->parsingConfig)
+                        $container->cleanupParser
                     ]
                 );
             },
+
+            'cutParser' => function (ContainerInterface $container) {
+                return new CutParser(
+                    $container->parsingConfig,
+                    $container->renderer,
+                );
+            };
 
             'dispatcher' => function (ContainerInterface $container) {
                 return new \Plasticode\Events\EventDispatcher(

@@ -10,8 +10,6 @@ class Text
     public const POpen = '<p>';
     public const PClose = '</p>';
 
-    public const Cut = '<!--cut-->';
-
     /**
      * Breaks text into array of lines.
      * 
@@ -87,7 +85,7 @@ class Text
     }
 
     /**
-     * <br/> x3+ -> <br/><br/>.
+     * <br/>{3,} -> <br/><br/>.
      *
      * @param string $text
      * @return string
@@ -98,7 +96,7 @@ class Text
     }
 
     /**
-     * Changes <br/>{3,} to </p><p>. Also ensures that text is wrapped in <p>...</p>.
+     * Changes <br/>{2,} to </p><p>. Also ensures that text is wrapped in <p>...</p>.
      *
      * @param string $text
      * @return string

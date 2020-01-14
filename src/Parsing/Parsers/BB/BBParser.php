@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing;
+namespace Plasticode\Parsing\Parsers\BB;
 
 class BBParser
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Plasticode\Tests\Parsing;
+namespace Plasticode\Tests\Parsing\Steps;
 
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Steps\BrsToPsStep;
 
-final class BrsToPsStepTest extends ParsingTestCase
+final class BrsToPsStepTest extends ParsingStepTestCase
 {
     /** @var BrsToPsStep */
     private $step;
