@@ -4,7 +4,14 @@ namespace Plasticode\Util;
 
 class Arrays
 {
-    public static function exists($array, $key) : bool
+    /**
+     * Checks if the key is present in the array.
+     *
+     * @param array|null $array
+     * @param mixed $key
+     * @return boolean
+     */
+    public static function exists(?array $array, $key) : bool
     {
         return !is_null($array) && ($array[$key] ?? null) !== null;
     }
