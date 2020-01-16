@@ -378,8 +378,8 @@ class Bootstrap
                 return new BBContainerConfig();
             },
 
-            'bbContainer' => function (ContainerInterface $container) {
-                return new BBContainer(
+            'bbContainerParser' => function (ContainerInterface $container) {
+                return new BBContainerParser(
                     $container->bbContainerConfig,
                     $container->renderer
                 );
@@ -391,10 +391,7 @@ class Bootstrap
                         new TitlesStep($container->renderer, $container->lineParser),
                         new MarkdownParser($container->renderer),
                         new NewLinesToBrsStep(),
-                        new BBContainerParser(
-                            $container->bbContainer,
-                            $container->renderer
-                        ),
+                        $container->bbContainerParser,
                         //new BracketsParser(),
                         new ReplacesStep($container->parsingConfig),
                         //new DoubleBracketsParser(),

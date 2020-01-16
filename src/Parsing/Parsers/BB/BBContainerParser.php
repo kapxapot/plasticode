@@ -3,26 +3,33 @@
 namespace Plasticode\Parsing\Parsers\BB;
 
 use Plasticode\Collection;
+use Plasticode\Config\Interfaces\BBContainerConfigInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
+use Plasticode\Parsing\Interfaces\MapperInterface;
 use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
-use Plasticode\Util\Arrays;
 use Plasticode\Util\Text;
+use Webmozart\Assert\Assert;
 
 class BBContainerParser extends BaseStep
 {
     use BBAttributeParser;
 
-    /** @var BBContainer */
-    private $container;
-
     /** @var RendererInterface */
     protected $renderer;
 
-    public function __construct(BBContainer $container, RendererInterface $renderer)
+    /** @var array */
+    private $map = [];
+
+    public function __construct(BBContainerConfigInterface $config, RendererInterface $renderer)
     {
-        $this->container = $container;
+        $tagMappers = $config->getMappers();
+
+        foreach ($tagMappers as $tag => $mapper) {
+            $this->register($tag, $mapper);
+        }
+
         $this->renderer = $renderer;
     }
 
@@ -41,12 +48,31 @@ class BBContainerParser extends BaseStep
         return $context;
     }
 
+    public function register(string $tag, MapperInterface $mapper) : void
+    {
+        Assert::notEmpty($tag, 'Tag can\'t be empty.');
+        Assert::alnum($tag, 'Tag can contain only alphanumeric characters.');
+        Assert::notNull($mapper, 'Mapper can\'t be null.');
+
+        $this->map[$tag] = $mapper;
+    }
+
+    /**
+     * Returns registered tags.
+     *
+     * @return string[]
+     */
+    private function getTags() : array
+    {
+        return array_keys($this->map);
+    }
+
     /**
      * Splits text into sequence of starting tags, ending tags and text.
      */
     private function getSequence(string $text) : array
     {
-        $ctags = $this->container->getTags();
+        $ctags = $this->getTags();
         
         if (empty($ctags)) {
             return [$text];
@@ -70,7 +96,7 @@ class BBContainerParser extends BaseStep
         
         foreach ($parts as $part) {
             if (preg_match('/\[(' . $ctagsStr . ')([^\[]*)\]/Ui', $part, $matches)) {
-                // container start
+                // bb container start
                 $tag = $matches[1];
                 $attrs = $this->parseAttributes($matches[2]);
                 
@@ -80,7 +106,7 @@ class BBContainerParser extends BaseStep
                     'attributes' => $attrs,
                 ];
             } elseif (preg_match('/\[\/(' . $ctagsStr . ')\]/Ui', $part, $matches)) {
-                // container end
+                // bb container end
                 $tag = $matches[1];
 
                 $sequence[] = [
@@ -159,12 +185,38 @@ class BBContainerParser extends BaseStep
         foreach ($tree as $part) {
             if ($part instanceof BBNode) {
                 $part->text = $this->renderTree($part->content);
-                $parts[] = $this->container->renderNode($part);
+                $parts[] = $this->renderNode($part);
             } else {
                 $parts[] = $this->renderer->text($part);
             }
         }
         
         return implode(Text::BrBr, $parts);
+    }
+    
+    private function renderNode(BBNode $node) : string
+    {
+        $tag = $node->tag;
+        $mapper = $this->getMapper($tag);
+
+        return $this->renderer->component(
+            $tag,
+            $mapper->map($node->text, $node->attributes)
+        );
+    }
+
+    private function getMapper(string $tag) : MapperInterface
+    {
+        Assert::true(
+            $this->isKnownTag($tag),
+            'No mapper found for BB container tag \'' . $tag . '\''
+        );
+
+        return $this->map[$tag];
+    }
+
+    public function isKnownTag(string $tag) : bool
+    {
+        return array_key_exists($tag, $this->map);
     }
 }
