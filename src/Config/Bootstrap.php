@@ -3,6 +3,11 @@
 namespace Plasticode\Config;
 
 use Plasticode\IO\File;
+use Plasticode\Parsing\Mappers\ListMapper;
+use Plasticode\Parsing\Mappers\QuoteMapper;
+use Plasticode\Parsing\Mappers\SpoilerMapper;
+use Plasticode\Parsing\Parsers\BB\BBContainer;
+use Plasticode\Parsing\Parsers\BB\BBContainerParser;
 use Plasticode\Parsing\Parsers\CleanupParser;
 use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Parsing\Parsers\CutParser;
@@ -368,6 +373,17 @@ class Bootstrap
                     ]
                 );
             },
+
+            'bbContainerConfig' => function (ContainerInterface $container) {
+                return new BBContainerConfig();
+            },
+
+            'bbContainer' => function (ContainerInterface $container) {
+                return new BBContainer(
+                    $container->bbContainerConfig,
+                    $container->renderer
+                );
+            },
             
             'parser' => function (ContainerInterface $container) {
                 return new CompositeParser(
@@ -375,7 +391,10 @@ class Bootstrap
                         new TitlesStep($container->renderer, $container->lineParser),
                         new MarkdownParser($container->renderer),
                         new NewLinesToBrsStep(),
-                        //new BracketContainersParser(),
+                        new BBContainerParser(
+                            $container->bbContainer,
+                            $container->renderer
+                        ),
                         //new BracketsParser(),
                         new ReplacesStep($container->parsingConfig),
                         //new DoubleBracketsParser(),

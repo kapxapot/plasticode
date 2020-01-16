@@ -124,7 +124,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
     
     /**
-     * Returns first $limit elements
+     * Returns first $limit elements.
      */
     public function take(int $limit) : self
     {
@@ -133,12 +133,29 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
     
     /**
-     * Skips $offset elements and takes $limit elements
+     * Skips $offset elements and takes $limit elements.
+     * Negative $offset is counted from the end backwards.
      */
-    public function slice(int $offset, int $limit) : self
+    public function slice(int $offset, int $limit = null) : self
     {
         $data = Arrays::slice($this->data, $offset, $limit);
         return self::make($data);
+    }
+
+    /**
+     * Removes $limit elements from the end of collection (backward skip).
+     */
+    public function trimEnd(int $limit) : self
+    {
+        return $this->slice(-$limit);
+    }
+
+    /**
+     * Removes 1 element from the end of collection.
+     */
+    public function pop() : self
+    {
+        return $this->trimEnd(1);
     }
     
     /**

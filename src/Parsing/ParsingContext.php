@@ -8,7 +8,7 @@ use Plasticode\Util\Text;
 
 class ParsingContext
 {
-    /** @var string */
+    /** @var string|null */
     public $text;
 
     /** @var \Plasticode\Collection */
@@ -23,7 +23,7 @@ class ParsingContext
     /** @var string[] */
     public $videos = [];
 
-    /** @var string */
+    /** @var string|null */
     public $updatedAt;
 
     private function __construct()

@@ -232,7 +232,7 @@ class Arrays
     }
     
     /**
-     * Returns first $limit elements
+     * Returns first $limit elements.
      */
     public static function take(array $array, int $limit) : array
     {
@@ -240,9 +240,9 @@ class Arrays
     }
     
     /**
-     * Skips $offset elements and takes $limit elements
+     * Skips $offset elements and takes $limit elements.
      */
-    public static function slice(array $array, int $offset, int $limit) : array
+    public static function slice(array $array, int $offset, int $limit = null) : array
     {
         return array_slice($array, $offset, $limit);
     }

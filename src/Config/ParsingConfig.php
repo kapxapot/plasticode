@@ -3,7 +3,6 @@
 namespace Plasticode\Config;
 
 use Plasticode\Config\Interfaces\ParsingConfigInterface;
-use Plasticode\Util\Text;
 
 class ParsingConfig implements ParsingConfigInterface
 {

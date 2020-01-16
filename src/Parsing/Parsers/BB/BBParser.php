@@ -2,11 +2,18 @@
 
 namespace Plasticode\Parsing\Parsers\BB;
 
+use Plasticode\Parsing\Interfaces\MapperInterface;
+use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
+use Plasticode\Util\Arrays;
+use Plasticode\Util\Text;
+
 class BBParser
 {
+    use BBAttributeParser;
+
     protected function parseUrlBB(string $text) : string
     {
-        return $this->parseBBContainer(
+        return $this->parseTag(
             $text,
             'url',
             function ($content, $attrs) {
@@ -22,7 +29,7 @@ class BBParser
     {
         $text = $result['text'];
         
-        $result['text'] = $this->parseBBContainer(
+        $result['text'] = $this->parseTag(
             $text,
             $tag,
             function ($content, $attrs) use (&$result, $tag) {
@@ -71,7 +78,7 @@ class BBParser
     {
         $text = $result['text'];
         
-        $result['text'] = $this->parseBBContainer(
+        $result['text'] = $this->parseTag(
             $text,
             'carousel',
             function ($content, $attrs) use (&$result) {
@@ -126,7 +133,7 @@ class BBParser
 
     protected function parseColorBB(string $text) : string
     {
-        return $this->parseBBContainer(
+        return $this->parseTag(
             $text,
             'color',
             function ($content, $attrs) {
@@ -142,7 +149,7 @@ class BBParser
     {
         $text = $result['text'];
 
-        $result['text'] = $this->parseBBContainer(
+        $result['text'] = $this->parseTag(
             $text,
             'youtube',
             function ($content, $attrs) use (&$result) {
@@ -162,6 +169,40 @@ class BBParser
         );
 
         return $result;
+    }
+    
+    private function parseTag(string $text, string $tagName, MapperInterface $mapper, string $componentName = null) : string
+    {
+        $componentName = $componentName ?? $tagName;
+        
+        return preg_replace_callback(
+            $this->getTagPattern($tagName),
+            function ($matches) use ($componentName, $mapper) {
+                $parsed = $this->parseTagMatches($matches);
+                $data = $mapper->map($parsed['content'], $parsed['attrs']);
+
+                return $this->renderer->component($componentName, $data);
+            },
+            $text
+        );
+    }
+    
+    private function getTagPattern(string $tag) : string
+    {
+        return "/\[{$tag}([^\[]*)\](.*)\[\/{$tag}\]/Uis";
+    }
+    
+    private function parseTagMatches(array $matches) : array
+    {
+        if (!empty($matches)) {
+            $content = Text::trimBrs($matches[2]);
+            $attrs = $this->parseAttributes($matches[1]);
+        }
+        
+        return [
+            'content' => $content ?? 'parse error',
+            'attrs' => $attrs ?? [],
+        ];
     }
     
     protected function parseBrackets(array $result) : array

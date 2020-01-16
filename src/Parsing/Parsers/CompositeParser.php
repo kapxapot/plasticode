@@ -5,6 +5,7 @@ namespace Plasticode\Parsing\Parsers;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
+use Webmozart\Assert\Assert;
 
 class CompositeParser extends BaseStep
 {
@@ -35,6 +36,8 @@ class CompositeParser extends BaseStep
      */
     public function setPipeline(array $pipeline) : self
     {
+        Assert::allIsInstanceOf($pipeline, ParsingStepInterface::class);
+
         $this->pipeline = $pipeline;
         return $this;
     }
