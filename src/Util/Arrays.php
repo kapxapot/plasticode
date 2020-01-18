@@ -2,18 +2,23 @@
 
 namespace Plasticode\Util;
 
+use Webmozart\Assert\Assert;
+
 class Arrays
 {
+    const IdField = 'id';
+    const Dot = '.';
+
     /**
      * Checks if the key is present in the array.
      *
-     * @param array|null $array
-     * @param mixed $key
+     * @param array $array
+     * @param string|integer|null $key
      * @return boolean
      */
-    public static function exists(?array $array, $key) : bool
+    public static function exists(array $array, $key) : bool
     {
-        return !is_null($array) && ($array[$key] ?? null) !== null;
+        return !is_null($array[$key] ?? null);
     }
     
     /**
@@ -21,12 +26,12 @@ class Arrays
      * Taken from Illuminate/Support/Arr.
      *
      * @param array $array
-     * @param string $key
+     * @param string|integer|null $key
      * @return mixed
      */
-    public static function get($array, $key)
+    public static function get(array $array, $key)
     {
-        if (is_null($array) || count($array) == 0 || strlen($key) == 0) {
+        if (empty($array) || strlen($key) == 0) {
             return null;
         }
 
@@ -34,7 +39,7 @@ class Arrays
             return $array[$key];
         }
 
-        foreach (explode('.', $key) as $segment) {
+        foreach (explode(self::Dot, $key) as $segment) {
             if (!self::exists($array, $segment)) {
                 return null;
             }
@@ -52,15 +57,13 @@ class Arrays
      * @param array $array
      * @param string $key
      * @param mixed $value
-     * @return array
+     * @return array|null
      */
-    public static function set(&$array, $key, $value) : array
+    public static function set(array &$array, $key, $value) : ?array
     {
-        if (empty($array) || strlen($key) == 0) {
-            return null;
-        }
+        Assert::notNull($key);
 
-        $keys = explode('.', $key);
+        $keys = explode(self::Dot, $key);
 
         while (count($keys) > 1) {
             $key = array_shift($keys);
@@ -81,42 +84,88 @@ class Arrays
     }
     
     /**
-     * Returns distinct values from array grouped by selector ('id' by default).
+     * Returns distinct values from array grouped by 'id'.
      * 
      * @param array $array
-     * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
+     * @return array
      */
-    public static function distinctBy($array, $by = 'id') : array
+    public static function distinctById(array $array) : array
+    {
+        return self::distinctBy($array, self::IdField);
+    }
+    
+    /**
+     * Returns distinct values from array grouped by selector.
+     * 
+     * @param array $array
+     * @param string|\Closure $by Column/property name or Closure, returning generated column/property name.
+     * @return array
+     */
+    public static function distinctBy(array $array, $by) : array
     {
         return array_values(self::toAssocBy($array, $by));
     }
     
     /**
-     * Converts array to associative array by column/property or callable.
-     * Selector must be unique, otherwise only first element is taken, others are discarded.
+     * Converts array to associative array by 'id'.
+     * Selector must be unique, otherwise only first element is taken,
+     * others are discarded.
      * 
      * @param array $array
-     * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
+     * @return array
      */
-    public static function toAssocBy($array, $by = 'id') : array
+    public static function toAssocById(array $array) : array
+    {
+        return self::toAssocBy($array, self::IdField);
+    }
+    
+    /**
+     * Converts array to associative array by column/property or callable.
+     * Selector must be unique, otherwise only first element is taken,
+     * others are discarded.
+     * 
+     * @param array $array
+     * @param string|\Closure $by Column/property name or Closure, returning generated column/property name.
+     * @return array
+     */
+    public static function toAssocBy(array $array, $by) : array
     {
         $groups = self::groupBy($array, $by);
         
-        array_walk($groups, function (&$item, $key) {
-            $item = $item[0];
-        });
+        array_walk(
+            $groups,
+            function (&$item, $key) {
+                $item = $item[0];
+            }
+        );
         
         return $groups;
     }
     
     /**
-     * Groups array by column/property or callable.
+     * Groups array by 'id'.
      * 
      * @param array $array
-     * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
+     * @return array
      */
-    public static function groupBy($array, $by = 'id') : array
+    public static function groupById(array $array) : array
     {
+        return self::groupBy($array, self::IdField);
+    }
+    
+    /**
+     * Groups array by column/property or Closure.
+     * 
+     * @param array $array
+     * @param string|\Closure $by Column/property name or Closure, returning generated column/property name.
+     * @return array
+     */
+    public static function groupBy(array $array, $by) : array
+    {
+        if (empty($array)) {
+            return [];
+        }
+
         $result = [];
 
         foreach ($array as $element) {
@@ -132,40 +181,59 @@ class Arrays
 
     /**
      * Extracts non-null 'id' column/property values.
+     * 
+     * @param array $array
+     * @return array
      */
-    public static function extractIds($array) : array
+    public static function extractIds(array $array) : array
     {
-        return self::extract($array, 'id');
+        return self::extract($array, self::IdField);
     }
     
     /**
-     * Extracts non-null column/property values from array.
+     * Extracts unique (!) non-null column/property values from array.
+     * 
+     * @param array $array
+     * @param string $column
+     * @return array
      */
-    public static function extract($array, $column) : array
+    public static function extract(array $array, string $column) : array
     {
-        if ($array === null) {
-            return null;
+        if (empty($array)) {
+            return [];
         }
         
-        $values = array_map(function ($item) use ($column) {
-            return self::getProperty($item, $column);
-        }, $array);
+        $values = array_map(
+            function ($item) use ($column) {
+                return self::getProperty($item, $column);
+            },
+            $array
+        );
         
-        return array_filter(array_unique($values), function ($item) {
-            return $item !== null;
-        });
+        return array_filter(
+            array_unique($values),
+            function ($item) {
+                return !is_null($item);
+            }
+        );
     }
     
     /**
      * Returns property value.
      * 
+     * @param mixed $obj
+     * @param string $property
      * @return mixed
      */
-    private static function getProperty($obj, $property)
+    private static function getProperty($obj, string $property)
     {
-        return is_array($obj)
-            ? $obj[$property]
-            : $obj->{$property};
+        if (is_array($obj)) {
+            return $obj[$property] ?? null;
+        }
+
+        return property_exists($obj, $property)
+            ? $obj->{$property}
+            : null;
     }
     
     /**

@@ -92,13 +92,13 @@ class Controller extends Contained
     protected function buildActionPart(array $result, string $part) : array
     {
         $bits = explode('.', $part);
+        
         if (count($bits) > 1) {
             $action = $bits[0];
             $entity = $bits[1];
 
             Arrays::set($result, "actions.{$action}.{$entity}", true);
-        }
-        else {
+        } else {
             throw new InvalidArgumentException('Unknown sidebar part: ' . $part);
         }
 

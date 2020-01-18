@@ -50,9 +50,9 @@ class BBContainerParser extends BaseStep
 
     public function register(string $tag, MapperInterface $mapper) : void
     {
-        Assert::notEmpty($tag, 'Tag can\'t be empty.');
-        Assert::alnum($tag, 'Tag can contain only alphanumeric characters.');
-        Assert::notNull($mapper, 'Mapper can\'t be null.');
+        Assert::notEmpty($tag);
+        Assert::alnum($tag);
+        Assert::notNull($mapper);
 
         $this->map[$tag] = $mapper;
     }
