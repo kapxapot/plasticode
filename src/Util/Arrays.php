@@ -209,13 +209,15 @@ class Arrays
             },
             $array
         );
-        
-        return array_filter(
+
+        $values = array_filter(
             array_unique($values),
             function ($item) {
                 return !is_null($item);
             }
         );
+
+        return array_values($values);
     }
     
     /**
