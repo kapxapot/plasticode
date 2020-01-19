@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Tests;
+namespace Plasticode\Tests\Util;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Text;

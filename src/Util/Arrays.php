@@ -257,9 +257,12 @@ class Arrays
      * Filters array by column/property value or Closure,
      * then returns last item or null.
      * 
+     * @param array $array
+     * @param string|\Closure
+     * @param mixed $value
      * @return mixed
      */
-    public static function lastBy($array, $by, $value = null)
+    public static function lastBy(array $array, $by, $value = null)
     {
         $filtered = self::filter($array, $by, $value);
         return self::last($filtered);
