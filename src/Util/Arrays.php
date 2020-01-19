@@ -285,7 +285,7 @@ class Arrays
             '$by must be a property/column with provided $value, or it must be a Closure without $value.'
         );
 
-        return array_filter(
+        $values = array_filter(
             $array,
             function ($item) use ($by, $value) {
                 return $by instanceof \Closure
@@ -293,20 +293,44 @@ class Arrays
                     : self::getProperty($item, $by) == $value;
             }
         );
+
+        return array_values($values);
     }
     
-    public static function filterIn($array, $column, $values) : array
+    /**
+     * Filters array by specified column values.
+     *
+     * @param array $array
+     * @param string $column
+     * @param array $values
+     * @return array
+     */
+    public static function filterIn(array $array, string $column, array $values) : array
     {
-        return self::filter($array, function ($item) use ($column, $values) {
-            return in_array(self::getProperty($item, $column), $values);
-        });
+        return self::filter(
+            $array,
+            function ($item) use ($column, $values) {
+                return in_array(self::getProperty($item, $column), $values);
+            }
+        );
     }
     
-    public static function filterNotIn($array, $column, $values) : array
+    /**
+     * Filters array by all column values except specified.
+     *
+     * @param array $array
+     * @param string $column
+     * @param array $values
+     * @return array
+     */
+    public static function filterNotIn(array $array, string $column, array $values) : array
     {
-        return self::filter($array, function ($item) use ($column, $values) {
-            return !in_array(self::getProperty($item, $column), $values);
-        });
+        return self::filter(
+            $array,
+            function ($item) use ($column, $values) {
+                return !in_array(self::getProperty($item, $column), $values);
+            }
+        );
     }
     
     /**

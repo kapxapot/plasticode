@@ -25,7 +25,7 @@ final class LastByTest extends TestCase
         );
     }
 
-    public function lastByClosureProvider()
+    public function lastByClosureProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item2 = ['id' => 2, 'name' => 'two'];
@@ -135,7 +135,7 @@ final class LastByTest extends TestCase
         );
     }
 
-    public function lastByPropertyProvider()
+    public function lastByPropertyProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item2 = ['id' => 2, 'name' => 'two'];

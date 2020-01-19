@@ -25,7 +25,7 @@ final class FirstByTest extends TestCase
         );
     }
 
-    public function firstByClosureProvider()
+    public function firstByClosureProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item2 = ['id' => 2, 'name' => 'two'];
@@ -135,7 +135,7 @@ final class FirstByTest extends TestCase
         );
     }
 
-    public function firstByPropertyProvider()
+    public function firstByPropertyProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item2 = ['id' => 2, 'name' => 'two'];
