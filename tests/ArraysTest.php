@@ -7,14 +7,17 @@ use Plasticode\Util\Arrays;
 
 final class ArraysTest extends TestCase
 {
+    /** @var array */
     const ABC = ['a', 'b', 'c'];
 
+    /** @var array */
     const AvBvCv = [
         'a' => 'av',
         'b' => 'bv',
         'c' => 'cv'
     ];
 
+    /** @var array */
     const A_Bc = [
         'a' => ['b' => 'c']
     ];
@@ -26,13 +29,14 @@ final class ArraysTest extends TestCase
      * @param array $array
      * @param string|integer|null $key
      * @param boolean $result
+     * @return void
      */
-    public function testExists(array $array, $key, bool $result)
+    public function testExists(array $array, $key, bool $result) : void
     {
         $this->assertEquals($result, Arrays::exists($array, $key));
     }
 
-    public function existsProvider()
+    public function existsProvider() : array
     {
         return [
             [[], null, false],
@@ -55,13 +59,14 @@ final class ArraysTest extends TestCase
      * @param array $array
      * @param string|integer|null $key
      * @param mixed $result
+     * @return void
      */
-    public function testGet(array $array, $key, $result)
+    public function testGet(array $array, $key, $result) : void
     {
         $this->assertEquals($result, Arrays::get($array, $key));
     }
 
-    public function getProvider()
+    public function getProvider() : array
     {
         return [
             [[], null, null],
@@ -84,15 +89,16 @@ final class ArraysTest extends TestCase
      * @param array $array
      * @param string $key
      * @param mixed $value
+     * @return void
      */
-    public function testSet(array $array, $key, $value)
+    public function testSet(array $array, $key, $value) : void
     {
         Arrays::set($array, $key, $value);
 
         $this->assertEquals($value, Arrays::get($array, $key));
     }
 
-    public function setProvider()
+    public function setProvider() : array
     {
         $v = 'v';
 
@@ -112,15 +118,16 @@ final class ArraysTest extends TestCase
      *
      * @param array $array
      * @param mixed $value
+     * @return void
      */
-    public function testSetNullKey(array $array, $value)
+    public function testSetNullKey(array $array, $value) : void
     {
         $this->expectException(\InvalidArgumentException::class);
 
         Arrays::set($array, null, $value);
     }
 
-    public function setNullKeyProvider()
+    public function setNullKeyProvider() : array
     {
         $v = 'v';
 
@@ -140,12 +147,12 @@ final class ArraysTest extends TestCase
      * @param array $result
      * @return void
      */
-    public function testDistinctById(array $array, array $result)
+    public function testDistinctById(array $array, array $result) : void
     {
         $this->assertEquals($result, Arrays::distinctById($array));
     }
 
-    public function distinctByIdProvider()
+    public function distinctByIdProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item11 = ['id' => 1, 'name' => 'one one'];
@@ -177,12 +184,12 @@ final class ArraysTest extends TestCase
      * @param array $result
      * @return void
      */
-    public function testDistinctBy(array $array, $by, array $result)
+    public function testDistinctBy(array $array, $by, array $result) : void
     {
         $this->assertEquals($result, Arrays::distinctBy($array, $by));
     }
 
-    public function distinctByProvider()
+    public function distinctByProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item11 = ['id' => 1, 'name' => 'one one'];
@@ -233,12 +240,12 @@ final class ArraysTest extends TestCase
      * @param array $result
      * @return void
      */
-    public function testToAssocById(array $array, array $result)
+    public function testToAssocById(array $array, array $result) : void
     {
         $this->assertEquals($result, Arrays::toAssocById($array));
     }
 
-    public function toAssocByIdProvider()
+    public function toAssocByIdProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item11 = ['id' => 1, 'name' => 'one one'];
@@ -276,12 +283,12 @@ final class ArraysTest extends TestCase
      * @param array $result
      * @return void
      */
-    public function testToAssocBy(array $array, $by, array $result)
+    public function testToAssocBy(array $array, $by, array $result) : void
     {
         $this->assertEquals($result, Arrays::toAssocBy($array, $by));
     }
 
-    public function toAssocByProvider()
+    public function toAssocByProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item11 = ['id' => 1, 'name' => 'one one'];
@@ -346,12 +353,12 @@ final class ArraysTest extends TestCase
      * @param array $result
      * @return void
      */
-    public function testGroupById(array $array, array $result)
+    public function testGroupById(array $array, array $result) : void
     {
         $this->assertEquals($result, Arrays::groupById($array));
     }
 
-    public function groupByIdProvider()
+    public function groupByIdProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item11 = ['id' => 1, 'name' => 'one one'];
@@ -389,12 +396,12 @@ final class ArraysTest extends TestCase
      * @param array $result
      * @return void
      */
-    public function testGroupBy(array $array, $by, array $result)
+    public function testGroupBy(array $array, $by, array $result) : void
     {
         $this->assertEquals($result, Arrays::groupBy($array, $by));
     }
 
-    public function groupByProvider()
+    public function groupByProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item11 = ['id' => 1, 'name' => 'one one'];
@@ -459,12 +466,12 @@ final class ArraysTest extends TestCase
      * @param array $result
      * @return void
      */
-    public function testExtractIds(array $array, array $result)
+    public function testExtractIds(array $array, array $result) : void
     {
         $this->assertEquals($result, Arrays::extractIds($array));
     }
 
-    public function extractIdsProvider()
+    public function extractIdsProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item11 = ['id' => 1, 'name' => 'one one'];
@@ -496,12 +503,12 @@ final class ArraysTest extends TestCase
      * @param array $result
      * @return void
      */
-    public function testExtract(array $array, string $column, array $result)
+    public function testExtract(array $array, string $column, array $result) : void
     {
         $this->assertEquals($result, Arrays::extract($array, $column));
     }
 
-    public function extractProvider()
+    public function extractProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item11 = ['id' => 1, 'name' => 'one one'];
@@ -524,5 +531,168 @@ final class ArraysTest extends TestCase
                 ['one', 'one one']
             ]
         ];
+    }
+
+    /**
+     * @covers Arrays
+     * @dataProvider firstByClosureProvider
+     *
+     * @param array $array
+     * @param \Closure $by
+     * @param mixed $result
+     * @return void
+     */
+    public function testFirstByClosure(array $array, \Closure $by, $result) : void
+    {
+        $this->assertEquals(
+            $result,
+            Arrays::firstBy($array, $by)
+        );
+    }
+
+    public function firstByClosureProvider()
+    {
+        $item1 = ['id' => 1, 'name' => 'one'];
+        $item2 = ['id' => 2, 'name' => 'two'];
+        $item3 = ['id' => 3, 'name' => 'three'];
+
+        $testArray = [$item1, $item2, $item3];
+
+        $dummy1 = new DummyModel(1, 'one');
+        $dummy2 = new DummyModel(2, 'two');
+        $dummy3 = new DummyModel(3, 'three');
+
+        $testObjArray = [$dummy1, $dummy2, $dummy3];
+
+        return [
+            [
+                $testArray,
+                function (array $item) {
+                    return strlen($item['name']) == 3;
+                },
+                $item1
+            ],
+            [
+                $testArray,
+                function (array $item) {
+                    return strlen($item['name']) == 5;
+                },
+                $item3
+            ],
+            [
+                $testArray,
+                function (array $item) {
+                    return $item['name'] == 'two';
+                },
+                $item2
+            ],
+            [
+                $testArray,
+                function (array $item) {
+                    return $item['name'] == 'four';
+                },
+                null
+            ],
+            [
+                $testObjArray,
+                function (DummyModel $obj) {
+                    return strlen($obj->name) == 3;
+                },
+                $dummy1
+            ],
+            [
+                $testObjArray,
+                function (DummyModel $obj) {
+                    return strlen($obj->name) == 5;
+                },
+                $dummy3
+            ],
+            [
+                $testObjArray,
+                function (DummyModel $obj) {
+                    return $obj->name == 'two';
+                },
+                $dummy2
+            ],
+            [
+                $testObjArray,
+                function (DummyModel $obj) {
+                    return $obj->name == 'four';
+                },
+                null
+            ],
+        ];
+    }
+
+    /**
+     * @covers Arrays
+     * 
+     * @return void
+     */
+    public function testFirstByClosureIncorrectParams() : void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Arrays::firstBy(
+            [],
+            function ($item) {
+                return true;
+            },
+            'some value'
+        );
+    }
+
+    /**
+     * @covers Arrays
+     * @dataProvider firstByPropertyProvider
+     *
+     * @param array $array
+     * @param string $by
+     * @param mixed $value
+     * @param mixed $result
+     * @return void
+     */
+    public function testFirstByProperty(array $array, string $by, $value, $result) : void
+    {
+        $this->assertEquals(
+            $result,
+            Arrays::firstBy($array, $by, $value)
+        );
+    }
+
+    public function firstByPropertyProvider()
+    {
+        $item1 = ['id' => 1, 'name' => 'one'];
+        $item2 = ['id' => 2, 'name' => 'two'];
+        $item3 = ['id' => 3, 'name' => 'three'];
+
+        $testArray = [$item1, $item2, $item3];
+
+        $dummy1 = new DummyModel(1, 'one');
+        $dummy2 = new DummyModel(2, 'two');
+        $dummy3 = new DummyModel(3, 'three');
+
+        $testObjArray = [$dummy1, $dummy2, $dummy3];
+
+        return [
+            [$testArray, 'name', 'two', $item2],
+            [$testArray, 'age', 3, null],
+            [$testArray, 'name', 'four', null],
+            [$testObjArray, 'name', 'two', $dummy2],
+            [$testObjArray, 'age', 3, null],
+            [$testObjArray, 'name', 'four', null],
+        ];
+    }
+
+    /**
+     * @covers Arrays
+     * 
+     * @return void
+     */
+    public function testFirstByPropertyIncorrectParams() : void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        Arrays::firstBy([], 'name');
     }
 }

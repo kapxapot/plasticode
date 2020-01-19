@@ -120,7 +120,7 @@ class Arrays
     }
     
     /**
-     * Converts array to associative array by column/property or callable.
+     * Converts array to associative array by column/property or Closure.
      * Selector must be unique, otherwise only first element is taken,
      * others are discarded.
      * 
@@ -169,7 +169,7 @@ class Arrays
         $result = [];
 
         foreach ($array as $element) {
-            $key = is_callable($by)
+            $key = $by instanceof \Closure
                 ? $by($element)
                 : self::getProperty($element, $by);
             
@@ -239,18 +239,23 @@ class Arrays
     }
     
     /**
-     * Filters array by column/property value or callable, then returns first item or null.
+     * Filters array by column/property value or Closure,
+     * then returns first item or null.
      * 
+     * @param array $array
+     * @param string|\Closure
+     * @param mixed $value
      * @return mixed
      */
-    public static function firstBy($array, $by, $value = null)
+    public static function firstBy(array $array, $by, $value = null)
     {
         $filtered = self::filter($array, $by, $value);
         return self::first($filtered);
     }
     
     /**
-     * Filters array by column/property value or callable, then returns last item or null.
+     * Filters array by column/property value or Closure,
+     * then returns last item or null.
      * 
      * @return mixed
      */
@@ -261,19 +266,30 @@ class Arrays
     }
     
     /**
-     * Filters array by column/property value or callable.
+     * Filters array by column/property value or Closure.
+     * 
+     * @param array $array
+     * @param string|\Closure $by
+     * @param mixed $value
+     * @return array
      */
-    public static function filter($array, $by, $value = null) : array
+    public static function filter(array $array, $by, $value = null) : array
     {
-        if ($array === null) {
-            return null;
-        }
-        
-        return array_filter($array, function ($item) use ($by, $value) {
-            return is_callable($by)
-                ? $by($item)
-                : self::getProperty($item, $by) == $value;
-        });
+        Assert::true(
+            $by instanceof \Closure && is_null($value)
+            ||
+            is_string($by) && !is_null($value),
+            '$by must be a property/column with provided $value, or it must be a Closure without $value.'
+        );
+
+        return array_filter(
+            $array,
+            function ($item) use ($by, $value) {
+                return $by instanceof \Closure
+                    ? $by($item)
+                    : self::getProperty($item, $by) == $value;
+            }
+        );
     }
     
     public static function filterIn($array, $column, $values) : array
