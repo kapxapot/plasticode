@@ -335,16 +335,29 @@ class Arrays
     
     /**
      * Removes empty strings and nulls from array.
+     * 
+     * @param array $array
+     * @return array
      */
     public static function clean(array $array) : array
     {
-        return array_filter($array, function ($item) {
-            return strlen($item) > 0;
-        });
+        $values = array_filter(
+            $array,
+            function ($item) {
+                return strlen($item) > 0;
+            }
+        );
+
+        return array_values($values);
     }
     
     /**
      * Skips $offset elements from the start and returns the remaining array.
+     * If the $offset is negative, skips the elements from the end.
+     * 
+     * @param array $array
+     * @param integer $offset
+     * @return array
      */
     public static function skip(array $array, int $offset) : array
     {
@@ -353,6 +366,11 @@ class Arrays
     
     /**
      * Returns first $limit elements.
+     * If the $limit is negative, takes the elements from the end.
+     * 
+     * @param array $array
+     * @param integer $offset
+     * @return array
      */
     public static function take(array $array, int $limit) : array
     {
@@ -360,9 +378,9 @@ class Arrays
     }
     
     /**
-     * Skips $offset elements and takes $limit elements.
+     * Combines skip() and take().
      */
-    public static function slice(array $array, int $offset, int $limit = null) : array
+    public static function slice(array $array, int $offset, int $limit) : array
     {
         return array_slice($array, $offset, $limit);
     }
@@ -370,9 +388,10 @@ class Arrays
     /**
      * Returns first item from array or null.
      * 
+     * @param array $array
      * @return mixed
      */
-    public static function first($array)
+    public static function first(array $array)
     {
         return !empty($array) ? reset($array) : null;
     }
@@ -380,9 +399,10 @@ class Arrays
     /**
      * Returns last item from array or null.
      * 
+     * @param array $array
      * @return mixed
      */
-    public static function last($array)
+    public static function last(array $array)
     {
         return !empty($array) ? end($array) : null;
     }

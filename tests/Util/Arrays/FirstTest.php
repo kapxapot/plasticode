@@ -6,26 +6,47 @@ use PHPUnit\Framework\TestCase;
 use Plasticode\Tests\DummyModel;
 use Plasticode\Util\Arrays;
 
-final class LastByTest extends TestCase
+final class FirstTest extends TestCase
 {
     /**
      * @covers Arrays
-     * @dataProvider lastByClosureProvider
+     * @dataProvider firstProvider
+     *
+     * @param array $array
+     * @param mixed $result
+     * @return void
+     */
+    public function testFirst(array $array, $result) : void
+    {
+        $this->assertEquals($result, Arrays::first($array));
+    }
+
+    public function firstProvider() : array
+    {
+        return [
+            [[], null],
+            [['a', 'b'], 'a'],
+        ];
+    }
+
+    /**
+     * @covers Arrays
+     * @dataProvider firstByClosureProvider
      *
      * @param array $array
      * @param \Closure $by
      * @param mixed $result
      * @return void
      */
-    public function testLastByClosure(array $array, \Closure $by, $result) : void
+    public function testFirstByClosure(array $array, \Closure $by, $result) : void
     {
         $this->assertEquals(
             $result,
-            Arrays::lastBy($array, $by)
+            Arrays::firstBy($array, $by)
         );
     }
 
-    public function lastByClosureProvider() : array
+    public function firstByClosureProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item2 = ['id' => 2, 'name' => 'two'];
@@ -45,7 +66,7 @@ final class LastByTest extends TestCase
                 function (array $item) {
                     return strlen($item['name']) == 3;
                 },
-                $item2
+                $item1
             ],
             [
                 $testArray,
@@ -57,9 +78,9 @@ final class LastByTest extends TestCase
             [
                 $testArray,
                 function (array $item) {
-                    return $item['name'] == 'one';
+                    return $item['name'] == 'two';
                 },
-                $item1
+                $item2
             ],
             [
                 $testArray,
@@ -73,7 +94,7 @@ final class LastByTest extends TestCase
                 function (DummyModel $obj) {
                     return strlen($obj->name) == 3;
                 },
-                $dummy2
+                $dummy1
             ],
             [
                 $testObjArray,
@@ -85,9 +106,9 @@ final class LastByTest extends TestCase
             [
                 $testObjArray,
                 function (DummyModel $obj) {
-                    return $obj->name == 'one';
+                    return $obj->name == 'two';
                 },
-                $dummy1
+                $dummy2
             ],
             [
                 $testObjArray,
@@ -104,11 +125,11 @@ final class LastByTest extends TestCase
      * 
      * @return void
      */
-    public function testLastByClosureIncorrectParams() : void
+    public function testFirstByClosureIncorrectParams() : void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        Arrays::lastBy(
+        Arrays::firstBy(
             [],
             function ($item) {
                 return true;
@@ -119,7 +140,7 @@ final class LastByTest extends TestCase
 
     /**
      * @covers Arrays
-     * @dataProvider lastByPropertyProvider
+     * @dataProvider firstByPropertyProvider
      *
      * @param array $array
      * @param string $by
@@ -127,15 +148,15 @@ final class LastByTest extends TestCase
      * @param mixed $result
      * @return void
      */
-    public function testLastByProperty(array $array, string $by, $value, $result) : void
+    public function testFirstByProperty(array $array, string $by, $value, $result) : void
     {
         $this->assertEquals(
             $result,
-            Arrays::lastBy($array, $by, $value)
+            Arrays::firstBy($array, $by, $value)
         );
     }
 
-    public function lastByPropertyProvider() : array
+    public function firstByPropertyProvider() : array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item2 = ['id' => 2, 'name' => 'two'];
@@ -164,10 +185,10 @@ final class LastByTest extends TestCase
      * 
      * @return void
      */
-    public function testLastByPropertyIncorrectParams() : void
+    public function testFirstByPropertyIncorrectParams() : void
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        Arrays::lastBy([], 'name');
+        Arrays::firstBy([], 'name');
     }
 }

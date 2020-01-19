@@ -5,7 +5,7 @@ namespace Plasticode\Tests\Util\Arrays;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Arrays;
 
-final class ExistsGetSetTest extends TestCase
+final class MiscTest extends TestCase
 {
     /** @var array */
     const ABC = ['a', 'b', 'c'];
@@ -136,6 +136,39 @@ final class ExistsGetSetTest extends TestCase
             [self::ABC, $v],
             [self::AvBvCv, $v],
             [self::A_Bc, $v],
+        ];
+    }
+
+    /**
+     * @covers Arrays
+     * @dataProvider cleanProvider
+     *
+     * @param array $array
+     * @param array $result
+     * @return void
+     */
+    public function testClean(array $array, array $result) : void
+    {
+        $this->assertEquals($result, Arrays::clean($array));
+    }
+
+    public function cleanProvider() : array
+    {
+        return [
+            [[], []],
+            [
+                [
+                    'some',
+                    '',
+                    'string',
+                    null
+                ],
+                ['some', 'string']
+            ],
+            [
+                ['already', 'clean'],
+                ['already', 'clean']
+            ],
         ];
     }
 }
