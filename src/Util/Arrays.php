@@ -396,7 +396,7 @@ class Arrays
     
     /**
      * Skips $offset elements from the start and returns the remaining array.
-     * If the $offset is negative, skips the elements from the end.
+     * If the $offset is negative, starts backwards from the end towards it.
      * 
      * @param array $array
      * @param integer $offset
@@ -409,10 +409,11 @@ class Arrays
     
     /**
      * Returns first $limit elements.
-     * If the $limit is negative, takes the elements from the end.
+     * If the $limit is negative, takes all the elements from the start
+     * until |$limit| from the end.
      * 
      * @param array $array
-     * @param integer $offset
+     * @param integer $limit
      * @return array
      */
     public static function take(array $array, int $limit) : array
@@ -422,6 +423,11 @@ class Arrays
     
     /**
      * Combines skip() and take().
+     * 
+     * @param array $array
+     * @param integer $offset
+     * @param integer $limit
+     * @return array
      */
     public static function slice(array $array, int $offset, int $limit) : array
     {
