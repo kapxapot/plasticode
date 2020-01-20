@@ -352,6 +352,49 @@ class Arrays
     }
     
     /**
+     * Returns first item from array or null.
+     * 
+     * @param array $array
+     * @return mixed
+     */
+    public static function first(array $array)
+    {
+        return !empty($array) ? reset($array) : null;
+    }
+    
+    /**
+     * Returns last item from array or null.
+     * 
+     * @param array $array
+     * @return mixed
+     */
+    public static function last(array $array)
+    {
+        return !empty($array) ? end($array) : null;
+    }
+    
+    /**
+     * Filters associative array by provided key set.
+     * If key is absent, it is ignored.
+     * 
+     * @param array $array
+     * @param array $keys
+     * @return array
+     */
+    public static function filterKeys(array $array, array $keys) : array
+    {
+        $result = [];
+        
+        foreach ($keys as $key) {
+            if (isset($array[$key])) {
+                $result[$key] = $array[$key];
+            }
+        }
+        
+        return $result;
+    }
+    
+    /**
      * Skips $offset elements from the start and returns the remaining array.
      * If the $offset is negative, skips the elements from the end.
      * 
@@ -383,45 +426,6 @@ class Arrays
     public static function slice(array $array, int $offset, int $limit) : array
     {
         return array_slice($array, $offset, $limit);
-    }
-    
-    /**
-     * Returns first item from array or null.
-     * 
-     * @param array $array
-     * @return mixed
-     */
-    public static function first(array $array)
-    {
-        return !empty($array) ? reset($array) : null;
-    }
-    
-    /**
-     * Returns last item from array or null.
-     * 
-     * @param array $array
-     * @return mixed
-     */
-    public static function last(array $array)
-    {
-        return !empty($array) ? end($array) : null;
-    }
-    
-    /**
-     * Filters associative array by provided key set.
-     * If key is absent, it is ignored.
-     */
-    public static function filterKeys($array, array $keys) : array
-    {
-        $result = [];
-        
-        foreach ($keys as $key) {
-            if (isset($array[$key])) {
-                $result[$key] = $array[$key];
-            }
-        }
-        
-        return $result;
     }
     
     public static function orderBy($array, $column, $dir = null, $type = null) : array

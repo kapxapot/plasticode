@@ -258,4 +258,70 @@ final class FilterTest extends TestCase
             [$testObjArray, 'name', ['four'], $testObjArray],
         ];
     }
+
+    /**
+     * @covers Arrays
+     * @dataProvider filterKeysProvider
+     *
+     * @param array $array
+     * @param array $keys
+     * @param array $result
+     * @return void
+     */
+    public function testFilterKeys(array $array, array $keys, array $result) : void
+    {
+        $this->assertEquals($result, Arrays::filterKeys($array, $keys));
+    }
+
+    public function filterKeysProvider() : array
+    {
+        $testArray = [
+            'one' => 1,
+            'two' => 2,
+            'three' => 3
+        ];
+
+        return [
+            [[], [], []],
+            [[], ['one'], []],
+            [['one' => 1], [], []],
+            [['one' => 1], ['one'], ['one' => 1]],
+            [
+                [
+                    'one' => 1,
+                    'two' => 2,
+                    'three' => 3
+                ],
+                ['one', 'three'],
+                [
+                    'one' => 1,
+                    'three' => 3
+                ]
+            ],
+            [
+                [
+                    'one' => 1,
+                    'two' => 2
+                ],
+                ['three'],
+                []
+            ],
+            [[], [1], []],
+            [['one'], [], []],
+            [['one'], [0], ['one']],
+            [
+                ['one', 'two', 'three'],
+                [0, 2],
+                [
+                    0 => 'one',
+                    2 => 'three'
+                ]
+            ],
+            [
+                ['one', 'two'],
+                [2],
+                []
+            ]
+        ];
+    }
 }
