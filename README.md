@@ -1,6 +1,6 @@
 # Plasticode
 
-![](https://travis-ci.com/kapxapot/plasticode.svg?branch=master)
+[![](https://travis-ci.com/kapxapot/plasticode.svg?branch=master)](https://travis-ci.com/kapxapot/plasticode)
 
 PHP framework on top of Slim framework.
 
