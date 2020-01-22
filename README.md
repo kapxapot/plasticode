@@ -7,8 +7,8 @@ PHP framework on top of Slim framework.
 Sites built on **Plasticode**:
 
 - https://warcry.ru (GitHub: [kapxapot/plasticode-warcry](https://github.com/kapxapot/plasticode-warcry))
-- https://dacomics.ru
-- https://bs.warcry.ru (former blizzardstreams.com)
+- https://dacomics.ru (GitHub: [kapxapot/dacomics](https://github.com/kapxapot/dacomics))
+- https://bs.warcry.ru (former blizzardstreams.com) (GitHub: [kapxapot/blizzardstreams](https://github.com/kapxapot/blizzardstreams))
 - https://associ.ru (GitHub: [kapxapot/associations](https://github.com/kapxapot/associations))
 
 For boilerplate see [kapxapot/plasticode-boilerplate](https://github.com/kapxapot/plasticode-boilerplate).
