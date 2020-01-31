@@ -10,6 +10,7 @@ Sites built on **Plasticode**:
 - https://dacomics.ru (GitHub: [kapxapot/dacomics](https://github.com/kapxapot/dacomics))
 - https://bs.warcry.ru (former blizzardstreams.com) (GitHub: [kapxapot/blizzardstreams](https://github.com/kapxapot/blizzardstreams))
 - https://associ.ru (GitHub: [kapxapot/associations](https://github.com/kapxapot/associations))
+- FTP Sync (unpublished and abandoned) (GitHub: [kapxapot/ftpsync](https://github.com/kapxapot/ftpsync))
 
 For boilerplate see [kapxapot/plasticode-boilerplate](https://github.com/kapxapot/plasticode-boilerplate).
 
