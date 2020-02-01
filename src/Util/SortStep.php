@@ -16,12 +16,12 @@ class SortStep
 
     /**
      * @param string $field
-     * @param boolean $desc
+     * @param boolean $desc False by default
      */
-    public function __construct(string $field, bool $desc = false)
+    public function __construct(string $field, bool $desc = null)
     {
         $this->field = $field;
-        $this->desc = $desc;
+        $this->desc = $desc ?? false;
     }
 
     /**

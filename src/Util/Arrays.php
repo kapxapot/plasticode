@@ -2,10 +2,13 @@
 
 namespace Plasticode\Util;
 
+use Plasticode\Util\Traits\PropertyAccess;
 use Webmozart\Assert\Assert;
 
 class Arrays
 {
+    use PropertyAccess;
+
     const IdField = 'id';
     const Dot = '.';
 
@@ -218,24 +221,6 @@ class Arrays
         );
 
         return array_values($values);
-    }
-    
-    /**
-     * Returns property value.
-     * 
-     * @param mixed $obj
-     * @param string $property
-     * @return mixed
-     */
-    private static function getProperty($obj, string $property)
-    {
-        if (is_array($obj)) {
-            return $obj[$property] ?? null;
-        }
-
-        return property_exists($obj, $property)
-            ? $obj->{$property}
-            : null;
     }
     
     /**
