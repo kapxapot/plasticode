@@ -50,7 +50,7 @@ class Query implements \IteratorAggregate
     /**
      * Array of sort settings
      *
-     * @var \Plasticode\Util\SortStep[]
+     * @var SortStep[]
      */
     private $sortOrder;
     
@@ -60,7 +60,7 @@ class Query implements \IteratorAggregate
      * @param \ORM $query The base query. Can be null for an empty query
      * @param string $idField Must be provided for non-empty query
      * @param \Closure $toModel Must be provided for non-empty query
-     * @param \Plasticode\Util\SortStep[] $sortOrder
+     * @param SortStep[] $sortOrder
      */
     public function __construct(\ORM $query = null, string $idField = null, \Closure $toModel = null, array $sortOrder = [])
     {
@@ -149,7 +149,7 @@ class Query implements \IteratorAggregate
      * Looks for a record with provided id.
      *
      * @param string|int $id
-     * @return null|\Plasticode\Models\DbModel
+     * @return null|DbModel
      */
     public function find($id) : ?DbModel
     {
@@ -164,7 +164,7 @@ class Query implements \IteratorAggregate
      * "Select one".
      * In case of empty query returns null.
      *
-     * @return null|\Plasticode\Models\DbModel
+     * @return null|DbModel
      */
     public function one() : ?DbModel
     {
@@ -209,7 +209,7 @@ class Query implements \IteratorAggregate
      *
      * In case of empty query (or no records) returns null.
      * 
-     * @return null|\Plasticode\Models\DbModel
+     * @return null|DbModel
      */
     public function random() : ?DbModel
     {
@@ -275,7 +275,7 @@ class Query implements \IteratorAggregate
      * plus applied modification.
      *
      * @param \Closure $queryModifier
-     * @param \Plasticode\Util\SortStep[] $sortOrder
+     * @param SortStep[] $sortOrder
      * @return mixed
      */
     private function branch(\Closure $queryModifier = null, array $sortOrder = null)
@@ -326,7 +326,7 @@ class Query implements \IteratorAggregate
      * Allows passing an array or a Collection.
      *
      * @param string $field
-     * @param array|\Plasticode\Collection $values Array or Collection
+     * @param array|Collection $values Array or Collection
      * @return self
      */
     public function whereIn(string $field, $values) : self
@@ -353,7 +353,7 @@ class Query implements \IteratorAggregate
      * Allows passing an array or a Collection.
      * 
      * @param string $field
-     * @param array|\Plasticode\Collection $values Array or Collection
+     * @param array|Collection $values Array or Collection
      * @return self
      */
     public function whereNotIn(string $field, $values) : self
@@ -493,7 +493,7 @@ class Query implements \IteratorAggregate
     /**
      * Applies sort order as array.
      *
-     * @param \Plasticode\Util\SortStep[] $sortOrder
+     * @param SortStep[] $sortOrder
      * @return Query
      */
     public function withSort(array $sortOrder) : Query

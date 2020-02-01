@@ -22,11 +22,11 @@ class Sort
      * Example config:
      *
      * $sorts = [
-     *  'remote_online' => [ 'dir' => 'desc' ],
-     *  'priority' => [ 'dir' => 'desc' ],
+     *  'remote_online' => [], // dir = asc by default
+     *  'priority' => [ 'dir' => 'desc' ], // type is numeric by default
      *  'priority_game' => [ 'dir' => 'desc' ],
      *  'remote_viewers' => [ 'dir' => 'desc' ],
-     *  'title' => [ 'dir' => 'asc', 'type' => 'string' ],
+     *  'title' => [ 'type' => 'string' ],
      * ];
      */
     public static function multi(array $array, array $sorts) : array
@@ -41,13 +41,13 @@ class Sort
 
         usort(
             $array,
-            function($a, $b) use ($sorts) {
+            function($itemA, $itemB) use ($sorts) {
                 foreach ($sorts as $field => $settings) {
                     $dir = $settings['dir'] ?? self::ASC;
                     $type = $settings['type'] ?? null;
 
-                    $propA = self::getProperty($a, $field);
-                    $propB = self::getProperty($b, $field);
+                    $propA = self::getProperty($itemA, $field);
+                    $propB = self::getProperty($itemB, $field);
                     
                     switch ($type) {
                         case self::STRING:
@@ -71,12 +71,12 @@ class Sort
                             $a = $propA;
                             $b = $propB;
                             
-                            if ($a && $b || !$a && !$b) {
-                                $cmp = 0;
-                            } elseif ($a && !$b) {
+                            if ($a && !$b) {
                                 $cmp = 1;
                             } elseif (!$a && $b) {
                                 $cmp = -1;
+                            } else {
+                                $cmp = 0;
                             }
                             break;
                         
@@ -108,7 +108,7 @@ class Sort
     }
 
     /**
-     * Sorts array by its field asc/desc.
+     * Sorts array by $field asc/desc.
      * 
      * @param array $array
      * @param string $field

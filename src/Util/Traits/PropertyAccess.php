@@ -2,6 +2,8 @@
 
 namespace Plasticode\Util\Traits;
 
+use Webmozart\Assert\Assert;
+
 trait PropertyAccess
 {
     /**
@@ -16,6 +18,8 @@ trait PropertyAccess
         if (is_array($obj)) {
             return $obj[$property] ?? null;
         }
+
+        Assert::object($obj);
 
         return property_exists($obj, $property)
             ? $obj->{$property}
