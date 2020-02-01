@@ -419,27 +419,71 @@ class Arrays
         return array_slice($array, $offset, $limit);
     }
     
-    public static function orderBy($array, $column, $dir = null, $type = null) : array
+    /**
+     * Orders array items, ascending / numeric by default.
+     * Shortcut for Sort::by().
+     *
+     * @param array $array
+     * @param string $column
+     * @param string|null $dir
+     * @param string|null $type
+     * @return array
+     */
+    public static function orderBy(array $array, string $column, ?string $dir = null, ?string $type = null) : array
     {
         return Sort::by($array, $column, $dir, $type);
     }
     
-    public static function orderByDesc($array, $column, $type = null) : array
+    /**
+     * Orders array items descending, numeric by default.
+     * Shortcut for Sort::desc().
+     *
+     * @param array $array
+     * @param string $column
+     * @param string|null $type
+     * @return array
+     */
+    public static function orderByDesc(array $array, string $column, ?string $type = null) : array
     {
         return Sort::desc($array, $column, $type);
     }
     
-    public static function orderByStr($array, $column, $dir = null) : array
+    /**
+     * Orders array items as strings, ascending by default.
+     * Shortcut for Sort::byStr().
+     *
+     * @param array $array
+     * @param string $column
+     * @param string|null $dir
+     * @return array
+     */
+    public static function orderByStr(array $array, string $column, ?string $dir = null) : array
     {
         return Sort::byStr($array, $column, $dir);
     }
     
-    public static function orderByStrDesc($array, $column) : array
+    /**
+     * Orders array items descending as strings.
+     * Shortcut for Sort::descStr().
+     *
+     * @param array $array
+     * @param string $column
+     * @return array
+     */
+    public static function orderByStrDesc(array $array, string $column) : array
     {
         return Sort::descStr($array, $column);
     }
     
-    public static function multiSort($array, $sorts) : array
+    /**
+     * Orders array items based on array of sort conditions.
+     * Shortcut for Sort::multi().
+     *
+     * @param array $array
+     * @param array $sorts
+     * @return array
+     */
+    public static function multiSort(array $array, array $sorts) : array
     {
         return Sort::multi($array, $sorts);
     }

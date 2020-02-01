@@ -217,6 +217,22 @@ final class SortTest extends TestCase
                 ],
                 $this->toObjArray([$this->first, $this->second, $this->third])
             ],
+            [
+                [
+                    ['id' => 1, 'name' => 'Alex'],
+                    ['id' => 2, 'name' => 'Peter'],
+                    ['id' => 3, 'name' => 'Alex'],
+                ],
+                [
+                    'name' => ['type' => Sort::STRING],
+                    'id' => ['dir' => Sort::DESC],
+                ],
+                [
+                    ['id' => 3, 'name' => 'Alex'],
+                    ['id' => 1, 'name' => 'Alex'],
+                    ['id' => 2, 'name' => 'Peter'],
+                ]
+            ],
         ];
     }
 

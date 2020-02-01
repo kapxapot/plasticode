@@ -112,12 +112,12 @@ class Sort
      * 
      * @param array $array
      * @param string $field
-     * @param string $dir 'asc' or 'desc'. null = 'asc'
-     * @param string $type Pass 'string' for string comparison
+     * @param string|null $dir 'asc' or 'desc'. null = 'asc'
+     * @param string|null $type null = numeric
      * 
      * @return array
      */
-    public static function by(array $array, string $field, string $dir = null, string $type = null) : array
+    public static function by(array $array, string $field, ?string $dir = null, ?string $type = null) : array
     {
         $sorts = [
             $field => [
@@ -132,7 +132,7 @@ class Sort
     /**
      * Alias for by($array, $field).
      */
-    public static function asc(array $array, string $field, string $type = null) : array
+    public static function asc(array $array, string $field, ?string $type = null) : array
     {
         return self::by($array, $field, null, $type);
     }
@@ -140,7 +140,7 @@ class Sort
     /**
      * Shortcut for by($array, $field, 'desc').
      */
-    public static function desc(array $array, string $field, string $type = null) : array
+    public static function desc(array $array, string $field, ?string $type = null) : array
     {
         return self::by($array, $field, self::DESC, $type);
     }
@@ -148,7 +148,7 @@ class Sort
     /**
      * Sort by $field as strings.
      */
-    public static function byStr(array $array, string $field, string $dir = null) : array
+    public static function byStr(array $array, string $field, ?string $dir = null) : array
     {
         return self::by($array, $field, $dir, self::STRING);
     }

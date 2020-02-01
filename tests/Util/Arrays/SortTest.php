@@ -1,0 +1,120 @@
+<?php
+
+namespace Plasticode\Tests\Util\Arrays;
+
+use PHPUnit\Framework\TestCase;
+use Plasticode\Util\Arrays;
+use Plasticode\Util\Sort;
+
+final class SortTest extends TestCase
+{
+    /**
+     * @covers Arrays
+     */
+    public function testOrderBy() : void
+    {
+        $array = [
+            ['a' => 2],
+            ['a' => 1],
+            ['a' => 3],
+        ];
+
+        $this->assertEquals(
+            [
+                ['a' => 1],
+                ['a' => 2],
+                ['a' => 3],
+            ],
+            Arrays::orderBy($array, 'a')
+        );
+    }
+
+    /**
+     * @covers Arrays
+     */
+    public function testOrderByDesc() : void
+    {
+        $array = [
+            ['a' => 2],
+            ['a' => 1],
+            ['a' => 3],
+        ];
+
+        $this->assertEquals(
+            [
+                ['a' => 3],
+                ['a' => 2],
+                ['a' => 1],
+            ],
+            Arrays::orderByDesc($array, 'a')
+        );
+    }
+
+    /**
+     * @covers Arrays
+     */
+    public function testOrderByStr() : void
+    {
+        $array = [
+            ['name' => 'Anna'],
+            ['name' => 'Peter'],
+            ['name' => 'John'],
+        ];
+
+        $this->assertEquals(
+            [
+                ['name' => 'Anna'],
+                ['name' => 'John'],
+                ['name' => 'Peter'],
+            ],
+            Arrays::orderByStr($array, 'name')
+        );
+    }
+
+    /**
+     * @covers Arrays
+     */
+    public function testOrderByStrDesc() : void
+    {
+        $array = [
+            ['name' => 'Anna'],
+            ['name' => 'Peter'],
+            ['name' => 'John'],
+        ];
+
+        $this->assertEquals(
+            [
+                ['name' => 'Peter'],
+                ['name' => 'John'],
+                ['name' => 'Anna'],
+            ],
+            Arrays::orderByStrDesc($array, 'name')
+        );
+    }
+
+    /**
+     * @covers Arrays
+     */
+    public function testMultiSort() : void
+    {
+        $array = [
+            ['id' => 1, 'name' => 'Alex'],
+            ['id' => 2, 'name' => 'Peter'],
+            ['id' => 3, 'name' => 'Alex'],
+        ];
+
+        $sorts = [
+            'name' => ['type' => Sort::STRING],
+            'id' => ['dir' => Sort::DESC],
+        ];
+
+        $this->assertEquals(
+            [
+                ['id' => 3, 'name' => 'Alex'],
+                ['id' => 1, 'name' => 'Alex'],
+                ['id' => 2, 'name' => 'Peter'],
+            ],
+            Arrays::multiSort($array, $sorts)
+        );
+    }
+}
