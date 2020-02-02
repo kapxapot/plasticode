@@ -121,4 +121,40 @@ final class CollectionTest extends TestCase
             ],
         ];
     }
+
+    public function testLastObjRemembers() : void
+    {
+        $col = Collection::make(
+            [
+                new DummyModel(1, 'one'),
+                new DummyModel(2, 'two'),
+                new DummyModel(3, 'three'),
+            ]
+        );
+
+        /** @var DummyModel */
+        $last = $col->last();
+
+        $last->name = 'four';
+
+        $this->assertEquals('four', $col->last()->name);
+    }
+
+    public function testLastArrayForgets() : void
+    {
+        $col = Collection::make(
+            [
+                ['id' => 1, 'name' => 'one'],
+                ['id' => 2, 'name' => 'two'],
+                ['id' => 3, 'name' => 'three'],
+            ]
+        );
+
+        /** @var array */
+        $last = $col->last();
+
+        $last['name'] = 'four';
+
+        $this->assertEquals('three', $col->last()['name']);
+    }
 }

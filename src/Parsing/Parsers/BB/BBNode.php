@@ -21,11 +21,13 @@ class BBNode
      *
      * @param string $tag
      * @param string[] $attributes
+     * @param string $text
      */
-    public function __construct(string $tag, array $attributes)
+    public function __construct(string $tag, array $attributes, string $text)
     {
         $this->tag = $tag;
         $this->attributes = $attributes;
+        $this->text = $text;
     }
 
     /**

@@ -104,6 +104,7 @@ class BBContainerParser extends BaseStep
                     'type' => 'start',
                     'tag' => $tag,
                     'attributes' => $attrs,
+                    'text' => $part,
                 ];
             } elseif (preg_match('/\[\/(' . $ctagsStr . ')\]/Ui', $part, $matches)) {
                 // bb container end
@@ -112,8 +113,10 @@ class BBContainerParser extends BaseStep
                 $sequence[] = [
                     'type' => 'end',
                     'tag' => $tag,
+                    'text' => $part,
                 ];
             } elseif (strlen($part) > 0) {
+                // some text
                 $sequence[] = $part;
             }
         }
@@ -130,13 +133,14 @@ class BBContainerParser extends BaseStep
         $nodes = Collection::makeEmpty();
         
         $consume = function ($part) use (&$nodes, &$tree) {
+            /** @var BBNode */
             $node = $nodes->last();
 
-            if (is_null($node)) {
+            if (!is_null($node)) {
+                $node->addContent($part);
+            } else {
                 $tree[] = $part;
             }
-
-            $node->addContent($part);
         };
 
         foreach ($sequence as $part) {
@@ -148,27 +152,40 @@ class BBContainerParser extends BaseStep
                 case 'start':
                     $node = new BBNode(
                         $part['tag'],
-                        $part['attributes']
+                        $part['attributes'],
+                        $part['text']
                     );
-    
+
                     $nodes = $nodes->add($node);
 
                     break;
                 
                 case 'end':
                     // matching node?
+                    /** @var BBNode */
                     $node = $nodes->last();
 
-                    // no matching node - leave as is
-                    if (is_null($node) || $node->tag != $part['tag']) {
-                        $consume($part);
+                    // matching node - wrap it up
+                    if (!is_null($node) && $node->tag == $part['tag']) {
+                        $nodes = $nodes->trimEnd(1);
+                        $consume($node);
+                    } else {
+                        $consume($part['text']);
                     }
 
-                    // consume node
-                    $nodes = $nodes->pop();
-                    $consume($node);
-
                     break;
+            }
+        }
+
+        while ($nodes->any()) {
+            /** @var BBNode */
+            $node = $nodes->last();
+            $nodes = $nodes->trimEnd(1);
+
+            $consume($node->text);
+
+            foreach ($node->content as $part) {
+                $consume($part);
             }
         }
         

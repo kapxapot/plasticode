@@ -149,14 +149,6 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     {
         return $this->slice(-$limit);
     }
-
-    /**
-     * Removes 1 element from the end of collection.
-     */
-    public function pop() : self
-    {
-        return $this->trimEnd(1);
-    }
     
     /**
      * Return random item.
