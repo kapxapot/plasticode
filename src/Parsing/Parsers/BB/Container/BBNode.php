@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing\Parsers\BB;
+namespace Plasticode\Parsing\Parsers\BB\Container;
 
 class BBNode
 {
