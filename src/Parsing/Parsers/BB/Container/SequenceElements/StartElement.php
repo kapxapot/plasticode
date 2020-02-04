@@ -2,7 +2,7 @@
 
 namespace Plasticode\Parsing\Parsers\BB\Container\SequenceElements;
 
-use Plasticode\Parsing\Parsers\BB\Container\BBNode;
+use Plasticode\Parsing\Parsers\BB\Container\Nodes\TagNode;
 
 class StartElement extends EndElement
 {
@@ -16,8 +16,8 @@ class StartElement extends EndElement
         $this->attributes = $attributes;
     }
 
-    public function toBBNode() : BBNode
+    public function toTagNode() : TagNode
     {
-        return new BBNode($this->tag, $this->attributes, $this->text);
+        return new TagNode($this->tag, $this->attributes, $this->text);
     }
 }

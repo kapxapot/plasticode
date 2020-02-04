@@ -2,10 +2,12 @@
 
 namespace Plasticode\Parsing\Parsers\BB\Container;
 
-use Plasticode\Collection;
+use Plasticode\Parsing\Parsers\BB\Container\Nodes\TagNode;
+use Plasticode\Parsing\Parsers\BB\Container\Nodes\Node;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\EndElement;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\SequenceElement;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\StartElement;
+use Plasticode\Util\Arrays;
 
 class BBTreeBuilder
 {
@@ -13,60 +15,56 @@ class BBTreeBuilder
      * Builds container tree based on parts sequence.
      * 
      * @param SequenceElement[] $sequence
-     * @return array
+     * @return Node[]
      */
     public function build(array $sequence) : array
     {
+        /** @var Node[] */
         $tree = [];
-        $nodes = Collection::makeEmpty();
-        
-        $consume = function ($part) use (&$nodes, &$tree) {
-            /** @var BBNode */
-            $node = $nodes->last();
 
-            if (!is_null($node)) {
-                $node->addContent($part);
+        /** @var TagNode[] */
+        $tagNodes = [];
+        
+        $consume = function (Node $node) use (&$tagNodes, &$tree) {
+            if (!empty($tagNodes)) {
+                Arrays::last($tagNodes)->addChild($node);
             } else {
-                $tree[] = $part;
+                $tree[] = $node;
             }
         };
 
         foreach ($sequence as $element) {
             if ($element instanceof StartElement) {
-                $node = $element->toBBNode();
-                $nodes = $nodes->add($node);
-
+                $tagNodes[] = $element->toTagNode();
                 continue;
             }
             
             if ($element instanceof EndElement) {
                 // matching node?
-                /** @var BBNode */
-                $node = $nodes->last();
+                /** @var TagNode */
+                $tagNode = Arrays::last($tagNodes);
 
                 // matching node - wrap it up
-                if (!is_null($node) && $node->tag == $element->tag) {
-                    $nodes = $nodes->trimEnd(1);
-                    $consume($node);
-                
+                if ($tagNode && $tagNode->tag == $element->tag) {
+                    array_pop($tagNodes);
+                    $consume($tagNode);
                     continue;
                 }
             }
 
             // text element or not matching end element
-            $consume($element->text);
+            $consume($element->toNode());
         }
 
         // there still can be some dangling nodes
-        while ($nodes->any()) {
-            /** @var BBNode */
-            $node = $nodes->last();
-            $nodes = $nodes->trimEnd(1);
+        while (!empty($tagNodes)) {
+            /** @var TagNode */
+            $tagNode = array_pop($tagNodes);
 
-            $consume($node->text);
+            $consume($tagNode->reduce());
 
-            foreach ($node->content as $content) {
-                $consume($content);
+            foreach ($tagNode->children as $child) {
+                $consume($child);
             }
         }
         

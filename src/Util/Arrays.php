@@ -418,6 +418,18 @@ class Arrays
     {
         return array_slice($array, $offset, $limit);
     }
+
+    /**
+     * Removes $limit (1 by default) elements from the array.
+     *
+     * @param array $array
+     * @param integer $limit
+     * @return array
+     */
+    public static function trimEnd(array $array, int $limit = null) : array
+    {
+        return self::slice($array, 0, -($limit ?? 1));
+    }
     
     /**
      * Orders array items, ascending / numeric by default.

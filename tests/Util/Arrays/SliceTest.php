@@ -139,4 +139,33 @@ final class SliceTest extends TestCase
             [$testArray, -10, 10, $testArray], // 31
         ];
     }
+
+    /**
+     * @covers Arrays
+     * @dataProvider trimEndProvider
+     */
+    public function testTrimEnd(array $array, int $limit = null, array $result) : void
+    {
+        $this->assertEquals(
+            $result,
+            Arrays::trimEnd($array, $limit)
+        );
+    }
+
+    public function trimEndProvider() : array
+    {
+        $array = ['one', 'two', 'three'];
+
+        return [
+            [[], null, []],
+            [[], 1, []],
+            [[], 3, []],
+            [[], 5, []],
+            [$array, null, ['one', 'two']],
+            [$array, 1, ['one', 'two']],
+            [$array, 2, ['one']],
+            [$array, 3, []],
+            [$array, 5, []],
+        ];
+    }
 }

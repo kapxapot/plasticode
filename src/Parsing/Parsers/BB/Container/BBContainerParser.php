@@ -47,9 +47,16 @@ class BBContainerParser extends BaseStep implements MapperSourceInterface
         $ctags = $this->getTags();
         $sequence = $this->sequencer->getSequence($context->text, $ctags);
 
-        $containerTree = $this->treeBuilder->build($sequence);
+        $tree = $this->treeBuilder->build($sequence);
 
-        $context->text = $this->treeRenderer->render($containerTree, $this);
+        $context->text = $this->treeRenderer->render($tree, $this);
+
+        // TODO: fluent calls notation
+        // $context->text = $this
+        //     ->sequencer
+        //     ->getSequence($context->text, $ctags)
+        //     ->build()
+        //     ->render($this);
         
         return $context;
     }

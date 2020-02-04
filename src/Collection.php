@@ -145,9 +145,10 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     /**
      * Removes $limit elements from the end of collection (backward skip).
      */
-    public function trimEnd(int $limit) : self
+    public function trimEnd(int $limit = null) : self
     {
-        return $this->slice(-$limit);
+        $data = Arrays::trimEnd($this->data, $limit);
+        return self::make($data);
     }
     
     /**

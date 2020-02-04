@@ -4,6 +4,8 @@ namespace Plasticode\Parsing\Parsers\BB\Container;
 
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\Interfaces\MapperSourceInterface;
+use Plasticode\Parsing\Parsers\BB\Container\Nodes\Node;
+use Plasticode\Parsing\Parsers\BB\Container\Nodes\TagNode;
 use Plasticode\Util\Text;
 
 class BBTreeRenderer
@@ -18,24 +20,28 @@ class BBTreeRenderer
 
     /**
      * Renders container tree.
+     * 
+     * @param Node[] $tree
+     * @param MapperSourceInterface $mapperSource
+     * @return string
      */
     public function render(array $tree, MapperSourceInterface $mapperSource) : string
     {
         $parts = [];
 
-        foreach ($tree as $part) {
-            if ($part instanceof BBNode) {
-                $part->text = $this->render($part->content, $mapperSource);
-                $parts[] = $this->renderNode($part, $mapperSource);
+        foreach ($tree as $node) {
+            if ($node instanceof TagNode) {
+                $node->text = $this->render($node->children, $mapperSource);
+                $parts[] = $this->renderNode($node, $mapperSource);
             } else {
-                $parts[] = $this->renderer->text($part);
+                $parts[] = $this->renderer->text($node->text);
             }
         }
         
         return implode(Text::BrBr, $parts);
     }
     
-    private function renderNode(BBNode $node, MapperSourceInterface $mapperSource) : string
+    private function renderNode(TagNode $node, MapperSourceInterface $mapperSource) : string
     {
         $tag = $node->tag;
         $mapper = $mapperSource->getMapper($tag);
