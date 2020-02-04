@@ -4,6 +4,12 @@ namespace Plasticode\Parsing\Parsers\BB\Traits;
 
 trait BBAttributeParser
 {
+    /**
+     * Parses attributes chunk.
+     *
+     * @param string $str
+     * @return string[]
+     */
     public function parseAttributes(string $str) : array
     {
         $attrsStr = trim($str, ' |=');

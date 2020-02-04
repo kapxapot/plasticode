@@ -2,6 +2,9 @@
 
 namespace Plasticode\Parsing\Parsers\BB\Container;
 
+use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\EndElement;
+use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\SequenceElement;
+use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\StartElement;
 use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
 use Plasticode\Util\Text;
 
@@ -14,11 +17,14 @@ class BBSequencer
      * 
      * @param string $text Text to sequence
      * @param string[] $ctags Known BB container tags
+     * @return SequenceElement[]
      */
     public function getSequence(string $text, array $ctags) : array
     {
         if (empty($ctags)) {
-            return [$text];
+            return [
+                new SequenceElement($text)
+            ];
         }
         
         $ctagsStr = implode('|', $ctags);
@@ -43,24 +49,15 @@ class BBSequencer
                 $tag = $matches[1];
                 $attrs = $this->parseAttributes($matches[2]);
                 
-                $sequence[] = [
-                    'type' => 'start',
-                    'tag' => $tag,
-                    'attributes' => $attrs,
-                    'text' => $part,
-                ];
+                $sequence[] = new StartElement($tag, $attrs, $part);
             } elseif (preg_match('/\[\/(' . $ctagsStr . ')\]/Ui', $part, $matches)) {
                 // bb container end
                 $tag = $matches[1];
 
-                $sequence[] = [
-                    'type' => 'end',
-                    'tag' => $tag,
-                    'text' => $part,
-                ];
+                $sequence[] = new EndElement($tag, $part);
             } elseif (strlen($part) > 0) {
                 // some text
-                $sequence[] = $part;
+                $sequence[] = new SequenceElement($part);
             }
         }
 
