@@ -30,7 +30,7 @@ class EventDispatcher extends Contained
     private $queue = [];
 
     /**
-     * Creates event dispatcher
+     * Creates event dispatcher.
      *
      * @param object $container DI container
      * @param array $processors Event processors
@@ -48,7 +48,7 @@ class EventDispatcher extends Contained
     }
 
     /**
-     * Adds event to event queue
+     * Adds event to event queue.
      *
      * @param Event $event
      * @return void
@@ -67,7 +67,7 @@ class EventDispatcher extends Contained
     }
 
     /**
-     * Tries to take event from event queue
+     * Tries to take event from event queue.
      *
      * @return Event|null
      */
@@ -77,7 +77,7 @@ class EventDispatcher extends Contained
     }
 
     /**
-     * Entry point for new event processing
+     * Entry point for new event processing.
      *
      * @param Event $event
      * @return void
@@ -126,7 +126,7 @@ class EventDispatcher extends Contained
     }
 
     /**
-     * Process next event in event queue
+     * Process next event in event queue.
      *
      * @return void
      */
@@ -163,7 +163,7 @@ class EventDispatcher extends Contained
         $methodName = $this->getProcessMethod($eventClass);
 
         foreach ($this->processors as $processor) {
-            if (\method_exists($processor, $methodName)) {
+            if (method_exists($processor, $methodName)) {
                 $this->log('   method ' . $methodName . ' found in processor ' . $processor->getClass());
 
                 $map[] = $processor;
@@ -188,7 +188,7 @@ class EventDispatcher extends Contained
      * Looks for the same event class with the same entity id.
      * 
      * @param Event $event
-     * @return bool
+     * @return boolean
      */
     private function isLoop(Event $event) : bool
     {

@@ -3,7 +3,6 @@
 namespace Plasticode\Models\Traits;
 
 use Plasticode\Collection;
-use Plasticode\Query;
 
 trait Children
 {

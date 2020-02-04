@@ -3,9 +3,12 @@
 namespace Plasticode\Events;
 
 use Plasticode\Models\DbModel;
+use Plasticode\Traits\GetClass;
 
 abstract class Event
 {
+    use GetClass;
+    
     /**
      * Parent event
      *
@@ -53,11 +56,6 @@ abstract class Event
         return is_null($entity)
             ? null
             : $entity->getId();
-    }
-
-    public function getClass() : string
-    {
-        return static::class;
     }
 
     public function toString() : string

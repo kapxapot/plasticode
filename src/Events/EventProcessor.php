@@ -3,11 +3,9 @@
 namespace Plasticode\Events;
 
 use Plasticode\Contained;
+use Plasticode\Traits\GetClass;
 
 abstract class EventProcessor extends Contained
 {
-    public function getClass() : string
-    {
-        return static::class;
-    }
+    use GetClass;
 }
