@@ -57,6 +57,7 @@ class BBTreeBuilder
             $consume($element->text);
         }
 
+        // there still can be some dangling nodes
         while ($nodes->any()) {
             /** @var BBNode */
             $node = $nodes->last();
