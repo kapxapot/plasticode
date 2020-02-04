@@ -48,11 +48,12 @@ class BBTreeBuilder
                 if (!is_null($node) && $node->tag == $element->tag) {
                     $nodes = $nodes->trimEnd(1);
                     $consume($node);
-                }
                 
-                continue;
+                    continue;
+                }
             }
 
+            // text element or not matching end element
             $consume($element->text);
         }
 
