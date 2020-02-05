@@ -3,11 +3,10 @@
 namespace Plasticode\Config;
 
 use Plasticode\IO\File;
-use Plasticode\Parsing\Mappers\ListMapper;
-use Plasticode\Parsing\Mappers\QuoteMapper;
-use Plasticode\Parsing\Mappers\SpoilerMapper;
-use Plasticode\Parsing\Parsers\BB\BBContainer;
-use Plasticode\Parsing\Parsers\BB\BBContainerParser;
+use Plasticode\Parsing\Parsers\BB\Container\BBContainerParser;
+use Plasticode\Parsing\Parsers\BB\Container\BBSequencer;
+use Plasticode\Parsing\Parsers\BB\Container\BBTreeBuilder;
+use Plasticode\Parsing\Parsers\BB\Container\BBTreeRenderer;
 use Plasticode\Parsing\Parsers\CleanupParser;
 use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Parsing\Parsers\CutParser;
@@ -43,50 +42,6 @@ class Bootstrap
         $this->settings = $settings;
         $this->dbSettings = $this->settings['db'];
         $this->dir = $dir;
-    }
-    
-    /**
-     * Not used yet.
-     *
-     * @return array
-     */
-    protected function getClassMappings() : array
-    {
-        return [
-            'user' => \Plasticode\Models\User::class,
-            'role' => \Plasticode\Models\Role::class,
-            'authToken' => \Plasticode\Models\AuthToken::class,
-            'menuItem' => \Plasticode\Models\MenuItem::class,
-
-            'captchaConfig' => \Plasticode\Config\CaptchaConfig::class,
-            'parsingConfig' => \Plasticode\Config\ParsingConfig::class,
-            'localizationConfig' => \Plasticode\Config\LocalizationConfig::class,
-
-            'db' => \Plasticode\Data\Db::class,
-            'cache' => \Plasticode\Core\Cache::class,
-            'cases' => \Plasticode\Util\Cases::class,
-        ];
-    }
-    
-    /**
-     * Not used yet.
-     *
-     * @return array
-     */
-    protected function getContainedClassMappings() : array
-    {
-        return [
-            'auth' => \Plasticode\Auth\Auth::class,
-            'access' => \Plasticode\Auth\Access::class,
-            'validator' => \Plasticode\Validation\Validator::class,
-            'linker' => \Plasticode\Core\Linker::class,
-
-            'twitch' => \Plasticode\External\Twitch::class,
-            'telegram' => \Plasticode\External\Telegram::class,
-
-            'notFoundHandler' => \Plasticode\Handlers\NotFoundHandler::class,
-            'notAllowedHandler' => \Plasticode\Handlers\NotAllowedHandler::class,
-        ];
     }
     
     /**
@@ -381,7 +336,9 @@ class Bootstrap
             'bbContainerParser' => function (ContainerInterface $container) {
                 return new BBContainerParser(
                     $container->bbContainerConfig,
-                    $container->renderer
+                    new BBSequencer(),
+                    new BBTreeBuilder(),
+                    new BBTreeRenderer($container->renderer)
                 );
             },
             
