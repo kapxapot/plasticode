@@ -50,12 +50,20 @@ class BBSequencer
                 $attrs = $this->parseAttributes($matches[2]);
                 
                 $sequence[] = new StartElement($tag, $attrs, $part);
-            } elseif (preg_match('/\[\/(' . $ctagsStr . ')\]/Ui', $part, $matches)) {
+
+                continue;
+            }
+            
+            if (preg_match('/\[\/(' . $ctagsStr . ')\]/Ui', $part, $matches)) {
                 // bb container end
                 $tag = $matches[1];
 
                 $sequence[] = new EndElement($tag, $part);
-            } elseif (strlen($part) > 0) {
+
+                continue;
+            }
+            
+            if (strlen($part) > 0) {
                 // some text
                 $sequence[] = new SequenceElement($part);
             }
