@@ -2,15 +2,15 @@
 
 namespace Plasticode\Parsing\Parsers\BB\Container;
 
-use Plasticode\Config\Interfaces\BBContainerConfigInterface;
-use Plasticode\Parsing\Interfaces\MapperInterface;
 use Plasticode\Parsing\Interfaces\MapperSourceInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
-use Webmozart\Assert\Assert;
 
-class BBContainerParser extends BaseStep implements MapperSourceInterface
+class BBContainerParser extends BaseStep
 {
+    /** @var MapperSourceInterface */
+    private $config;
+
     /** @var BBSequencer */
     private $sequencer;
 
@@ -20,17 +20,9 @@ class BBContainerParser extends BaseStep implements MapperSourceInterface
     /** @var BBTreeRenderer */
     private $treeRenderer;
 
-    /** @var array */
-    private $map = [];
-
-    public function __construct(BBContainerConfigInterface $config, BBSequencer $sequencer, BBTreeBuilder $treeBuilder, BBTreeRenderer $treeRenderer)
+    public function __construct(MapperSourceInterface $config, BBSequencer $sequencer, BBTreeBuilder $treeBuilder, BBTreeRenderer $treeRenderer)
     {
-        $tagMappers = $config->getMappers();
-
-        foreach ($tagMappers as $tag => $mapper) {
-            $this->register($tag, $mapper);
-        }
-
+        $this->config = $config;
         $this->sequencer = $sequencer;
         $this->treeBuilder = $treeBuilder;
         $this->treeRenderer = $treeRenderer;
@@ -44,12 +36,12 @@ class BBContainerParser extends BaseStep implements MapperSourceInterface
             return $context;
         }
 
-        $ctags = $this->getTags();
+        $ctags = $this->config->getTags();
         $sequence = $this->sequencer->getSequence($context->text, $ctags);
 
         $tree = $this->treeBuilder->build($sequence);
 
-        $context->text = $this->treeRenderer->render($tree, $this);
+        $context->text = $this->treeRenderer->render($tree, $this->config);
 
         // TODO: fluent calls notation
         // $context->text = $this
@@ -59,34 +51,5 @@ class BBContainerParser extends BaseStep implements MapperSourceInterface
         //     ->render($this);
         
         return $context;
-    }
-
-    public function register(string $tag, MapperInterface $mapper) : void
-    {
-        Assert::notEmpty($tag);
-        Assert::alnum($tag);
-        Assert::notNull($mapper);
-
-        $this->map[$tag] = $mapper;
-    }
-
-    /**
-     * Returns registered tags.
-     *
-     * @return string[]
-     */
-    private function getTags() : array
-    {
-        return array_keys($this->map);
-    }
-
-    public function getMapper(string $tag) : MapperInterface
-    {
-        Assert::true(
-            array_key_exists($tag, $this->map),
-            'No mapper found for BB container tag \'' . $tag . '\''
-        );
-
-        return $this->map[$tag];
     }
 }

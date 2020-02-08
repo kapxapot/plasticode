@@ -33,9 +33,11 @@ class BBTreeRenderer
             if ($node instanceof TagNode) {
                 $node->text = $this->render($node->children, $mapperSource);
                 $parts[] = $this->renderNode($node, $mapperSource);
-            } else {
-                $parts[] = $this->renderer->text($node->text);
+
+                continue;
             }
+            
+            $parts[] = $this->renderer->text($node->text);
         }
         
         return implode(Text::BrBr, $parts);

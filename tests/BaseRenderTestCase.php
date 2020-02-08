@@ -1,19 +1,14 @@
 <?php
 
-namespace Plasticode\Tests\Parsing;
+namespace Plasticode\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Config\Interfaces\ParsingConfigInterface;
-use Plasticode\Config\ParsingConfig;
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Core\Renderer;
 use Slim\Views\Twig;
 
 abstract class BaseRenderTestCase extends TestCase
 {
-    /** @var ParsingConfigInterface */
-    protected $config;
-
     /** @var Twig */
     private $view;
 
@@ -23,8 +18,6 @@ abstract class BaseRenderTestCase extends TestCase
     protected function setUp() : void
     {
         parent::setUp();
-
-        $this->config = new ParsingConfig();
         
         $this->view = new Twig('views/bootstrap3/', ['debug' => true]);
         $this->renderer = new Renderer($this->view);
@@ -34,7 +27,6 @@ abstract class BaseRenderTestCase extends TestCase
     {
         unset($this->renderer);
         unset($this->view);
-        unset($this->config);
 
         parent::tearDown();
     }

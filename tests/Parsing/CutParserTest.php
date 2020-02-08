@@ -6,7 +6,7 @@ use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Parsers\CleanupParser;
 use Plasticode\Parsing\Parsers\CutParser;
 
-final class CutParserTest extends BaseRenderTestCase
+final class CutParserTest extends BaseParsingRenderTestCase
 {
     /** @var ParsingStepInterface */
     private $cleanupParser;

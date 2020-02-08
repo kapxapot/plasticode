@@ -3,6 +3,8 @@
 namespace Plasticode\Tests\Parsing\BB;
 
 use PHPUnit\Framework\TestCase;
+use Plasticode\Config\BBContainerConfig;
+use Plasticode\Parsing\Interfaces\MapperSourceInterface;
 use Plasticode\Parsing\Parsers\BB\Container\BBSequencer;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\EndElement;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\SequenceElement;
@@ -10,8 +12,22 @@ use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\StartElement;
 
 final class BBSequencerTest extends TestCase
 {
-    /** @var string[] */
-    private $ctags = ['quote', 'spoiler', 'list'];
+    /** @var MapperSourceInterface */
+    private $config;
+
+    protected function setUp() : void
+    {
+        parent::setUp();
+
+        $this->config = new BBContainerConfig();
+    }
+
+    protected function tearDown() : void
+    {
+        unset($this->config);
+
+        parent::tearDown();
+    }
 
     /**
      * @covers BBSequencer
@@ -22,7 +38,7 @@ final class BBSequencerTest extends TestCase
 
         $seq = $sequencer->getSequence(
             '[quote|some_attr|another]test [b]bold[/b] test[spoiler]blah[/spoiler][/quote]some [img|image.jpg] text',
-            $this->ctags
+            $this->config->getTags()
         );
 
         $this->assertContainsOnlyInstancesOf(SequenceElement::class, $seq);
@@ -49,7 +65,6 @@ final class BBSequencerTest extends TestCase
         $this->assertEquals('spoiler', $spoilerStart->tag);
         $this->assertEquals('[spoiler]', $spoilerStart->text);
         $this->assertEmpty($spoilerStart->attributes);
-
 
         /** @var SequenceElement */
         $testText2 = $seq[3];

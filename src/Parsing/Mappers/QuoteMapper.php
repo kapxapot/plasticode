@@ -9,6 +9,7 @@ class QuoteMapper implements MapperInterface
     public function map(string $content, array $attrs) : array
     {
         $author = null;
+        $url = null;
         $chunks = [];
 
         foreach ($attrs as $attr) {

@@ -4,9 +4,9 @@ namespace Plasticode\Tests\Parsing\Steps;
 
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\ParsingContext;
-use Plasticode\Tests\Parsing\BaseRenderTestCase;
+use Plasticode\Tests\Parsing\BaseParsingRenderTestCase;
 
-abstract class ParsingStepTestCase extends BaseRenderTestCase
+abstract class ParsingStepTestCase extends BaseParsingRenderTestCase
 {
     protected function parse(string $text) : ParsingContext
     {

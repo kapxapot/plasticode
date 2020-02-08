@@ -3,28 +3,30 @@
 namespace Plasticode\Tests\Parsing\BB;
 
 use PHPUnit\Framework\TestCase;
+use Plasticode\Config\BBContainerConfig;
+use Plasticode\Parsing\Interfaces\MapperSourceInterface;
 use Plasticode\Parsing\Parsers\BB\Container\BBSequencer;
 use Plasticode\Parsing\Parsers\BB\Container\BBTreeBuilder;
 use Plasticode\Parsing\Parsers\BB\Container\Nodes\Node;
 use Plasticode\Parsing\Parsers\BB\Container\Nodes\TagNode;
-use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\SequenceElement;
 
 final class BBTreeBuilderTest extends TestCase
 {
-    /** @var string[] */
-    private $ctags = ['quote', 'spoiler', 'list'];
+    /** @var MapperSourceInterface */
+    private $config;
 
-    /**
-     * Gets BBSequence from $text.
-     *
-     * @param string $text
-     * @return SequenceElement[]
-     */
-    private function getSequence(string $text) : array
+    protected function setUp() : void
     {
-        $sequencer = new BBSequencer();
+        parent::setUp();
 
-        return $sequencer->getSequence($text, $this->ctags);
+        $this->config = new BBContainerConfig();
+    }
+
+    protected function tearDown() : void
+    {
+        unset($this->config);
+
+        parent::tearDown();
     }
 
     /**
@@ -35,10 +37,10 @@ final class BBTreeBuilderTest extends TestCase
      */
     private function buildTree(string $text) : array
     {
-        $seq = $this->getSequence($text);
+        $sequencer = new BBSequencer();
+        $seq = $sequencer->getSequence($text, $this->config->getTags());
 
         $treeBuilder = new BBTreeBuilder();
-
         return $treeBuilder->build($seq);
     }
 
