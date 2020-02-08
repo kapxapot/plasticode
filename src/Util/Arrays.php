@@ -13,20 +13,36 @@ class Arrays
     const Dot = '.';
 
     /**
+     * Checks if $array is an array or implements \ArrayAccess.
+     *
+     * @param array|\ArrayAccess $array
+     * @return void
+     */
+    private static function checkArray($array) : void
+    {
+        Assert::true(
+            is_array($array) || $array instanceof \ArrayAccess,
+            '$array must be an array or implement \ArrayAccess.'
+        );
+    }
+
+    /**
      * Checks if the key is present in the array.
      *
-     * @param array $array
+     * @param array|\ArrayAccess $array
      * @param string|integer|null $key
      * @return boolean
      */
-    public static function exists(array $array, $key) : bool
+    public static function exists($array, $key) : bool
     {
+        self::checkArray($array);
+
         return !is_null($array[$key] ?? null);
     }
     
     /**
      * Get an item from an associative array using "dot" notation.
-     * Taken from Illuminate/Support/Arr.
+     * Taken from Illuminate\Support\Arr.
      *
      * @param array|\ArrayAccess $array
      * @param string|integer|null $key
@@ -34,10 +50,7 @@ class Arrays
      */
     public static function get($array, $key)
     {
-        Assert::true(
-            is_array($array) || $array instanceof \ArrayAccess,
-            '$array must be an array or implement \ArrayAccess.'
-        );
+        self::checkArray($array);
         
         if (empty($array) || strlen($key) == 0) {
             return null;
@@ -60,7 +73,7 @@ class Arrays
 
     /**
      * Set an array item to a given value using "dot" notation.
-     * Taken from Illuminate/Support/Arr.
+     * Taken from Illuminate\Support\Arr.
      *
      * @param array $array
      * @param string $key
