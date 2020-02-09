@@ -2,6 +2,7 @@
 
 namespace Plasticode;
 
+use Plasticode\Exceptions\ApplicationException;
 use Plasticode\Models\DbModel;
 use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;
@@ -133,16 +134,40 @@ class Query implements \IteratorAggregate
             return Collection::makeEmpty();
         }
         
-        $objs = $this->getSortedQuery()->findMany();
+        $query = $this->getSortedQuery();
+
+        try {
+            $objs = $query->findMany();
         
-        $all = array_map(
-            function ($obj) {
-                return ($this->toModel)($obj);
-            },
-            $objs ?? []
-        );
-        
-        return Collection::make($all);
+            $all = array_map(
+                function ($obj) {
+                    return ($this->toModel)($obj);
+                },
+                $objs ?? []
+            );
+            
+            return Collection::make($all);
+        } catch (\PDOException $pdoEx) {
+            throw new ApplicationException(
+                'Failed to execute query: ' . self::queryToString($query)
+            );
+        }
+    }
+
+    /**
+     * Gets SQL statement for the ORM query.
+     *
+     * @param \ORM $query
+     * @return string
+     */
+    private static function queryToString(\ORM $query) : string
+    {
+        $method = new \ReflectionMethod('\ORM', '_build_select');
+        $method->setAccessible(true);
+
+        $statement = $method->invoke($query);
+
+        return $statement;
     }
     
     /**
