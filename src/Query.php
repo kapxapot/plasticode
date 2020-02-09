@@ -364,6 +364,8 @@ class Query implements \IteratorAggregate
             $values,
             'WhereIn error: values must be a Collection or an array.'
         );
+
+        Assert::notEmpty($values);
         
         return $this->branch(
             function ($q) use ($field, $values) {
@@ -391,6 +393,8 @@ class Query implements \IteratorAggregate
             $values,
             'WhereNotIn error: values must be a Collection or an array.'
         );
+
+        Assert::notEmpty($values);
         
         return $this->branch(
             function ($q) use ($field, $values) {
