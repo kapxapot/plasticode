@@ -174,7 +174,8 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      */
     public function ids() : self
     {
-        return $this->extract('id');
+        $data = Arrays::extractIds($this->data);
+        return self::make($data);
     }
 
     /**

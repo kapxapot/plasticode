@@ -21,7 +21,7 @@ trait PropertyAccess
 
         Assert::object($obj);
 
-        return property_exists($obj, $property)
+        return isset($obj->{$property})
             ? $obj->{$property}
             : null;
     }
