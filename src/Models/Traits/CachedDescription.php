@@ -2,9 +2,13 @@
 
 namespace Plasticode\Models\Traits;
 
+use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Util\Date;
 
+/**
+ * @property CompositeParser $parser
+ */
 trait CachedDescription
 {
     protected static function getDescriptionField() : string
@@ -58,9 +62,7 @@ trait CachedDescription
                     $this->save();
                 }
                 
-                if (!is_null($parsed)) {
-                    $parsed = self::$parser->renderLinks($parsed);
-                }
+                $parsed = self::$parser->renderLinks($parsed);
 
                 return $parsed;
             }

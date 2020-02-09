@@ -2,12 +2,14 @@
 
 namespace Plasticode\Parsing\Parsers;
 
+use Plasticode\Parsing\Interfaces\LinkRendererInterface;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
+use Plasticode\Util\Arrays;
 use Webmozart\Assert\Assert;
 
-class CompositeParser extends BaseStep
+class CompositeParser extends BaseStep implements LinkRendererInterface
 {
     /** @var ParsingStepInterface[] */
     private $pipeline;
@@ -54,5 +56,37 @@ class CompositeParser extends BaseStep
         }
 
         return $context;
+    }
+
+    /**
+     * Renders links using pipeline's link renderers.
+     *
+     * @param ParsingContext $context
+     * @return ParsingContext
+     */
+    public function renderLinks(ParsingContext $context) : ParsingContext
+    {
+        $context = clone $context;
+
+        foreach ($this->getLinkRenderers() as $linkRenderer) {
+            $context = $linkRenderer->renderLinks($context);
+        }
+
+        return $context;
+    }
+
+    /**
+     * Returns pipeline link renderers.
+     *
+     * @return LinkRendererInterface[]
+     */
+    private function getLinkRenderers() : array
+    {
+        return Arrays::filter(
+            $this->pipeline,
+            function ($item) {
+                return $item instanceof LinkRendererInterface;
+            }
+        );
     }
 }

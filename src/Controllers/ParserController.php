@@ -4,9 +4,13 @@ namespace Plasticode\Controllers;
 
 use Plasticode\Contained;
 use Plasticode\Core\Response;
+use Plasticode\Parsing\Parsers\CompositeParser;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * @property CompositeParser $parser
+ */
 class ParserController extends Contained
 {
     public function parse(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface

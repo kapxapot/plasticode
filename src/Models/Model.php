@@ -2,12 +2,17 @@
 
 namespace Plasticode\Models;
 
+use Plasticode\Auth\Auth;
 use Plasticode\Contained;
 use Plasticode\Core\Cache;
+use Plasticode\Core\Linker;
+use Plasticode\Data\Db;
 use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Models\Role;
 use Plasticode\Models\User;
+use Plasticode\Parsing\Parsers\CompositeParser;
+use Plasticode\Util\Cases;
 use Plasticode\Util\Strings;
 use Psr\Container\ContainerInterface;
 
@@ -16,27 +21,27 @@ class Model implements \ArrayAccess, \JsonSerializable
     /**
      * DI container wrapper (!)
      *
-     * @var \Plasticode\Contained
+     * @var Contained
      */
     protected static $container;
     
     /**
      * Db layer
      *
-     * @var \Plasticode\Data\Db
+     * @var Db
      */
     protected static $db;
 
-    /** @var \Plasticode\Auth\Auth */
+    /** @var Auth */
     protected static $auth;
 
-    /** @var \Api\Core\Linker */
+    /** @var Linker */
     protected static $linker;
 
-    /** @var \Plasticode\Util\Cases */
+    /** @var Cases */
     protected static $cases;
 
-    /** @var \Plasticode\Core\Parser */
+    /** @var CompositeParser */
     protected static $parser;
     
     protected static $userRepository;
@@ -53,14 +58,14 @@ class Model implements \ArrayAccess, \JsonSerializable
     /**
      * Instance cache
      *
-     * @var \Plasticode\Core\Cache
+     * @var Cache
      */
     protected $objCache;
 
     /**
      * Static cache
      *
-     * @var \Plasticode\Core\Cache
+     * @var Cache
      */
     private static $staticCache;
 
