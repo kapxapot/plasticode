@@ -2,7 +2,7 @@
 
 namespace Plasticode;
 
-use Plasticode\Exceptions\ApplicationException;
+use Plasticode\Exceptions\SqlException;
 use Plasticode\Models\DbModel;
 use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;
@@ -148,7 +148,7 @@ class Query implements \IteratorAggregate
             
             return Collection::make($all);
         } catch (\PDOException $pdoEx) {
-            throw new ApplicationException(
+            throw new SqlException(
                 'Failed to execute query: ' . self::queryToString($query)
             );
         }
