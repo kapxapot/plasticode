@@ -15,11 +15,15 @@ class QuoteMapper implements MapperInterface
         foreach ($attrs as $attr) {
             if (strpos($attr, 'http') === 0) {
                 $url = $attr;
-            } elseif (!$author) {
-                $author = $attr;
-            } else {
-                $chunks[] = $attr;
+                continue;
             }
+            
+            if (!$author) {
+                $author = $attr;
+                continue;
+            }
+            
+            $chunks[] = $attr;
         }
         
         return [
