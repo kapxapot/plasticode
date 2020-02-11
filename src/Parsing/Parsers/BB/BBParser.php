@@ -4,12 +4,30 @@ namespace Plasticode\Parsing\Parsers\BB;
 
 use Plasticode\Parsing\Interfaces\MapperInterface;
 use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
+use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\Text;
 
-class BBParser
+class BBParser extends BaseStep
 {
     use BBAttributeParser;
+    
+    protected function parseBrackets(array $result) : array
+    {
+        $result = $this->parseImgBB($result, 'img');
+        $result = $this->parseImgBB($result, 'leftimg');
+        $result = $this->parseImgBB($result, 'rightimg');
+        $result = $this->parseCarousel($result);
+        $result = $this->parseYoutubeBB($result);
+
+        $text = $result['text'];
+        $text = $this->parseColorBB($text);
+        $text = $this->parseUrlBB($text);
+
+        $result['text'] = $text;
+
+        return $result;
+    }
 
     protected function parseUrlBB(string $text) : string
     {
@@ -203,22 +221,5 @@ class BBParser
             'content' => $content ?? 'parse error',
             'attrs' => $attrs ?? [],
         ];
-    }
-    
-    protected function parseBrackets(array $result) : array
-    {
-        $result = $this->parseImgBB($result, 'img');
-        $result = $this->parseImgBB($result, 'leftimg');
-        $result = $this->parseImgBB($result, 'rightimg');
-        $result = $this->parseCarousel($result);
-        $result = $this->parseYoutubeBB($result);
-
-        $text = $result['text'];
-        $text = $this->parseColorBB($text);
-        $text = $this->parseUrlBB($text);
-
-        $result['text'] = $text;
-
-        return $result;
     }
 }

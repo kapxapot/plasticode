@@ -35,5 +35,8 @@
         "psr-4": {
             "Plasticode\\Tests\\": "tests"
         }
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }

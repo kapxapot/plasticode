@@ -10,6 +10,8 @@ use Plasticode\Util\Date;
 
 final class ParsingContextTest extends TestCase
 {
+    private $json = '{"text":"some text","contents":[{"level":1,"label":"1","text":"Hey"},{"level":1,"label":"2","text":"Yay"}],"largeImages":["largeImage1","largeImage2"],"images":["image1","image2"],"videos":["video1","video2"],"updatedAt":"imma date"}';
+
     /**
      * @covers ParsingContext
      */
@@ -44,9 +46,7 @@ final class ParsingContextTest extends TestCase
      */
     public function testFromJson() : void
     {
-        $json = '{"text":"some text","contents":[{"level":1,"label":"1","text":"Hey"},{"level":1,"label":"2","text":"Yay"}],"largeImages":["largeImage1","largeImage2"],"images":["image1","image2"],"videos":["video1","video2"],"updatedAt":"imma date"}';
-
-        $context = ParsingContext::fromJson($json);
+        $context = ParsingContext::fromJson($this->json);
 
         $this->assertEquals('some text', $context->text);
 
@@ -83,5 +83,17 @@ final class ParsingContextTest extends TestCase
         $this->assertEquals('video1', $context->video());
 
         $this->assertEquals('imma date', $context->updatedAt);
+    }
+
+    /**
+     * @covers ParsingContext
+     */
+    public function testClone() : void
+    {
+        $original = ParsingContext::fromJson($this->json);
+
+        $context = clone $original;
+
+        $this->assertEquals(json_encode($context), $this->json);
     }
 }

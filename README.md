@@ -1,6 +1,8 @@
 # Plasticode
 
-[![](https://travis-ci.com/kapxapot/plasticode.svg?branch=master)](https://travis-ci.com/kapxapot/plasticode)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/kapxapot/plasticode.svg)](https://packagist.org/packages/kapxapot/plasticode)
+[![Build status](https://img.shields.io/travis/kapxapot/plasticode/master.svg)](https://travis-ci.com/kapxapot/plasticode)
+[![Build status](https://travis-ci.com/kapxapot/plasticode.svg?branch=master)](https://travis-ci.com/kapxapot/plasticode)
 
 PHP framework on top of Slim framework.
 
@@ -24,24 +26,34 @@ Plasticode uses [Phinx](http://docs.phinx.org) DB migrations.
 
 Run all migrations:
 
-*vendor/bin/phinx migrate*
+```bash
+vendor/bin/phinx migrate
+```
 
 For non-default environment (stage, production):
 
-*vendor/bin/phinx -e environment*
+```bash
+vendor/bin/phinx -e environment
+```
 
 #### Rollback
 
 Rollback one migration:
 
-*vendor/bin/phinx rollback*
+```bash
+vendor/bin/phinx rollback
+```
 
 #### New migration
 
 Create new migration:
 
-*vendor/bin/phinx create NameOfMigration*
+```bash
+vendor/bin/phinx create NameOfMigration
+```
 
 ### Run tests
 
-vendor/bin/phpunit --bootstrap ./vendor/autoload.php tests
+```bash
+composer test
+```

@@ -37,7 +37,7 @@ final class BBSequencerTest extends TestCase
         $sequencer = new BBSequencer();
 
         $seq = $sequencer->getSequence(
-            '[quote|some_attr|another]test [b]bold[/b] test[spoiler]blah[/spoiler][/quote]some [img|image.jpg] text',
+            '[quote|some_attr|another]test [b]bold[/b] test[spoiler]blah[/spoiler][/quote]some [img]image.jpg[/img] text',
             $this->config->getTags()
         );
 
@@ -90,6 +90,6 @@ final class BBSequencerTest extends TestCase
         $testText3 = $seq[6];
 
         $this->assertInstanceOf(SequenceElement::class, $testText3);
-        $this->assertEquals('some [img|image.jpg] text', $testText3->text);
+        $this->assertEquals('some [img]image.jpg[/img] text', $testText3->text);
     }
 }

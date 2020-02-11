@@ -50,7 +50,7 @@ final class BBTreeBuilderTest extends TestCase
     public function testBuild() : void
     {
         $tree = $this->buildTree(
-            '[quote|some_attr|another]test [b]bold[/b] test[spoiler]blah[/spoiler][/quote]some [img|image.jpg] text'
+            '[quote|some_attr|another]test [b]bold[/b] test[spoiler]blah[/spoiler][/quote]some [img]image.jpg[/img] text'
         );
 
         $this->assertContainsOnlyInstancesOf(Node::class, $tree);
@@ -67,7 +67,7 @@ final class BBTreeBuilderTest extends TestCase
 
         /** @var Node */
         $textNode = $tree[1];
-        $this->assertEquals('some [img|image.jpg] text', $textNode->text);
+        $this->assertEquals('some [img]image.jpg[/img] text', $textNode->text);
 
         /** @var Node */
         $textNode2 = $quoteNode->children[0];
