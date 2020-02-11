@@ -22,9 +22,7 @@ Sites built on **Plasticode**:
 
 Plasticode uses [Phinx](http://docs.phinx.org) DB migrations.
 
-#### Run migrations
-
-Run all migrations:
+#### Run all migrations
 
 ```bash
 vendor/bin/phinx migrate
@@ -36,17 +34,13 @@ For non-default environment (stage, production):
 vendor/bin/phinx -e environment
 ```
 
-#### Rollback
-
-Rollback one migration:
+#### Rollback one migration
 
 ```bash
 vendor/bin/phinx rollback
 ```
 
-#### New migration
-
-Create new migration:
+#### Create new migration
 
 ```bash
 vendor/bin/phinx create NameOfMigration
