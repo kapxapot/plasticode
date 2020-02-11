@@ -14,8 +14,7 @@ Sites built on **Plasticode**:
 |[Blizzard Streams](https://bs.warcry.ru) (former blizzardstreams.com)|[kapxapot/blizzardstreams](https://github.com/kapxapot/blizzardstreams)|
 |[Ассоциации](https://associ.ru)|[kapxapot/associations](https://github.com/kapxapot/associations)|
 |FTP Sync (unpublished and abandoned)|[kapxapot/ftpsync](https://github.com/kapxapot/ftpsync)|
-
-For boilerplate see [kapxapot/plasticode-boilerplate](https://github.com/kapxapot/plasticode-boilerplate).
+|Boilerplate|[kapxapot/plasticode-boilerplate](https://github.com/kapxapot/plasticode-boilerplate)|
 
 ## Manual
 
