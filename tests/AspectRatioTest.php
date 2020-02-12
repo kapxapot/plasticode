@@ -8,7 +8,7 @@ use Plasticode\Models\AspectRatio;
 final class AspectRatioTest extends TestCase
 {
     /**
-     * @covers AspectRatio
+     * @covers \Plasticode\Models\AspectRatio
      */
     public function testInvalidDimensions() : void
     {
@@ -18,7 +18,7 @@ final class AspectRatioTest extends TestCase
     }
 
     /**
-     * @covers AspectRatio
+     * @covers \Plasticode\Models\AspectRatio
      */
     public function testIsHorizontal() : void
     {
@@ -28,7 +28,7 @@ final class AspectRatioTest extends TestCase
     }
 
     /**
-     * @covers AspectRatio
+     * @covers \Plasticode\Models\AspectRatio
      */
     public function testIsVertical() : void
     {
@@ -38,7 +38,7 @@ final class AspectRatioTest extends TestCase
     }
 
     /**
-     * @covers AspectRatio
+     * @covers \Plasticode\Models\AspectRatio
      * @dataProvider exactProvider
      */
     public function testExact($width, $height, $expected) : void
@@ -57,7 +57,7 @@ final class AspectRatioTest extends TestCase
     }
 
     /**
-     * @covers AspectRatio
+     * @covers \Plasticode\Models\AspectRatio
      * @dataProvider closestProvider
      */
     public function testClosest($width, $height, $expected) : void
@@ -76,7 +76,7 @@ final class AspectRatioTest extends TestCase
     }
 
     /**
-     * @covers AspectRatio
+     * @covers \Plasticode\Models\AspectRatio
      * @dataProvider cssProvider
      */
     public function testCss($width, $height, $expected) : void
