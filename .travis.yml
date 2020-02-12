@@ -1,8 +1,6 @@
 language: php
 php:
   - 7.2
-before_install:
-  - composer require phpunit/phpunit:^8 satooshi/php-coveralls:dev-master
-  - composer install --dev
-script: phpunit --coverage-clover ./tests/logs/clover.xml
+before_install: composer install
+script: phpunit
 after_script: php vendor/bin/coveralls -v
