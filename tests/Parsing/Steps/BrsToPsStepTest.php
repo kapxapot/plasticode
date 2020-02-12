@@ -5,6 +5,9 @@ namespace Plasticode\Tests\Parsing\Steps;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Steps\BrsToPsStep;
 
+/**
+ * @covers \Plasticode\Parsing\Steps\BrsToPsStep
+ */
 final class BrsToPsStepTest extends ParsingStepTestCase
 {
     /** @var BrsToPsStep */
@@ -29,17 +32,11 @@ final class BrsToPsStepTest extends ParsingStepTestCase
         return $this->step;
     }
 
-    /**
-     * @covers BrsToPsStep
-     */
     public function testContextIsImmutable() : void
     {
         $this->assertContextIsImmutable();
     }
 
-    /**
-     * @covers BrsToPsStep
-     */
     public function testParseNotWrapped() : void
     {
         $context = $this->parse(
@@ -52,9 +49,6 @@ final class BrsToPsStepTest extends ParsingStepTestCase
         );
     }
 
-    /**
-     * @covers BrsToPsStep
-     */
     public function testParseWrapped() : void
     {
         $context = $this->parse(
@@ -67,9 +61,6 @@ final class BrsToPsStepTest extends ParsingStepTestCase
         );
     }
 
-    /**
-     * @covers BrsToPsStep
-     */
     public function testParseWithStart() : void
     {
         $context = $this->parse(
@@ -82,9 +73,6 @@ final class BrsToPsStepTest extends ParsingStepTestCase
         );
     }
 
-    /**
-     * @covers BrsToPsStep
-     */
     public function testParseWithEnd() : void
     {
         $context = $this->parse(

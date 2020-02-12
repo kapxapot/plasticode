@@ -3,9 +3,12 @@
 namespace Plasticode\Tests\Util;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Tests\SortDummy;
+use Plasticode\Tests\Dummies\SortDummy;
 use Plasticode\Util\Sort;
 
+/**
+ * @covers \Plasticode\Util\Sort
+ */
 final class SortTest extends TestCase
 {
     private $first = [
@@ -33,7 +36,6 @@ final class SortTest extends TestCase
     ];
 
     /**
-     * @covers Sort
      * @dataProvider multiProvider
      */
     public function testMulti(array $array, array $sorts, array $expected) : void
@@ -253,7 +255,6 @@ final class SortTest extends TestCase
     }
 
     /**
-     * @covers Sort
      * @dataProvider byProvider
      */
     public function testBy(array $array, string $field, ?string $dir, array $expected) : void
@@ -281,7 +282,6 @@ final class SortTest extends TestCase
     }
 
     /**
-     * @covers Sort
      * @dataProvider ascProvider
      */
     public function testAsc(array $array, string $field, ?string $type, array $expected) : void
@@ -328,7 +328,6 @@ final class SortTest extends TestCase
     }
 
     /**
-     * @covers Sort
      * @dataProvider descProvider
      */
     public function testDesc(array $array, string $field, ?string $type, array $expected) : void
@@ -385,7 +384,6 @@ final class SortTest extends TestCase
     }
 
     /**
-     * @covers Sort
      * @dataProvider byStrProvider
      */
     public function testByStr(array $array, string $field, ?string $dir, array $expected) : void
@@ -423,7 +421,6 @@ final class SortTest extends TestCase
     }
 
     /**
-     * @covers Sort
      * @dataProvider ascStrProvider
      */
     public function testAscStr(array $array, string $field, array $expected) : void
@@ -456,7 +453,6 @@ final class SortTest extends TestCase
     }
 
     /**
-     * @covers Sort
      * @dataProvider descStrProvider
      */
     public function testDescStr(array $array, string $field, array $expected) : void

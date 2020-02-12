@@ -6,6 +6,9 @@ use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Parsing\Steps\TitlesStep;
 
+/**
+ * @covers \Plasticode\Parsing\Steps\TitlesStep
+ */
 final class TitlesStepTest extends ParsingStepTestCase
 {
     /** @var ParsingStepInterface */
@@ -37,17 +40,11 @@ final class TitlesStepTest extends ParsingStepTestCase
         return $this->step;
     }
 
-    /**
-     * @covers TitlesStep
-     */
     public function testContextIsImmutable() : void
     {
         $this->assertContextIsImmutable();
     }
 
-    /**
-     * @covers TitlesStep
-     */
     public function testParse() : void
     {
         $lines = [
@@ -104,9 +101,6 @@ final class TitlesStepTest extends ParsingStepTestCase
         $this->assertNull($context->updatedAt);
     }
 
-    /**
-     * @covers TitlesStep
-     */
     public function testOutOfRangeTitles() : void
     {
         $lines = [
@@ -137,9 +131,6 @@ final class TitlesStepTest extends ParsingStepTestCase
         );
     }
 
-    /**
-     * @covers TitlesStep
-     */
     public function testScreenedTitle() : void
     {
         $lines = [
@@ -161,8 +152,6 @@ final class TitlesStepTest extends ParsingStepTestCase
 
     /**
      * Deprecated syntax, only for compatibility.
-     * 
-     * @covers TitlesStep
      */
     public function testStickTitles() : void
     {

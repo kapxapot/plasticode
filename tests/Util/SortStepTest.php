@@ -5,11 +5,11 @@ namespace Plasticode\Tests\Util;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\SortStep;
 
+/**
+ * @covers \Plasticode\Util\SortStep
+ */
 final class SortStepTest extends TestCase
 {
-    /**
-     * @covers SortStep
-     */
     public function testDefault() : void
     {
         $field = 'field';
@@ -20,7 +20,6 @@ final class SortStepTest extends TestCase
     }
 
     /**
-     * @covers SortStep
      * @dataProvider explicitProvider
      */
     public function testExplicitAsc(string $field, bool $desc) : void

@@ -10,6 +10,9 @@ use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\EndElement;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\SequenceElement;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\StartElement;
 
+/**
+ * @covers \Plasticode\Parsing\Parsers\BB\Container\BBSequencer
+ */
 final class BBSequencerTest extends TestCase
 {
     /** @var MapperSourceInterface */
@@ -29,9 +32,6 @@ final class BBSequencerTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * @covers BBSequencer
-     */
     public function testGetSequence() : void
     {
         $sequencer = new BBSequencer();

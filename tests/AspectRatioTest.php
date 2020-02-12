@@ -5,11 +5,11 @@ namespace Plasticode\Tests;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Models\AspectRatio;
 
+/**
+ * @covers \Plasticode\Models\AspectRatio
+ */
 final class AspectRatioTest extends TestCase
 {
-    /**
-     * @covers \Plasticode\Models\AspectRatio
-     */
     public function testInvalidDimensions() : void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -17,9 +17,6 @@ final class AspectRatioTest extends TestCase
         new AspectRatio(0, 10);
     }
 
-    /**
-     * @covers \Plasticode\Models\AspectRatio
-     */
     public function testIsHorizontal() : void
     {
         $ratio = new AspectRatio(200, 100);
@@ -27,9 +24,6 @@ final class AspectRatioTest extends TestCase
         $this->assertTrue($ratio->isHorizontal());
     }
 
-    /**
-     * @covers \Plasticode\Models\AspectRatio
-     */
     public function testIsVertical() : void
     {
         $ratio = new AspectRatio(100, 200);
@@ -38,7 +32,6 @@ final class AspectRatioTest extends TestCase
     }
 
     /**
-     * @covers \Plasticode\Models\AspectRatio
      * @dataProvider exactProvider
      */
     public function testExact($width, $height, $expected) : void
@@ -57,7 +50,6 @@ final class AspectRatioTest extends TestCase
     }
 
     /**
-     * @covers \Plasticode\Models\AspectRatio
      * @dataProvider closestProvider
      */
     public function testClosest($width, $height, $expected) : void
@@ -76,7 +68,6 @@ final class AspectRatioTest extends TestCase
     }
 
     /**
-     * @covers \Plasticode\Models\AspectRatio
      * @dataProvider cssProvider
      */
     public function testCss($width, $height, $expected) : void

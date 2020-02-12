@@ -10,6 +10,9 @@ use Plasticode\Parsing\Parsers\BB\Container\BBTreeBuilder;
 use Plasticode\Parsing\Parsers\BB\Container\Nodes\Node;
 use Plasticode\Parsing\Parsers\BB\Container\Nodes\TagNode;
 
+/**
+ * @covers \Plasticode\Parsing\Parsers\BB\Container\BBTreeBuilder
+ */
 final class BBTreeBuilderTest extends TestCase
 {
     /** @var MapperSourceInterface */
@@ -44,9 +47,6 @@ final class BBTreeBuilderTest extends TestCase
         return $treeBuilder->build($seq);
     }
 
-    /**
-     * @covers BBTreeBuilder
-     */
     public function testBuild() : void
     {
         $tree = $this->buildTree(

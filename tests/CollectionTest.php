@@ -4,11 +4,14 @@ namespace Plasticode\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Collection;
+use Plasticode\Tests\Dummies\DummyModel;
 
+/**
+ * @covers \Plasticode\Collection
+ */
 final class CollectionTest extends TestCase
 {
     /**
-     * @covers Collection
      * @dataProvider flattenProvider
      */
     public function testFlatten(Collection $original, Collection $expected) : void
@@ -64,7 +67,6 @@ final class CollectionTest extends TestCase
     }
 
     /**
-     * @covers Collection
      * @dataProvider jsonEncodeProvider
      */
     public function testJsonEncode(Collection $original, array $expected) : void

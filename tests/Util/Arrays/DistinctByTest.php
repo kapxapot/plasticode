@@ -3,18 +3,16 @@
 namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Tests\DummyModel;
+use Plasticode\Tests\Dummies\DummyModel;
 use Plasticode\Util\Arrays;
 
+/**
+ * @covers \Plasticode\Util\Arrays
+ */
 final class DistinctByTest extends TestCase
 {
     /**
-     * @covers Arrays
      * @dataProvider distinctByIdProvider
-     *
-     * @param array $array
-     * @param array $result
-     * @return void
      */
     public function testDistinctById(array $array, array $result) : void
     {
@@ -45,7 +43,6 @@ final class DistinctByTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider distinctByProvider
      *
      * @param array $array

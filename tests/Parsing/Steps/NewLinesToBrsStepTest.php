@@ -5,6 +5,9 @@ namespace Plasticode\Tests\Parsing\Steps;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 
+/**
+ * @covers \Plasticode\Parsing\Steps\NewLinesToBrsStep
+ */
 final class NewLinesToBrsStepTest extends ParsingStepTestCase
 {
     /** @var NewLinesToBrsStep */
@@ -29,17 +32,11 @@ final class NewLinesToBrsStepTest extends ParsingStepTestCase
         return $this->step;
     }
 
-    /**
-     * @covers NewLinesToBrsStep
-     */
     public function testContextIsImmutable() : void
     {
         $this->assertContextIsImmutable();
     }
 
-    /**
-     * @covers NewLinesToBrsStep
-     */
     public function testParse() : void
     {
         $context = $this->parseLines(

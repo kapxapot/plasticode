@@ -5,11 +5,11 @@ namespace Plasticode\Tests\Parsing;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Parsing\TitlesContext;
 
+/**
+ * @covers \Plasticode\Parsing\TitlesContext
+ */
 final class TitlesContextTest extends TestCase
 {
-    /**
-     * @covers TitlesContext
-     */
     public function testNonPositiveLimits() : void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -17,9 +17,6 @@ final class TitlesContextTest extends TestCase
         new TitlesContext(0, 10);
     }
 
-    /**
-     * @covers TitlesContext
-     */
     public function testInvalidLimits() : void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -27,9 +24,6 @@ final class TitlesContextTest extends TestCase
         new TitlesContext(2, 1);
     }
 
-    /**
-     * @covers TitlesContext
-     */
     public function testCorrectLimitsAndSlices() : void
     {
         $context = new TitlesContext(1, 4);
@@ -40,9 +34,6 @@ final class TitlesContextTest extends TestCase
         $this->assertCount(4, $context->getCountSlice(4));
     }
 
-    /**
-     * @covers TitlesContext
-     */
     public function testIncorrectSliceTooLow() : void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -51,9 +42,6 @@ final class TitlesContextTest extends TestCase
         $context->getCountSlice(0);
     }
 
-    /**
-     * @covers TitlesContext
-     */
     public function testIncorrectSliceTooHigh() : void
     {
         $this->expectException(\InvalidArgumentException::class);

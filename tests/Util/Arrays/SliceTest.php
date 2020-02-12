@@ -5,16 +5,13 @@ namespace Plasticode\Tests\Util\Arrays;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Arrays;
 
+/**
+ * @covers \Plasticode\Util\Arrays
+ */
 final class SliceTest extends TestCase
 {
     /**
-     * @covers Arrays
      * @dataProvider skipProvider
-     *
-     * @param array $array
-     * @param integer $offset
-     * @param array $result
-     * @return void
      */
     public function testSkip(array $array, int $offset, array $result) : void
     {
@@ -41,13 +38,7 @@ final class SliceTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider takeProvider
-     *
-     * @param array $array
-     * @param integer $limit
-     * @param array $result
-     * @return void
      */
     public function testTake(array $array, int $limit, array $result) : void
     {
@@ -74,14 +65,7 @@ final class SliceTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider sliceProvider
-     *
-     * @param array $array
-     * @param integer $offset
-     * @param integer $limit
-     * @param array $result
-     * @return void
      */
     public function testSlice(array $array, int $offset, int $limit, array $result) : void
     {
@@ -141,7 +125,6 @@ final class SliceTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider trimEndProvider
      */
     public function testTrimEnd(array $array, int $limit = null, array $result) : void

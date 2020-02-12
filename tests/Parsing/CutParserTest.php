@@ -6,6 +6,9 @@ use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Parsers\CleanupParser;
 use Plasticode\Parsing\Parsers\CutParser;
 
+/**
+ * @covers \Plasticode\Parsing\Parsers\CutParser
+ */
 final class CutParserTest extends BaseParsingRenderTestCase
 {
     /** @var ParsingStepInterface */
@@ -34,7 +37,6 @@ final class CutParserTest extends BaseParsingRenderTestCase
     }
 
     /**
-     * @covers CutParser
      * @dataProvider parseWithCutProvider
      */
     public function testParseWithCut(string $text, string $fullExpected, string $shortExpected) : void
@@ -72,7 +74,6 @@ final class CutParserTest extends BaseParsingRenderTestCase
     }
 
     /**
-     * @covers CutParser
      * @dataProvider parseWithoutCutProvider
      */
     public function testParseWithoutCut(?string $text) : void
@@ -94,9 +95,6 @@ final class CutParserTest extends BaseParsingRenderTestCase
         ];
     }
 
-    /**
-     * @covers CutParser
-     */
     public function testParseAlternativeTag() : void
     {
         $parser = new CutParser($this->cleanupParser, '<!-- cut -->');

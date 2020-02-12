@@ -3,19 +3,16 @@
 namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Tests\DummyModel;
+use Plasticode\Tests\Dummies\DummyModel;
 use Plasticode\Util\Arrays;
 
+/**
+ * @covers \Plasticode\Util\Arrays
+ */
 final class FilterTest extends TestCase
 {
     /**
-     * @covers Arrays
      * @dataProvider filterClosureProvider
-     *
-     * @param array $array
-     * @param \Closure $by
-     * @param array $result
-     * @return void
      */
     public function testFilterClosure(array $array, \Closure $by, array $result) : void
     {
@@ -99,11 +96,6 @@ final class FilterTest extends TestCase
         ];
     }
 
-    /**
-     * @covers Arrays
-     * 
-     * @return void
-     */
     public function testFilterClosureIncorrectParams() : void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -118,7 +110,6 @@ final class FilterTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider filterPropertyProvider
      *
      * @param array $array
@@ -159,11 +150,6 @@ final class FilterTest extends TestCase
         ];
     }
 
-    /**
-     * @covers Arrays
-     * 
-     * @return void
-     */
     public function testFilterPropertyIncorrectParams() : void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -172,7 +158,6 @@ final class FilterTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider filterInProvider
      *
      * @param array $array
@@ -216,7 +201,6 @@ final class FilterTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider filterNotInProvider
      *
      * @param array $array
@@ -260,13 +244,7 @@ final class FilterTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider filterKeysProvider
-     *
-     * @param array $array
-     * @param array $keys
-     * @param array $result
-     * @return void
      */
     public function testFilterKeys(array $array, array $keys, array $result) : void
     {

@@ -5,10 +5,12 @@ namespace Plasticode\Tests\Util;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Text;
 
+/**
+ * @covers \Plasticode\Util\Text
+ */
 final class TextTest extends TestCase
 {
     /**
-     * @covers Text
      * @dataProvider toLinesProvider
      */
     public function testToLines(?string $original, array $expected) : void
@@ -30,7 +32,6 @@ final class TextTest extends TestCase
         ];
     }
 
-    /** @covers Text */
     public function testNewLinesToBrs() : void
     {
         $this->assertEquals(

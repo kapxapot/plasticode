@@ -5,6 +5,9 @@ namespace Plasticode\Tests\Util\Arrays;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Arrays;
 
+/**
+ * @covers \Plasticode\Util\Arrays
+ */
 final class MiscTest extends TestCase
 {
     /** @var array */
@@ -23,7 +26,6 @@ final class MiscTest extends TestCase
     ];
 
     /**
-     * @covers Arrays
      * @dataProvider existsProvider
      * 
      * @param array $array
@@ -53,7 +55,6 @@ final class MiscTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider getProvider
      *
      * @param array $array
@@ -83,7 +84,6 @@ final class MiscTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider setProvider
      *
      * @param array $array
@@ -113,7 +113,6 @@ final class MiscTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider setNullKeyProvider
      *
      * @param array $array
@@ -140,7 +139,6 @@ final class MiscTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider cleanProvider
      *
      * @param array $array

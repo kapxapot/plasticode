@@ -5,6 +5,9 @@ namespace Plasticode\Tests\Parsing\Steps;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Steps\ReplacesStep;
 
+/**
+ * @covers \Plasticode\Parsing\Steps\ReplacesStep
+ */
 final class ReplacesStepTest extends ParsingStepTestCase
 {
     /** @var ReplacesStep */
@@ -29,17 +32,11 @@ final class ReplacesStepTest extends ParsingStepTestCase
         return $this->step;
     }
 
-    /**
-     * @covers ReplacesStep
-     */
     public function testContextIsImmutable() : void
     {
         $this->assertContextIsImmutable();
     }
 
-    /**
-     * @covers ReplacesStep
-     */
     public function testParse() : void
     {
         $context = $this->parseLines(

@@ -3,18 +3,16 @@
 namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Tests\DummyModel;
+use Plasticode\Tests\Dummies\DummyModel;
 use Plasticode\Util\Arrays;
 
+/**
+ * @covers \Plasticode\Util\Arrays
+ */
 final class ToAssocByTest extends TestCase
 {
     /**
-     * @covers Arrays
      * @dataProvider toAssocByIdProvider
-     * 
-     * @param array $array
-     * @param array $result
-     * @return void
      */
     public function testToAssocById(array $array, array $result) : void
     {
@@ -51,7 +49,6 @@ final class ToAssocByTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider toAssocByProvider
      *
      * @param array $array

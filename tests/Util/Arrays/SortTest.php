@@ -6,11 +6,11 @@ use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\Sort;
 
+/**
+ * @covers \Plasticode\Util\Arrays
+ */
 final class SortTest extends TestCase
 {
-    /**
-     * @covers Arrays
-     */
     public function testOrderBy() : void
     {
         $array = [
@@ -29,9 +29,6 @@ final class SortTest extends TestCase
         );
     }
 
-    /**
-     * @covers Arrays
-     */
     public function testOrderByDesc() : void
     {
         $array = [
@@ -50,9 +47,6 @@ final class SortTest extends TestCase
         );
     }
 
-    /**
-     * @covers Arrays
-     */
     public function testOrderByStr() : void
     {
         $array = [
@@ -71,9 +65,6 @@ final class SortTest extends TestCase
         );
     }
 
-    /**
-     * @covers Arrays
-     */
     public function testOrderByStrDesc() : void
     {
         $array = [
@@ -92,9 +83,6 @@ final class SortTest extends TestCase
         );
     }
 
-    /**
-     * @covers Arrays
-     */
     public function testMultiSort() : void
     {
         $array = [

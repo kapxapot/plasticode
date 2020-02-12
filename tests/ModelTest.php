@@ -5,10 +5,12 @@ namespace Plasticode\Tests;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Models\Model;
 
+/**
+ * @covers \Plasticode\Models\Model
+ */
 final class ModelTest extends TestCase
 {
     /**
-     * @covers Model
      * @dataProvider jsonEncodeProvider
      */
     public function testJsonEncode(Model $original, array $expected) : void

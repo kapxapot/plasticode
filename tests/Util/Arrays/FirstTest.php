@@ -3,13 +3,15 @@
 namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Tests\DummyModel;
+use Plasticode\Tests\Dummies\DummyModel;
 use Plasticode\Util\Arrays;
 
+/**
+ * @covers \Plasticode\Util\Arrays
+ */
 final class FirstTest extends TestCase
 {
     /**
-     * @covers Arrays
      * @dataProvider firstProvider
      *
      * @param array $array
@@ -30,7 +32,6 @@ final class FirstTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider firstByClosureProvider
      *
      * @param array $array
@@ -120,11 +121,6 @@ final class FirstTest extends TestCase
         ];
     }
 
-    /**
-     * @covers Arrays
-     * 
-     * @return void
-     */
     public function testFirstByClosureIncorrectParams() : void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -139,7 +135,6 @@ final class FirstTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider firstByPropertyProvider
      *
      * @param array $array
@@ -180,11 +175,6 @@ final class FirstTest extends TestCase
         ];
     }
 
-    /**
-     * @covers Arrays
-     * 
-     * @return void
-     */
     public function testFirstByPropertyIncorrectParams() : void
     {
         $this->expectException(\InvalidArgumentException::class);

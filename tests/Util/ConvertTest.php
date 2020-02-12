@@ -5,10 +5,12 @@ namespace Plasticode\Tests\Util;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Convert;
 
+/**
+ * @covers \Plasticode\Util\Convert
+ */
 final class ConvertTest extends TestCase
 {
     /**
-     * @covers Convert
      * @dataProvider toBitProvider
      */
     public function testToBit(?bool $source, int $expected) : void

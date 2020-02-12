@@ -6,6 +6,9 @@ use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Parsers\MarkdownParser;
 use Plasticode\Tests\Parsing\Steps\ParsingStepTestCase;
 
+/**
+ * @covers \Plasticode\Parsing\Parsers\MarkdownParser
+ */
 final class MarkdownParserTest extends ParsingStepTestCase
 {
     /** @var MarkdownParser */
@@ -30,17 +33,11 @@ final class MarkdownParserTest extends ParsingStepTestCase
         return $this->parser;
     }
 
-    /**
-     * @covers MarkdownParser
-     */
     public function testContextIsImmutable() : void
     {
         $this->assertContextIsImmutable();
     }
 
-    /**
-     * @covers MarkdownParser
-     */
     public function testParseListUnordered() : void
     {
         $context = $this->parseLines(
@@ -59,9 +56,6 @@ final class MarkdownParserTest extends ParsingStepTestCase
         );
     }
 
-    /**
-     * @covers MarkdownParser
-     */
     public function testParseListUnorderedMixed() : void
     {
         $context = $this->parseLines(
@@ -79,9 +73,6 @@ final class MarkdownParserTest extends ParsingStepTestCase
         );
     }
 
-    /**
-     * @covers MarkdownParser
-     */
     public function testParseListOrdered() : void
     {
         $context = $this->parseLines(
@@ -99,9 +90,6 @@ final class MarkdownParserTest extends ParsingStepTestCase
         );
     }
 
-    /**
-     * @covers MarkdownParser
-     */
     public function testParseListOrderedJagged() : void
     {
         $context = $this->parseLines(

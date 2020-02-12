@@ -5,10 +5,12 @@ namespace Plasticode\Tests\Util;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Strings;
 
+/**
+ * @covers \Plasticode\Util\Strings
+ */
 final class StringsTest extends TestCase
 {
     /**
-     * @covers Strings
      * @dataProvider alphaNumProvider
      */
     public function testToAlphaNum(?string $original, ?string $expected) : void
@@ -30,7 +32,6 @@ final class StringsTest extends TestCase
     }
 
     /**
-     * @covers Strings
      * @dataProvider hashTagsProvider
      */
     public function testHashTags(array $original, string $expected) : void
@@ -50,7 +51,6 @@ final class StringsTest extends TestCase
     }
 
     /**
-     * @covers Strings
      * @dataProvider normalizeProvider
      */
     public function testNormalize(?string $original, ?string $expected) : void

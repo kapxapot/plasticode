@@ -4,18 +4,16 @@ namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Models\Model;
-use Plasticode\Tests\DummyModel;
+use Plasticode\Tests\Dummies\DummyModel;
 use Plasticode\Util\Arrays;
 
+/**
+ * @covers \Plasticode\Util\Arrays
+ */
 final class ExtractTest extends TestCase
 {
     /**
-     * @covers Arrays
      * @dataProvider extractIdsProvider
-     *
-     * @param array $array
-     * @param array $result
-     * @return void
      */
     public function testExtractIds(array $array, array $result) : void
     {
@@ -54,13 +52,7 @@ final class ExtractTest extends TestCase
     }
 
     /**
-     * @covers Arrays
      * @dataProvider extractProvider
-     *
-     * @param array $array
-     * @param string $column
-     * @param array $result
-     * @return void
      */
     public function testExtract(array $array, string $column, array $result) : void
     {
