@@ -1,7 +1,8 @@
 # Plasticode
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/kapxapot/plasticode.svg)](https://packagist.org/packages/kapxapot/plasticode)
-[![Build status](https://travis-ci.com/kapxapot/plasticode.svg?branch=master)](https://travis-ci.com/kapxapot/plasticode)
+[![Build Status](https://travis-ci.com/kapxapot/plasticode.svg?branch=master)](https://travis-ci.com/kapxapot/plasticode)
+[![Coverage Status](https://coveralls.io/repos/github/kapxapot/plasticode/badge.svg?branch=master)](https://coveralls.io/github/kapxapot/plasticode?branch=master)
 
 PHP framework on top of Slim framework.
 
