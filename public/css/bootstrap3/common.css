@@ -55,6 +55,10 @@ body {
     grid-template-rows: auto 1fr auto;
 }
 
+.full-width, .width-100 {
+    width: 100%;
+}
+
 .no-under {
     text-decoration: none;
 }
