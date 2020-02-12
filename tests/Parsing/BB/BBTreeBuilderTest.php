@@ -7,8 +7,8 @@ use Plasticode\Config\BBContainerConfig;
 use Plasticode\Parsing\Interfaces\MapperSourceInterface;
 use Plasticode\Parsing\Parsers\BB\Container\BBSequencer;
 use Plasticode\Parsing\Parsers\BB\Container\BBTreeBuilder;
-use Plasticode\Parsing\Parsers\BB\Container\Nodes\Node;
-use Plasticode\Parsing\Parsers\BB\Container\Nodes\TagNode;
+use Plasticode\Parsing\Parsers\BB\Nodes\Node;
+use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 
 /**
  * @covers \Plasticode\Parsing\Parsers\BB\Container\BBTreeBuilder

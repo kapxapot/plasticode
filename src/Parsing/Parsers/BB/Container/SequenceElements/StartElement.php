@@ -2,7 +2,7 @@
 
 namespace Plasticode\Parsing\Parsers\BB\Container\SequenceElements;
 
-use Plasticode\Parsing\Parsers\BB\Container\Nodes\TagNode;
+use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 
 class StartElement extends EndElement
 {

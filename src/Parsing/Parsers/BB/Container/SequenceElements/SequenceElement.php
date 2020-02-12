@@ -2,7 +2,7 @@
 
 namespace Plasticode\Parsing\Parsers\BB\Container\SequenceElements;
 
-use Plasticode\Parsing\Parsers\BB\Container\Nodes\Node;
+use Plasticode\Parsing\Parsers\BB\Nodes\Node;
 
 class SequenceElement
 {

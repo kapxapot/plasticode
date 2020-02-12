@@ -4,8 +4,8 @@ namespace Plasticode\Parsing\Parsers\BB\Container;
 
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\Interfaces\MapperSourceInterface;
-use Plasticode\Parsing\Parsers\BB\Container\Nodes\Node;
-use Plasticode\Parsing\Parsers\BB\Container\Nodes\TagNode;
+use Plasticode\Parsing\Parsers\BB\Nodes\Node;
+use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Util\Text;
 
 class BBTreeRenderer

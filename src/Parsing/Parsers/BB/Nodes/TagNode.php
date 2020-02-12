@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing\Parsers\BB\Container\Nodes;
+namespace Plasticode\Parsing\Parsers\BB\Nodes;
 
 class TagNode extends Node
 {
