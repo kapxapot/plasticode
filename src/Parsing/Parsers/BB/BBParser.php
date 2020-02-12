@@ -4,6 +4,7 @@ namespace Plasticode\Parsing\Parsers\BB;
 
 use Plasticode\Parsing\Interfaces\MapperInterface;
 use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
+use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\Text;
@@ -11,6 +12,13 @@ use Plasticode\Util\Text;
 class BBParser extends BaseStep
 {
     use BBAttributeParser;
+
+    public function parseContext(ParsingContext $context) : ParsingContext
+    {
+        $context = clone $context;
+
+        return $context;
+    }
     
     protected function parseBrackets(array $result) : array
     {

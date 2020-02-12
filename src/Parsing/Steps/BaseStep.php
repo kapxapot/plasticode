@@ -14,5 +14,5 @@ abstract class BaseStep implements ParsingStepInterface
         return $this->parseContext($context);
     }
 
-    public abstract function parseContext(ParsingContext $data) : ParsingContext;
+    public abstract function parseContext(ParsingContext $context) : ParsingContext;
 }
