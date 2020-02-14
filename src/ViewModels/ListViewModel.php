@@ -18,7 +18,7 @@ class ListViewModel extends ViewModel
     {
         parent::__construct();
 
-        $this->items = $items ?? [];
+        $this->items = $items;
         $this->ordered = $ordered ?? false;
     }
 

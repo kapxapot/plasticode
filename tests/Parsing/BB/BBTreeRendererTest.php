@@ -33,10 +33,43 @@ final class BBTreeRendererTest extends BaseRenderTestCase
         return $treeRenderer->render($tree, $config);
     }
 
+    public function testRenderList() : void
+    {
+        $text = $this->renderTree(
+            '[list][*]one[*]two[*]three[/list]'
+        );
+
+        $this->assertEquals(
+            '<ul><li>one</li><li>two</li><li>three</p></li></ul>',
+            $text
+        );
+    }
+
+    public function testRenderOrderedList() : void
+    {
+        $text = $this->renderTree(
+            '[list=1][*]one[*]two[*]three[/list]'
+        );
+
+        $this->assertEquals(
+            '<ol><li>one</li><li>two</li><li>three</p></li></ol>',
+            $text
+        );
+    }
+
     public function testRenderQuote() : void
     {
         $text = $this->renderTree(
-            '[quote|author|date]text[/quote]'
+            '[quote|author|http://someurl|date|other chunk]text[/quote]'
+        );
+
+        $this->assertNotEmpty($text);
+    }
+
+    public function testRenderSpoiler() : void
+    {
+        $text = $this->renderTree(
+            '[spoiler|Super spoiler]Hidden text[/spoiler]'
         );
 
         $this->assertNotEmpty($text);

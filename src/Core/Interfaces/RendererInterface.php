@@ -2,8 +2,6 @@
 
 namespace Plasticode\Core\Interfaces;
 
-use Plasticode\Models\Model;
-
 interface RendererInterface
 {
     /**
@@ -20,7 +18,7 @@ interface RendererInterface
      * Renders component.
      *
      * @param string $name
-     * @param \Plasticode\Models\Model|array|null $data
+     * @param mixed|null $data
      * @return string
      */
     public function component(string $name, $data = null) : string;

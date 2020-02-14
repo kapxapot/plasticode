@@ -73,7 +73,7 @@ final class StringsTest extends TestCase
     /**
      * @dataProvider isUrlProvider
      */
-    public function testIsUrl(?string $original, ?string $expected) : void
+    public function testIsUrl(?string $original, bool $expected) : void
     {
         $this->assertEquals(
             $expected,
@@ -86,7 +86,31 @@ final class StringsTest extends TestCase
         return [
             [null, false],
             ['', false],
+            ['/', false],
             ['/url', false],
+            ['http://hahaha', true],
+            ['https://hhehehehe', true],
+        ];
+    }
+
+    /**
+     * @dataProvider isUrlOrRelativeProvider
+     */
+    public function testIsUrlOrRelative(?string $original, bool $expected) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Strings::isUrlOrRelative($original)
+        );
+    }
+
+    public function isUrlOrRelativeProvider() : array
+    {
+        return [
+            [null, false],
+            ['', false],
+            ['/', true],
+            ['/url', true],
             ['http://hahaha', true],
             ['https://hhehehehe', true],
         ];

@@ -2,11 +2,11 @@
 
 namespace Plasticode\Core;
 
-use Plasticode\Collection;
 use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Exceptions\Interfaces\HttpExceptionInterface;
 use Plasticode\Exceptions\Interfaces\PropagatedExceptionInterface;
+use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Util\Text;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -26,7 +26,7 @@ class Response
      */
     public static function json(ResponseInterface $response, $data, array $options = []) : ResponseInterface
     {
-        if ($data instanceof Collection) {
+        if ($data instanceof ArrayableInterface) {
             $data = $data->toArray();
         } elseif ($data instanceof \ORM) {
             $data = $data->asArray();

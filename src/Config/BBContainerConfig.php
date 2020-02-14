@@ -2,14 +2,14 @@
 
 namespace Plasticode\Config;
 
-use Plasticode\Parsing\Interfaces\MapperInterface;
-use Plasticode\Parsing\Interfaces\MapperSourceInterface;
+use Plasticode\Parsing\Interfaces\TagMapperInterface;
+use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
 use Plasticode\Parsing\Mappers\ListMapper;
 use Plasticode\Parsing\Mappers\QuoteMapper;
 use Plasticode\Parsing\Mappers\SpoilerMapper;
 use Webmozart\Assert\Assert;
 
-class BBContainerConfig implements MapperSourceInterface
+class BBContainerConfig implements TagMapperSourceInterface
 {
     /** @var array */
     private $map = [];
@@ -21,7 +21,7 @@ class BBContainerConfig implements MapperSourceInterface
         $this->register('quote', new QuoteMapper());
     }
 
-    public function register(string $tag, MapperInterface $mapper) : void
+    public function register(string $tag, TagMapperInterface $mapper) : void
     {
         Assert::notEmpty($tag);
         Assert::alnum($tag);
@@ -45,7 +45,7 @@ class BBContainerConfig implements MapperSourceInterface
         return $this->map;
     }
 
-    public function getMapper(string $tag) : MapperInterface
+    public function getMapper(string $tag) : TagMapperInterface
     {
         Assert::true(
             array_key_exists($tag, $this->map),

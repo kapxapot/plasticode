@@ -3,7 +3,7 @@
 namespace Plasticode\Parsing\Parsers\BB\Container;
 
 use Plasticode\Core\Interfaces\RendererInterface;
-use Plasticode\Parsing\Interfaces\MapperSourceInterface;
+use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
 use Plasticode\Parsing\Parsers\BB\Nodes\Node;
 use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Util\Text;
@@ -22,10 +22,10 @@ class BBTreeRenderer
      * Renders container tree.
      * 
      * @param Node[] $tree
-     * @param MapperSourceInterface $mapperSource
+     * @param TagMapperSourceInterface $mapperSource
      * @return string
      */
-    public function render(array $tree, MapperSourceInterface $mapperSource) : string
+    public function render(array $tree, TagMapperSourceInterface $mapperSource) : string
     {
         $parts = [];
 
@@ -43,14 +43,12 @@ class BBTreeRenderer
         return implode(Text::BrBr, $parts);
     }
     
-    private function renderNode(TagNode $node, MapperSourceInterface $mapperSource) : string
+    private function renderNode(TagNode $node, TagMapperSourceInterface $mapperSource) : string
     {
         $tag = $node->tag;
         $mapper = $mapperSource->getMapper($tag);
+        $viewModel = $mapper->map($node);
 
-        return $this->renderer->component(
-            $tag,
-            $mapper->map($node->text, $node->attributes)
-        );
+        return $this->renderer->component($tag, $viewModel);
     }
 }

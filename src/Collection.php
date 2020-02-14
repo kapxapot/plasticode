@@ -2,9 +2,10 @@
 
 namespace Plasticode;
 
+use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Util\Arrays;
 
-class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializable
+class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializable, ArrayableInterface
 {
     protected $data;
     

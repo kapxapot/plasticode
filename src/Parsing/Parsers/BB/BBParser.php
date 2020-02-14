@@ -2,7 +2,7 @@
 
 namespace Plasticode\Parsing\Parsers\BB;
 
-use Plasticode\Parsing\Interfaces\MapperInterface;
+use Plasticode\Parsing\Interfaces\TagMapperInterface;
 use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
@@ -70,7 +70,7 @@ class BBParser extends BaseStep
                         } else {
                             $height = $attr;
                         }
-                    } elseif (Strings::isUrl($attr) || strpos($attr, '/') === 0) {
+                    } elseif (Strings::isUrlOrRelative($attr)) {
                         if (Image::isImagePath($attr)) {
                             $thumb = $attr;
                         } else {
@@ -198,7 +198,7 @@ class BBParser extends BaseStep
         return $result;
     }
     
-    private function parseTag(string $text, string $tagName, MapperInterface $mapper, string $componentName = null) : string
+    private function parseTag(string $text, string $tagName, TagMapperInterface $mapper, string $componentName = null) : string
     {
         $componentName = $componentName ?? $tagName;
         

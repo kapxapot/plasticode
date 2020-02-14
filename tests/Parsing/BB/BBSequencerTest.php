@@ -4,7 +4,7 @@ namespace Plasticode\Tests\Parsing\BB;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Config\BBContainerConfig;
-use Plasticode\Parsing\Interfaces\MapperSourceInterface;
+use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
 use Plasticode\Parsing\Parsers\BB\Container\BBSequencer;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\EndElement;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\SequenceElement;
@@ -15,7 +15,7 @@ use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\StartElement;
  */
 final class BBSequencerTest extends TestCase
 {
-    /** @var MapperSourceInterface */
+    /** @var TagMapperSourceInterface */
     private $config;
 
     protected function setUp() : void

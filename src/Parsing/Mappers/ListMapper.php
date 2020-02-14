@@ -13,7 +13,7 @@ class ListMapper implements TagMapperInterface
     public function map(TagNode $tagNode) : ViewModel
     {
         $ordered = !empty($tagNode->attributes);
-        $items = null;
+        $items = [];
 
         $content = strstr($tagNode->text, '[*]');
         

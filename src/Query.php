@@ -3,6 +3,7 @@
 namespace Plasticode;
 
 use Plasticode\Exceptions\SqlException;
+use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\DbModel;
 use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;
@@ -348,21 +349,21 @@ class Query implements \IteratorAggregate
     /**
      * Wrapper method for the underlying whereIn().
      * 
-     * Allows passing an array or a Collection.
+     * Allows passing an array or a ArrayableInterface.
      *
      * @param string $field
-     * @param array|Collection $values Array or Collection
+     * @param array|ArrayableInterface $values
      * @return self
      */
     public function whereIn(string $field, $values) : self
     {
-        if ($values instanceof Collection) {
+        if ($values instanceof ArrayableInterface) {
             $values = $values->toArray();
         }
         
         Assert::isArray(
             $values,
-            'WhereIn error: values must be a Collection or an array.'
+            'WhereIn error: values must be a ArrayableInterface or an array.'
         );
 
         Assert::notEmpty($values);
@@ -377,21 +378,21 @@ class Query implements \IteratorAggregate
     /**
      * Wrapper method for the underlying whereNotIn().
      *
-     * Allows passing an array or a Collection.
+     * Allows passing an array or a ArrayableInterface.
      * 
      * @param string $field
-     * @param array|Collection $values Array or Collection
+     * @param array|ArrayableInterface $values
      * @return self
      */
     public function whereNotIn(string $field, $values) : self
     {
-        if ($values instanceof Collection) {
+        if ($values instanceof ArrayableInterface) {
             $values = $values->toArray();
         }
         
         Assert::isArray(
             $values,
-            'WhereNotIn error: values must be a Collection or an array.'
+            'WhereNotIn error: values must be a ArrayableInterface or an array.'
         );
 
         Assert::notEmpty($values);

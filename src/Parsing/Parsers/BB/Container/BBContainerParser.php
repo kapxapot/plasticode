@@ -2,13 +2,13 @@
 
 namespace Plasticode\Parsing\Parsers\BB\Container;
 
-use Plasticode\Parsing\Interfaces\MapperSourceInterface;
+use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 
 class BBContainerParser extends BaseStep
 {
-    /** @var MapperSourceInterface */
+    /** @var TagMapperSourceInterface */
     private $config;
 
     /** @var BBSequencer */
@@ -20,7 +20,7 @@ class BBContainerParser extends BaseStep
     /** @var BBTreeRenderer */
     private $treeRenderer;
 
-    public function __construct(MapperSourceInterface $config, BBSequencer $sequencer, BBTreeBuilder $treeBuilder, BBTreeRenderer $treeRenderer)
+    public function __construct(TagMapperSourceInterface $config, BBSequencer $sequencer, BBTreeBuilder $treeBuilder, BBTreeRenderer $treeRenderer)
     {
         $this->config = $config;
         $this->sequencer = $sequencer;

@@ -2,16 +2,16 @@
 
 namespace Plasticode\Parsing\Interfaces;
 
-interface MapperSourceInterface
+interface TagMapperSourceInterface
 {
     /**
      * Registers new mapper for a specified $tag.
      *
      * @param string $tag
-     * @param MapperInterface $mapper
+     * @param TagMapperInterface $mapper
      * @return void
      */
-    public function register(string $tag, MapperInterface $mapper) : void;
+    public function register(string $tag, TagMapperInterface $mapper) : void;
     
     /**
      * Returns registered tags.
@@ -32,7 +32,7 @@ interface MapperSourceInterface
      * Returns mapper by $tag.
      *
      * @param string $tag
-     * @return MapperInterface
+     * @return TagMapperInterface
      */
-    public function getMapper(string $tag) : MapperInterface;
+    public function getMapper(string $tag) : TagMapperInterface;
 }

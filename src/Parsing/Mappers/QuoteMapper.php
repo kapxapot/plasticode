@@ -5,6 +5,7 @@ namespace Plasticode\Parsing\Mappers;
 use Plasticode\Parsing\Interfaces\TagMapperInterface;
 use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Util\Strings;
+use Plasticode\ViewModels\QuoteViewModel;
 use Plasticode\ViewModels\ViewModel;
 
 class QuoteMapper implements TagMapperInterface
@@ -29,12 +30,6 @@ class QuoteMapper implements TagMapperInterface
             $chunks[] = $attr;
         }
         
-        return QuoteViewModel(
-            [
-            'text' => $tagNode->text,
-            'author' => $author,
-            'url' => $url,
-            'chunks' => $chunks,
-        ];
+        return new QuoteViewModel($tagNode->text, $author, $url, $chunks);
     }
 }

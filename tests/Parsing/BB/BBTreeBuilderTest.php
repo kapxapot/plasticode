@@ -4,7 +4,7 @@ namespace Plasticode\Tests\Parsing\BB;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Config\BBContainerConfig;
-use Plasticode\Parsing\Interfaces\MapperSourceInterface;
+use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
 use Plasticode\Parsing\Parsers\BB\Container\BBSequencer;
 use Plasticode\Parsing\Parsers\BB\Container\BBTreeBuilder;
 use Plasticode\Parsing\Parsers\BB\Nodes\Node;
@@ -15,7 +15,7 @@ use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
  */
 final class BBTreeBuilderTest extends TestCase
 {
-    /** @var MapperSourceInterface */
+    /** @var TagMapperSourceInterface */
     private $config;
 
     protected function setUp() : void

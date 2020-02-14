@@ -3,7 +3,7 @@
 namespace Plasticode\Core;
 
 use Plasticode\Core\Interfaces\RendererInterface;
-use Plasticode\Models\Model;
+use Plasticode\Interfaces\ArrayableInterface;
 use Slim\Views\Twig;
 
 class Renderer implements RendererInterface
@@ -44,7 +44,7 @@ class Renderer implements RendererInterface
 
     public function component(string $name, $data = null) : string
     {
-        if ($data instanceof Model) {
+        if ($data instanceof ArrayableInterface) {
             $data = $data->toArray();
         }
 

@@ -4,10 +4,6 @@ namespace Plasticode\ViewModels;
 
 /**
  * BB quote view model.
- * 
- * @property string $text
- * @property string|null $author
- * @prop
  */
 class QuoteViewModel extends ViewModel
 {
@@ -32,8 +28,43 @@ class QuoteViewModel extends ViewModel
         $this->chunks = $chunks;
     }
 
+    /**
+     * Text.
+     *
+     * @return string
+     */
     public function text() : string
     {
-        
+        return $this->text;
+    }
+
+    /**
+     * Author name.
+     *
+     * @return string|null
+     */
+    public function author() : ?string
+    {
+        return $this->author;
+    }
+
+    /**
+     * Url.
+     *
+     * @return string|null
+     */
+    public function url() : ?string
+    {
+        return $this->url;
+    }
+
+    /**
+     * Other chunks.
+     *
+     * @return string[]
+     */
+    public function chunks() : array
+    {
+        return $this->chunks;
     }
 }

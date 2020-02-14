@@ -9,6 +9,7 @@ use Plasticode\Core\Linker;
 use Plasticode\Data\Db;
 use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\InvalidConfigurationException;
+use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\Role;
 use Plasticode\Models\User;
 use Plasticode\Parsing\Parsers\CompositeParser;
@@ -16,7 +17,7 @@ use Plasticode\Util\Cases;
 use Plasticode\Util\Strings;
 use Psr\Container\ContainerInterface;
 
-class Model implements \ArrayAccess, \JsonSerializable
+class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
 {
     /**
      * DI container wrapper (!)

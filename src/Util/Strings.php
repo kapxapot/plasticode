@@ -232,24 +232,35 @@ class Strings
     /**
      * Checks if string starts with 'http'.
      *
-     * @param string $str
+     * @param string|null $str
      * @return boolean
      */
-    public static function isUrl(string $str) : bool
+    public static function isUrl(?string $str) : bool
     {
         return self::startsWith($str, 'http');
+    }
+
+    /**
+     * Checks if string starts with 'http' or '/'.
+     *
+     * @param string|null $str
+     * @return boolean
+     */
+    public static function isUrlOrRelative(?string $str) : bool
+    {
+        return self::isUrl($str) || self::startsWith($str, '/');
     }
     
     /**
      * Checks if a string starts with any mask from the list.
      * 
-     * @param string $str String to test
+     * @param string|null $str String to test
      * @param string[] $masks Array of string masks
      * @return bool True, if matches
      */
-    public static function startsWithAny(string $str, array $masks) : bool
+    public static function startsWithAny(?string $str, array $masks) : bool
     {
-        if (empty($masks)) {
+        if (strlen($str) == 0 || empty($masks)) {
             return false;
         }
 
@@ -268,24 +279,32 @@ class Strings
     /**
      * Checks if a string starts with a given mask.
      * 
-     * @param string $str String to test
+     * @param string|null $str String to test
      * @param string $mask String mask
      * @return bool True, if matches
      */
-    public static function startsWith(string $str, string $mask) : bool
+    public static function startsWith(?string $str, string $mask) : bool
     {
+        if (strlen($str) == 0) {
+            return false;
+        }
+
         return strpos($str, $mask) === 0;
     }
     
     /**
      * Checks if a string ends with a given mask.
      * 
-     * @param string $str String to test
+     * @param string|null $str String to test
      * @param string $mask String mask
      * @return bool True, if matches
      */
-    public static function endsWith(string $str, string $mask) : bool
+    public static function endsWith(?string $str, string $mask) : bool
     {
+        if (strlen($str) == 0) {
+            return false;
+        }
+
         return mb_substr($str, -strlen($mask)) == $mask;
     }
     
