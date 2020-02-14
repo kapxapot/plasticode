@@ -2,15 +2,20 @@
 
 namespace Plasticode\Parsing\Mappers;
 
-use Plasticode\Parsing\Interfaces\MapperInterface;
+use Plasticode\Parsing\Interfaces\TagMapperInterface;
+use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Util\Text;
+use Plasticode\ViewModels\ListViewModel;
+use Plasticode\ViewModels\ViewModel;
 
-class ListMapper implements MapperInterface
+class ListMapper implements TagMapperInterface
 {
-    public function map(string $content, array $attrs) : array
+    public function map(TagNode $tagNode) : ViewModel
     {
-        $ordered = !empty($attrs);
-        $content = strstr($content, '[*]');
+        $ordered = !empty($tagNode->attributes);
+        $items = null;
+
+        $content = strstr($tagNode->text, '[*]');
         
         if ($content !== false) {
             $items = preg_split('/\[\*\]/', $content, -1, PREG_SPLIT_NO_EMPTY);
@@ -23,9 +28,6 @@ class ListMapper implements MapperInterface
             );
         }
         
-        return [
-            'ordered' => $ordered,
-            'items' => $items ?? [],
-        ];
+        return new ListViewModel($items, $ordered);
     }
 }

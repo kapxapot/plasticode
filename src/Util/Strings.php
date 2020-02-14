@@ -228,6 +228,17 @@ class Strings
             )
         );
     }
+
+    /**
+     * Checks if string starts with 'http'.
+     *
+     * @param string $str
+     * @return boolean
+     */
+    public static function isUrl(string $str) : bool
+    {
+        return self::startsWith($str, 'http');
+    }
     
     /**
      * Checks if a string starts with any mask from the list.

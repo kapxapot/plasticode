@@ -2,18 +2,21 @@
 
 namespace Plasticode\Parsing\Mappers;
 
-use Plasticode\Parsing\Interfaces\MapperInterface;
+use Plasticode\Parsing\Interfaces\TagMapperInterface;
+use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
+use Plasticode\Util\Strings;
+use Plasticode\ViewModels\ViewModel;
 
-class QuoteMapper implements MapperInterface
+class QuoteMapper implements TagMapperInterface
 {
-    public function map(string $content, array $attrs) : array
+    public function map(TagNode $tagNode) : ViewModel
     {
         $author = null;
         $url = null;
         $chunks = [];
 
-        foreach ($attrs as $attr) {
-            if (strpos($attr, 'http') === 0) {
+        foreach ($tagNode->attributes as $attr) {
+            if (Strings::isUrl($attr)) {
                 $url = $attr;
                 continue;
             }
@@ -26,8 +29,9 @@ class QuoteMapper implements MapperInterface
             $chunks[] = $attr;
         }
         
-        return [
-            'text' => $content,
+        return QuoteViewModel(
+            [
+            'text' => $tagNode->text,
             'author' => $author,
             'url' => $url,
             'chunks' => $chunks,

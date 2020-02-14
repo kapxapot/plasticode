@@ -69,4 +69,26 @@ final class StringsTest extends TestCase
             [' aza ZA    uhuhuh ', 'aza za uhuhuh'],
         ];
     }
+
+    /**
+     * @dataProvider isUrlProvider
+     */
+    public function testIsUrl(?string $original, ?string $expected) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Strings::isUrl($original)
+        );
+    }
+
+    public function isUrlProvider() : array
+    {
+        return [
+            [null, false],
+            ['', false],
+            ['/url', false],
+            ['http://hahaha', true],
+            ['https://hhehehehe', true],
+        ];
+    }
 }

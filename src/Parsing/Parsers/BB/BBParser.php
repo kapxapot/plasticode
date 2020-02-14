@@ -7,6 +7,7 @@ use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Util\Arrays;
+use Plasticode\Util\Strings;
 use Plasticode\Util\Text;
 
 class BBParser extends BaseStep
@@ -69,7 +70,7 @@ class BBParser extends BaseStep
                         } else {
                             $height = $attr;
                         }
-                    } elseif (strpos($attr, 'http') === 0 || strpos($attr, '/') === 0) {
+                    } elseif (Strings::isUrl($attr) || strpos($attr, '/') === 0) {
                         if (Image::isImagePath($attr)) {
                             $thumb = $attr;
                         } else {
