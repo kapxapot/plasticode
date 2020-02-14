@@ -8,7 +8,6 @@ use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
-use Plasticode\Util\Arrays;
 use Plasticode\Util\Strings;
 use Plasticode\Util\Text;
 
@@ -147,20 +146,6 @@ class BBParser extends BaseStep
         return $result;
     }
 
-    protected function parseColorBB(string $text) : string
-    {
-        return $this->parseTag(
-            $text,
-            'color',
-            function ($content, $attrs) {
-                return [
-                    'content' => $content,
-                    'color' => Arrays::first($attrs),
-                ];
-            }
-        );
-    }
-
     protected function parseYoutubeBB(array $result) : array
     {
         $text = $result['text'];
@@ -217,15 +202,18 @@ class BBParser extends BaseStep
     
     private function parseTagMatches(string $tag, array $matches) : TagNode
     {
-        if (!empty($matches)) {
-            $content = Text::trimBrs($matches[2]);
+        /** @var string[] */
+        $attrs = [];
+        $content = '';
+
+        if (count($matches) > 1) {
             $attrs = $this->parseAttributes($matches[1]);
         }
+
+        if (count($matches) > 2) {
+            $content = Text::trimBrs($matches[2]);
+        }
         
-        return new TagNode(
-            $tag,
-            $attrs,
-            $content ?? 'parse error'
-        );
+        return new TagNode($tag, $attrs, $content);
     }
 }

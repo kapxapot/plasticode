@@ -16,11 +16,6 @@ class SpoilerViewModel extends ViewModel
     /** @var string|null */
     private $title;
 
-    /**
-     * @param string $id
-     * @param string $body
-     * @param string|null $title
-     */
     public function __construct(string $id, string $body, ?string $title)
     {
         parent::__construct();
