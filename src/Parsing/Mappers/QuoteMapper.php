@@ -17,7 +17,7 @@ class QuoteMapper implements TagMapperInterface
         $url = null;
         $chunks = [];
 
-        foreach ($tagNode->attributes as $attr) {
+        foreach ($tagNode->attributes() as $attr) {
             if (Strings::isUrl($attr)) {
                 $url = $attr;
                 continue;
@@ -31,7 +31,7 @@ class QuoteMapper implements TagMapperInterface
             $chunks[] = $attr;
         }
         
-        $model = new QuoteViewModel($tagNode->text, $author, $url, $chunks);
+        $model = new QuoteViewModel($tagNode->text(), $author, $url, $chunks);
 
         return new ViewContext($model, $context);
     }

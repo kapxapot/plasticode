@@ -43,13 +43,6 @@ class BBContainerParser extends BaseStep
 
         $context->text = $this->treeRenderer->render($tree, $this->config);
 
-        // TODO: fluent calls notation
-        // $context->text = $this
-        //     ->sequencer
-        //     ->getSequence($context->text, $ctags)
-        //     ->build()
-        //     ->render($this);
-        
         return $context;
     }
 }

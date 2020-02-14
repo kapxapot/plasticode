@@ -8,7 +8,7 @@ namespace Plasticode\Parsing\Parsers\BB\Nodes;
 class Node
 {
     /** @var string */
-    public $text;
+    protected $text;
 
     /**
      * Creates Node.
@@ -16,6 +16,27 @@ class Node
      * @param string $text
      */
     public function __construct(string $text)
+    {
+        $this->text = $text;
+    }
+
+    /**
+     * Get text.
+     *
+     * @return string
+     */
+    public function text() : string
+    {
+        return $this->text;
+    }
+
+    /**
+     * Set text.
+     *
+     * @param string $text
+     * @return void
+     */
+    public function setText(string $text) : void
     {
         $this->text = $text;
     }

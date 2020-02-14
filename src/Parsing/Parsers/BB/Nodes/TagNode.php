@@ -2,16 +2,18 @@
 
 namespace Plasticode\Parsing\Parsers\BB\Nodes;
 
+use Plasticode\Util\Arrays;
+
 class TagNode extends Node
 {
     /** @var string */
-    public $tag;
+    private $tag;
 
     /** @var string[] */
-    public $attributes;
+    private $attributes;
 
     /** @var Node[] */
-    public $children = [];
+    private $children = [];
 
     /**
      * Creates TagNode.
@@ -26,6 +28,46 @@ class TagNode extends Node
 
         $this->tag = $tag;
         $this->attributes = $attributes ?? [];
+    }
+
+    /**
+     * Tag.
+     *
+     * @return string
+     */
+    public function tag() : string
+    {
+        return $this->tag;
+    }
+
+    /**
+     * Attributes.
+     *
+     * @return string[]
+     */
+    public function attributes() : array
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Child nodes.
+     *
+     * @return Node[]
+     */
+    public function children() : array
+    {
+        return $this->children;
+    }
+
+    /**
+     * Returns first attribute or null.
+     *
+     * @return string|null
+     */
+    public function firstAttribute() : ?string
+    {
+        return Arrays::first($this->attributes);
     }
 
     /**

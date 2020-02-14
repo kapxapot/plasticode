@@ -2,7 +2,9 @@
 
 namespace Plasticode\Parsing\Parsers\BB;
 
-use Plasticode\Parsing\Interfaces\TagMapperInterface;
+use Plasticode\Core\Interfaces\RendererInterface;
+use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
+use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
@@ -14,42 +16,29 @@ class BBParser extends BaseStep
 {
     use BBAttributeParser;
 
+    /** @var TagMapperSourceInterface */
+    private $config;
+
+    /** @var RendererInterface */
+    private $renderer;
+
+    public function __construct(TagMapperSourceInterface $config, RendererInterface $renderer)
+    {
+        $this->config = $config;
+        $this->renderer = $renderer;
+    }
+
     public function parseContext(ParsingContext $context) : ParsingContext
     {
         $context = clone $context;
 
+        $tags = $this->config->getTags();
+
+        foreach ($tags as $tag) {
+            $context = $this->parseTag($tag, $context);
+        }
+
         return $context;
-    }
-    
-    protected function parseBrackets(array $result) : array
-    {
-        $result = $this->parseImgBB($result, 'img');
-        $result = $this->parseImgBB($result, 'leftimg');
-        $result = $this->parseImgBB($result, 'rightimg');
-        $result = $this->parseCarousel($result);
-        $result = $this->parseYoutubeBB($result);
-
-        $text = $result['text'];
-        $text = $this->parseColorBB($text);
-        $text = $this->parseUrlBB($text);
-
-        $result['text'] = $text;
-
-        return $result;
-    }
-
-    protected function parseUrlBB(string $text) : string
-    {
-        return $this->parseTag(
-            $text,
-            'url',
-            function ($content, $attrs) {
-                return [
-                    'url' => Arrays::first($attrs) ?? $content,
-                    'text' => $content,
-                ];
-            }
-        );
     }
 
     protected function parseImgBB(array $result, string $tag) : array
@@ -198,20 +187,27 @@ class BBParser extends BaseStep
         return $result;
     }
     
-    private function parseTag(string $text, string $tagName, TagMapperInterface $mapper, string $componentName = null) : string
+    private function parseTag(string $tag, ParsingContext $context) : ParsingContext
     {
-        $componentName = $componentName ?? $tagName;
-        
-        return preg_replace_callback(
-            $this->getTagPattern($tagName),
-            function ($matches) use ($componentName, $mapper) {
-                $parsed = $this->parseTagMatches($matches);
-                $data = $mapper->map($parsed['content'], $parsed['attrs']);
+        $mapper = $this->config->getMapper($tag);
+        $componentName = $this->config->getComponentName($tag);
 
-                return $this->renderer->component($componentName, $data);
+        $context->text = preg_replace_callback(
+            $this->getTagPattern($tag),
+            function ($matches) use ($tag, $mapper, $componentName, $context) {
+                $tagNode = $this->parseTagMatches($tag, $matches);
+                $viewContext = $mapper->map($tagNode, $context);
+                $context = $viewContext->context();
+
+                return $this->renderer->component(
+                    $componentName,
+                    $viewContext->model()
+                );
             },
-            $text
+            $context->text
         );
+
+        return $context;
     }
     
     private function getTagPattern(string $tag) : string
@@ -219,16 +215,17 @@ class BBParser extends BaseStep
         return "/\[{$tag}([^\[]*)\](.*)\[\/{$tag}\]/Uis";
     }
     
-    private function parseTagMatches(array $matches) : array
+    private function parseTagMatches(string $tag, array $matches) : TagNode
     {
         if (!empty($matches)) {
             $content = Text::trimBrs($matches[2]);
             $attrs = $this->parseAttributes($matches[1]);
         }
         
-        return [
-            'content' => $content ?? 'parse error',
-            'attrs' => $attrs ?? [],
-        ];
+        return new TagNode(
+            $tag,
+            $attrs,
+            $content ?? 'parse error'
+        );
     }
 }

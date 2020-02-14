@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Parsing;
 
 use Plasticode\Config\Interfaces\ParsingConfigInterface;
-use Plasticode\Config\ParsingConfig;
+use Plasticode\Config\Parsing\ParsingConfig;
 use Plasticode\Tests\BaseRenderTestCase;
 
 abstract class BaseParsingRenderTestCase extends BaseRenderTestCase

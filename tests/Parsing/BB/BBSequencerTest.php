@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Parsing\BB;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Config\BBContainerConfig;
+use Plasticode\Config\Parsing\BBContainerConfig;
 use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
 use Plasticode\Parsing\Parsers\BB\Container\BBSequencer;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\EndElement;

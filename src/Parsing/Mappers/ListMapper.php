@@ -13,10 +13,10 @@ class ListMapper implements TagMapperInterface
 {
     public function map(TagNode $tagNode, ?ParsingContext $context = null) : ViewContext
     {
-        $ordered = !empty($tagNode->attributes);
+        $ordered = !empty($tagNode->attributes());
         $items = [];
 
-        $content = strstr($tagNode->text, '[*]');
+        $content = strstr($tagNode->text(), '[*]');
         
         if ($content !== false) {
             $items = preg_split('/\[\*\]/', $content, -1, PREG_SPLIT_NO_EMPTY);

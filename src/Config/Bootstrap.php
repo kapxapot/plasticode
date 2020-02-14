@@ -2,6 +2,8 @@
 
 namespace Plasticode\Config;
 
+use Plasticode\Config\Parsing\BBContainerConfig;
+use Plasticode\Config\Parsing\ParsingConfig;
 use Plasticode\IO\File;
 use Plasticode\Parsing\Parsers\BB\BBParser;
 use Plasticode\Parsing\Parsers\BB\Container\BBContainerParser;
@@ -314,7 +316,7 @@ class Bootstrap
             },
             
             'parsingConfig' => function (ContainerInterface $container) {
-                return new \Plasticode\Config\ParsingConfig();
+                return new ParsingConfig();
             },
 
             'cleanupParser' => function (ContainerInterface $container) {

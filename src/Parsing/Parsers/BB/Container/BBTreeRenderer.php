@@ -31,13 +31,16 @@ class BBTreeRenderer
 
         foreach ($tree as $node) {
             if ($node instanceof TagNode) {
-                $node->text = $this->render($node->children, $mapperSource);
+                $node->setText(
+                    $this->render($node->children(), $mapperSource)
+                );
+
                 $parts[] = $this->renderNode($node, $mapperSource);
 
                 continue;
             }
             
-            $parts[] = $this->renderer->text($node->text);
+            $parts[] = $this->renderer->text($node->text());
         }
         
         return implode(Text::BrBr, $parts);
@@ -45,7 +48,7 @@ class BBTreeRenderer
     
     private function renderNode(TagNode $node, TagMapperSourceInterface $mapperSource) : string
     {
-        $tag = $node->tag;
+        $tag = $node->tag();
         $mapper = $mapperSource->getMapper($tag);
         $viewContext = $mapper->map($node);
 

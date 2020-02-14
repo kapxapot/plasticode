@@ -1,33 +1,29 @@
 <?php
 
-namespace Plasticode\Config;
+namespace Plasticode\Parsing;
 
 use Plasticode\Parsing\Interfaces\TagMapperInterface;
 use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
-use Plasticode\Parsing\Mappers\ListMapper;
-use Plasticode\Parsing\Mappers\QuoteMapper;
-use Plasticode\Parsing\Mappers\SpoilerMapper;
 use Webmozart\Assert\Assert;
 
-class BBContainerConfig implements TagMapperSourceInterface
+abstract class TagMapperSource implements TagMapperSourceInterface
 {
     /** @var array */
     private $map = [];
 
-    public function __construct()
-    {
-        $this->register('spoiler', new SpoilerMapper());
-        $this->register('list', new ListMapper());
-        $this->register('quote', new QuoteMapper());
-    }
+    private $componentMap = [];
 
-    public function register(string $tag, TagMapperInterface $mapper) : void
+    public function register(string $tag, TagMapperInterface $mapper, ?string $componentName = null) : void
     {
         Assert::notEmpty($tag);
         Assert::alnum($tag);
         Assert::notNull($mapper);
 
         $this->map[$tag] = $mapper;
+
+        if (strlen($componentName) > 0) {
+            $this->componentMap[$tag] = $componentName;
+        }
     }
 
     /**
@@ -53,5 +49,10 @@ class BBContainerConfig implements TagMapperSourceInterface
         );
 
         return $this->map[$tag];
+    }
+
+    public function getComponentName(string $tag): string
+    {
+        return $this->componentMap[$tag] ?? $tag;
     }
 }

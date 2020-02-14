@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Config;
+namespace Plasticode\Config\Parsing;
 
 use Plasticode\Config\Interfaces\ParsingConfigInterface;
 

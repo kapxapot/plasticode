@@ -45,7 +45,7 @@ class BBTreeBuilder
                 $tagNode = Arrays::last($tagNodes);
 
                 // matching node - wrap it up
-                if ($tagNode && $tagNode->tag == $element->tag) {
+                if ($tagNode && $tagNode->tag() == $element->tag) {
                     array_pop($tagNodes);
                     $consume($tagNode);
                     continue;
@@ -63,7 +63,7 @@ class BBTreeBuilder
 
             $consume($tagNode->reduce());
 
-            foreach ($tagNode->children as $child) {
+            foreach ($tagNode->children() as $child) {
                 $consume($child);
             }
         }

@@ -35,4 +35,12 @@ interface TagMapperSourceInterface
      * @return TagMapperInterface
      */
     public function getMapper(string $tag) : TagMapperInterface;
+
+    /**
+     * Returns component name for $tag. Default = $tag.
+     *
+     * @param string $tag
+     * @return string
+     */
+    public function getComponentName(string $tag) : string;
 }

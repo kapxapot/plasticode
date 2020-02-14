@@ -2,7 +2,7 @@
 
 namespace Plasticode\Tests\Parsing\BB;
 
-use Plasticode\Config\BBContainerConfig;
+use Plasticode\Config\Parsing\BBContainerConfig;
 use Plasticode\Parsing\Parsers\BB\Container\BBSequencer;
 use Plasticode\Parsing\Parsers\BB\Container\BBTreeBuilder;
 use Plasticode\Parsing\Parsers\BB\Container\BBTreeRenderer;
