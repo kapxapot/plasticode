@@ -58,15 +58,21 @@ class BBParser extends BaseStep
                         } else {
                             $height = $attr;
                         }
-                    } elseif (Strings::isUrlOrRelative($attr)) {
+
+                        continue;
+                    }
+                    
+                    if (Strings::isUrlOrRelative($attr)) {
                         if (Image::isImagePath($attr)) {
                             $thumb = $attr;
                         } else {
                             $url = $attr;
                         }
-                    } else {
-                        $alt = $attr;
+
+                        continue;
                     }
+                    
+                    $alt = $attr;
                 }
                 
                 $result['images'][] = $thumb ?? $content; // change this to only thumb?
