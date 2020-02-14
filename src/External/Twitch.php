@@ -21,7 +21,7 @@ class Twitch
     
     public function getGameData($id) : array
     {
-        $url = $this->baseUrl . 'games?id' . $id;
+        $url = $this->baseUrl . 'games?id=' . $id;
         return $this->getData($url);
     }
     
