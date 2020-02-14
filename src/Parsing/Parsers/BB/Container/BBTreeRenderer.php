@@ -47,8 +47,8 @@ class BBTreeRenderer
     {
         $tag = $node->tag;
         $mapper = $mapperSource->getMapper($tag);
-        $viewModel = $mapper->map($node);
+        $viewContext = $mapper->map($node);
 
-        return $this->renderer->component($tag, $viewModel);
+        return $this->renderer->component($tag, $viewContext->model());
     }
 }

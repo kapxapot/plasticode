@@ -4,13 +4,14 @@ namespace Plasticode\Parsing\Mappers;
 
 use Plasticode\Parsing\Interfaces\TagMapperInterface;
 use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
+use Plasticode\Parsing\ParsingContext;
+use Plasticode\Parsing\ViewContext;
 use Plasticode\Util\Strings;
 use Plasticode\ViewModels\QuoteViewModel;
-use Plasticode\ViewModels\ViewModel;
 
 class QuoteMapper implements TagMapperInterface
 {
-    public function map(TagNode $tagNode) : ViewModel
+    public function map(TagNode $tagNode, ?ParsingContext $context = null) : ViewContext
     {
         $author = null;
         $url = null;
@@ -30,6 +31,8 @@ class QuoteMapper implements TagMapperInterface
             $chunks[] = $attr;
         }
         
-        return new QuoteViewModel($tagNode->text, $author, $url, $chunks);
+        $model = new QuoteViewModel($tagNode->text, $author, $url, $chunks);
+
+        return new ViewContext($model, $context);
     }
 }
