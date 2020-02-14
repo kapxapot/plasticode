@@ -7,9 +7,14 @@ namespace Plasticode\ViewModels;
  */
 class SpoilerViewModel extends ViewModel
 {
+    /** @var string */
     private $id;
-    private $title;
+
+    /** @var string */
     private $body;
+
+    /** @var string|null */
+    private $title;
 
     /**
      * @param string $id

@@ -7,7 +7,10 @@ namespace Plasticode\ViewModels;
  */
 class ListViewModel extends ViewModel
 {
+    /** @var string[] */
     private $items;
+    
+    /** @var boolean */
     private $ordered;
 
     /**

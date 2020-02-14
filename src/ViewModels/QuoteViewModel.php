@@ -7,9 +7,16 @@ namespace Plasticode\ViewModels;
  */
 class QuoteViewModel extends ViewModel
 {
+    /** @var string */
     private $text;
+
+    /** @var string|null */
     private $author;
+
+    /** @var string|null */
     private $url;
+
+    /** @var string[] */
     private $chunks;
 
     /**
