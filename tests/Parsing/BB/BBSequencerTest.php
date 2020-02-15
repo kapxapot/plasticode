@@ -10,9 +10,6 @@ use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\EndElement;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\SequenceElement;
 use Plasticode\Parsing\Parsers\BB\Container\SequenceElements\StartElement;
 
-/**
- * @covers \Plasticode\Parsing\Parsers\BB\Container\BBSequencer
- */
 final class BBSequencerTest extends TestCase
 {
     /** @var TagMapperSourceInterface */

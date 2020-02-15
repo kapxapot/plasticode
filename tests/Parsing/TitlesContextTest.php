@@ -5,9 +5,6 @@ namespace Plasticode\Tests\Parsing;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Parsing\TitlesContext;
 
-/**
- * @covers \Plasticode\Parsing\TitlesContext
- */
 final class TitlesContextTest extends TestCase
 {
     public function testNonPositiveLimits() : void

@@ -5,9 +5,6 @@ namespace Plasticode\Tests\Parsing\Steps;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Steps\CleanupStep;
 
-/**
- * @covers \Plasticode\Parsing\Steps\CleanupStep
- */
 final class CleanupStepTest extends ParsingStepTestCase
 {
     /** @var CleanupStep */

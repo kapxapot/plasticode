@@ -7,9 +7,6 @@ use Plasticode\Models\Model;
 use Plasticode\Tests\Dummies\DummyModel;
 use Plasticode\Util\Arrays;
 
-/**
- * @covers \Plasticode\Util\Arrays
- */
 final class ExtractTest extends TestCase
 {
     /**

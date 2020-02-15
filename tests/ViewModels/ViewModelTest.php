@@ -5,9 +5,6 @@ namespace Plasticode\Tests\ViewModels;
 use PHPUnit\Framework\TestCase;
 use Plasticode\ViewModels\SpoilerViewModel;
 
-/**
- * @covers \Plasticode\ViewModels\ViewModel
- */
 final class ViewModelTest extends TestCase
 {
     public function testToArray() : void

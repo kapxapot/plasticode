@@ -6,9 +6,6 @@ use PHPUnit\Framework\TestCase;
 use Plasticode\Tests\Dummies\DummyModel;
 use Plasticode\Util\Arrays;
 
-/**
- * @covers \Plasticode\Util\Arrays
- */
 final class DistinctByTest extends TestCase
 {
     /**

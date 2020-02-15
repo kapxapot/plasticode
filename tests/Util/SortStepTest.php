@@ -5,9 +5,6 @@ namespace Plasticode\Tests\Util;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\SortStep;
 
-/**
- * @covers \Plasticode\Util\SortStep
- */
 final class SortStepTest extends TestCase
 {
     public function testDefault() : void

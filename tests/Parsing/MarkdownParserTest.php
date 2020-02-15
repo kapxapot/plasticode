@@ -6,9 +6,6 @@ use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Parsers\MarkdownParser;
 use Plasticode\Tests\Parsing\Steps\ParsingStepTestCase;
 
-/**
- * @covers \Plasticode\Parsing\Parsers\MarkdownParser
- */
 final class MarkdownParserTest extends ParsingStepTestCase
 {
     /** @var MarkdownParser */

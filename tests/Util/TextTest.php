@@ -5,9 +5,6 @@ namespace Plasticode\Tests\Util;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Text;
 
-/**
- * @covers \Plasticode\Util\Text
- */
 final class TextTest extends TestCase
 {
     /**

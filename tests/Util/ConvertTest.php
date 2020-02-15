@@ -5,9 +5,6 @@ namespace Plasticode\Tests\Util;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Convert;
 
-/**
- * @covers \Plasticode\Util\Convert
- */
 final class ConvertTest extends TestCase
 {
     /**

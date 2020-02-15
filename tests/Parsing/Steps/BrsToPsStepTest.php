@@ -5,9 +5,6 @@ namespace Plasticode\Tests\Parsing\Steps;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Steps\BrsToPsStep;
 
-/**
- * @covers \Plasticode\Parsing\Steps\BrsToPsStep
- */
 final class BrsToPsStepTest extends ParsingStepTestCase
 {
     /** @var BrsToPsStep */

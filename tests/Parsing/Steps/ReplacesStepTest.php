@@ -5,9 +5,6 @@ namespace Plasticode\Tests\Parsing\Steps;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Steps\ReplacesStep;
 
-/**
- * @covers \Plasticode\Parsing\Steps\ReplacesStep
- */
 final class ReplacesStepTest extends ParsingStepTestCase
 {
     /** @var ReplacesStep */

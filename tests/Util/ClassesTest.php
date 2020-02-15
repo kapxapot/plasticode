@@ -6,9 +6,6 @@ use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Classes;
 use Plasticode\ViewModels\SpoilerViewModel;
 
-/**
- * @covers \Plasticode\Util\Classes
- */
 final class ClassesTest extends TestCase
 {
     public function testGetPublicMethods() : void

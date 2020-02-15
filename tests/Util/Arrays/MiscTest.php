@@ -5,9 +5,6 @@ namespace Plasticode\Tests\Util\Arrays;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Arrays;
 
-/**
- * @covers \Plasticode\Util\Arrays
- */
 final class MiscTest extends TestCase
 {
     /** @var array */

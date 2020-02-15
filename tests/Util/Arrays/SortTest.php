@@ -6,9 +6,6 @@ use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\Sort;
 
-/**
- * @covers \Plasticode\Util\Arrays
- */
 final class SortTest extends TestCase
 {
     public function testOrderBy() : void

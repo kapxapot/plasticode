@@ -5,9 +5,6 @@ namespace Plasticode\Tests\Parsing\Steps;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 
-/**
- * @covers \Plasticode\Parsing\Steps\NewLinesToBrsStep
- */
 final class NewLinesToBrsStepTest extends ParsingStepTestCase
 {
     /** @var NewLinesToBrsStep */

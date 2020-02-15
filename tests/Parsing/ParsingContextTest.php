@@ -8,9 +8,6 @@ use Plasticode\Parsing\ContentsItem;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Util\Date;
 
-/**
- * @covers \Plasticode\Parsing\ParsingContext
- */
 final class ParsingContextTest extends TestCase
 {
     private $json = '{"text":"some text","contents":[{"level":1,"label":"1","text":"Hey"},{"level":1,"label":"2","text":"Yay"}],"largeImages":["largeImage1","largeImage2"],"images":["image1","image2"],"videos":["video1","video2"],"updatedAt":"imma date"}';

@@ -5,9 +5,6 @@ namespace Plasticode\Tests;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Models\AspectRatio;
 
-/**
- * @covers \Plasticode\Models\AspectRatio
- */
 final class AspectRatioTest extends TestCase
 {
     public function testInvalidDimensions() : void

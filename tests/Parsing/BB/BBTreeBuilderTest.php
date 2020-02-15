@@ -10,9 +10,6 @@ use Plasticode\Parsing\Parsers\BB\Container\BBTreeBuilder;
 use Plasticode\Parsing\Parsers\BB\Nodes\Node;
 use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 
-/**
- * @covers \Plasticode\Parsing\Parsers\BB\Container\BBTreeBuilder
- */
 final class BBTreeBuilderTest extends TestCase
 {
     /** @var TagMapperSourceInterface */

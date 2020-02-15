@@ -6,9 +6,6 @@ use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Parsing\Steps\TitlesStep;
 
-/**
- * @covers \Plasticode\Parsing\Steps\TitlesStep
- */
 final class TitlesStepTest extends ParsingStepTestCase
 {
     /** @var ParsingStepInterface */

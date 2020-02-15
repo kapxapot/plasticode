@@ -8,9 +8,6 @@ use Plasticode\Parsing\Parsers\BB\Container\BBTreeBuilder;
 use Plasticode\Parsing\Parsers\BB\Container\BBTreeRenderer;
 use Plasticode\Tests\BaseRenderTestCase;
 
-/**
- * @covers \Plasticode\Parsing\Parsers\BB\Container\BBTreeRenderer
- */
 final class BBTreeRendererTest extends BaseRenderTestCase
 {
     /**

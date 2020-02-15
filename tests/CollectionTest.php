@@ -6,9 +6,6 @@ use PHPUnit\Framework\TestCase;
 use Plasticode\Collection;
 use Plasticode\Tests\Dummies\DummyModel;
 
-/**
- * @covers \Plasticode\Collection
- */
 final class CollectionTest extends TestCase
 {
     /**

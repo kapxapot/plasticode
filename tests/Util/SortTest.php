@@ -6,9 +6,6 @@ use PHPUnit\Framework\TestCase;
 use Plasticode\Tests\Dummies\SortDummy;
 use Plasticode\Util\Sort;
 
-/**
- * @covers \Plasticode\Util\Sort
- */
 final class SortTest extends TestCase
 {
     private $first = [

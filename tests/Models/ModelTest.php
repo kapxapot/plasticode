@@ -5,9 +5,6 @@ namespace Plasticode\Tests\Models;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Models\Model;
 
-/**
- * @covers \Plasticode\Models\Model
- */
 final class ModelTest extends TestCase
 {
     /**
