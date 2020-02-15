@@ -47,7 +47,7 @@ class BBSequencer
             if (preg_match('/\[(' . $ctagsStr . ')([^\[]*)\]/Ui', $part, $matches)) {
                 // bb container start
                 $tag = $matches[1];
-                $attrs = $this->parseAttributes($matches[2]);
+                $attrs = self::parseAttributes($matches[2]);
                 
                 $sequence[] = new StartElement($tag, $attrs, $part);
 

@@ -2,15 +2,15 @@
 
 namespace Plasticode\Parsing\Steps;
 
-use Plasticode\Config\Interfaces\ParsingConfigInterface;
+use Plasticode\Config\Parsing\Interfaces\ReplacesConfigInterface;
 use Plasticode\Parsing\ParsingContext;
 
 class ReplacesStep extends BaseStep
 {
-    /** @var ParsingConfigInterface */
+    /** @var ReplacesConfigInterface */
     protected $config;
 
-    public function __construct(ParsingConfigInterface $config)
+    public function __construct(ReplacesConfigInterface $config)
     {
         $this->config = $config;
     }

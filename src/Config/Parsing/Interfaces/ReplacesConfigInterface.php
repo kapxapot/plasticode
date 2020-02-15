@@ -1,8 +1,8 @@
 <?php
 
-namespace Plasticode\Config\Interfaces;
+namespace Plasticode\Config\Parsing\Interfaces;
 
-interface ParsingConfigInterface
+interface ReplacesConfigInterface
 {
     /**
      * Returns replaces for final markup cleanup.

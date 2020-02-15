@@ -3,11 +3,13 @@
 namespace Plasticode\Parsing\Parsers\BB;
 
 use Plasticode\Core\Interfaces\RendererInterface;
+use Plasticode\Parsing\Interfaces\TagMapperInterface;
 use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
 use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
+use Plasticode\Parsing\ViewContext;
 use Plasticode\Util\Text;
 
 class BBParser extends BaseStep
@@ -20,7 +22,10 @@ class BBParser extends BaseStep
     /** @var RendererInterface */
     private $renderer;
 
-    public function __construct(TagMapperSourceInterface $config, RendererInterface $renderer)
+    public function __construct(
+        TagMapperSourceInterface $config,
+        RendererInterface $renderer
+    )
     {
         $this->config = $config;
         $this->renderer = $renderer;
@@ -41,40 +46,60 @@ class BBParser extends BaseStep
 
     private function parseTag(string $tag, ParsingContext $context) : ParsingContext
     {
-        $mapper = $this->config->getMapper($tag);
-        $componentName = $this->config->getComponentName($tag);
+        $tagPattern = self::getTagPattern($tag);
+        $text = $context->text;
 
-        $context->text = preg_replace_callback(
-            $this->getTagPattern($tag),
-            function ($matches) use ($tag, $mapper, $componentName, $context) {
-                $tagNode = $this->parseTagMatches($tag, $matches);
-                $viewContext = $mapper->map($tagNode, $context);
-                $context = $viewContext->context();
-
-                return $this->renderer->component(
-                    $componentName,
-                    $viewContext->model()
-                );
+        $parsedText = preg_replace_callback(
+            $tagPattern,
+            function (array $matches) use ($tag, &$context) {
+                return $this->parseTagMatches($tag, $matches, $context);
             },
-            $context->text
+            $text
         );
+
+        $context->text = $parsedText;
 
         return $context;
     }
-    
-    private function getTagPattern(string $tag) : string
+
+    private static function getTagPattern(string $tag) : string
     {
         return "/\[{$tag}([^\[]*)\](.*)\[\/{$tag}\]/Uis";
     }
-    
-    private function parseTagMatches(string $tag, array $matches) : TagNode
+
+    private function parseTagMatches(string $tag, array $matches, ParsingContext &$context) : string
+    {
+        $viewContext = $this->mapToViewContext($tag, $matches, $context);
+        $context = $viewContext->parsingContext();
+        $componentName = $this->config->getComponentName($tag);
+
+        return $this->render($componentName, $viewContext);
+    }
+
+    private function render(string $componentName, ViewContext $context) : string
+    {
+        return $this->renderer->component(
+            $componentName,
+            $context->model()
+        );
+    }
+
+    private function mapToViewContext(string $tag, array $matches, ParsingContext $context) : ViewContext
+    {
+        $mapper = $this->config->getMapper($tag);
+        $tagNode = self::matchesToNode($tag, $matches);
+
+        return $mapper->map($tagNode, $context);
+    }
+
+    private static function matchesToNode(string $tag, array $matches) : TagNode
     {
         /** @var string[] */
         $attrs = [];
         $content = '';
 
         if (count($matches) > 1) {
-            $attrs = $this->parseAttributes($matches[1]);
+            $attrs = self::parseAttributes($matches[1]);
         }
 
         if (count($matches) > 2) {

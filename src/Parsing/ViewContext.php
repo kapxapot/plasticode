@@ -4,35 +4,31 @@ namespace Plasticode\Parsing;
 
 use Plasticode\ViewModels\ViewModel;
 
+/**
+ * Aggregate for ViewModel + ParsingContext.
+ */
 class ViewContext
 {
+    /** @var ViewModel */
     private $model;
-    private $context;
 
-    public function __construct(ViewModel $model, ?ParsingContext $context = null)
+    /** @var ParsingContext|null */
+    private $parsingContext;
+
+    public function __construct(ViewModel $model, ?ParsingContext $parsingContext = null)
     {
         $this->model = $model;
-        $this->context = $context;
+        $this->parsingContext = $parsingContext;
     }
 
-    /**
-     * View model.
-     *
-     * @return ViewModel
-     */
     public function model() : ViewModel
     {
         return $this->model;
     }
 
-    /**
-     * Parsing context.
-     *
-     * @return ParsingContext
-     */
-    public function context() : ParsingContext
+    public function parsingContext() : ?ParsingContext
     {
-        return $this->context;
+        return $this->parsingContext;
     }
 
     /**
@@ -42,6 +38,6 @@ class ViewContext
      */
     public function hasParsingContext() : bool
     {
-        return !is_null($this->context);
+        return !is_null($this->parsingContext);
     }
 }
