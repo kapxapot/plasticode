@@ -12,10 +12,10 @@ class UrlMapper implements TagMapperInterface
 {
     public function map(TagNode $tagNode, ?ParsingContext $context = null) : ViewContext
     {
-        $content = $tagNode->text();
-        $url = $tagNode->firstAttribute() ?? $content;
+        $text = $tagNode->text();
+        $url = $tagNode->firstAttribute() ?? $text;
 
-        $model = new UrlViewModel($url, $content);
+        $model = new UrlViewModel($url, $text);
 
         return new ViewContext($model, $context);
     }

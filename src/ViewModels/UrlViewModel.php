@@ -8,12 +8,12 @@ class UrlViewModel extends ViewModel
     private $url;
 
     /** @var string|null */
-    private $content;
+    private $text;
 
-    public function __construct(string $url, ?string $content)
+    public function __construct(string $url, ?string $text)
     {
         $this->url = $url;
-        $this->content = $content;
+        $this->text = $text;
     }
 
     public function url() : string
@@ -22,12 +22,12 @@ class UrlViewModel extends ViewModel
     }
 
     /**
-     * Returns link content, if empty = url.
+     * Returns link text, if empty = url.
      *
      * @return string
      */
-    public function content() : string
+    public function text() : string
     {
-        return $this->content ?? $this->url;
+        return $this->text ?? $this->url;
     }
 }
