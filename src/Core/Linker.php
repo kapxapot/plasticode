@@ -11,9 +11,9 @@ use Plasticode\Util\Strings;
 class Linker implements LinkerInterface
 {
     /** @var SettingsProviderInterface */
-    private $settingsProvider;
+    protected $settingsProvider;
 
-    private $router;
+    protected $router;
 
     public function __construct(SettingsProviderInterface $settingsProvider, $router)
     {
