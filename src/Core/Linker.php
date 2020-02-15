@@ -7,15 +7,17 @@ use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\IO\Image;
 use Plasticode\Util\Numbers;
 use Plasticode\Util\Strings;
+use Slim\Interfaces\RouterInterface;
 
 class Linker implements LinkerInterface
 {
     /** @var SettingsProviderInterface */
     protected $settingsProvider;
 
+    /** @var RouterInterface */
     protected $router;
 
-    public function __construct(SettingsProviderInterface $settingsProvider, $router)
+    public function __construct(SettingsProviderInterface $settingsProvider, RouterInterface $router)
     {
         $this->settingsProvider = $settingsProvider;
         $this->router = $router;
