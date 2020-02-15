@@ -6,7 +6,7 @@ use Plasticode\Parsing\Interfaces\TagMapperInterface;
 use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\ViewContext;
-use Plasticode\ViewModels\LinkViewModel;
+use Plasticode\ViewModels\UrlViewModel;
 
 class UrlMapper implements TagMapperInterface
 {
@@ -15,7 +15,7 @@ class UrlMapper implements TagMapperInterface
         $content = $tagNode->text();
         $url = $tagNode->firstAttribute() ?? $content;
 
-        $model = new LinkViewModel($url, $content);
+        $model = new UrlViewModel($url, $content);
 
         return new ViewContext($model, $context);
     }

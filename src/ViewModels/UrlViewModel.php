@@ -2,7 +2,7 @@
 
 namespace Plasticode\ViewModels;
 
-class LinkViewModel extends ViewModel
+class UrlViewModel extends ViewModel
 {
     /** @var string */
     private $url;

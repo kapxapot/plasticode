@@ -3,6 +3,7 @@
 namespace Plasticode\Config;
 
 use Plasticode\Config\Parsing\BBContainerConfig;
+use Plasticode\Config\Parsing\BBParserConfig;
 use Plasticode\Config\Parsing\ParsingConfig;
 use Plasticode\IO\File;
 use Plasticode\Parsing\Parsers\BB\BBParser;
@@ -323,10 +324,21 @@ class Bootstrap
                 return new CleanupParser($container->parsingConfig);
             },
 
+            'bbParserConfig' => function (ContainerInterface $container) {
+                return new BBParserConfig($container->linker);
+            },
+
+            'bbParser' => function (ContainerInterface $container) {
+                return new BBParser(
+                    $container->bbParserConfig,
+                    $container->renderer
+                );
+            },
+
             'lineParser' => function (ContainerInterface $container) {
                 return new CompositeParser(
                     [
-                        new BBParser(),
+                        $container->bbParser,
                         //new DoubleBracketsParser(),
                     ]
                 );
@@ -352,7 +364,7 @@ class Bootstrap
                         new MarkdownParser($container->renderer),
                         new NewLinesToBrsStep(),
                         $container->bbContainerParser,
-                        new BBParser(),
+                        $container->bbParser,
                         new ReplacesStep($container->parsingConfig),
                         //new DoubleBracketsParser(),
                         $container->cleanupParser
