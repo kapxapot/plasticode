@@ -2,14 +2,25 @@
 
 namespace Plasticode\Core;
 
-use Plasticode\Contained;
 use Plasticode\Core\Interfaces\LinkerInterface;
+use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\IO\Image;
 use Plasticode\Util\Numbers;
 use Plasticode\Util\Strings;
 
-class Linker extends Contained implements LinkerInterface
+class Linker implements LinkerInterface
 {
+    /** @var SettingsProviderInterface */
+    private $settingsProvider;
+
+    private $router;
+
+    public function __construct(SettingsProviderInterface $settingsProvider, $router)
+    {
+        $this->settingsProvider = $settingsProvider;
+        $this->router = $router;
+    }
+
     /**
      * Makes url absolute. If no url provided, returns site url with trailing '/'.
      *
@@ -18,7 +29,10 @@ class Linker extends Contained implements LinkerInterface
      */
     public function abs(string $url = null) : string
     {
-        $baseUrl = rtrim($this->getSettings('view_globals.site_url'), '/');
+        $siteUrl = $this->settingsProvider
+            ->getSettings('view_globals.site_url');
+        
+        $baseUrl = rtrim($siteUrl, '/');
         
         if (strpos($url, $baseUrl) !== 0) {
             $url = $baseUrl . '/' . ltrim($url, '/');
@@ -34,7 +48,7 @@ class Linker extends Contained implements LinkerInterface
     
     public function root() : string
     {
-        return $this->getSettings('root');
+        return $this->settingsProvider->getSettings('root');
     }
 
     public function getExtension($type) : ?string

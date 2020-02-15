@@ -12,7 +12,7 @@ use Plasticode\ViewModels\ImageViewModel;
 
 class ImageMapper implements TagMapperInterface
 {
-    public function map(TagNode $tagNode, ?ParsingContext $context) : ViewContext
+    public function map(TagNode $tagNode, ?ParsingContext $context = null) : ViewContext
     {
         if ($context) {
             /** @var ParsingContext $context */

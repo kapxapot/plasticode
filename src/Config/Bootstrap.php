@@ -313,7 +313,10 @@ class Bootstrap
             },
             
             'linker' => function (ContainerInterface $container) {
-                return new \Plasticode\Core\Linker($container);
+                return new \Plasticode\Core\Linker(
+                    $container->settingsProvider,
+                    $container->router
+                );
             },
             
             'replacesConfig' => function (ContainerInterface $container) {
