@@ -132,7 +132,7 @@ class ParsingContext
      */
     public function setLines(array $lines) : self
     {
-        $lines = Text::trimLines($lines);
+        $lines = Text::trimEmptyLines($lines);
         $this->text = Text::fromLines($lines);
 
         return $this;

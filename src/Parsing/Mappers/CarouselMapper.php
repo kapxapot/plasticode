@@ -34,7 +34,7 @@ class CarouselMapper implements TagMapperInterface
         
         $parts = array_map(
             function ($part) {
-                return trim(Text::trimBrs($part));
+                return trim(Text::trimNewLinesAndBrs($part));
             },
             $parts
         );

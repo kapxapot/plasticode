@@ -41,4 +41,48 @@ final class TextTest extends TestCase
             )
         );
     }
+
+    public function testTrimEmptyLines() : void
+    {
+        $this->assertEquals(
+            ['one', '', 'two'],
+            Text::trimEmptyLines(['', null, '', 'one', '', 'two', '', null])
+        );
+    }
+
+    public function testTrimPattern() : void
+    {
+        $this->assertEquals(
+            'dacacv',
+            Text::trimPattern('a|b|c', 'bacdacacvacac')
+        );
+    }
+
+    public function testTrimMultiPattern() : void
+    {
+        $this->assertEquals(
+            'dacacv',
+            Text::trimMultiPattern(['b', 'ac'], 'bacdacacvacac')
+        );
+    }
+
+    public function testTrimBrs() : void
+    {
+        $this->assertEquals(
+            'hey...',
+            Text::trimBrs(
+                '<br/><br /><br>hey...<br/><br>'
+            )
+        );
+    }
+
+    public function testTrimNewLinesAndBrs() : void
+    {
+        $this->assertEquals(
+            'hey...',
+            Text::trimNewLinesAndBrs(
+                "\r\n\r<br/>\n<br /><br>hey...<br/><br>\r\n"
+            )
+        );
+    }
 }

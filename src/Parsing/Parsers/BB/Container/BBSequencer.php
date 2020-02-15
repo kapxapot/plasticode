@@ -30,13 +30,15 @@ class BBSequencer
         $ctagsStr = implode('|', $ctags);
         
         $parts = preg_split(
-            '/(\[\/?(?:' . $ctagsStr . ')[^\[]*\])/Ui', $text, -1,
+            '/(\[\/?(?:' . $ctagsStr . ')[^\[]*\])/Ui',
+            $text,
+            -1,
             PREG_SPLIT_DELIM_CAPTURE
         );
         
         $parts = array_map(
             function ($part) {
-                return Text::trimBrs($part);
+                return Text::trimNewLinesAndBrs($part);
             },
             $parts
         );

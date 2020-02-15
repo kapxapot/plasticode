@@ -57,7 +57,7 @@ class CutParser
         }
         
         $text = substr($text, 0, $cutpos);
-        $text = Text::trimBrs($text);
+        $text = Text::trimNewLinesAndBrs($text);
 
         return $this->cleanup($text);
     }

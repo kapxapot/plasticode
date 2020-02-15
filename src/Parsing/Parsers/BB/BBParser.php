@@ -3,7 +3,6 @@
 namespace Plasticode\Parsing\Parsers\BB;
 
 use Plasticode\Core\Interfaces\RendererInterface;
-use Plasticode\Parsing\Interfaces\TagMapperInterface;
 use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
 use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
@@ -22,10 +21,7 @@ class BBParser extends BaseStep
     /** @var RendererInterface */
     private $renderer;
 
-    public function __construct(
-        TagMapperSourceInterface $config,
-        RendererInterface $renderer
-    )
+    public function __construct(TagMapperSourceInterface $config, RendererInterface $renderer)
     {
         $this->config = $config;
         $this->renderer = $renderer;
@@ -103,7 +99,7 @@ class BBParser extends BaseStep
         }
 
         if (count($matches) > 2) {
-            $content = Text::trimBrs($matches[2]);
+            $content = Text::trimNewLinesAndBrs($matches[2]);
         }
         
         return new TagNode($tag, $attrs, $content);

@@ -23,7 +23,7 @@ class ListMapper implements TagMapperInterface
             
             $items = array_map(
                 function ($item) {
-                    return Text::trimBrs($item);
+                    return Text::trimNewLinesAndBrs($item);
                 },
                 $items
             );
