@@ -36,13 +36,20 @@ final class BBContainerParserTest extends BaseRenderTestCase
     /**
      * Renders BB containers from $text.
      *
-     * @param string $text
-     * @return string
+     * @param string|null $text
+     * @return string|null
      */
-    private function render(string $text) : string
+    private function render(?string $text) : ?string
     {
         $context = $this->parser->parse($text);
         return $context->text;
+    }
+
+    public function testRenderEmpty() : void
+    {
+        $text = $this->render(null);
+
+        $this->assertNull($text);
     }
 
     public function testRenderList() : void

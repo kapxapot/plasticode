@@ -102,4 +102,24 @@ final class MarkdownParserTest extends ParsingStepTestCase
             $context->text
         );
     }
+
+    public function testParseListMixed() : void
+    {
+        $context = $this->parseLines(
+            [
+                '- Unordered',
+                '1. Ordered',
+                'Just text',
+            ]
+        );
+
+        $this->assertEquals(
+            [
+                '<ul><li>Unordered</li></ul>',
+                '<ol><li>Ordered</li></ol>',
+                'Just text'
+            ],
+            $context->getLines()
+        );
+    }
 }

@@ -11,7 +11,7 @@ class ParsingContext
     /** @var string|null */
     public $text;
 
-    /** @var \Plasticode\Collection */
+    /** @var Collection */
     public $contents;
 
     /** @var string[] */

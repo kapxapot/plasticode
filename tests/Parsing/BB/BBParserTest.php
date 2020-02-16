@@ -39,6 +39,16 @@ final class BBParserTest extends BaseRenderTestCase
         );
     }
 
+    public function testYoutubeSized() : void
+    {
+        $context = $this->parser->parse('[youtube|320|200]somecode[/youtube]');
+
+        $this->assertEquals(
+            '<div class="center"><iframe src="https://www.youtube.com/embed/somecode" width="320" height="200" frameborder="0" allowfullscreen></iframe></div>',
+            $context->text
+        );
+    }
+
     public function testColor() : void
     {
         $context = $this->parser->parse('[color=#ffaa00]Colored text[/color]');
