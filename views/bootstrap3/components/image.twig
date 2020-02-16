@@ -17,18 +17,11 @@
 
     <{{ main_tag }} class="{{ div_classes }}">
         {% if thumb or url %}<a href="{{ url ?? source }}"{% if not url %} class="colorbox"{% endif %}>{% endif %}
-        <img src="{{ thumb ?? source }}"
-            class="img-responsive"
-            {% if width > 0 %}width="{{ width }}"{% endif %}
-            {% if height > 0 %}height="{{ height }}"{% endif %}
-            {% if alt %}title="{{ alt }}"{% endif %}
-        />
+        <img src="{{ thumb ?? source }}" class="img-responsive"{% if width > 0 %} width="{{ width }}"{% endif %}{% if height > 0 %} height="{{ height }}"{% endif %} alt="{{ alt }}"{% if alt %} title="{{ alt }}"{% endif %}/>
         {% if thumb or url %}</a>{% endif %}
 
         {% if alt %}
-            <{{ caption_tag }} class="img-caption">
-                {% if url %}<a href="{{ url }}">{{ alt }}</a>{% else %}{{ alt }}{% endif %}
-            </{{ caption_tag }}>
+            <{{ caption_tag }} class="img-caption">{% if url %}<a href="{{ url }}">{{ alt }}</a>{% else %}{{ alt }}{% endif %}</{{ caption_tag }}>
         {% endif %}
     </{{ main_tag }}>
 {% endif %}

@@ -21,14 +21,6 @@ interface TagMapperSourceInterface
     public function getTags() : array;
     
     /**
-     * Returns all registered mappers as an associative array.
-     * $tag => $mapper.
-     *
-     * @return array
-     */
-    public function getMappers() : array;
-    
-    /**
      * Returns mapper by $tag.
      *
      * @param string $tag

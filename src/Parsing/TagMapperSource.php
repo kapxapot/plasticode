@@ -36,11 +36,6 @@ abstract class TagMapperSource implements TagMapperSourceInterface
         return array_keys($this->map);
     }
 
-    public function getMappers() : array
-    {
-        return $this->map;
-    }
-
     public function getMapper(string $tag) : TagMapperInterface
     {
         Assert::true(
