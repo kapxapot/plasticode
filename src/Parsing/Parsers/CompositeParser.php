@@ -24,12 +24,6 @@ class CompositeParser extends BaseStep implements LinkRendererInterface
         $this->setPipeline($pipeline ?? []);
     }
 
-    public function addStep(ParsingStepInterface $step) : self
-    {
-        $this->pipeline[] = $step;
-        return $this;
-    }
-
     /**
      * Sets parsing steps pipeline.
      *

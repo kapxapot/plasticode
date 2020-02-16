@@ -2,19 +2,36 @@
 
 namespace Plasticode\Parsing;
 
-use Plasticode\Models\Model;
+use Plasticode\ViewModels\ViewModel;
 
 /**
- * Item for contents list of the parsed text.accordion
+ * Item for contents list of the parsed text.
  * 
- * @property integer $level
  * @property string|null $label
  * @property string $text
  */
-class ContentsItem extends Model
+class ContentsItem extends ViewModel
 {
+    /** @var string */
     public const LABEL_DELIMITER = '_';
 
+    /** @var string[] */
+    protected static $methodsToExclude = ['displayText'];
+
+    /** @var integer */
+    private $level;
+
+    /** @var string|null */
+    private $label;
+
+    /** @var string */
+    private $text;
+
+    /**
+     * @param integer $level
+     * @param string|null $label For example: "1_1_2".
+     * @param string $text Text is supposed to be parsed, can contain html tags.
+     */
     public function __construct(int $level, ?string $label, string $text)
     {
         $this->level = $level;
@@ -22,7 +39,22 @@ class ContentsItem extends Model
         $this->text = $text;
     }
 
-    public function dottedLabel() : ?string
+    public function level() : int
+    {
+        return $this->level;
+    }
+
+    public function label() : ?string
+    {
+        return $this->label;
+    }
+
+    public function text() : string
+    {
+        return $this->text;
+    }
+
+    private function dottedLabel() : ?string
     {
         return $this->label
             ? str_replace(self::LABEL_DELIMITER, '.', $this->label)
@@ -31,8 +63,9 @@ class ContentsItem extends Model
 
     public function displayText() : string
     {
-        return
-            ($this->dottedLabel() ? $this->dottedLabel() . '. ' : '') .
-            strip_tags($this->text);
+        $label = $this->dottedLabel();
+        $prefix = $label ? $label . '. ' : '';
+
+        return $prefix . strip_tags($this->text);
     }
 }

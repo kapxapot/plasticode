@@ -52,18 +52,18 @@ final class ParsingContextTest extends TestCase
         $this->assertEquals(
             [1, '1', 'Hey'],
             [
-                $contents1->level,
-                $contents1->label,
-                $contents1->text
+                $contents1->level(),
+                $contents1->label(),
+                $contents1->text()
             ]
         );
 
         $this->assertEquals(
             [1, '2', 'Yay'],
             [
-                $contents2->level,
-                $contents2->label,
-                $contents2->text
+                $contents2->level(),
+                $contents2->label(),
+                $contents2->text()
             ]
         );
 

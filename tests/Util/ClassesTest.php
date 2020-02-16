@@ -11,7 +11,7 @@ final class ClassesTest extends TestCase
     public function testGetPublicMethods() : void
     {
         $this->assertEquals(
-            ['id', 'body', 'title', 'toArray'],
+            ['id', 'body', 'title', 'toArray', 'jsonSerialize'],
             Classes::getPublicMethods(SpoilerViewModel::class)
         );
     }

@@ -2,13 +2,13 @@
 
 namespace Plasticode\Parsing\Mappers;
 
+use Plasticode\Parsing\CarouselSlide;
 use Plasticode\Parsing\Interfaces\TagMapperInterface;
 use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\ViewContext;
 use Plasticode\Util\Numbers;
 use Plasticode\Util\Text;
-use Plasticode\ViewModels\CarouselSlide;
 use Plasticode\ViewModels\CarouselViewModel;
 
 class CarouselMapper implements TagMapperInterface
@@ -16,7 +16,6 @@ class CarouselMapper implements TagMapperInterface
     public function map(TagNode $tagNode, ?ParsingContext $context = null) : ViewContext
     {
         if ($context) {
-            /** @var ParsingContext $context */
             $context = clone $context;
         }
 

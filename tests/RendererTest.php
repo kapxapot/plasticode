@@ -2,6 +2,9 @@
 
 namespace Plasticode\Tests;
 
+use Plasticode\Parsing\ContentsItem;
+use Plasticode\ViewModels\ContentsViewModel;
+
 final class RendererTest extends BaseRenderTestCase
 {
     public function testPrev() : void
@@ -17,6 +20,21 @@ final class RendererTest extends BaseRenderTestCase
         $this->assertEquals(
             '<i class="glyphicon glyphicon-chevron-right" aria-hidden="true"></i>',
             $this->renderer->next()
+        );
+    }
+
+    public function testContents() : void
+    {
+        $contents = new ContentsViewModel(
+            [
+                new ContentsItem(1, '1', 'Title'),
+                new ContentsItem(3, '1_2_3', 'Some <a href="ababa">text</a>'),
+            ]
+        );
+
+        $this->assertEquals(
+            '<div class="panel-body contents"><div class="contents--header">Содержание:</div><div class="contents--body mt-2"><div class="contents--level1"><a href="#1">1. Title</a></div><div class="contents--level3"><a href="#1_2_3">1.2.3. Some text</a></div></div></div>',
+            $this->renderer->component('contents', $contents)
         );
     }
 }

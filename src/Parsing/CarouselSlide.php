@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\ViewModels;
+namespace Plasticode\Parsing;
 
 class CarouselSlide
 {

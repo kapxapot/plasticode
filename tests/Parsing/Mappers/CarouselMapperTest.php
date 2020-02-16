@@ -3,11 +3,11 @@
 namespace Plasticode\Tests\Parsing\Mappers;
 
 use PHPUnit\Framework\TestCase;
+use Plasticode\Parsing\CarouselSlide;
 use Plasticode\Parsing\Mappers\CarouselMapper;
 use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Util\Text;
-use Plasticode\ViewModels\CarouselSlide;
 use Plasticode\ViewModels\CarouselViewModel;
 
 final class CarouselMapperTest extends TestCase

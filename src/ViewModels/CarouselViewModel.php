@@ -2,6 +2,8 @@
 
 namespace Plasticode\ViewModels;
 
+use Plasticode\Parsing\CarouselSlide;
+
 class CarouselViewModel extends ViewModel
 {
     /** @var string */

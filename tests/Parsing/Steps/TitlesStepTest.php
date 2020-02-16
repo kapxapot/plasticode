@@ -72,18 +72,18 @@ final class TitlesStepTest extends ParsingStepTestCase
         $this->assertEquals(
             [1, '1', 'Title'],
             [
-                $contents1->level,
-                $contents1->label,
-                $contents1->text
+                $contents1->level(),
+                $contents1->label(),
+                $contents1->text()
             ]
         );
 
         $this->assertEquals(
             [1, '2', 'Some more'],
             [
-                $contents2->level,
-                $contents2->label,
-                $contents2->text
+                $contents2->level(),
+                $contents2->label(),
+                $contents2->text()
             ]
         );
 
