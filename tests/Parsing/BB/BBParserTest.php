@@ -4,6 +4,7 @@ namespace Plasticode\Tests\Parsing\BB;
 
 use Plasticode\Config\Parsing\BBParserConfig;
 use Plasticode\Parsing\Parsers\BB\BBParser;
+use Plasticode\Parsing\ParsingContext;
 use Plasticode\Tests\BaseRenderTestCase;
 use Plasticode\Tests\Mocks\LinkerMock;
 
@@ -27,6 +28,23 @@ final class BBParserTest extends BaseRenderTestCase
         unset($this->parser);
 
         parent::tearDown();
+    }
+
+    public function testCarousel() : void
+    {
+        $context = $this->parser->parseContext(
+            ParsingContext::fromLines(
+                [
+                    '[carousel]',
+                    'http://img.ru/1616 Some image',
+                    '//some/other/link',
+                    '[/carousel]',
+                ]
+            )
+        );
+
+        $this->assertStringStartsWith('<div id="carousel-', $context->text);
+        $this->assertStringEndsWith('</div>', $context->text);
     }
 
     public function testYoutube() : void

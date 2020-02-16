@@ -27,7 +27,7 @@ class TagNode extends Node
         parent::__construct($text);
 
         $this->tag = $tag;
-        $this->attributes = $attributes ?? [];
+        $this->attributes = $attributes;
     }
 
     /**
