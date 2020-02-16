@@ -8,6 +8,9 @@
     <filter>
         <whitelist>
             <directory>src</directory>
+            <exclude>
+                <directory suffix="Interface.php">.</directory>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
