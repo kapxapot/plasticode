@@ -29,12 +29,42 @@ final class BBParserTest extends BaseRenderTestCase
         parent::tearDown();
     }
 
-    public function testParse() : void
+    public function testYoutube() : void
+    {
+        $context = $this->parser->parse('[youtube]somecode[/youtube]');
+
+        $this->assertEquals(
+            '<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="https://www.youtube.com/embed/somecode" frameborder="0" allowfullscreen></iframe></div>',
+            $context->text
+        );
+    }
+
+    public function testColor() : void
+    {
+        $context = $this->parser->parse('[color=#ffaa00]Colored text[/color]');
+
+        $this->assertEquals(
+            '<span style="color: #ffaa00">Colored text</span>',
+            $context->text
+        );
+    }
+
+    public function testUrl() : void
     {
         $context = $this->parser->parse('[url=http://warcry.ru]Warcry.ru[/url]');
 
         $this->assertEquals(
             '<a href="http://warcry.ru">Warcry.ru</a>',
+            $context->text
+        );
+    }
+
+    public function testIncorrect() : void
+    {
+        $context = $this->parser->parse('[url=http://warcry.ru]Warcry.ru[/color]');
+
+        $this->assertEquals(
+            '[url=http://warcry.ru]Warcry.ru[/color]',
             $context->text
         );
     }

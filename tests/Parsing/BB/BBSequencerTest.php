@@ -89,4 +89,17 @@ final class BBSequencerTest extends TestCase
         $this->assertInstanceOf(SequenceElement::class, $testText3);
         $this->assertEquals('some [img]image.jpg[/img] text', $testText3->text);
     }
+
+    public function testNoTagsSequence() : void
+    {
+        $text = '[quote|some_attr|another]test [b]bold[/b] test[spoiler]blah[/spoiler][/quote]some [img]image.jpg[/img] text';
+
+        $sequencer = new BBSequencer();
+
+        $seq = $sequencer->getSequence($text, []);
+
+        $this->assertContainsOnlyInstancesOf(SequenceElement::class, $seq);
+        $this->assertCount(1, $seq);
+        $this->assertEquals($text, $seq[0]->text);
+    }
 }
