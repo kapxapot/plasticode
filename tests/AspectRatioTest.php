@@ -31,7 +31,7 @@ final class AspectRatioTest extends TestCase
     /**
      * @dataProvider exactProvider
      */
-    public function testExact($width, $height, $expected) : void
+    public function testExact(int $width, int $height, float $expected) : void
     {
         $ratio = new AspectRatio($width, $height);
 
@@ -48,8 +48,13 @@ final class AspectRatioTest extends TestCase
 
     /**
      * @dataProvider closestProvider
+     * 
+     * @param integer $width
+     * @param integer $height
+     * @param integer[] $expected
+     * @return void
      */
-    public function testClosest($width, $height, $expected) : void
+    public function testClosest(int $width, int $height, array $expected) : void
     {
         $ratio = new AspectRatio($width, $height);
 
@@ -67,7 +72,7 @@ final class AspectRatioTest extends TestCase
     /**
      * @dataProvider cssProvider
      */
-    public function testCss($width, $height, $expected) : void
+    public function testCss(int $width, int $height, string $expected) : void
     {
         $ratio = new AspectRatio($width, $height);
 
@@ -83,6 +88,38 @@ final class AspectRatioTest extends TestCase
             [100, 1000, 'ratio-w1 ratio-h3'],
             [20, 30, 'ratio-w2 ratio-h3'],
             [31, 19, 'ratio-w3 ratio-h2'],
+        ];
+    }
+
+    /**
+     * @dataProvider supportedRatiosProvider
+     *
+     * @param integer $width
+     * @param integer $height
+     * @param integer[][] $supportedRatios
+     * @param integer[] $expected
+     * @return void
+     */
+    public function testSupportedRatios(int $width, int $height, array $supportedRatios, array $expected) : void
+    {
+        $ratio = new AspectRatio($width, $height, $supportedRatios);
+
+        $this->assertEquals(
+            $expected,
+            $ratio->closest()
+        );
+    }
+
+    public function supportedRatiosProvider() : array
+    {
+        $supportedRatios = [
+            [1, 1],
+            [1, 10]
+        ];
+
+        return [
+            [100, 400, $supportedRatios, [1, 1]],
+            [600, 100, $supportedRatios, [10, 1]],
         ];
     }
 }

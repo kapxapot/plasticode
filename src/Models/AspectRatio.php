@@ -2,57 +2,107 @@
 
 namespace Plasticode\Models;
 
+use Webmozart\Assert\Assert;
+
 class AspectRatio extends Model
 {
+    /** @var integer */
     private $width;
+
+    /** @var integer */
     private $height;
 
     /**
      * Ratios must have bigger value first, smaller value second (to be >= 1)
      *
-     * @var array
+     * @var integer[][]
      */
     private $supportedRatios = [
-        [ 1, 1 ],
-        [ 2, 1 ],
-        [ 3, 1 ],
-        [ 3, 2 ],
+        [1, 1],
+        [2, 1],
+        [3, 1],
+        [3, 2],
     ];
     
+    /**
+     * @param integer $width
+     * @param integer $height
+     * @param integer[][]|null $supportedRatios
+     */
     public function __construct(int $width, int $height, array $supportedRatios = null)
     {
-        if ($width <= 0 || $height <= 0) {
-            throw new \InvalidArgumentException('Width and height must be positive.');
-        }
+        Assert::greaterThan($width, 0);
+        Assert::greaterThan($height, 0);
         
         $this->width = $width;
         $this->height = $height;
         
         if (!empty($supportedRatios)) {
+            $this->validateRatios($supportedRatios);
             $this->setSupportedRatios($supportedRatios);
         }
     }
 
-    private function setSupportedRatios(array $ratios)
+    /**
+     * Validates ratios.
+     *
+     * @param integer[][] $ratios
+     * @return void
+     */
+    private function validateRatios(array $ratios) : void
     {
-        // to do: validate input!
-        $this->supportedRatios = $ratios;
+        foreach ($ratios as $ratio) {
+            Assert::isArray($ratio);
+            Assert::count($ratio, 2);
+            Assert::allNatural($ratio);
+        }
     }
 
+    /**
+     * Sets new supported ratios assuming that they are valid.
+     * 
+     * @param integer[][] $ratios
+     * @return void
+     */
+    private function setSupportedRatios(array $ratios) : void
+    {
+        /** @var integer[][] */
+        $this->supportedRatios = [];
+
+        foreach ($ratios as $ratio) {
+            $x = $ratio[0];
+            $y = $ratio[1];
+
+            $this->supportedRatios[] = $x >= $y
+                ? [$x, $y]
+                : [$y, $x];
+        }
+    }
+
+    /**
+     * Returns true, if width >= height.
+     *
+     * @return boolean
+     */
     public function isHorizontal() : bool
     {
         return $this->width >= $this->height;
     }
     
+    /**
+     * Returns true, if width < height.
+     *
+     * @return boolean
+     */
     public function isVertical() : bool
     {
         return !$this->isHorizontal();
     }
     
     /**
-     * Exact ratio as a float value
+     * Returns the exact ratio as a float value.
      * 
-     * Ratio is calculated as (bigger size / smaller size) and is always >= 1
+     * Ratio is calculated as (bigger size / smaller size) and is always >= 1.
      *
      * @return float
      */
@@ -64,15 +114,18 @@ class AspectRatio extends Model
     }
     
     /**
-     * Closest supported ratio as [x, y]
+     * Returns the closest supported ratio as [x, y].
      *
-     * @return array
+     * @return integer[]
      */
     public function closest() : array
     {
         $ratio = $this->exact();
 
+        /** @var float|null */
         $minDelta = null;
+
+        /** @var integer[][] */
         $minRatios = [];
 
         foreach ($this->supportedRatios as $sup) {
@@ -88,6 +141,7 @@ class AspectRatio extends Model
             }
         }
 
+        /** @var integer[]|null */
         $result = null;
 
         // looking for the smallest ratio with the same delta
@@ -100,9 +154,20 @@ class AspectRatio extends Model
         return $result;
     }
     
+    /**
+     * Generates CSS classes for the closest ratio.
+     * Returns empty string if there is none.
+     *
+     * @return string
+     */
     public function cssClasses() : string
     {
         $ratio = $this->closest();
+
+        if (is_null($ratio)) {
+            return '';
+        }
+
         $hor = $this->isHorizontal();
 
         return
