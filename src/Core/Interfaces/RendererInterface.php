@@ -22,4 +22,18 @@ interface RendererInterface
      * @return string
      */
     public function component(string $name, $data = null) : string;
+
+    /**
+     * Renders "prev" glyph.
+     *
+     * @return string
+     */
+    public function prev() : string;
+
+    /**
+     * Renders "next" glyph.
+     *
+     * @return string
+     */
+    public function next() : string;
 }
