@@ -163,11 +163,6 @@ class AspectRatio extends Model
     public function cssClasses() : string
     {
         $ratio = $this->closest();
-
-        if (is_null($ratio)) {
-            return '';
-        }
-
         $hor = $this->isHorizontal();
 
         return
