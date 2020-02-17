@@ -36,7 +36,7 @@ class Cache
     
     public function getCached(string $path, \Closure $func, bool $forced = false)
     {
-        if ($forced === true && !$this->exists($path)) {
+        if ($forced === true || !$this->exists($path)) {
             $this->set($path, $func());
         }
         
