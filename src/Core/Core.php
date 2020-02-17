@@ -9,7 +9,7 @@ use Respect\Validation\Validator as v;
 class Core
 {
     /**
-     * Plasticode bootstrap
+     * Plasticode bootstrap.
      * 
      * Initializes container with provided settings,
      * initializes validation namespaces,

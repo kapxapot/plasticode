@@ -106,7 +106,7 @@ class Response
             $msg = $container->translator->translate($msg);
         }
 
-        // log stack trace if the exception is non-propagated        
+        // log stack trace if the exception is non-propagated
         if ($settings['log_errors'] && !($ex instanceof PropagatedExceptionInterface)) {
             $container->logger->error("Error: {$msg}");
             

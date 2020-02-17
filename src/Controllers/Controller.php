@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Base controller for controllers showing views
+ * Base controller for controllers showing views.
  */
 class Controller extends Contained
 {
