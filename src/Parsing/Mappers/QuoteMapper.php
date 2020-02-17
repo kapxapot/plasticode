@@ -11,6 +11,8 @@ use Plasticode\ViewModels\QuoteViewModel;
 
 class QuoteMapper implements TagMapperInterface
 {
+    protected static $viewModelClass = QuoteViewModel::class;
+
     public function map(TagNode $tagNode, ?ParsingContext $context = null) : ViewContext
     {
         $author = null;
@@ -31,7 +33,8 @@ class QuoteMapper implements TagMapperInterface
             $chunks[] = $attr;
         }
         
-        $model = new QuoteViewModel($tagNode->text(), $author, $url, $chunks);
+        $modelClass = self::$viewModelClass;
+        $model = new $modelClass($tagNode->text(), $author, $url, $chunks);
 
         return new ViewContext($model, $context);
     }

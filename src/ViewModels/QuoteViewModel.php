@@ -19,13 +19,17 @@ class QuoteViewModel extends ViewModel
     /** @var string[] */
     private $chunks;
 
+    /** @var string|null */
+    private $style;
+
     /**
      * @param string $text
      * @param string|null $author
      * @param string|null $url
      * @param string[] $chunks
+     * @param string|null $style
      */
-    public function __construct(string $text, ?string $author, ?string $url, array $chunks)
+    public function __construct(string $text, ?string $author, ?string $url, array $chunks, ?string $style = null)
     {
         parent::__construct();
 
@@ -33,6 +37,7 @@ class QuoteViewModel extends ViewModel
         $this->author = $author;
         $this->url = $url;
         $this->chunks = $chunks;
+        $this->style = $style;
     }
 
     public function text() : string
@@ -63,5 +68,10 @@ class QuoteViewModel extends ViewModel
     public function chunks() : array
     {
         return $this->chunks;
+    }
+
+    public function style() : ?string
+    {
+        return $this->style;
     }
 }
