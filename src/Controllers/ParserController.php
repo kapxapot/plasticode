@@ -18,10 +18,15 @@ class ParserController extends Contained
         $data = $request->getParsedBody();
         $text = strip_tags($data['text']);
         
-        $context = $this->parser->parse($text);
-        $context = $this->parser->renderLinks($context);
-
-        $text = $this->cutParser->full($context->text);
+        try
+        {
+            $context = $this->parser->parse($text);
+            $context = $this->parser->renderLinks($context);
+    
+            $text = $this->cutParser->full($context->text);
+        } catch (\Exception $ex) {
+            $text = 'Parsing error: ' . $ex->getMessage();
+        }
 
         return Response::json($response, ['text' => $text]);
     }
