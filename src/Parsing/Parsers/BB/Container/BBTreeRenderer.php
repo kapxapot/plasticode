@@ -36,7 +36,6 @@ class BBTreeRenderer
                 );
 
                 $parts[] = $this->renderNode($node, $mapperSource);
-
                 continue;
             }
             
