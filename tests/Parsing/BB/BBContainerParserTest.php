@@ -82,7 +82,10 @@ final class BBContainerParserTest extends BaseRenderTestCase
             '[quote|author|http://someurl|date|other chunk]text[/quote]'
         );
 
-        $this->assertNotEmpty($text);
+        $this->assertEquals(
+            '<div class="quote"><div class="quote--header"><span class="quote--author"><a href="http://someurl">author</a></span> [date, other chunk]:</div><div class="quote--body"><p>text</p></div></div>',
+            $text
+        );
     }
 
     public function testRenderSpoiler() : void

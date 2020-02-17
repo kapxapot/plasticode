@@ -7,8 +7,6 @@
         {% if author %}
             <div class="quote--header"><span class="quote--author">{% if url %}<a href="{{ url }}">{{ author }}</a>{% else %}{{ author }}{% endif %}</span>{% if chunks %} [{{ chunks }}]{% endif %}:</div>
         {% endif %}
-        <div class="quote--body">
-            {{ text|raw }}
-        </div>
+        <div class="quote--body">{{ text|raw }}</div>
     </div>
 {% endif %}
