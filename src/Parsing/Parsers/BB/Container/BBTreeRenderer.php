@@ -49,9 +49,10 @@ class BBTreeRenderer
     private function renderNode(TagNode $node, TagMapperSourceInterface $mapperSource) : string
     {
         $tag = $node->tag();
+        $componentName = $mapperSource->getComponentName($tag);
         $mapper = $mapperSource->getMapper($tag);
         $viewContext = $mapper->map($node);
 
-        return $this->renderer->component($tag, $viewContext->model());
+        return $this->renderer->component($componentName, $viewContext->model());
     }
 }
