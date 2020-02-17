@@ -33,7 +33,7 @@ class QuoteMapper implements TagMapperInterface
             $chunks[] = $attr;
         }
         
-        $modelClass = self::$viewModelClass;
+        $modelClass = static::$viewModelClass;
         $model = new $modelClass($tagNode->text(), $author, $url, $chunks);
 
         return new ViewContext($model, $context);
