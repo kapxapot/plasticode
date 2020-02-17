@@ -4,11 +4,12 @@ namespace Plasticode\Core;
 
 class Cache
 {
+    /** @var \ArrayAccess */
     private $cache;
     
-    public function __construct()
+    public function __construct(?\ArrayAccess $carrier = null)
     {
-        $this->cache = [];
+        $this->cache = $carrier ?? [];
     }
     
     public function get(string $path)
@@ -23,7 +24,7 @@ class Cache
     
     public function exists(string $path) : bool
     {
-        return array_key_exists($path, $this->cache);
+        return isset($this->cache[$path]);
     }
     
     public function delete(string $path)
@@ -33,9 +34,9 @@ class Cache
         }
     }
     
-    public function getCached(string $path, \Closure $func)
+    public function getCached(string $path, \Closure $func, bool $forced = false)
     {
-        if (!$this->exists($path)) {
+        if ($forced === true && !$this->exists($path)) {
             $this->set($path, $func());
         }
         

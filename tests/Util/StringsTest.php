@@ -112,4 +112,12 @@ final class StringsTest extends TestCase
             ['https://hhehehehe', true],
         ];
     }
+
+    public function testToUtf8() : void
+    {
+        $this->assertEquals(
+            'somecoolstring',
+            Strings::toUtf8('some' . chr(0x97) . 'cool' . chr(27) . 'string')
+        );
+    }
 }

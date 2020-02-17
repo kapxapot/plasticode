@@ -7,7 +7,6 @@ use Plasticode\Contained;
 use Plasticode\Core\Cache;
 use Plasticode\Core\Linker;
 use Plasticode\Data\Db;
-use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\Role;
@@ -16,6 +15,7 @@ use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Util\Cases;
 use Plasticode\Util\Strings;
 use Psr\Container\ContainerInterface;
+use Webmozart\Assert\Assert;
 
 class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
 {
@@ -73,7 +73,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     /** @var boolean */
     private static $initialized = false;
 
-    public static function init(ContainerInterface $container)
+    public static function init(ContainerInterface $container) : void
     {
         if (!self::$initialized) {
             // hack for getSettings()
@@ -135,14 +135,10 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     {
         $name = $name ?? self::getLazyFuncName();
         
-        if ($ignoreCache === true || !$this->objCache->exists($name)) {
-            $this->objCache->set($name, $loader());
-        }
-        
-        return $this->objCache->get($name);
+        return $this->objCache->getCached($name, $loader, $ignoreCache);
     }
     
-    protected function resetLazy(string $name)
+    protected function resetLazy(string $name) : void
     {
         $this->objCache->delete($name);
     }
@@ -152,14 +148,10 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         $cache = self::getStaticCache();
         $name = $name ?? self::getLazyFuncName();
         
-        if ($ignoreCache === true || !$cache->exists($name)) {
-            $cache->set($name, $loader());
-        }
-        
-        return $cache->get($name);
+        return $cache->getCached($name, $loader, $ignoreCache);
     }
     
-    protected static function resetStaticLazy(string $name)
+    protected static function resetStaticLazy(string $name) : void
     {
         $cache = self::getStaticCache();
         $cache->delete($name);
@@ -174,7 +166,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         return self::$staticCache;
     }
     
-    private function checkPropertyExists(string $property)
+    private function checkPropertyExists(string $property) : void
     {
         if (array_key_exists($property, $this->obj)) {
             $className = static::class;
@@ -261,11 +253,9 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
-            throw new InvalidArgumentException('$offset cannot be null.');
-        } else {
-            $this->{$offset} = $value;
-        }
+        Assert::notNull($offset);
+
+        $this->{$offset} = $value;
     }
 
     public function offsetExists($offset) : bool
