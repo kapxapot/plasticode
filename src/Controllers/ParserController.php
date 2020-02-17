@@ -3,6 +3,7 @@
 namespace Plasticode\Controllers;
 
 use Plasticode\Contained;
+use Plasticode\Core\Env;
 use Plasticode\Core\Response;
 use Plasticode\Parsing\Parsers\CompositeParser;
 use Psr\Http\Message\ResponseInterface;
@@ -25,7 +26,18 @@ class ParserController extends Contained
     
             $text = $this->cutParser->full($context->text);
         } catch (\Exception $ex) {
-            $text = 'Parsing error: ' . $ex->getMessage();
+            /** @var Env */
+            $env = $this->env;
+
+            $debugMessage = 'Parsing error: ' . $ex->getMessage();
+
+            if ($env && $env->isDev()) {
+                $text = $debugMessage;
+            } else {
+                $text = 'Parsing error.';
+            }
+
+            $this->logger->error($debugMessage);
         }
 
         return Response::json($response, ['text' => $text]);
