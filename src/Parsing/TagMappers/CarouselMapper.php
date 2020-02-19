@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing\Mappers;
+namespace Plasticode\Parsing\TagMappers;
 
 use Plasticode\Parsing\CarouselSlide;
 use Plasticode\Parsing\Interfaces\TagMapperInterface;

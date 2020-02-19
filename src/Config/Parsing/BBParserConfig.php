@@ -3,11 +3,11 @@
 namespace Plasticode\Config\Parsing;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Parsing\Mappers\CarouselMapper;
-use Plasticode\Parsing\Mappers\ColorMapper;
-use Plasticode\Parsing\Mappers\ImageMapper;
-use Plasticode\Parsing\Mappers\UrlMapper;
-use Plasticode\Parsing\Mappers\YoutubeMapper;
+use Plasticode\Parsing\TagMappers\CarouselMapper;
+use Plasticode\Parsing\TagMappers\ColorMapper;
+use Plasticode\Parsing\TagMappers\ImageMapper;
+use Plasticode\Parsing\TagMappers\UrlMapper;
+use Plasticode\Parsing\TagMappers\YoutubeMapper;
 use Plasticode\Parsing\TagMapperSource;
 
 class BBParserConfig extends TagMapperSource

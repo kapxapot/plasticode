@@ -17,7 +17,6 @@ abstract class TagMapperSource implements TagMapperSourceInterface
     {
         Assert::notEmpty($tag);
         Assert::alnum($tag);
-        Assert::notNull($mapper);
 
         $this->map[$tag] = $mapper;
 

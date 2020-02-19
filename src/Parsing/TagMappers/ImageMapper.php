@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing\Mappers;
+namespace Plasticode\Parsing\TagMappers;
 
 use Plasticode\IO\Image;
 use Plasticode\Parsing\Interfaces\TagMapperInterface;

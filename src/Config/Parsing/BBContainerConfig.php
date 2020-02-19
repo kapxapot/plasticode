@@ -2,9 +2,9 @@
 
 namespace Plasticode\Config\Parsing;
 
-use Plasticode\Parsing\Mappers\ListMapper;
-use Plasticode\Parsing\Mappers\QuoteMapper;
-use Plasticode\Parsing\Mappers\SpoilerMapper;
+use Plasticode\Parsing\TagMappers\ListMapper;
+use Plasticode\Parsing\TagMappers\QuoteMapper;
+use Plasticode\Parsing\TagMappers\SpoilerMapper;
 use Plasticode\Parsing\TagMapperSource;
 
 class BBContainerConfig extends TagMapperSource
