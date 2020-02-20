@@ -2,14 +2,23 @@
 
 namespace Plasticode\Parsing\Parsers;
 
-use Plasticode\Core\Interfaces\RendererInterface;
-use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Parsing\Interfaces\LinkMapperSourceInterface;
 use Plasticode\Parsing\Interfaces\LinkRendererInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Util\Arrays;
 
+/**
+ * Parses double brackets tags such as [[about|About]] page or [[news:123|Some cool news]] news links.
+ * 
+ * - Default mapper parses [[slug|Content]] links.
+ * - Tag mappers parse [[tag:id|Content]] links.
+ * - Generic mapper parses all other [[unknown-tag:id|Content]] links.
+ * 
+ * If there's no matching mapper, the parser leaves the link unchanged.
+ * 
+ * The mappers can be customized via LinkMapperSourceInterface config ('doubleBracketsConfig' in container).
+ */
 class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
 {
     private const Pattern = '/\[\[(.+)\]\]/U';
@@ -17,13 +26,9 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
     /** @var LinkMapperSourceInterface */
     private $config;
 
-    /** @var RendererInterface */
-    private $renderer;
-
-    public function __construct(LinkMapperSourceInterface $config, RendererInterface $renderer)
+    public function __construct(LinkMapperSourceInterface $config)
     {
         $this->config = $config;
-        $this->renderer = $renderer;
     }
 
     public function parseContext(ParsingContext $context) : ParsingContext
@@ -86,15 +91,18 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
     {
         $mapper = $this->config->getDefaultMapper();
 
-        if (is_null($mapper)) {
-            throw new InvalidConfigurationException(
-                'No default double bracket link mapper defined.'
-            );
-        }
-
-        return $mapper->map($chunks);
+        return $mapper
+            ? $mapper->map($chunks)
+            : null;
     }
 
+    /**
+     * Renders tag link.
+     *
+     * @param string $tag
+     * @param string[] $chunks
+     * @return string|null
+     */
     private function renderTag(string $tag, array $chunks) : ?string
     {
         $mapper =
@@ -108,8 +116,8 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
     }
 
     /**
-     * Renders links using registered link renderers.
-     *
+     * Renders %template% links using registered link renderers.
+     * 
      * @param ParsingContext $context
      * @return ParsingContext
      */
