@@ -35,14 +35,15 @@ abstract class TagMapperSource implements TagMapperSourceInterface
         return array_keys($this->map);
     }
 
-    public function getMapper(string $tag) : TagMapperInterface
+    /**
+     * Get mapper for the tag. Null if absent.
+     *
+     * @param string $tag
+     * @return TagMapperInterface|null
+     */
+    public function getMapper(string $tag) : ?TagMapperInterface
     {
-        Assert::true(
-            array_key_exists($tag, $this->map),
-            'No mapper found for BB container tag \'' . $tag . '\''
-        );
-
-        return $this->map[$tag];
+        return $this->map[$tag] ?? null;
     }
 
     public function getComponentName(string $tag): string

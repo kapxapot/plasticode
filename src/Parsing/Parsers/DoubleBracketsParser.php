@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing\Parsers\DoubleBrackets;
+namespace Plasticode\Parsing\Parsers;
 
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Exceptions\InvalidConfigurationException;
@@ -8,6 +8,7 @@ use Plasticode\Parsing\Interfaces\LinkMapperSourceInterface;
 use Plasticode\Parsing\Interfaces\LinkRendererInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
+use Plasticode\Util\Arrays;
 
 class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
 {
@@ -96,6 +97,45 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
 
     private function renderTag(string $tag, array $chunks) : ?string
     {
-        
+        $mapper =
+            $this->config->getMapper($tag)
+            ??
+            $this->config->getGenericMapper();
+
+        return $mapper
+            ? $mapper->map($chunks)
+            : null;
+    }
+
+    /**
+     * Renders links using registered link renderers.
+     *
+     * @param ParsingContext $context
+     * @return ParsingContext
+     */
+    public function renderLinks(ParsingContext $context) : ParsingContext
+    {
+        $context = clone $context;
+
+        foreach ($this->getLinkRenderers() as $linkRenderer) {
+            $context = $linkRenderer->renderLinks($context);
+        }
+
+        return $context;
+    }
+
+    /**
+     * Returns registered link renderers.
+     *
+     * @return LinkRendererInterface[]
+     */
+    private function getLinkRenderers() : array
+    {
+        return Arrays::filter(
+            $this->config->getAllMappers(),
+            function ($item) {
+                return $item instanceof LinkRendererInterface;
+            }
+        );
     }
 }

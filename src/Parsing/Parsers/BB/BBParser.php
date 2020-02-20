@@ -10,6 +10,7 @@ use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Parsing\ViewContext;
 use Plasticode\Util\Text;
+use Webmozart\Assert\Assert;
 
 class BBParser extends BaseStep
 {
@@ -83,6 +84,9 @@ class BBParser extends BaseStep
     private function mapToViewContext(string $tag, array $matches, ParsingContext $context) : ViewContext
     {
         $mapper = $this->config->getMapper($tag);
+
+        Assert::notNull($mapper, 'No tag mapper found for tag ' . $tag);
+
         $tagNode = self::matchesToNode($tag, $matches);
 
         return $mapper->map($tagNode, $context);

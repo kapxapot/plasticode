@@ -7,6 +7,7 @@ use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
 use Plasticode\Parsing\Parsers\BB\Nodes\Node;
 use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Util\Text;
+use Webmozart\Assert\Assert;
 
 class BBTreeRenderer
 {
@@ -50,6 +51,9 @@ class BBTreeRenderer
         $tag = $node->tag();
         $componentName = $mapperSource->getComponentName($tag);
         $mapper = $mapperSource->getMapper($tag);
+
+        Assert::notNull($mapper, 'No BB container tag mapper found for tag ' . $tag);
+        
         $viewContext = $mapper->map($node);
 
         return $this->renderer->component($componentName, $viewContext->model());

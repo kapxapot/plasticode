@@ -21,12 +21,12 @@ interface TagMapperSourceInterface
     public function getTags() : array;
     
     /**
-     * Returns mapper by $tag.
+     * Get mapper for the tag. Null if absent.
      *
      * @param string $tag
-     * @return TagMapperInterface
+     * @return TagMapperInterface|null
      */
-    public function getMapper(string $tag) : TagMapperInterface;
+    public function getMapper(string $tag) : ?TagMapperInterface;
 
     /**
      * Returns component name for $tag. Default = $tag.

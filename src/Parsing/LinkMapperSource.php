@@ -35,14 +35,9 @@ abstract class LinkMapperSource implements LinkMapperSourceInterface
         $this->map[$tag] = $mapper;
     }
 
-    public function getMapper(string $tag) : LinkMapperInterface
+    public function getMapper(string $tag) : ?LinkMapperInterface
     {
-        Assert::true(
-            array_key_exists($tag, $this->map),
-            'No mapper found for tag \'' . $tag . '\''
-        );
-
-        return $this->map[$tag];
+        return $this->map[$tag] ?? null;
     }
 
     public function getGenericMapper() : ?LinkMapperInterface
