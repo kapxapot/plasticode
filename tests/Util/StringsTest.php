@@ -120,4 +120,39 @@ final class StringsTest extends TestCase
             Strings::toUtf8('some' . chr(0x97) . 'cool' . chr(27) . 'string')
         );
     }
+
+    /**
+     * @dataProvider appendQueryParamProvider
+     *
+     * @param string $request
+     * @param string $name
+     * @param mixed $value
+     * @param string $expected
+     * @return void
+     */
+    public function testAppendQueryParam(string $request, string $name, $value, string $expected) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Strings::appendQueryParam($request, $name, $value)
+        );
+    }
+
+    public function appendQueryParamProvider() : array
+    {
+        return [
+            [
+                'http://site.com/some-page',
+                'id',
+                123,
+                'http://site.com/some-page?id=123'
+            ],
+            [
+                'http://site.com/some-page?id=123',
+                'name',
+                'test',
+                'http://site.com/some-page?id=123&name=test'
+            ],
+        ];
+    }
 }

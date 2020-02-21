@@ -2,15 +2,17 @@
 
 namespace Plasticode\Config\Parsing;
 
-use Plasticode\Parsing\LinkMappers\NewsMapper;
-use Plasticode\Parsing\LinkMappers\PageMapper;
+use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
+use Plasticode\Parsing\LinkMappers\PageLinkMapper;
+use Plasticode\Parsing\LinkMappers\TagLinkMapper;
 use Plasticode\Parsing\LinkMapperSource;
 
 class DoubleBracketsConfig extends LinkMapperSource
 {
     public function __construct()
     {
-        $this->setDefaultMapper(new PageMapper());
-        $this->register('news', new NewsMapper());
+        $this->setDefaultMapper(new PageLinkMapper());
+        $this->register('news', new NewsLinkMapper());
+        $this->register('tag', new TagLinkMapper());
     }
 }

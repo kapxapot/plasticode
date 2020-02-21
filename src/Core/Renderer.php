@@ -4,6 +4,7 @@ namespace Plasticode\Core;
 
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Interfaces\ArrayableInterface;
+use Plasticode\ViewModels\UrlViewModel;
 use Slim\Views\Twig;
 
 class Renderer implements RendererInterface
@@ -28,6 +29,28 @@ class Renderer implements RendererInterface
                 'text' => $text,
                 'style' => $style,
                 'id' => $id,
+            ]
+        );
+    }
+
+    /**
+     * Renders url.
+     *
+     * @param UrlViewModel $model
+     * @return string
+     */
+    public function url(UrlViewModel $model) : string
+    {
+        return $this->component('url', $model);
+    }
+
+    public function noUrl(string $text, ?string $title = null) : string
+    {
+        return $this->component(
+            'no_url',
+            [
+                'text' => $text,
+                'title' => $title,
             ]
         );
     }

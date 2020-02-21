@@ -58,19 +58,20 @@ class Linker implements LinkerInterface
         return Image::getExtension($type ?? 'jpeg');
     }
 
-    /**
-     * For paging.
-     */
-    function page(string $base, int $page) : string
+    public function page(string $slug = null) : string
     {
-        $delim = strpos($base, '?') !== false ? '&' : '?';
-        return $base . ($page == 1 ? '' : "{$delim}page={$page}");
+        return $this->router->pathFor('main.page', ['slug' => $slug]);
+    }
+
+    public function news(int $id = null) : string
+    {
+        return $this->router->pathFor('main.news', ['id' => $id]);
     }
 
     public function tag(string $tag = null, string $tab = null) : string
     {
         $tag = Strings::fromSpaces($tag, '+');
-        $url = $this->router->pathFor('main.tag', [ 'tag' => $tag ]);
+        $url = $this->router->pathFor('main.tag', ['tag' => $tag]);
         
         if ($tab) {
             $url .= '#/' . $tab;
@@ -78,8 +79,6 @@ class Linker implements LinkerInterface
         
         return $url;
     }
-
-    // Twitch
     
     public function twitchImg(string $id) : string
     {
@@ -96,14 +95,10 @@ class Linker implements LinkerInterface
         return 'https://twitch.tv/' . $id;
     }
 
-    // YouTube
-
     public function youtube(string $code) : string
     {
         return 'https://youtube.com/watch?v=' . $code;
     }
-
-    // Gravatar
 
     public function gravatarUrl(string $hash = null) : string
     {
@@ -116,8 +111,6 @@ class Linker implements LinkerInterface
     {
         return $this->gravatarUrl();
     }
-
-    // Misc
 
     public function randPic(int $width, int $height) : string
     {

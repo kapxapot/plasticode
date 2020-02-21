@@ -368,11 +368,24 @@ class Strings
     {
         $string = iconv('UTF-8', 'UTF-8//IGNORE', $string);
     
-        if ($control === true)
-        {
+        if ($control === true) {
             $string = preg_replace('~\p{C}+~u', '', $string);
         }
     
         return $string;
+    }
+
+    /**
+     * Appends query param to http request string.
+     *
+     * @param string $request
+     * @param string $name
+     * @param mixed $value
+     * @return string
+     */
+    public static function appendQueryParam(string $request, string $name, $value) : string
+    {
+        $delim = strpos($request, '?') !== false ? '&' : '?';
+        return $request . $delim . $name . '=' . $value;
     }
 }

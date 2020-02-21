@@ -2,6 +2,8 @@
 
 namespace Plasticode\Core;
 
+use Plasticode\Util\Strings;
+
 class Pagination
 {
     protected $linker;
@@ -122,9 +124,19 @@ class Pagination
         return [
             'page' => $page,
             'current' => $current,
-            'url' => $this->linker->page($baseUrl, $page),
+            'url' => $this->pageLink($baseUrl, $page),
             'label' => ($label != null) ? $label : $page,
             'title' => ($title != null) ? $title : "Страница {$page}",
         ];
     }
+    
+    private function pageLink(string $base, int $page) : string
+    {
+        if ($page <= 1) {
+            return $base;
+        }
+
+        return Strings::appendQueryParam($base, 'page', $page);
+    }
+
 }
