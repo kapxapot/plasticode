@@ -22,13 +22,13 @@ class Strings
     public static function toSpaces(string $str = null, string $space = self::SPACE_CHAR) : string
     {
         $str = stripslashes($str);
-        return preg_replace("/{$space}/", ' ', $str);
+        return preg_replace('/' . $space . '/', ' ', $str);
     }
 
     /**
      * Replaces spaces with special characters.
      * 
-     * Replaces '\s+' with SPACE_CHAR ('_' or $spaces).
+     * Replaces '\s+' with SPACE_CHAR ('_' or $space).
      * 
      * @param string $str String to process
      * @param string $space Custom replacement character, '_' by default
@@ -69,24 +69,33 @@ class Strings
      */
     public static function toSnakeCase(string $str) : string
     {
-        return ltrim(mb_strtolower(preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '_$0', $str)), '_');
+        return ltrim(
+            mb_strtolower(
+                preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '_$0', $str)
+            ),
+            '_'
+        );
     }
     
     /**
      * Trims, converts to lower case and squishes spaces.
      *
      * @param null|string $str
+     * @param string|null $space Character to squish spaces to
      * @return null|string
      */
-    public static function normalize(?string $str) : ?string
+    public static function normalize(?string $str, ?string $space = null) : ?string
     {
         if (strlen($str) == 0) {
             return $str;
         }
 
-        $str = trim($str);
+        $space = $space ?? ' ';
+
         $str = mb_strtolower($str);
-        $str = preg_replace('/\s+/', ' ', $str);
+        $str = self::fromSpaces($str, $space);
+        $str = preg_replace('#(' . $space . '){2,}#', $space, $str);
+        $str = trim($str, $space);
         
         return $str;
     }
@@ -387,5 +396,22 @@ class Strings
     {
         $delim = strpos($request, '?') !== false ? '&' : '?';
         return $request . $delim . $name . '=' . $value;
+    }
+
+    /**
+     * Converts string to slug, that allows only [a-z0-9\-] and must start from alphanumeric character.
+     *
+     * @param string $rawSlug
+     * @return string
+     */
+    public static function toSlug(string $rawSlug) : ?string
+    {
+        // remove invalid characters
+        $slug = preg_replace('/[^a-zA-Z0-9-\s]/', '', $rawSlug);
+
+        // trim, lower case, squish spaces and replace them with '-'
+        $slug = self::normalize($slug, '-');
+
+        return $slug;
     }
 }

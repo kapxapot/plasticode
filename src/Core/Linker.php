@@ -5,6 +5,8 @@ namespace Plasticode\Core;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\IO\Image;
+use Plasticode\Models\News;
+use Plasticode\Models\Page;
 use Plasticode\Util\Numbers;
 use Plasticode\Util\Strings;
 use Slim\Interfaces\RouterInterface;
@@ -58,14 +60,24 @@ class Linker implements LinkerInterface
         return Image::getExtension($type ?? 'jpeg');
     }
 
-    public function page(string $slug = null) : string
+    public function page(Page $page = null) : string
     {
-        return $this->router->pathFor('main.page', ['slug' => $slug]);
+        return $this->router->pathFor(
+            'main.page',
+            [
+                'slug' => $page ? $page->slug : null
+            ]
+        );
     }
 
-    public function news(int $id = null) : string
+    public function news(News $news = null) : string
     {
-        return $this->router->pathFor('main.news', ['id' => $id]);
+        return $this->router->pathFor(
+            'main.news',
+            [
+                'id' => $news ? $news->getId() : null
+            ]
+        );
     }
 
     public function tag(string $tag = null, string $tab = null) : string

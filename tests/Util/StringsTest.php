@@ -50,20 +50,21 @@ final class StringsTest extends TestCase
     /**
      * @dataProvider normalizeProvider
      */
-    public function testNormalize(?string $original, ?string $expected) : void
+    public function testNormalize(?string $original, ?string $space, ?string $expected) : void
     {
         $this->assertEquals(
             $expected,
-            Strings::normalize($original)
+            Strings::normalize($original, $space)
         );
     }
 
     public function normalizeProvider()
     {
         return [
-            [null, null],
-            ['', ''],
-            [' aza ZA    uhuhuh ', 'aza za uhuhuh'],
+            [null, null, null],
+            ['', null, ''],
+            [' aza ZA    uhuhuh ', null, 'aza za uhuhuh'],
+            [' aza ZA  --uhuhuh-', '-', 'aza-za-uhuhuh'],
         ];
     }
 
@@ -153,6 +154,31 @@ final class StringsTest extends TestCase
                 'test',
                 'http://site.com/some-page?id=123&name=test'
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider toSlugProvider
+     *
+     * @param string $original
+     * @param string $expected
+     * @return void
+     */
+    public function testToSlug(string $original, string $expected) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Strings::toSlug($original)
+        );
+    }
+
+    public function toSlugProvider() : array
+    {
+        return [
+            ['Illidan Stormrage', 'illidan-stormrage'],
+            ['-soMe--  sLug-123 ', 'some-slug-123'],
+            ['крутой slug!', 'slug'],
+            ['доброе утро', ''],
         ];
     }
 }

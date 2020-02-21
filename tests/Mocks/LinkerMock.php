@@ -3,6 +3,8 @@
 namespace Plasticode\Tests\Mocks;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
+use Plasticode\Models\News;
+use Plasticode\Models\Page;
 
 final class LinkerMock implements LinkerInterface
 {
@@ -11,14 +13,14 @@ final class LinkerMock implements LinkerInterface
         return 'http://abs' . $url;
     }
 
-    public function page(string $slug = null) : string
+    public function page(Page $page = null) : string
     {
-        return '/' . $slug;
+        return '/' . ($page ? $page->slug : null);
     }
 
-    public function news(int $id = null) : string
+    public function news(News $news = null) : string
     {
-        return '/news/' . $id;
+        return '/news/' . ($news ? $news->getId() : null);
     }
 
     public function tag(string $tag = null, string $tab = null) : string
