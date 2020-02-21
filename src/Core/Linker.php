@@ -60,7 +60,7 @@ class Linker implements LinkerInterface
         return Image::getExtension($type ?? 'jpeg');
     }
 
-    public function page(Page $page = null) : string
+    public function page(?Page $page = null) : string
     {
         return $this->router->pathFor(
             'main.page',
@@ -70,7 +70,7 @@ class Linker implements LinkerInterface
         );
     }
 
-    public function news(News $news = null) : string
+    public function news(?News $news = null) : string
     {
         return $this->router->pathFor(
             'main.news',

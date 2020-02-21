@@ -13,12 +13,12 @@ final class LinkerMock implements LinkerInterface
         return 'http://abs' . $url;
     }
 
-    public function page(Page $page = null) : string
+    public function page(?Page $page = null) : string
     {
         return '/' . ($page ? $page->slug : null);
     }
 
-    public function news(News $news = null) : string
+    public function news(?News $news = null) : string
     {
         return '/news/' . ($news ? $news->getId() : null);
     }

@@ -12,6 +12,7 @@ use Plasticode\Util\Strings;
 /**
  * Tag class.
  * 
+ * @property integer $id
  * @property string $tag
  * @property integer $entityId
  * @property string $entityType

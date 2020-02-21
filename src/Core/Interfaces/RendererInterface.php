@@ -34,6 +34,16 @@ interface RendererInterface
     public function url(UrlViewModel $model) : string;
 
     /**
+     * Renders an entity url.
+     *
+     * @param string $url
+     * @param string $text
+     * @param string|null $title
+     * @return string
+     */
+    public function entityUrl(string $url, string $text, ?string $title = null) : string;
+
+    /**
      * Renders a placeholder instead of url (when there's no url).
      *
      * @param string $text

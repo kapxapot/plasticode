@@ -2,10 +2,19 @@
 
 namespace Plasticode\Parsing\LinkMappers;
 
-use Plasticode\Parsing\Interfaces\LinkMapperInterface;
-use Plasticode\Parsing\Interfaces\LinkRendererInterface;
+use Plasticode\Util\Strings;
 
-class TagLinkMapper implements LinkMapperInterface, LinkRendererInterface
+class TagLinkMapper extends TaggedEntityLinkMapper
 {
-    
+    protected $entity = 'tag';
+
+    protected function baseUrl() : string
+    {
+        return $this->linker->tag();
+    }
+
+    protected function escapeSlug(string $slug): string
+    {
+        return Strings::fromSpaces($slug, '+');
+    }
 }

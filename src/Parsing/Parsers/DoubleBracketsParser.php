@@ -4,6 +4,7 @@ namespace Plasticode\Parsing\Parsers;
 
 use Plasticode\Parsing\Interfaces\LinkMapperSourceInterface;
 use Plasticode\Parsing\Interfaces\LinkRendererInterface;
+use Plasticode\Parsing\LinkMappers\EntityLinkMapper;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Util\Arrays;
@@ -56,29 +57,15 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
             return null;
         }
         
-        $text = null;
         $chunks = preg_split('/\|/', $match);
+        $slugChunk = $chunks[0];
+        $slug = EntityLinkMapper::extractSlug($slugChunk);
 
-        // looking for ":" in first chunk
-        $tagChunk = $chunks[0];
-        $tagParts = preg_split('/:/', $tagChunk, null, PREG_SPLIT_NO_EMPTY);
-        $tag = $tagParts[0];
-        
-        // one tag part = default
-        if (count($tagParts) == 1) {
+        if (!$slug->hasTag()) {
             return $this->renderDefault($chunks);
         }
 
-        // many tag parts
-        // pattern: [[tag:id|content]]
-        // e.g.: [[npc:27412|Слинкин Демогном]]
-        $id = $tagParts[1];
-        $content = $chunks[1] ?? null;
-        $text = $this->renderTag($tag, $chunks);
-        
-        return strlen($text) > 0
-            ? $text
-            : null;
+        return $this->renderTag($slug->tag(), $chunks);
     }
 
     /**
@@ -106,7 +93,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
     private function renderTag(string $tag, array $chunks) : ?string
     {
         $mapper =
-            $this->config->getMapper($tag)
+            $this->config->getEntityMapper($tag)
             ??
             $this->config->getGenericMapper();
 

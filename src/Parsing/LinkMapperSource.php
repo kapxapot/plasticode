@@ -2,6 +2,7 @@
 
 namespace Plasticode\Parsing;
 
+use Plasticode\Parsing\Interfaces\EntityLinkMapperInterface;
 use Plasticode\Parsing\Interfaces\LinkMapperInterface;
 use Plasticode\Parsing\Interfaces\LinkMapperSourceInterface;
 use Webmozart\Assert\Assert;
@@ -11,8 +12,8 @@ abstract class LinkMapperSource implements LinkMapperSourceInterface
     /** @var LinkMapperInterface|null */
     private $defaultMapper;
 
-    /** @var LinkMapperInterface[] */
-    private $map = [];
+    /** @var EntityLinkMapperInterface[] */
+    private $entityMappers = [];
 
     /** @var LinkMapperInterface|null */
     private $genericMapper;
@@ -27,17 +28,17 @@ abstract class LinkMapperSource implements LinkMapperSourceInterface
         $this->defaultMapper = $mapper;
     }
 
-    public function register(string $tag, LinkMapperInterface $mapper) : void
+    public function registerEntityMapper(string $tag, EntityLinkMapperInterface $mapper) : void
     {
         Assert::notEmpty($tag);
         Assert::alnum($tag);
         
-        $this->map[$tag] = $mapper;
+        $this->entityMappers[$tag] = $mapper;
     }
 
-    public function getMapper(string $tag) : ?LinkMapperInterface
+    public function getEntityMapper(string $tag) : ?EntityLinkMapperInterface
     {
-        return $this->map[$tag] ?? null;
+        return $this->entityMappers[$tag] ?? null;
     }
 
     public function getGenericMapper() : ?LinkMapperInterface
@@ -59,7 +60,7 @@ abstract class LinkMapperSource implements LinkMapperSourceInterface
     {
         return array_filter(
             array_merge(
-                array_values($this->map),
+                array_values($this->entityMappers),
                 [$this->defaultMapper, $this->genericMapper]
             )
         );

@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Tests\Parsing\Mappers;
+namespace Plasticode\Tests\Parsing\TagMappers;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Parsing\CarouselSlide;
