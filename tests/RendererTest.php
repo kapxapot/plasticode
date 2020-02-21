@@ -5,6 +5,7 @@ namespace Plasticode\Tests;
 use Plasticode\Parsing\ContentsItem;
 use Plasticode\ViewModels\ContentsViewModel;
 use Plasticode\ViewModels\QuoteViewModel;
+use Plasticode\ViewModels\UrlViewModel;
 
 final class RendererTest extends BaseRenderTestCase
 {
@@ -46,6 +47,24 @@ final class RendererTest extends BaseRenderTestCase
         $this->assertEquals(
             '<div class="quote some-style"><div class="quote--header"><span class="quote--author">Blizzard</span>:</div><div class="quote--body">quote text</div></div>',
             $this->renderer->component('quote', $model)
+        );
+    }
+
+    public function testUrl() : void
+    {
+        $model = new UrlViewModel('http://warcry.ru', 'Warcry.ru', 'Best of the best', 'cool_style', 'no-follow', ['id' => 123]);
+
+        $this->assertEquals(
+            '<a href="http://warcry.ru" data-toggle="tooltip" title="Best of the best" class="cool_style" rel="no-follow" data-id="123">Warcry.ru</a>',
+            $this->renderer->url($model)
+        );
+    }
+
+    public function testNoUrl() : void
+    {
+        $this->assertEquals(
+            '<span class="no_url" data-toggle="tooltip" title="Best of the best">Warcry.ru</span>',
+            $this->renderer->noUrl('Warcry.ru', 'Best of the best')
         );
     }
 }
