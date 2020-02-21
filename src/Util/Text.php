@@ -139,7 +139,7 @@ class Text
      */
     public static function squishBrs(string $text) : string
     {
-        return preg_replace('#(' . self::Br . '){3,}#', self::BrBr, $text);
+        return preg_replace('/(' . self::BrPattern . '){3,}/', self::BrBr, $text);
     }
 
     /**
@@ -190,7 +190,7 @@ class Text
     public static function applyRegexReplaces(string $text, array $replaces) : string
     {
         foreach ($replaces as $key => $value) {
-            $text = preg_replace('#(' . $key . ')#', $value, $text);
+            $text = preg_replace('/(' . $key . ')/', $value, $text);
         }
         
         return $text;
