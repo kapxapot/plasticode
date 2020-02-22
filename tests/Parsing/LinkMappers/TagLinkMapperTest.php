@@ -2,17 +2,14 @@
 
 namespace Plasticode\Tests\Parsing\LinkMappers;
 
-use Plasticode\Parsing\LinkMappers\PageLinkMapper;
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Tests\BaseRenderTestCase;
 use Plasticode\Tests\Mocks\LinkerMock;
-use Plasticode\Tests\Mocks\Repositories\PageRepositoryMock;
-use Plasticode\Tests\Mocks\Repositories\TagRepositoryMock;
 
-final class PageLinkMapperTest extends BaseRenderTestCase
+final class TagLinkMapperTest extends BaseRenderTestCase
 {
-    /** @var PageLinkMapper */
+    /** @var TagLinkMapper */
     private $mapper;
 
     protected function setUp() : void
@@ -21,13 +18,7 @@ final class PageLinkMapperTest extends BaseRenderTestCase
         
         $linker = new LinkerMock();
 
-        $this->mapper = new PageLinkMapper(
-            new PageRepositoryMock(),
-            new TagRepositoryMock(),
-            $this->renderer,
-            $linker,
-            new TagLinkMapper($this->renderer, $linker)
-        );
+        $this->mapper = new TagLinkMapper($this->renderer, $linker);
     }
 
     protected function tearDown() : void
@@ -52,19 +43,19 @@ final class PageLinkMapperTest extends BaseRenderTestCase
     {
         return [
             [
-                ['Illidan Stormrage'],
-                '<span class="no-url">Illidan Stormrage</span>'
+                ['tag:about us'],
+                '<a href="%tag%/about+us" class="entity-url">about us</a>'
             ],
             [
-                ['illidan-stormrage', 'Illidanchick'],
-                '<span class="no-url" data-toggle="tooltip" title="illidan-stormrage">Illidanchick</span>'
+                ['tag:About us'],
+                '<a href="%tag%/About+us" class="entity-url">About us</a>'
             ],
             [
-                ['about us'],
-                '<a href="%page%/about-us" class="entity-url">about us</a>'
+                ['tag:about us', 'About us'],
+                '<a href="%tag%/about+us" class="entity-url">About us</a>'
             ],
             [
-                ['warcraft'],
+                ['tag:warcraft'],
                 '<a href="%tag%/warcraft" class="entity-url">warcraft</a>'
             ]
         ];
@@ -93,10 +84,6 @@ final class PageLinkMapperTest extends BaseRenderTestCase
         $linker = new LinkerMock();
 
         return [
-            [
-                '<a href="%page%/about-us" class="entity-url">about us</a>',
-                '<a href="' . $linker->page() . 'about-us" class="entity-url">about us</a>'
-            ],
             [
                 '<a href="%tag%/warcraft" class="entity-url">warcraft</a>',
                 '<a href="' . $linker->tag() . 'warcraft" class="entity-url">warcraft</a>'

@@ -2,17 +2,15 @@
 
 namespace Plasticode\Tests\Parsing\LinkMappers;
 
-use Plasticode\Parsing\LinkMappers\PageLinkMapper;
+use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Tests\BaseRenderTestCase;
 use Plasticode\Tests\Mocks\LinkerMock;
-use Plasticode\Tests\Mocks\Repositories\PageRepositoryMock;
-use Plasticode\Tests\Mocks\Repositories\TagRepositoryMock;
 
-final class PageLinkMapperTest extends BaseRenderTestCase
+final class NewsLinkMapperTest extends BaseRenderTestCase
 {
-    /** @var PageLinkMapper */
+    /** @var NewsLinkMapper */
     private $mapper;
 
     protected function setUp() : void
@@ -21,13 +19,7 @@ final class PageLinkMapperTest extends BaseRenderTestCase
         
         $linker = new LinkerMock();
 
-        $this->mapper = new PageLinkMapper(
-            new PageRepositoryMock(),
-            new TagRepositoryMock(),
-            $this->renderer,
-            $linker,
-            new TagLinkMapper($this->renderer, $linker)
-        );
+        $this->mapper = new NewsLinkMapper($this->renderer, $linker);
     }
 
     protected function tearDown() : void
@@ -52,20 +44,12 @@ final class PageLinkMapperTest extends BaseRenderTestCase
     {
         return [
             [
-                ['Illidan Stormrage'],
-                '<span class="no-url">Illidan Stormrage</span>'
+                ['news:123'],
+                '<a href="%news%/123" class="entity-url">123</a>'
             ],
             [
-                ['illidan-stormrage', 'Illidanchick'],
-                '<span class="no-url" data-toggle="tooltip" title="illidan-stormrage">Illidanchick</span>'
-            ],
-            [
-                ['about us'],
-                '<a href="%page%/about-us" class="entity-url">about us</a>'
-            ],
-            [
-                ['warcraft'],
-                '<a href="%tag%/warcraft" class="entity-url">warcraft</a>'
+                ['news:5', 'Some great news!'],
+                '<a href="%news%/5" class="entity-url">Some great news!</a>'
             ]
         ];
     }
@@ -94,12 +78,8 @@ final class PageLinkMapperTest extends BaseRenderTestCase
 
         return [
             [
-                '<a href="%page%/about-us" class="entity-url">about us</a>',
-                '<a href="' . $linker->page() . 'about-us" class="entity-url">about us</a>'
-            ],
-            [
-                '<a href="%tag%/warcraft" class="entity-url">warcraft</a>',
-                '<a href="' . $linker->tag() . 'warcraft" class="entity-url">warcraft</a>'
+                '<a href="%news%/123" class="entity-url">warcraft</a>',
+                '<a href="' . $linker->news() . '123" class="entity-url">warcraft</a>'
             ]
         ];
     }

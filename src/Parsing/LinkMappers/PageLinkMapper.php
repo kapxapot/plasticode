@@ -4,6 +4,7 @@ namespace Plasticode\Parsing\LinkMappers;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
+use Plasticode\Parsing\ParsingContext;
 use Plasticode\Repositories\Interfaces\PageRepositoryInterface;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\Util\Strings;
@@ -20,7 +21,7 @@ class PageLinkMapper extends EntityLinkMapper
     /** @var TagRepository */
     private $tagRepository;
 
-    /** @var TagLinkMapper|null */
+    /** @var TagLinkMapper */
     private $tagLinkMapper;
 
     public function __construct(
@@ -82,5 +83,14 @@ class PageLinkMapper extends EntityLinkMapper
         $chunks[0] = $this->tagLinkMapper->tagChunk($rawSlug);
 
         return $this->tagLinkMapper->map($chunks);
+    }
+
+    public function renderLinks(ParsingContext $context): ParsingContext
+    {
+        $context = parent::renderLinks($context);
+
+        $context = $this->tagLinkMapper->renderLinks($context);
+
+        return $context;
     }
 }

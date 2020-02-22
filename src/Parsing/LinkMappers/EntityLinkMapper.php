@@ -47,19 +47,6 @@ abstract class EntityLinkMapper implements EntityLinkMapperInterface
         return $this->renderer->entityUrl($url, $text);
     }
 
-    public function renderLinks(ParsingContext $context): ParsingContext
-    {
-        $context = clone $context;
-
-        $context->text = preg_replace(
-            '/%' . $this->entity() . '%\//',
-            $this->baseUrl(),
-            $context->text
-        );
-
-        return $context;
-    }
-
     protected abstract function baseUrl() : string;
 
     public static function toSlugChunk(string $slugChunk) : SlugChunk
@@ -74,5 +61,18 @@ abstract class EntityLinkMapper implements EntityLinkMapperInterface
     public function tagChunk(string $slug) : string
     {
         return $this->entity() . ':' . $slug;
+    }
+
+    public function renderLinks(ParsingContext $context): ParsingContext
+    {
+        $context = clone $context;
+
+        $context->text = preg_replace(
+            '/%' . $this->entity() . '%\//',
+            $this->baseUrl(),
+            $context->text
+        );
+
+        return $context;
     }
 }
