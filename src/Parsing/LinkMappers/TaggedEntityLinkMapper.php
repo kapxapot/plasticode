@@ -18,7 +18,7 @@ abstract class TaggedEntityLinkMapper extends EntityLinkMapper
 
         $slugChunk = self::toSlugChunk($chunks[0]);
 
-        Assert::eq(static::$entity, $slugChunk->tag());
+        Assert::eq($this->entity, $slugChunk->tag());
 
         $slug = $slugChunk->slug();
 

@@ -11,7 +11,9 @@ use Webmozart\Assert\Assert;
 
 abstract class EntityLinkMapper implements EntityLinkMapperInterface
 {
-    /** @var string */
+    /**
+     * @var string Entity name
+     */
     protected $entity;
 
     /** @var RendererInterface */

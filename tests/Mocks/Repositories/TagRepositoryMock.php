@@ -15,7 +15,14 @@ class TagRepositoryMock implements TagRepositoryInterface
     {
         $this->tags = Collection::make(
             [
-                new Tag(['id' => 1, 'tag' => 'warcraft', 'entity_type' => 'pages', 'entity_id' => 2]),
+                new Tag(
+                    [
+                        'id' => 1,
+                        'tag' => 'warcraft',
+                        'entity_type' => 'pages',
+                        'entity_id' => 2
+                    ]
+                ),
             ]
         );
     }
