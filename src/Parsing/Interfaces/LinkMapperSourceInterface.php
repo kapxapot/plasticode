@@ -31,9 +31,9 @@ interface LinkMapperSourceInterface
      * Returns entity mapper for a tag.
      *
      * @param string $tag
-     * @return EntityLinkMapperInterface
+     * @return EntityLinkMapperInterface|null
      */
-    public function getEntityMapper(string $tag) : EntityLinkMapperInterface;
+    public function getEntityMapper(string $tag) : ?EntityLinkMapperInterface;
 
     /**
      * Returns mapper for non-specified tags.

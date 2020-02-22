@@ -4,6 +4,7 @@ namespace Plasticode\Config;
 
 use Plasticode\Config\Parsing\BBContainerConfig;
 use Plasticode\Config\Parsing\BBParserConfig;
+use Plasticode\Config\Parsing\DoubleBracketsConfig;
 use Plasticode\Config\Parsing\ReplacesConfig;
 use Plasticode\IO\File;
 use Plasticode\Parsing\Parsers\BB\BBParser;
@@ -14,10 +15,14 @@ use Plasticode\Parsing\Parsers\BB\Container\BBTreeRenderer;
 use Plasticode\Parsing\Parsers\CleanupParser;
 use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Parsing\Parsers\CutParser;
+use Plasticode\Parsing\Parsers\DoubleBracketsParser;
 use Plasticode\Parsing\Parsers\MarkdownParser;
 use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 use Plasticode\Parsing\Steps\ReplacesStep;
 use Plasticode\Parsing\Steps\TitlesStep;
+use Plasticode\Repositories\NewsRepository;
+use Plasticode\Repositories\PageRepository;
+use Plasticode\Repositories\TagRepository;
 use Plasticode\Twig\Extensions\AccessRightsExtension;
 use Psr\Container\ContainerInterface;
 use Slim\Collection as SlimCollection;
@@ -94,6 +99,18 @@ class Bootstrap
             
             'menuItemRepository' => function (ContainerInterface $container) {
                 return new \Plasticode\StaticProxy($container->menuItemClass);
+            },
+
+            'pageRepository' => function (ContainerInterface $container) {
+                return new PageRepository();
+            },
+
+            'tagRepository' => function (ContainerInterface $container) {
+                return new TagRepository();
+            },
+
+            'newsRepository' => function (ContainerInterface $container) {
+                return new NewsRepository();
             },
 
             'settingsProvider' => function (ContainerInterface $container) {
@@ -189,6 +206,7 @@ class Bootstrap
                 );
             
                 $cachePath = $tws['cache_path'];
+
                 if ($cachePath) {
                     $cachePath = File::combine($this->dir, $cachePath);
                 }
@@ -338,11 +356,26 @@ class Bootstrap
                 );
             },
 
+            'doubleBracketsConfig' => function (ContainerInterface $container) {
+                return new DoubleBracketsConfig(
+                    $container->pageRepository,
+                    $container->tagRepository,
+                    $container->renderer,
+                    $container->linker
+                );
+            },
+
+            'doubleBracketsParser' => function (ContainerInterface $container) {
+                return new DoubleBracketsParser(
+                    $container->doubleBracketsConfig
+                );
+            },
+
             'lineParser' => function (ContainerInterface $container) {
                 return new CompositeParser(
                     [
                         $container->bbParser,
-                        //new DoubleBracketsParser(),
+                        $container->doubleBracketsParser,
                     ]
                 );
             },
@@ -369,7 +402,7 @@ class Bootstrap
                         $container->bbContainerParser,
                         $container->bbParser,
                         new ReplacesStep($container->replacesConfig),
-                        //new DoubleBracketsParser(),
+                        $container->doubleBracketsParser,
                         $container->cleanupParser
                     ]
                 );
