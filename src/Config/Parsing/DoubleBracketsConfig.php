@@ -32,7 +32,7 @@ class DoubleBracketsConfig extends LinkMapperSource
 
         $this->setDefaultMapper($pageLinkMapper);
 
-        $this->registerEntityMapper('news', new NewsLinkMapper($renderer, $linker));
-        $this->registerEntityMapper('tag', $tagLinkMapper);
+        $this->registerEntityMapper(new NewsLinkMapper($renderer, $linker));
+        $this->registerEntityMapper($tagLinkMapper);
     }
 }

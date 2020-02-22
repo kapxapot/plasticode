@@ -28,28 +28,31 @@ abstract class EntityLinkMapper implements EntityLinkMapperInterface
         $this->linker = $linker;
     }
 
-    private function checkEntity() : void
+    public function entity() : string
     {
-        Assert::notNull($this->entity, 'Entity name is not specified.');
+        $this->validateEntity();
+        return $this->entity;
+    }
+
+    private function validateEntity() : void
+    {
+        Assert::notEmpty($this->entity, 'Entity name is not specified.');
+        Assert::alnum($this->entity);
     }
 
     protected function renderPlaceholder(string $slug, string $text) : string
     {
-        $this->checkEntity();
-
-        $url = '%' . $this->entity . '%/' . $slug;
+        $url = '%' . $this->entity() . '%/' . $slug;
         
         return $this->renderer->entityUrl($url, $text);
     }
 
     public function renderLinks(ParsingContext $context): ParsingContext
     {
-        $this->checkEntity();
-
         $context = clone $context;
 
         $context->text = preg_replace(
-            '/%' . $this->entity . '%\//',
+            '/%' . $this->entity() . '%\//',
             $this->baseUrl(),
             $context->text
         );
@@ -70,8 +73,6 @@ abstract class EntityLinkMapper implements EntityLinkMapperInterface
 
     public function tagChunk(string $slug) : string
     {
-        $this->checkEntity();
-
-        return $this->entity . ':' . $slug;
+        return $this->entity() . ':' . $slug;
     }
 }

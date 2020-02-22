@@ -58,8 +58,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
         }
         
         $chunks = preg_split('/\|/', $match);
-        $slugChunk = $chunks[0];
-        $slug = EntityLinkMapper::extractSlug($slugChunk);
+        $slug = EntityLinkMapper::toSlugChunk($chunks[0]);
 
         if (!$slug->hasTag()) {
             return $this->renderDefault($chunks);

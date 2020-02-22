@@ -28,11 +28,9 @@ abstract class LinkMapperSource implements LinkMapperSourceInterface
         $this->defaultMapper = $mapper;
     }
 
-    public function registerEntityMapper(string $tag, EntityLinkMapperInterface $mapper) : void
+    public function registerEntityMapper(EntityLinkMapperInterface $mapper) : void
     {
-        Assert::notEmpty($tag);
-        Assert::alnum($tag);
-        
+        $tag = $mapper->entity();
         $this->entityMappers[$tag] = $mapper;
     }
 
