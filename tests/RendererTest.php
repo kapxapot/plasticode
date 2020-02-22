@@ -63,7 +63,7 @@ final class RendererTest extends BaseRenderTestCase
     public function testNoUrl() : void
     {
         $this->assertEquals(
-            '<span class="no_url" data-toggle="tooltip" title="Best of the best">Warcry.ru</span>',
+            '<span class="no-url" data-toggle="tooltip" title="Best of the best">Warcry.ru</span>',
             $this->renderer->noUrl('Warcry.ru', 'Best of the best')
         );
     }

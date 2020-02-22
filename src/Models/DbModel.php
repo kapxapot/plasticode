@@ -51,32 +51,6 @@ abstract class DbModel extends Model implements SerializableInterface
     protected static $sortReverse = false;
 
     /**
-     * Wraps an existing database object
-     * or creates a new one using provided data
-     * 
-     * If data is null, wraps an empty database object.
-     * 
-     * @param array|\ORM $obj
-     */
-    public function __construct($obj = null)
-    {
-        parent::__construct();
-        
-        // \ORM - existing entity
-        if ($obj instanceof \ORM) {
-            $this->obj = $obj;
-            return;
-        }
-        
-        if (!is_array($obj)) {
-            $obj = null;
-        }
-
-        // null or array - new entity
-        $this->obj = self::$db->create(self::getTable(), $obj);
-    }
-    
-    /**
      * Static alias for new().
      * 
      * @param array|\ORM $obj
@@ -107,7 +81,7 @@ abstract class DbModel extends Model implements SerializableInterface
     public static function store($obj = null) : self
     {
         $model = static::create($obj);
-        return $model->save();
+        return self::save($model);
     }
     
     private static function pluralClass() : string
@@ -285,17 +259,22 @@ abstract class DbModel extends Model implements SerializableInterface
         return self::tableRights()->forEntity($this->obj->asArray());
     }
     
-    public function save() : self
+    public static function save(self $model) : self
     {
-        $this->obj->save();
-        return $this;
+        $obj = $model->getObj();
+
+        $ormObj = $obj instanceof \ORM
+            ? $obj
+            : self::$db->create(self::getTable(), $obj);
+            
+        $ormObj->save();
+
+        return static::create($ormObj);
     }
 
-    public function serialize() : ?array
+    public function serialize() : array
     {
-        return $this->obj
-            ? $this->obj->asArray()
-            : null;
+        return $this->toArray();
     }
     
     public function entityAlias() : string
@@ -316,7 +295,8 @@ abstract class DbModel extends Model implements SerializableInterface
     public function equals(?self $model) : bool
     {
         return !is_null($model)
-            && ($model->getId() === $this->getId());
+            && ($model->getId() === $this->getId())
+            && (get_class($model) == static::class);
     }
 
     public function toString() : string

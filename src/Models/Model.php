@@ -105,6 +105,16 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         $this->objCache = new Cache();
     }
 
+    /**
+     * Returns the underlying obj - array or \ORM.
+     *
+     * @return array|\ORM
+     */
+    public function getObj()
+    {
+        return $this->obj;
+    }
+
     protected static function getSettings(string $path)
     {
         return self::$container->getSettings($path);

@@ -14,18 +14,39 @@ final class PageLinkMapperTest extends BaseRenderTestCase
     /**
      * @dataProvider mapProvider
      */
-    public function testMap() : void
+    public function testMap(array $chunks, ?string $expected) : void
     {
+        $linker = new LinkerMock();
+
         $mapper = new PageLinkMapper(
             new PageRepositoryMock(),
             new TagRepositoryMock(),
             $this->renderer,
-            new LinkerMock(),
-            new TagLinkMapper()
+            $linker,
+            new TagLinkMapper($this->renderer, $linker)
         );
 
         $this->assertEquals(
-
+            $expected,
+            $mapper->map($chunks)
         );
+    }
+
+    public function mapProvider() : array
+    {
+        return [
+            [
+                ['Illidan Stormrage'],
+                '<span class="no-url">Illidan Stormrage</span>'
+            ],
+            [
+                ['illidan-stormrage', 'Illidanchick'],
+                '<span class="no-url" data-toggle="tooltip" title="illidan-stormrage">Illidanchick</span>'
+            ],
+            [
+                ['about us'],
+                '<a href="%page%/about-us" class="entity-url">about us</a>'
+            ],
+        ];
     }
 }

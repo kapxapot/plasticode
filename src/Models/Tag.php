@@ -66,7 +66,7 @@ class Tag extends DbModel implements LinkableInterface, SearchableInterface, Ser
             ->all();
     }
     
-    public function serialize() : ?array
+    public function serialize() : array
     {
         return [
             'id' => $this->getId(),

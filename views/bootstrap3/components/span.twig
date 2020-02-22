@@ -1,1 +1,1 @@
-<span{% if style %} class="{{ style }}"{% endif %}{% if title %} data-toggle="tooltip" title="{{ title }}"{% endif %}>{{ text }}</span>
+<span{% if style %} class="{{ style }}"{% endif %}{% if title and title != text %} data-toggle="tooltip" title="{{ title }}"{% endif %}>{{ text }}</span>
