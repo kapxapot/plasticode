@@ -232,6 +232,23 @@ final class SortTest extends TestCase
                     ['id' => 2, 'name' => 'Peter'],
                 ]
             ],
+            [
+                [
+                    ['v' => false],
+                    ['v' => false],
+                    ['v' => true],
+                    ['v' => true],
+                ],
+                [
+                    'v' => ['type' => Sort::BOOL],
+                ],
+                [
+                    ['v' => false],
+                    ['v' => false],
+                    ['v' => true],
+                    ['v' => true],
+                ],
+            ],
         ];
     }
 
