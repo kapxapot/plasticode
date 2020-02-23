@@ -60,6 +60,7 @@ final class DoubleBracketsParserTest extends BaseRenderTestCase
                 '[[tag:warcraft]]',
                 '[[news:123]]',
                 '[[news:5|Some great news!]]',
+                '[[area:45|New area]]',
             ]
         );
 
@@ -78,6 +79,7 @@ final class DoubleBracketsParserTest extends BaseRenderTestCase
                     '<a href="%tag%/warcraft" class="entity-url">warcraft</a>',
                     '<a href="%news%/123" class="entity-url">123</a>',
                     '<a href="%news%/5" class="entity-url">Some great news!</a>',
+                    '<a href="http://generic/area/45">New area</a>',
                 ]
             ),
             $parsedContext->text
