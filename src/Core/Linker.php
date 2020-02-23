@@ -60,24 +60,14 @@ class Linker implements LinkerInterface
         return Image::getExtension($type ?? 'jpeg');
     }
 
-    public function page(?Page $page = null) : string
+    public function page(string $slug = null) : string
     {
-        return $this->router->pathFor(
-            'main.page',
-            [
-                'slug' => $page ? $page->slug : null
-            ]
-        );
+        return $this->router->pathFor('main.page', ['slug' => $slug]);
     }
 
-    public function news(?News $news = null) : string
+    public function news(int $id = null) : string
     {
-        return $this->router->pathFor(
-            'main.news',
-            [
-                'id' => $news ? $news->getId() : null
-            ]
-        );
+        return $this->router->pathFor('main.news', ['id' => $id]);
     }
 
     public function tag(string $tag = null, string $tab = null) : string
