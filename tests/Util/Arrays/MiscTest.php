@@ -101,6 +101,7 @@ final class MiscTest extends TestCase
 
         return [
             [[], 'a', $v],
+            [[], 'a.b', $v],
             [self::ABC, 'a', $v],
             [self::ABC, 1, $v],
             [self::AvBvCv, 'b', $v],
