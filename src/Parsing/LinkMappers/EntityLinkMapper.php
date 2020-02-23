@@ -9,7 +9,7 @@ use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\SlugChunk;
 use Webmozart\Assert\Assert;
 
-abstract class EntityLinkMapper implements EntityLinkMapperInterface
+abstract class EntityLinkMapper extends SlugLinkMapper implements EntityLinkMapperInterface
 {
     /**
      * @var string Entity name
@@ -49,18 +49,18 @@ abstract class EntityLinkMapper implements EntityLinkMapperInterface
 
     protected abstract function baseUrl() : string;
 
-    public static function toSlugChunk(string $slugChunk) : SlugChunk
+    /**
+     * Adapts the provided slug chunk to the current entity's slug chunk.
+     *
+     * @param SlugChunk $slugChunk
+     * @return SlugChunk
+     */
+    public function adaptSlugChunk(SlugChunk $slugChunk) : SlugChunk
     {
-        $parts = preg_split('/:/', $slugChunk, null, PREG_SPLIT_NO_EMPTY);
-
-        return count($parts) > 1
-            ? new SlugChunk($parts[0], $parts[1])
-            : new SlugChunk(null, $parts[0]);
-    }
-
-    public function tagChunk(string $slug) : string
-    {
-        return $this->entity() . ':' . $slug;
+        return new SlugChunk(
+            $this->entity(),
+            $slugChunk->slug()
+        );
     }
 
     public function renderLinks(ParsingContext $context): ParsingContext

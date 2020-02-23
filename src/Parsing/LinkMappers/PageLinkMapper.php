@@ -5,10 +5,10 @@ namespace Plasticode\Parsing\LinkMappers;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\ParsingContext;
+use Plasticode\Parsing\SlugChunk;
 use Plasticode\Repositories\Interfaces\PageRepositoryInterface;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\Util\Strings;
-use Webmozart\Assert\Assert;
 
 /**
  * Page link format: [[page-slug|Text]].
@@ -49,15 +49,14 @@ class PageLinkMapper extends EntityLinkMapper
     /**
      * Maps page chunks to a page link.
      *
-     * @param string[] $chunks
+     * @param SlugChunk $slugChunk
+     * @param string[] $otherChunks
      * @return string|null
      */
-    public function map(array $chunks) : ?string
+    public function mapSlug(SlugChunk $slugChunk, array $otherChunks) : ?string
     {
-        Assert::notEmpty($chunks);
-
-        $rawSlug = $chunks[0];
-        $content = $chunks[1] ?? $rawSlug;
+        $rawSlug = $slugChunk->slug();
+        $content = $otherChunks[0] ?? $rawSlug;
 
         $slug = Strings::toSlug($rawSlug);
 
@@ -71,18 +70,17 @@ class PageLinkMapper extends EntityLinkMapper
 
         // if such tag exists, render as tag
         if ($this->tagLinkMapper && $this->tagRepository->exists($rawSlug)) {
-            return $this->renderAsTag($chunks);
+            return $this->renderAsTag($slugChunk, $otherChunks);
         }
 
         return $this->renderer->noUrl($content, $rawSlug);
     }
 
-    private function renderAsTag(array $chunks) : string
+    private function renderAsTag(SlugChunk $slugChunk, array $otherChunks) : string
     {
-        $rawSlug = $chunks[0];
-        $chunks[0] = $this->tagLinkMapper->tagChunk($rawSlug);
+        $slugChunk = $this->tagLinkMapper->adaptSlugChunk($slugChunk);
 
-        return $this->tagLinkMapper->map($chunks);
+        return $this->tagLinkMapper->mapSlug($slugChunk, $otherChunks);
     }
 
     public function renderLinks(ParsingContext $context): ParsingContext

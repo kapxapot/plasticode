@@ -4,7 +4,7 @@ namespace Plasticode\Parsing\Parsers;
 
 use Plasticode\Parsing\Interfaces\LinkMapperSourceInterface;
 use Plasticode\Parsing\Interfaces\LinkRendererInterface;
-use Plasticode\Parsing\LinkMappers\EntityLinkMapper;
+use Plasticode\Parsing\LinkMappers\SlugLinkMapper;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Util\Arrays;
@@ -23,6 +23,7 @@ use Plasticode\Util\Arrays;
 class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
 {
     private const Pattern = '/\[\[(.+)\]\]/U';
+    private const ChunkDelimiterPattern = '/\|/';
 
     /** @var LinkMapperSourceInterface */
     private $config;
@@ -53,12 +54,8 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
 
     private function parseDoubleBracketsMatch(?string $match) : ?string
     {
-        if (strlen($match) == 0) {
-            return null;
-        }
-        
-        $chunks = preg_split('/\|/', $match);
-        $slug = EntityLinkMapper::toSlugChunk($chunks[0]);
+        $chunks = preg_split(self::ChunkDelimiterPattern, $match);
+        $slug = SlugLinkMapper::toSlugChunk($chunks[0]);
 
         if (!$slug->hasTag()) {
             return $this->renderDefault($chunks);

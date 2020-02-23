@@ -5,7 +5,6 @@ namespace Plasticode\Parsing;
 use Plasticode\Parsing\Interfaces\EntityLinkMapperInterface;
 use Plasticode\Parsing\Interfaces\LinkMapperInterface;
 use Plasticode\Parsing\Interfaces\LinkMapperSourceInterface;
-use Webmozart\Assert\Assert;
 
 abstract class LinkMapperSource implements LinkMapperSourceInterface
 {
@@ -46,7 +45,7 @@ abstract class LinkMapperSource implements LinkMapperSourceInterface
 
     public function setGenericMapper(LinkMapperInterface $mapper) : void
     {
-        $this->defaultMapper = $mapper;
+        $this->genericMapper = $mapper;
     }
 
     /**

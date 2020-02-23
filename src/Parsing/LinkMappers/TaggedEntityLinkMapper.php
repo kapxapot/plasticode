@@ -2,30 +2,28 @@
 
 namespace Plasticode\Parsing\LinkMappers;
 
+use Plasticode\Parsing\SlugChunk;
 use Webmozart\Assert\Assert;
 
 abstract class TaggedEntityLinkMapper extends EntityLinkMapper
 {
     /**
-     * Maps chunks to a link.
+     * Maps tagged slug and other chunks to a link.
      *
-     * @param string[] $chunks
+     * @param SlugChunk $slugChunk
+     * @param string[] $otherChunks
      * @return string|null
      */
-    public function map(array $chunks) : ?string
+    public function mapSlug(SlugChunk $slugChunk, array $otherChunks) : ?string
     {
-        Assert::notEmpty($chunks);
-
-        $slugChunk = self::toSlugChunk($chunks[0]);
-
         Assert::eq($this->entity, $slugChunk->tag());
 
-        $slug = $slugChunk->slug();
+        $rawSlug = $slugChunk->slug();
 
-        $escapedSlug = $this->escapeSlug($slug);
-        $text = $chunks[1] ?? $slug;
+        $slug = $this->escapeSlug($rawSlug);
+        $text = $otherChunks[0] ?? $rawSlug;
 
-        return $this->renderPlaceholder($escapedSlug, $text);
+        return $this->renderPlaceholder($slug, $text);
     }
 
     protected function escapeSlug(string $slug) : string
