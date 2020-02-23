@@ -2,14 +2,11 @@
 
 namespace Plasticode\Tests\Parsing;
 
-use Plasticode\Config\Parsing\DoubleBracketsConfig;
 use Plasticode\Parsing\Parsers\DoubleBracketsParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Tests\BaseRenderTestCase;
-use Plasticode\Tests\Mocks\GenericLinkMapperMock;
+use Plasticode\Tests\Factories\LinkMapperSourceFactory;
 use Plasticode\Tests\Mocks\LinkerMock;
-use Plasticode\Tests\Mocks\Repositories\PageRepositoryMock;
-use Plasticode\Tests\Mocks\Repositories\TagRepositoryMock;
 use Plasticode\Util\Text;
 
 final class DoubleBracketsParserTest extends BaseRenderTestCase
@@ -26,15 +23,7 @@ final class DoubleBracketsParserTest extends BaseRenderTestCase
 
         $this->linker = new LinkerMock();
 
-        $config = new DoubleBracketsConfig(
-            new PageRepositoryMock(),
-            new TagRepositoryMock(),
-            $this->renderer,
-            $this->linker
-        );
-
-        $config->setGenericMapper(new GenericLinkMapperMock());
-
+        $config = LinkMapperSourceFactory::make($this->renderer);
         $this->parser = new DoubleBracketsParser($config);
     }
 
