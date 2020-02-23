@@ -82,4 +82,36 @@ final class TextTest extends TestCase
             )
         );
     }
+
+    /**
+     * @dataProvider toAbsoluteUrlsProvider
+     *
+     * @param string $text
+     * @param string $baseUrl
+     * @param string $expected
+     * @return void
+     */
+    public function testToAbsoluteUrls(string $text, string $baseUrl, string $expected) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Text::toAbsoluteUrls($text, $baseUrl)
+        );
+    }
+
+    public function toAbsoluteUrlsProvider() : array
+    {
+        return [
+            [
+                '<a href="/some/url">aaa</a>',
+                'https://warcry.ru/',
+                '<a href="https://warcry.ru/some/url">aaa</a>'
+            ],
+            [
+                '<a href=/some/url>aaa</a>',
+                'https://warcry.ru',
+                '<a href=https://warcry.ru/some/url>aaa</a>'
+            ],
+        ];
+    }
 }

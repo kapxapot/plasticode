@@ -174,6 +174,8 @@ class Text
      */
     public static function toAbsoluteUrls(string $text, string $baseUrl) : string
     {
+        $baseUrl = rtrim($baseUrl, '/') . '/';
+
         $text = str_replace('=/', '=' . $baseUrl, $text);
         $text = str_replace('="/', '="' . $baseUrl, $text);
         
