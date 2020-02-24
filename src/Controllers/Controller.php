@@ -26,7 +26,7 @@ use Webmozart\Assert\Assert;
  * @property Twig $view
  * @property Validator $validator
  */
-class Controller extends Contained implements TranslatorInterface
+class Controller extends Contained
 {
     /**
      * @var boolean
