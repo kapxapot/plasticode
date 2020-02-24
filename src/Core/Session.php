@@ -22,12 +22,12 @@ class Session implements SessionInterface
         return $_SESSION[$this->name][$key] ?? null;
     }
 
-    public function set(string $key, $value)
+    public function set(string $key, $value) : void
     {
         $_SESSION[$this->name][$key] = $value;
     }
     
-    public function delete(string $key)
+    public function delete(string $key) : void
     {
         unset($_SESSION[$this->name][$key]);
     }
