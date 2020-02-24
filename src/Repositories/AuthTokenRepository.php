@@ -17,7 +17,7 @@ class AuthTokenRepository implements AuthTokenRepositoryInterface
         return AuthToken::save($authToken);
     }
 
-    public function getByToken(string $token) : ?AuthToken
+    public function getByToken(?string $token) : ?AuthToken
     {
         return AuthToken::query()
             ->where('token', $token)

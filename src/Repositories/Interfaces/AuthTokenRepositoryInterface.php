@@ -8,5 +8,5 @@ interface AuthTokenRepositoryInterface
 {
     public function get(int $id) : ?AuthToken;
     public function save(AuthToken $authToken) : AuthToken;
-    public function getByToken(string $token) : ?AuthToken;
+    public function getByToken(?string $token) : ?AuthToken;
 }
