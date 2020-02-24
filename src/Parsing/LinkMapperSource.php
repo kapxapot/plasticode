@@ -6,7 +6,7 @@ use Plasticode\Parsing\Interfaces\EntityLinkMapperInterface;
 use Plasticode\Parsing\Interfaces\LinkMapperInterface;
 use Plasticode\Parsing\Interfaces\LinkMapperSourceInterface;
 
-abstract class LinkMapperSource implements LinkMapperSourceInterface
+class LinkMapperSource implements LinkMapperSourceInterface
 {
     /** @var LinkMapperInterface|null */
     private $defaultMapper;

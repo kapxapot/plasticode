@@ -32,6 +32,10 @@ use Plasticode\IO\File;
 use Plasticode\IO\Image;
 use Plasticode\Models\MenuItem;
 use Plasticode\Models\Role;
+use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
+use Plasticode\Parsing\LinkMappers\PageLinkMapper;
+use Plasticode\Parsing\LinkMappers\TagLinkMapper;
+use Plasticode\Parsing\LinkMapperSource;
 use Plasticode\Parsing\Parsers\BB\BBParser;
 use Plasticode\Parsing\Parsers\BB\Container\BBContainerParser;
 use Plasticode\Parsing\Parsers\BB\Container\BBSequencer;
@@ -383,13 +387,34 @@ class Bootstrap
                 );
             },
 
-            'doubleBracketsConfig' => function (ContainerInterface $container) {
-                return new DoubleBracketsConfig(
-                    $container->pageRepository,
-                    $container->tagRepository,
+            'tagLinkMapper' => function (ContainerInterface $container) {
+                return new TagLinkMapper(
                     $container->renderer,
                     $container->linker
                 );
+            },
+
+            'pageLinkMapper' => function (ContainerInterface $container) {
+                return new PageLinkMapper(
+                    $container->pageRepository,
+                    $container->tagRepository,
+                    $container->renderer,
+                    $container->linker,
+                    $container->tagLinkMapper
+                );
+            },
+
+            'newsLinkMapper' => function (ContainerInterface $container) {
+                return new NewsLinkMapper(
+                    $container->renderer,
+                    $container->linker
+                );
+            },
+
+            'doubleBracketsConfig' => function (ContainerInterface $container) {
+                // no double brackets link mappers by default
+                // add them!
+                return new LinkMapperSource();
             },
 
             'doubleBracketsParser' => function (ContainerInterface $container) {
