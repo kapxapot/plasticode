@@ -2,7 +2,9 @@
 
 namespace Plasticode\Core;
 
-class Translator
+use Plasticode\Core\Interfaces\TranslatorInterface;
+
+class Translator implements TranslatorInterface
 {
     private $dictionaries;
 

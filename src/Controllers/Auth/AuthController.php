@@ -2,14 +2,23 @@
 
 namespace Plasticode\Controllers\Auth;
 
+use Plasticode\Auth\Auth;
+use Plasticode\Auth\Interfaces\CaptchaInterface;
 use Plasticode\Controllers\Controller;
 use Plasticode\Core\Response;
 use Plasticode\Core\Security;
-use Plasticode\Exceptions\ValidationException;
 use Plasticode\Exceptions\Http\AuthenticationException;
+use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Request as SlimRequest;
+use Webmozart\Assert\Assert;
 
+/**
+ * @property Auth $auth
+ * @property CaptchaInterface $captcha
+ * @property UserRepositoryInterface $userRepository
+ */
 class AuthController extends Controller
 {
     public function postSignUp(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
@@ -17,11 +26,7 @@ class AuthController extends Controller
         $data = $request->getParsedBody();
 
         $rules = $this->userRepository->getRules($data);
-        $validation = $this->validator->validateRequest($request, $rules);
-        
-        if ($validation->failed()) {
-            throw new ValidationException($validation->errors);
-        }
+        $this->validate($request, $rules);
 
         if (!$this->captcha->validate($data['captcha'])) {
             throw new AuthenticationException('Incorrect or expired captcha.');
@@ -33,12 +38,13 @@ class AuthController extends Controller
 
         $password = $user->password;
         $user->password = Security::encodePassword($password);
-        $user->save();
+
+        $this->userRepository->save($user);
 
         // signing in
         $user = $this->auth->attempt($user->login, $password);
         
-        $this->logger->info("User signed up: {$user}");
+        $this->logger->info('User signed up: ' . $user);
 
         $token = $this->auth->getToken();
         $response = $response->withStatus(201);
@@ -54,7 +60,7 @@ class AuthController extends Controller
         return $response;
     }
 
-    public function postSignIn(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
+    public function postSignIn(SlimRequest $request, ResponseInterface $response) : ResponseInterface
     {
         $user = $this->auth->attempt(
             $request->getParam('login'),
@@ -65,9 +71,11 @@ class AuthController extends Controller
             throw new AuthenticationException('Incorrect user/password.');
         }
 
-        $this->logger->info("User logged in: {$user}");
+        $this->logger->info('User logged in: ' . $user);
     
         $token = $this->auth->getToken();
+
+        Assert::notNull($token);
 
         return Response::json(
             $response,

@@ -7,11 +7,11 @@ use Plasticode\Controllers\Controller;
 use Plasticode\Exceptions\Http\BadRequestException;
 use Plasticode\IO\Image;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Request as SlimRequest;
 
 abstract class ImageUploadController extends Controller
 {
-    public function upload(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
+    public function upload(SlimRequest $request, ResponseInterface $response) : ResponseInterface
     {
         $context = $request->getParam('context', null);
         $files = $request->getUploadedFiles()['files'] ?? null;
@@ -25,7 +25,10 @@ abstract class ImageUploadController extends Controller
             
             if ($error !== UPLOAD_ERR_OK) {
                 $fileName = $file->getClientFilename();
-                $this->logger->error("File upload error: {$fileName}, {$error}.");
+
+                $this->logger->error(
+                    'File upload error: ' . $fileName . ', ' . $error . '.'
+                );
                 
                 throw new BadRequestException('Upload error (see log for details).');
             }
@@ -33,7 +36,7 @@ abstract class ImageUploadController extends Controller
         
         foreach ($files as $file) {
             $fileName = $file->getClientFilename();
-            $this->logger->info("Uploaded file: {$fileName}.");
+            $this->logger->info('Uploaded file: ' . $fileName . '.');
             
             $this->extractAndProcessImages(
                 $file->file,
@@ -50,7 +53,11 @@ abstract class ImageUploadController extends Controller
     }
 
     /**
-     * Extracts and processes images from ZIP-archive
+     * Extracts and processes images from ZIP-archive.
+     * 
+     * @param string $zipName
+     * @param \Closure $process
+     * @return Image[]
      */
     protected function extractAndProcessImages(string $zipName, \Closure $process) : array
     {
@@ -76,6 +83,7 @@ abstract class ImageUploadController extends Controller
                     $imgType = Image::getImageTypeFromPath($fileName);
 
                     $image = new Image($data, $imgType);
+                    $images[] = $image;
 
                     $process($image, $fileName);
                 }
@@ -88,7 +96,7 @@ abstract class ImageUploadController extends Controller
     }
     
     /**
-     * Adds image
+     * Adds image.
      */
-    protected abstract function addImage(array $context, Image $image, string $fileName);
+    protected abstract function addImage(array $context, Image $image, string $fileName) : void;
 }

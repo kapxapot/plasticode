@@ -2,20 +2,18 @@
 
 namespace Plasticode\Models;
 
+/**
+ * @property integer $id
+ * @property string $name
+ * @property string $login
+ * @property string $password
+ * @property string $email
+ * @property integer $roleId
+ * @property string $createdAt
+ * @property string $updatedAt
+ */
 class User extends DbModel
 {
-    public static function getByLogin($login) : ?self
-    {
-        return self::query()
-            ->whereAnyIs(
-                [
-                    ['login' => $login],
-                    ['email' => $login],
-                ]
-            )
-            ->one();
-    }
-    
     public function displayName() : string
     {
         return $this->name ?? $this->login;

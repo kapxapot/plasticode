@@ -53,7 +53,7 @@ abstract class DbModel extends Model implements SerializableInterface
     /**
      * Static alias for new().
      * 
-     * @param array|\ORM $obj
+     * @param array|\ORM|null $obj
      * @return self
      */
     public static function create($obj = null) : self
@@ -159,7 +159,7 @@ abstract class DbModel extends Model implements SerializableInterface
     /**
      * Returns validation rules for this model.
      */
-    public static function getRules($data) : array
+    public static function getRules(array $data) : array
     {
         $gen = self::getGenerator();
         $rules = $gen->getRules($data);
@@ -172,6 +172,8 @@ abstract class DbModel extends Model implements SerializableInterface
      * 
      * Use getId() instead of id when $idField is custom.
      * It is recommended to use getId() always for safer code.
+     * 
+     * @return integer|string|null
      */
     public function getId()
     {

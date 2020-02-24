@@ -2,7 +2,9 @@
 
 namespace Plasticode\Core;
 
-class Session
+use Plasticode\Core\Interfaces\SessionInterface;
+
+class Session implements SessionInterface
 {
     private $name;
 

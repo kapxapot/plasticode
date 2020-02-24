@@ -2,15 +2,16 @@
 
 namespace Plasticode\Models;
 
+/**
+ * @property integer $id
+ * @property integer $userId
+ * @property string $token
+ * @property string|null $expiresAt
+ * @property string $createdAt
+ * @property string $updatedAt
+ */
 class AuthToken extends DbModel
 {
-    public static function getByToken($token) : ?self
-    {
-        return self::query()
-            ->where('token', $token)
-            ->one();
-    }
-    
     public function user() : User
     {
         return self::getUser($this->userId);

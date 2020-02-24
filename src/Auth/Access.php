@@ -2,21 +2,22 @@
 
 namespace Plasticode\Auth;
 
-use Plasticode\Core\Cache;
+use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Models\User;
+use Webmozart\Assert\Assert;
 
 class Access
 {
     /**
      * Authentication context
      *
-     * @var Plasticode\Auth\Auth
+     * @var Auth
      */
     private $auth;
 
-    /** @var Plasticode\Core\Cache */
+    /** @var CacheInterface */
     private $cache;
 
     /**
@@ -40,10 +41,15 @@ class Access
      */
     private $rights;
     
-    public function __construct(Auth $auth, Cache $cache, array $accessSettings)
+    public function __construct(
+        Auth $auth,
+        CacheInterface $cache,
+        array $accessSettings
+    )
     {
         $this->auth = $auth;
         $this->cache = $cache;
+
         $this->actions = $this->flattenActions($accessSettings['actions']);
         $this->templates = $accessSettings['templates'];
         $this->rights = $accessSettings['rights'];
@@ -96,9 +102,12 @@ class Access
      */
     public function checkRights(string $entity, string $action) : bool
     {
-        if (!isset($this->actions[$action])) {
-            throw new InvalidArgumentException('Unknown action: ' . $action);
-        }
+        $actionData = $this->actions[$action] ?? null;
+
+        Assert::notNull(
+            $actionData,
+            'Unknown action: ' . $action
+        );
         
         $grantAccess = false;
         
@@ -109,16 +118,16 @@ class Access
         }
 
         $roleTag = $role->tag;
+        
+        $rights = $this->rights[$entity] ?? null;
 
-        if (!isset($this->rights[$entity])) {
+        if (is_null($rights)) {
             throw new InvalidConfigurationException(
-                'You must configure access rights for entity "' . $entity . '"'
+                'Access rights for entity "' . $entity . '" are not configured.'
             );
         }
-        
-        $rights = $this->rights[$entity];
 
-        foreach ($this->actions[$action] as $actionBit) {
+        foreach ($actionData as $actionBit) {
             $grantAccess = $this->checkRightsForExactAction(
                 $rights, $actionBit, $roleTag
             );
@@ -173,19 +182,19 @@ class Access
     public function getAllRights(string $entity) : array
     {
         $path = 'access.' . $entity;
-        $can = $this->cache->get($path);
 
-        if (is_null($can)) {
-            $can = [];
-            $rights = array_keys($this->actions);
-            
-            foreach ($rights as $r) {
-                $can[$r] = $this->checkRights($entity, $r);
+        return $this->cache->getCached(
+            $path,
+            function () use ($entity) {
+                $can = [];
+                $rights = array_keys($this->actions);
+                
+                foreach ($rights as $r) {
+                    $can[$r] = $this->checkRights($entity, $r);
+                }
+
+                return $can;
             }
-
-            $this->cache->set($path, $can);
-        }
-        
-        return $can;
+        );
     }
 }

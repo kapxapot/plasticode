@@ -2,52 +2,94 @@
 
 namespace Plasticode\Auth;
 
-use Plasticode\Contained;
+use Plasticode\Core\Interfaces\SessionInterface;
 use Plasticode\Core\Security;
 use Plasticode\Exceptions\Http\AuthenticationException;
+use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\Models\AuthToken;
 use Plasticode\Models\Role;
 use Plasticode\Models\User;
+use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
+use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Util\Date;
 
-class Auth extends Contained
+class Auth
 {
+    /**
+     * Settings path for token time-to-live
+     * 
+     * @var string
+     */
+    private const TokenTtlPath = 'token_ttl';
+    
+    /**
+     * Default token time-to-live in hours
+     * 
+     * @var integer
+     */
+    private const DefaultTokenTtl = 24;
+
+    /** @var SessionInterface */
+    private $session;
+
+    /** @var AuthTokenRepositoryInterface */
+    private $authTokenRepository;
+
+    /** @var UserRepositoryInterface */
+    private $userRepository;
+
+    /** @var SettingsProviderInterface */
+    private $settingsProvider;
+
     /**
      * Current user
      *
-     * @var Plasticode\Models\User
+     * @var User|null
      */
     private $user;
 
     /**
      * Current role
      *
-     * @var Plasticode\Models\Role
+     * @var Role|null
      */
     private $role;
 
     /**
      * Current auth token
      *
-     * @var Plasticode\Models\AuthToken
+     * @var AuthToken|null
      */
     private $token;
+
+    public function __construct(
+        SessionInterface $session,
+        SettingsProviderInterface $settingsProvider,
+        AuthTokenRepositoryInterface $authTokenRepository,
+        UserRepositoryInterface $userRepository
+    )
+    {
+        $this->session = $session;
+        $this->settingsProvider = $settingsProvider;
+        $this->authTokenRepository = $authTokenRepository;
+        $this->userRepository = $userRepository;
+    }
     
     /**
-     * Set current auth token
+     * Set current auth token.
      *
-     * @param Plasticode\Models\AuthToken $token
+     * @param AuthToken $token
      * @return void
      */
-    private function setToken(AuthToken $token)
+    private function setToken(AuthToken $token) : void
     {
         $this->session->set('token_id', $token->id);
     }
 
     /**
-     * Get current auth token
+     * Get current auth token.
      *
-     * @return Plasticode\Models\AuthToken|null
+     * @return AuthToken|null
      */
     public function getToken() : ?AuthToken
     {
@@ -63,9 +105,9 @@ class Auth extends Contained
     }
     
     /**
-     * Get current user
+     * Get current user.
      *
-     * @return Plasticode\Models\User|null
+     * @return User|null
      */
     public function getUser() : ?User
     {
@@ -81,9 +123,9 @@ class Auth extends Contained
     }
     
     /**
-     * Get current role
+     * Get current role.
      *
-     * @return Plasticode\Models\Role|null
+     * @return Role|null
      */
     public function getRole() : ?Role
     {
@@ -99,7 +141,7 @@ class Auth extends Contained
     }
 
     /**
-     * Check if there is current user authenticated
+     * Check if there is current user authenticated.
      *
      * @return boolean
      */
@@ -109,11 +151,11 @@ class Auth extends Contained
     }
     
     /**
-     * Attempt login with login and password
+     * Attempt login with login and password.
      *
      * @param string $login
      * @param string $password
-     * @return Plasticode\Models\User|null
+     * @return User|null
      */
     public function attempt(string $login, string $password) : ?User
     {
@@ -131,15 +173,17 @@ class Auth extends Contained
         
         if (Security::rehashPasswordNeeded($user->password)) {
             $user->password = Security::encodePassword($password);
-            $user->save();
+            $user = $this->userRepository->save($user);
         }
         
-        $token = $this->authTokenRepository->store(
-            [
-                'user_id' => $user->id,
-                'token' => Security::generateToken(),
-                'expires_at' => $this->generateExpirationTime(),
-            ]
+        $token = $this->authTokenRepository->save(
+            new AuthToken(
+                [
+                    'user_id' => $user->getId(),
+                    'token' => Security::generateToken(),
+                    'expires_at' => $this->generateExpirationTime(),
+                ]
+            )
         );
         
         $this->setToken($token);
@@ -148,33 +192,37 @@ class Auth extends Contained
     }
 
     /**
-     * Logout the current user
+     * Logout the current user.
      *
      * @return void
      */
-    public function logout()
+    public function logout() : void
     {
         $this->session->delete('token_id');
     }
     
     /**
-     * Generate expiration time based on token_ttl setting
+     * Generate expiration time based on settings.
      *
      * @return string
      */
     private function generateExpirationTime() : string
     {
-        $ttl = $this->getSettings('token_ttl');
+        $ttl = $this->settingsProvider->getSettings(
+            self::TokenTtlPath,
+            self::DefaultTokenTtl
+        );
+        
         return Date::generateExpirationTime($ttl * 60);
     }
     
     /**
-     * Tries to validate auth token taken from cookie
+     * Tries to validate auth token taken from cookie.
      *
      * @param string|null $tokenStr
      * @return void
      */
-    public function validateCookie(?string $tokenStr)
+    public function validateCookie(?string $tokenStr) : void
     {
         try {
             $this->validateToken($tokenStr);
@@ -185,7 +233,7 @@ class Auth extends Contained
     }
 
     /**
-     * Validates auth token and authenticates user, if it's ok
+     * Validates auth token and authenticates user, if it's ok.
      *
      * @param string|null $tokenStr
      * @param boolean $ignoreExpiration
@@ -201,13 +249,14 @@ class Auth extends Contained
             if (is_null($token)) {
                 throw new AuthenticationException('Incorrect security token.');
             }
-            elseif (!$ignoreExpiration && strtotime($token->expiresAt) < time()) {
+            
+            if (!$ignoreExpiration && strtotime($token->expiresAt) < time()) {
                 throw new AuthenticationException('Security token expired.');
             }
         }
-            
+
         $token->expiresAt = $this->generateExpirationTime();
-        $token->save();
+        $token = $this->authTokenRepository->save($token);
 
         $this->setToken($token);
 

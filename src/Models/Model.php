@@ -97,7 +97,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     /**
      * Creates instance.
      *
-     * @param array|\ORM $obj
+     * @param array|\ORM|null $obj
      */
     public function __construct($obj = null)
     {

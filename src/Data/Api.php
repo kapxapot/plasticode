@@ -2,6 +2,7 @@
 
 namespace Plasticode\Data;
 
+use Plasticode\Auth\Auth;
 use Plasticode\Collection;
 use Plasticode\Contained;
 use Plasticode\Core\Response;
@@ -11,10 +12,14 @@ use Plasticode\Generators\EntityGenerator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * @property Auth $auth
+ * @property Db $db
+ */
 class Api extends Contained
 {
     /**
-     * Get access rights
+     * Returns access rights for the table.
      *
      * @param string $table
      * @return Rights
@@ -25,7 +30,7 @@ class Api extends Contained
     }
 
     /**
-     * Get entity
+     * Returns entity by id.
      *
      * @param ResponseInterface $response
      * @param mixed $id
@@ -65,7 +70,7 @@ class Api extends Contained
     }
 
     /**
-     * Get many entities
+     * Returns many entities.
      *
      * @param ResponseInterface $response
      * @param EntityGenerator $provider
@@ -132,7 +137,7 @@ class Api extends Contained
     }
     
     /**
-     * Create entity
+     * Creates entity.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
@@ -177,7 +182,7 @@ class Api extends Contained
     }
     
     /**
-     * Update entity
+     * Updates entity.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
@@ -231,7 +236,7 @@ class Api extends Contained
     }
     
     /**
-     * Delete entity
+     * Deletes entity.
      *
      * @param ResponseInterface $response
      * @param mixed $id
@@ -273,10 +278,7 @@ class Api extends Contained
     }
 
     /**
-     * Unset published if the user has no rights for it
-     * 
-     * Currently it just unsets published property,
-     * if the user has no rights to change it.
+     * Unsets 'published' property if the user has no rights to change it.
      * 
      * This is a security check,
      * alternatively ~NotAuthorized() exception can be thrown.
@@ -298,7 +300,7 @@ class Api extends Contained
     }
     
     /**
-     * Adds updated_at / created_by / updated_by values
+     * Adds updated_at / created_by / updated_by values.
      *
      * @param string $table
      * @param array $data

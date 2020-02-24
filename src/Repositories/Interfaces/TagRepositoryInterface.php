@@ -4,7 +4,7 @@ namespace Plasticode\Repositories\Interfaces;
 
 use Plasticode\Collection;
 
-interface TagRepositoryInterface extends RepositoryInterface
+interface TagRepositoryInterface
 {
     public function getByTag(string $tag) : Collection;
     public function exists(string $tag) : bool;

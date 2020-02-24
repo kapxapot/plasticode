@@ -4,29 +4,37 @@ namespace Plasticode\Controllers;
 
 use Plasticode\Collection;
 use Plasticode\Contained;
-use Plasticode\Exceptions\InvalidArgumentException;
-use Plasticode\Exceptions\Http\NotFoundException;
-use Plasticode\Models\Menu;
+use Plasticode\Core\Interfaces\TranslatorInterface;
+use Plasticode\Exceptions\ValidationException;
+use Plasticode\Handlers\NotFoundHandler;
+use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Util\Arrays;
+use Plasticode\Validation\Validator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
+use Slim\Views\Twig;
+use Webmozart\Assert\Assert;
 
 /**
  * Base controller for controllers showing views.
+ * 
+ * @property LoggerInterface $logger
+ * @property MenuRepositoryInterface $menuRepository
+ * @property NotFoundHandler $notFoundHandler
+ * @property TranslatorInterface $translator
+ * @property Twig $view
+ * @property Validator $validator
  */
-class Controller extends Contained
+class Controller extends Contained implements TranslatorInterface
 {
     /**
      * @var boolean
      */
     protected $autoOneColumn = true;
 
-    protected function notFound(ServerRequestInterface $request = null, ResponseInterface $response = null) : ResponseInterface
+    protected function notFound(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
-        if (!$request || !$response) {
-            throw new NotFoundException();
-        }
-
         $handler = $this->notFoundHandler;
 
         return $handler($request, $response);
@@ -42,8 +50,7 @@ class Controller extends Contained
         
         if (count($sidebar) > 0) {
             $params['sidebar'] = $sidebar;
-        }
-        elseif ($this->autoOneColumn === true) {
+        } elseif ($this->autoOneColumn === true) {
             $params['one_column'] = 1;
         }
         
@@ -71,7 +78,7 @@ class Controller extends Contained
     
     protected function buildMenu(array $settings) : Collection
     {
-        return Menu::getAll();
+        return $this->menuRepository->getAll();
     }
     
     protected function buildSidebar(array $settings) : array
@@ -92,23 +99,19 @@ class Controller extends Contained
     protected function buildActionPart(array $result, string $part) : array
     {
         $bits = explode('.', $part);
-        
-        if (count($bits) > 1) {
-            $action = $bits[0];
-            $entity = $bits[1];
 
-            Arrays::set($result, "actions.{$action}.{$entity}", true);
-        } else {
-            throw new InvalidArgumentException('Unknown sidebar part: ' . $part);
-        }
+        Assert::minCount($bits, 2, 'Unknown sidebar part: ' . $part);
+
+        [$action, $entity] = $bits;
+
+        Arrays::set($result, 'actions.' . $action . '.' . $entity, true);
 
         return $result;
     }
     
     /**
-     * Builds sidebar part and adds it to result
-     * 
-     * If the part is not built, returns null
+     * Builds sidebar part and adds it to result.
+     * If the part is not built, returns null.
      *
      * @param array $settings
      * @param array $result
@@ -125,7 +128,12 @@ class Controller extends Contained
         return $this->translator->translate($message);
     }
     
-    protected function render(ResponseInterface $response, string $template, array $params, bool $logQueryCount = false) : ResponseInterface
+    protected function render(
+        ResponseInterface $response,
+        string $template,
+        array $params,
+        bool $logQueryCount = false
+    ) : ResponseInterface
     {
         $rendered = $this->view->render($response, $template, $params);
 
@@ -134,5 +142,14 @@ class Controller extends Contained
         }
         
         return $rendered;
+    }
+
+    protected function validate(ServerRequestInterface $request, array $rules) : void
+    {
+        $validation = $this->validator->validateRequest($request, $rules);
+        
+        if ($validation->failed()) {
+            throw new ValidationException($validation->errors);
+        }
     }
 }

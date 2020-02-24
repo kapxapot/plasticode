@@ -2,52 +2,51 @@
 
 namespace Plasticode\Auth;
 
+use Plasticode\Auth\Interfaces\CaptchaInterface;
 use Plasticode\Config\Interfaces\CaptchaConfigInterface;
-use Plasticode\Core\Session;
+use Plasticode\Core\Interfaces\SessionInterface;
 use Plasticode\Util\Date;
 use Plasticode\Util\Numbers;
 
-class Captcha
+class Captcha implements CaptchaInterface
 {
     /**
-     * Session
-     *
-     * @var \Plasticode\Core\Session
+     * Default time to live in minutes
+     * 
+     * @var integer
      */
+    private const DefaultTtl = 10;
+
+    /** @var SessionInterface */
     private $session;
 
     /**
      * Time to live in minutes
      *
-     * @var int
+     * @var integer
      */
     private $ttl;
     
     /**
-     * Replacements
-     * 
-     * Init this array in constructor
-     * otherwise your captcha will be not captcha
+     * Init this array in constructor, otherwise your captcha will be not scrambled.
      * 
      * @var array
      */
     private $replacements = [];
 
     /**
-     * Creates Captcha instance.
-     * 
-     * @param \Plasticode\Core\Session
-     * @param \Plasticode\Config\Interfaces\CaptchaConfigInterface $config Your custom replacement config. You should provide it
-     * @param int $ttl Time to live in minutes
+     * @param SessionInterface
+     * @param CaptchaConfigInterface $config Your custom replacement config. You should provide it
+     * @param integer $ttl Time to live in minutes
      */
     public function __construct(
-        Session $session,
+        SessionInterface $session,
         CaptchaConfigInterface $config = null,
-        int $ttl = 10
+        int $ttl = null
     )
     {
         $this->session = $session;
-        $this->ttl = $ttl;
+        $this->ttl = $ttl ?? self::DefaultTtl;
 
         if (!is_null($config)) {
             $this->replacements = $config->getReplaces();
@@ -55,12 +54,12 @@ class Captcha
     }
 
     /**
-     * Fuck up the string using replacements.
+     * Scrambles the string using replacements.
      *
      * @param string $str
      * @return string
      */
-    private function fuckUp(string $str) : string
+    private function scramble(string $str) : string
     {
         foreach ($this->replacements as $key => $reps) {
             $rep = $reps[mt_rand(0, count($reps) - 1)];
@@ -71,7 +70,7 @@ class Captcha
     }
 
     /**
-     * Generate captcha.
+     * Generates captcha.
      *
      * @param integer $length
      * @param boolean $save
@@ -82,11 +81,11 @@ class Captcha
         $num = Numbers::generate($length);
         $string = Numbers::toString($num);
         
-        $fuckedUpString = implode(
+        $scrambledString = implode(
             '',
             array_map(
                 function ($value) {
-                    return $this->fuckUp($value);
+                    return $this->scramble($value);
                 },
                 explode(' ', $string)
             )
@@ -95,7 +94,7 @@ class Captcha
         $result = [
             'number' => $num,
             'string' => $string,
-            'captcha' => $fuckedUpString,
+            'captcha' => $scrambledString,
         ];
         
         if ($save) {
@@ -106,7 +105,7 @@ class Captcha
     }
     
     /**
-     * Save captcha to session.
+     * Saves captcha to session.
      *
      * @param array $captcha
      * @return void
@@ -119,7 +118,7 @@ class Captcha
     }
 
     /**
-     * Load captcha from session and destroy it in session
+     * Loads captcha from session and destroys it in session
      * so the captcha can be validated only once.
      *
      * @return array
@@ -130,7 +129,7 @@ class Captcha
     }
     
     /**
-     * Validate the provided number against previously generated captcha.
+     * Validates the provided number against previously generated captcha.
      *
      * @param mixed $number
      * @return boolean

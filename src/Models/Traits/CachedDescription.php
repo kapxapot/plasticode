@@ -59,7 +59,10 @@ trait CachedDescription
                     $parsed->updatedAt = Date::dbNow();
                     
                     $this->{$cacheField} = json_encode($parsed);
-                    $this->save();
+
+                    // this is a dirty hack and must be changed later
+                    // to save in some cache or in a repository.
+                    self::save($this);
                 }
                 
                 $parsed = self::$parser->renderLinks($parsed);
@@ -74,7 +77,10 @@ trait CachedDescription
         $cacheField = static::getDescriptionCacheField();
         
         $this->{$cacheField} = null;
-        $this->save();
+
+        // this is a dirty hack and must be changed later
+        // to save in some cache or in a repository.
+        self::save($this);
         
         $this->resetLazy('parsedDescription');
     }

@@ -2,7 +2,9 @@
 
 namespace Plasticode\Core;
 
-class Cache
+use Plasticode\Core\Interfaces\CacheInterface;
+
+class Cache implements CacheInterface
 {
     /** @var \ArrayAccess */
     private $cache;
@@ -17,7 +19,7 @@ class Cache
         return $this->cache[$path] ?? null;
     }
     
-    public function set(string $path, $value)
+    public function set(string $path, $value) : void
     {
         $this->cache[$path] = $value;
     }
@@ -27,7 +29,7 @@ class Cache
         return isset($this->cache[$path]);
     }
     
-    public function delete(string $path)
+    public function delete(string $path) : void
     {
         if ($this->exists($path)) {
             unset($this->cache[$path]);

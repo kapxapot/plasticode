@@ -2,11 +2,36 @@
 
 namespace Plasticode\Config;
 
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Plasticode\Auth\Access;
+use Plasticode\Auth\Auth;
+use Plasticode\Auth\Captcha;
 use Plasticode\Config\Parsing\BBContainerConfig;
 use Plasticode\Config\Parsing\BBParserConfig;
 use Plasticode\Config\Parsing\DoubleBracketsConfig;
 use Plasticode\Config\Parsing\ReplacesConfig;
+use Plasticode\Core\Cache;
+use Plasticode\Core\Linker;
+use Plasticode\Core\Pagination;
+use Plasticode\Core\Renderer;
+use Plasticode\Core\Session;
+use Plasticode\Core\Translator;
+use Plasticode\Data\Api;
+use Plasticode\Data\Db;
+use Plasticode\Events\EventDispatcher;
+use Plasticode\External\Telegram;
+use Plasticode\External\Twitch;
+use Plasticode\External\Twitter;
+use Plasticode\Generators\GeneratorResolver;
+use Plasticode\Handlers\ErrorHandler;
+use Plasticode\Handlers\NotAllowedHandler;
+use Plasticode\Handlers\NotFoundHandler;
 use Plasticode\IO\File;
+use Plasticode\IO\Image;
+use Plasticode\Models\MenuItem;
+use Plasticode\Models\Role;
 use Plasticode\Parsing\Parsers\BB\BBParser;
 use Plasticode\Parsing\Parsers\BB\Container\BBContainerParser;
 use Plasticode\Parsing\Parsers\BB\Container\BBSequencer;
@@ -20,12 +45,21 @@ use Plasticode\Parsing\Parsers\MarkdownParser;
 use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 use Plasticode\Parsing\Steps\ReplacesStep;
 use Plasticode\Parsing\Steps\TitlesStep;
+use Plasticode\Repositories\AuthTokenRepository;
+use Plasticode\Repositories\MenuRepository;
 use Plasticode\Repositories\NewsRepository;
 use Plasticode\Repositories\PageRepository;
 use Plasticode\Repositories\TagRepository;
+use Plasticode\Repositories\UserRepository;
+use Plasticode\SettingsProvider;
 use Plasticode\Twig\Extensions\AccessRightsExtension;
+use Plasticode\Util\Cases;
+use Plasticode\Validation\Validator;
 use Psr\Container\ContainerInterface;
 use Slim\Collection as SlimCollection;
+use Slim\Views\Twig;
+use Slim\Views\TwigExtension;
+use Twig\Extension\DebugExtension;
 
 class Bootstrap
 {
@@ -61,68 +95,72 @@ class Bootstrap
     public function getMappings() : array
     {
         return [
-            'userClass' => function (ContainerInterface $container) {
-                return \Plasticode\Models\User::class;
-            },
-            
             'roleClass' => function (ContainerInterface $container) {
-                return \Plasticode\Models\Role::class;
-            },
-            
-            'authTokenClass' => function (ContainerInterface $container) {
-                return \Plasticode\Models\AuthToken::class;
-            },
-            
-            'menuClass' => function (ContainerInterface $container) {
-                return \Plasticode\Models\Menu::class;
+                return Role::class;
             },
             
             'menuItemClass' => function (ContainerInterface $container) {
-                return \Plasticode\Models\MenuItem::class;
-            },
-            
-            'userRepository' => function (ContainerInterface $container) {
-                return new \Plasticode\StaticProxy($container->userClass);
-            },
-            
-            'roleRepository' => function (ContainerInterface $container) {
-                return new \Plasticode\StaticProxy($container->roleClass);
+                return MenuItem::class;
             },
             
             'authTokenRepository' => function (ContainerInterface $container) {
-                return new \Plasticode\StaticProxy($container->authTokenClass);
+                return new AuthTokenRepository();
             },
             
             'menuRepository' => function (ContainerInterface $container) {
-                return new \Plasticode\StaticProxy($container->menuClass);
+                return new MenuRepository();
             },
             
             'menuItemRepository' => function (ContainerInterface $container) {
                 return new \Plasticode\StaticProxy($container->menuItemClass);
             },
 
+            'newsRepository' => function (ContainerInterface $container) {
+                return new NewsRepository();
+            },
+
             'pageRepository' => function (ContainerInterface $container) {
                 return new PageRepository();
+            },
+
+            'roleRepository' => function (ContainerInterface $container) {
+                return new \Plasticode\StaticProxy($container->roleClass);
             },
 
             'tagRepository' => function (ContainerInterface $container) {
                 return new TagRepository();
             },
 
-            'newsRepository' => function (ContainerInterface $container) {
-                return new NewsRepository();
+            'userRepository' => function (ContainerInterface $container) {
+                return new UserRepository();
             },
 
             'settingsProvider' => function (ContainerInterface $container) {
-                return new \Plasticode\SettingsProvider($container);
+                return new SettingsProvider($container);
+            },
+            
+            'session' => function (ContainerInterface $container) {
+                $root = $this->settings['root'];
+                $name = 'sessionContainer' . $root;
+                
+                return new Session($name);
+            },
+            
+            'cache' => function (ContainerInterface $container) {
+                return new Cache();
             },
             
             'auth' => function (ContainerInterface $container) {
-                return new \Plasticode\Auth\Auth($container);
+                return new Auth(
+                    $container->session,
+                    $container->settingsProvider,
+                    $container->authTokenRepository,
+                    $container->userRepository
+                );
             },
             
             'logger' => function (ContainerInterface $container) {
-                $logger = new \Monolog\Logger(
+                $logger = new Logger(
                     $this->settings['logger']['name']
                 );
             
@@ -147,12 +185,12 @@ class Bootstrap
                 $path = $this->settings['logger']['path'];
                 $path = File::absolutePath($this->dir, $path);
 
-                $handler = new \Monolog\Handler\StreamHandler(
+                $handler = new StreamHandler(
                     $path,
-                    \Monolog\Logger::DEBUG
+                    Logger::DEBUG
                 );
 
-                $formatter = new \Monolog\Formatter\LineFormatter(
+                $formatter = new LineFormatter(
                     null, null, false, true
                 );
 
@@ -163,18 +201,18 @@ class Bootstrap
             },
             
             'captchaConfig' => function (ContainerInterface $container) {
-                return new \Plasticode\Config\CaptchaConfig();
+                return new CaptchaConfig();
             },
             
             'captcha' => function (ContainerInterface $container) {
-                return new \Plasticode\Auth\Captcha(
+                return new Captcha(
                     $container->session,
                     $container->captchaConfig
                 );
             },
             
             'access' => function (ContainerInterface $container) {
-                return new \Plasticode\Auth\Access(
+                return new Access(
                     $container->auth,
                     $container->cache,
                     $this->settings['access']
@@ -182,14 +220,14 @@ class Bootstrap
             },
             
             'generatorResolver' => function (ContainerInterface $container) {
-                return new \Plasticode\Generators\GeneratorResolver(
+                return new GeneratorResolver(
                     $container,
                     ['\\App\\Generators']
                 );
             },
             
             'cases' => function (ContainerInterface $container) {
-                return new \Plasticode\Util\Cases();
+                return new Cases();
             },
             
             'view' => function (ContainerInterface $container) {
@@ -211,7 +249,7 @@ class Bootstrap
                     $cachePath = File::combine($this->dir, $cachePath);
                 }
             
-                $view = new \Slim\Views\Twig(
+                $view = new Twig(
                     $templatesPath,
                     [
                         'cache' => $cachePath,
@@ -219,7 +257,7 @@ class Bootstrap
                     ]
                 );
             
-                $twigExt = new \Slim\Views\TwigExtension(
+                $twigExt = new TwigExtension(
                     $container->router,
                     $container->request->getUri()
                 );
@@ -231,7 +269,7 @@ class Bootstrap
                 );
 
                 $view->addExtension($accessExt);
-                $view->addExtension(new \Twig\Extension\DebugExtension);
+                $view->addExtension(new DebugExtension);
 
                 // set globals
                 $globals = $this->settings['view_globals'];
@@ -250,7 +288,7 @@ class Bootstrap
                         : $user->gravatarUrl(),
                 ];
             
-                $view['image_types'] = \Plasticode\IO\Image::buildTypesString();
+                $view['image_types'] = Image::buildTypesString();
                 
                 $view['tables'] = $this->settings['tables'];
                 $view['entities'] = $this->settings['entities'];
@@ -265,34 +303,23 @@ class Bootstrap
                 return $view;
             },
             
-            'cache' => function (ContainerInterface $container) {
-                return new \Plasticode\Core\Cache();
-            },
-            
-            'session' => function (ContainerInterface $container) {
-                $root = $this->settings['root'];
-                $name = 'sessionContainer' . $root;
-                
-                return new \Plasticode\Core\Session($name);
-            },
-            
             'localizationConfig' => function (ContainerInterface $container) {
-                return new \Plasticode\Config\LocalizationConfig();
+                return new LocalizationConfig();
             },
             
             'translator' => function (ContainerInterface $container) {
                 $lang = $this->settings['view_globals']['lang'] ?? 'ru';
                 $loc = $container->localizationConfig->get($lang);
                 
-                return new \Plasticode\Core\Translator($loc);
+                return new Translator($loc);
             },
             
             'validator' => function (ContainerInterface $container) {
-                return new \Plasticode\Validation\Validator($container);
+                return new Validator($container);
             },
             
             'dbClass' => function (ContainerInterface $container) {
-                return \Plasticode\Data\Db::class;
+                return Db::class;
             },
             
             'db' => function (ContainerInterface $container) {
@@ -316,22 +343,22 @@ class Bootstrap
             },
 
             'api' => function (ContainerInterface $container) {
-                return new \Plasticode\Data\Api($container);
+                return new Api($container);
             },
             
             'renderer' => function (ContainerInterface $container) {
-                return new \Plasticode\Core\Renderer($container->view);
+                return new Renderer($container->view);
             },
             
             'pagination' => function (ContainerInterface $container) {
-                return new \Plasticode\Core\Pagination(
+                return new Pagination(
                     $container->linker,
                     $container->renderer
                 );
             },
             
             'linker' => function (ContainerInterface $container) {
-                return new \Plasticode\Core\Linker(
+                return new Linker(
                     $container->settingsProvider,
                     $container->router
                 );
@@ -413,7 +440,7 @@ class Bootstrap
             },
 
             'dispatcher' => function (ContainerInterface $container) {
-                return new \Plasticode\Events\EventDispatcher(
+                return new EventDispatcher(
                     $container,
                     $container->eventProcessors
                 );
@@ -424,19 +451,19 @@ class Bootstrap
             },
                 
             'eventLog' => function (ContainerInterface $container) {
-                $logger = new \Monolog\Logger(
+                $logger = new Logger(
                     $this->settings['event_log']['name']
                 );
                 
                 $path = $this->settings['event_log']['path'];
                 $path = File::absolutePath($this->dir, $path);
 
-                $handler = new \Monolog\Handler\StreamHandler(
+                $handler = new StreamHandler(
                     $path,
-                    \Monolog\Logger::DEBUG
+                    Logger::DEBUG
                 );
 
-                $formatter = new \Monolog\Formatter\LineFormatter(
+                $formatter = new LineFormatter(
                     null, null, false, true
                 );
 
@@ -449,19 +476,19 @@ class Bootstrap
             // external
             
             'twitch' => function (ContainerInterface $container) {
-                return new \Plasticode\External\Twitch(
+                return new Twitch(
                     $this->settings['twitch']
                 );
             },
             
             'telegram' => function (ContainerInterface $container) {
-                return new \Plasticode\External\Telegram(
+                return new Telegram(
                     $this->settings['telegram']
                 );
             },
             
             'twitter' => function (ContainerInterface $container) {
-                return new \Plasticode\External\Twitter(
+                return new Twitter(
                     $this->settings['twitter']
                 );
             },
@@ -469,15 +496,15 @@ class Bootstrap
             // handlers
             
             'notFoundHandler' => function (ContainerInterface $container) {
-                return new \Plasticode\Handlers\NotFoundHandler($container);
+                return new NotFoundHandler($container);
             },
             
             'errorHandler' => function (ContainerInterface $container) {
-                return new \Plasticode\Handlers\ErrorHandler($container);
+                return new ErrorHandler($container);
             },
             
             'notAllowedHandler' => function (ContainerInterface $container) {
-                return new \Plasticode\Handlers\NotAllowedHandler($container);
+                return new NotAllowedHandler($container);
             },
         ];
     }
