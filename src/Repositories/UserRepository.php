@@ -7,6 +7,11 @@ use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 
 class UserRepository implements UserRepositoryInterface
 {
+    public function get(int $id) : ?User
+    {
+        return User::get($id);
+    }
+
     public function create(?array $data = null) : User
     {
         return User::create($data);

@@ -120,12 +120,12 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         return self::$container->getSettings($path);
     }
     
-    protected static function getUser($id) : ?User
+    protected static function getUser(int $id) : ?User
     {
         return self::$userRepository->get($id);
     }
     
-    protected static function getRole($id) : ?Role
+    protected static function getRole(int $id) : ?Role
     {
         return self::$roleRepository->get($id);
     }
