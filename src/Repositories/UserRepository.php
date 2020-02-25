@@ -5,7 +5,7 @@ namespace Plasticode\Repositories;
 use Plasticode\Models\User;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 
-class UserRepository implements UserRepositoryInterface
+class UserRepository extends IdiormRepository implements UserRepositoryInterface
 {
     public function get(int $id) : ?User
     {
@@ -34,6 +34,12 @@ class UserRepository implements UserRepositoryInterface
             ->one();
     }
 
+    /**
+     * Todo: supposedly this belongs to a model or some validation settings
+     *
+     * @param array $data
+     * @return array
+     */
     public function getRules(array $data) : array
     {
         return User::getRules($data);

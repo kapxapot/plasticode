@@ -7,31 +7,25 @@ use Plasticode\Models\Tag;
 use Plasticode\Query;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 
-class TagRepository implements TagRepositoryInterface
+class TagRepository extends IdiormRepository implements TagRepositoryInterface
 {
-    private static function entityQuery(string $entityType) : Query
-    {
-        return self::query()
-            ->where('entity_type', $entityType);
-    }
-    
-    public static function getByEntity(string $entityType, $entityId) : Query
-    {
-        return self::entityQuery($entityType)
-            ->where('entity_id', $entityId);
-    }
+    // public function getByEntity(string $entityType, int $entityId) : Query
+    // {
+    //     return $this->entityQuery($entityType)
+    //         ->where('entity_id', $entityId);
+    // }
 
-    public static function getIdsByTag(string $entityType, string $tag) : Collection
+    public function getIdsByTag(string $entityType, string $tag) : Collection
     {
-        return self::entityQuery($entityType)
+        return $this->entityQuery($entityType)
             ->where('tag', $tag)
             ->all()
             ->extract('entity_id');
     }
 
-    public static function deleteByEntity(string $entityType, $entityId) : bool
+    public function deleteByEntity(string $entityType, int $entityId) : bool
     {
-        return self::entityQuery($entityType)
+        return $this->entityQuery($entityType)
             ->where('entity_id', $entityId)
             ->delete();
     }
@@ -46,15 +40,21 @@ class TagRepository implements TagRepositoryInterface
         return $this->byTagQuery($tag)->any();
     }
 
+    private function entityQuery(string $entityType) : Query
+    {
+        return Tag::query()
+            ->where('entity_type', $entityType);
+    }
+
     private function byTagQuery(string $tag) : Query
     {
         return Tag::query()
             ->where('tag', $tag);
     }
-    
-    public static function search(string $searchQuery) : Collection
+
+    public function search(string $searchQuery) : Collection
     {
-        return self::query()
+        return Tag::query()
             ->search($searchQuery, '(tag like ?)')
             ->orderByAsc('tag')
             ->all();

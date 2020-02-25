@@ -5,6 +5,7 @@ namespace Plasticode\Controllers;
 use Plasticode\Collection;
 use Plasticode\Contained;
 use Plasticode\Core\Interfaces\TranslatorInterface;
+use Plasticode\Data\Db;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Handlers\NotFoundHandler;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
@@ -19,6 +20,7 @@ use Webmozart\Assert\Assert;
 /**
  * Base controller for controllers showing views.
  * 
+ * @property Db $db
  * @property LoggerInterface $logger
  * @property MenuRepositoryInterface $menuRepository
  * @property NotFoundHandler $notFoundHandler
@@ -138,7 +140,7 @@ class Controller extends Contained
         $rendered = $this->view->render($response, $template, $params);
 
         if ($logQueryCount) {
-            $this->logger->info("Query count: " . $this->db->getQueryCount());
+            $this->logger->info('Query count: ' . $this->db->getQueryCount());
         }
         
         return $rendered;

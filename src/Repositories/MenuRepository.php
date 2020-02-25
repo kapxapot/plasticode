@@ -6,7 +6,7 @@ use Plasticode\Collection;
 use Plasticode\Models\Menu;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 
-class MenuRepository implements MenuRepositoryInterface
+class MenuRepository extends IdiormRepository implements MenuRepositoryInterface
 {
     public function getAll() : Collection
     {

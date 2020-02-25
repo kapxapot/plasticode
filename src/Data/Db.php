@@ -233,7 +233,7 @@ final class Db extends Contained
         return $recursive;
     }
     
-    public function getQueryCount()
+    public function getQueryCount() : int
     {
         return \ORM::forTable(null)
             ->rawQuery('SHOW STATUS LIKE ?', [ 'Questions' ])

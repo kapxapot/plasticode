@@ -11,6 +11,7 @@ use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\User;
 use Plasticode\Parsing\Parsers\CompositeParser;
+use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Util\Cases;
@@ -52,7 +53,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     /** @var RoleRepositoryInterface */
     protected static $roleRepository;
 
-
+    /** @var MenuItemRepositoryInterface */
     protected static $menuItemRepository;
 
     /**

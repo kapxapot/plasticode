@@ -4,6 +4,6 @@ namespace Plasticode\Repositories;
 
 use Plasticode\Repositories\Interfaces\NewsRepositoryInterface;
 
-class NewsRepository implements NewsRepositoryInterface
+class NewsRepository extends IdiormRepository implements NewsRepositoryInterface
 {
 }

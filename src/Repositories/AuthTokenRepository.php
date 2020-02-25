@@ -5,7 +5,7 @@ namespace Plasticode\Repositories;
 use Plasticode\Models\AuthToken;
 use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
 
-class AuthTokenRepository implements AuthTokenRepositoryInterface
+class AuthTokenRepository extends IdiormRepository implements AuthTokenRepositoryInterface
 {
     public function get(int $id) : ?AuthToken
     {

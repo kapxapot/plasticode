@@ -57,13 +57,13 @@ class EventDispatcher extends Contained
     {
         // checking for loop
         if ($this->isLoop($event)) {
-            $this->log('[!] Loop found, enqueue aborted for ' . $event->toString());
+            $this->log('[!] Loop found, enqueue aborted for ' . $event);
             return;
         }
 
         $this->queue[] = $event;
 
-        $this->log('Queued ' . $event->toString() . ', queue size = ' . count($this->queue));
+        $this->log('Queued ' . $event . ', queue size = ' . count($this->queue));
     }
 
     /**
@@ -147,8 +147,7 @@ class EventDispatcher extends Contained
             $this->log('   no processor map found');
 
             $this->mapEventClass($eventClass);
-        }
-        else {
+        } else {
             $this->log('   processor map found (' . count($this->map[$eventClass]) . ' processors)');
         }
 

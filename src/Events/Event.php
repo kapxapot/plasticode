@@ -58,13 +58,13 @@ abstract class Event
             : $entity->getId();
     }
 
-    public function toString() : string
+    public function __toString() : string
     {
         $str = $this->getClass();
         $entity = $this->getEntity();
 
         if (!is_null($entity)) {
-            $str .= " (" . $entity->toString() . ")";
+            $str .= ' (' . $entity . ')';
         }
 
         return  $str;

@@ -29,7 +29,6 @@ use Plasticode\Handlers\NotAllowedHandler;
 use Plasticode\Handlers\NotFoundHandler;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
-use Plasticode\Models\MenuItem;
 use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
 use Plasticode\Parsing\LinkMappers\PageLinkMapper;
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
@@ -48,6 +47,7 @@ use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 use Plasticode\Parsing\Steps\ReplacesStep;
 use Plasticode\Parsing\Steps\TitlesStep;
 use Plasticode\Repositories\AuthTokenRepository;
+use Plasticode\Repositories\MenuItemRepository;
 use Plasticode\Repositories\MenuRepository;
 use Plasticode\Repositories\NewsRepository;
 use Plasticode\Repositories\PageRepository;
@@ -98,10 +98,6 @@ class Bootstrap
     public function getMappings() : array
     {
         return [
-            'menuItemClass' => function (ContainerInterface $container) {
-                return MenuItem::class;
-            },
-            
             'authTokenRepository' => function (ContainerInterface $container) {
                 return new AuthTokenRepository();
             },
@@ -111,7 +107,7 @@ class Bootstrap
             },
             
             'menuItemRepository' => function (ContainerInterface $container) {
-                return new \Plasticode\StaticProxy($container->menuItemClass);
+                return new MenuItemRepository();
             },
 
             'newsRepository' => function (ContainerInterface $container) {
