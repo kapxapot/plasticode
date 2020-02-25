@@ -10,7 +10,9 @@ class MenuItem extends DbModel implements LinkableInterface
 {
     protected static $parentIdField = 'menu_id';
 
-    /** @return \Plasticode\Util\SortStep[] */
+    /**
+     * @return SortStep[]
+     */
     protected static function getSortOrder() : array
     {
         return [
@@ -18,8 +20,6 @@ class MenuItem extends DbModel implements LinkableInterface
             SortStep::create('text')
         ];
     }
-    
-    // queries
     
     public static function getByMenu($menuId) : Query
     {

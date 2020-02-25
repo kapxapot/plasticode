@@ -10,7 +10,6 @@ use Plasticode\Auth\Auth;
 use Plasticode\Auth\Captcha;
 use Plasticode\Config\Parsing\BBContainerConfig;
 use Plasticode\Config\Parsing\BBParserConfig;
-use Plasticode\Config\Parsing\DoubleBracketsConfig;
 use Plasticode\Config\Parsing\ReplacesConfig;
 use Plasticode\Core\Cache;
 use Plasticode\Core\Linker;
@@ -31,7 +30,6 @@ use Plasticode\Handlers\NotFoundHandler;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
 use Plasticode\Models\MenuItem;
-use Plasticode\Models\Role;
 use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
 use Plasticode\Parsing\LinkMappers\PageLinkMapper;
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
@@ -53,6 +51,7 @@ use Plasticode\Repositories\AuthTokenRepository;
 use Plasticode\Repositories\MenuRepository;
 use Plasticode\Repositories\NewsRepository;
 use Plasticode\Repositories\PageRepository;
+use Plasticode\Repositories\RoleRepository;
 use Plasticode\Repositories\TagRepository;
 use Plasticode\Repositories\UserRepository;
 use Plasticode\SettingsProvider;
@@ -99,10 +98,6 @@ class Bootstrap
     public function getMappings() : array
     {
         return [
-            'roleClass' => function (ContainerInterface $container) {
-                return Role::class;
-            },
-            
             'menuItemClass' => function (ContainerInterface $container) {
                 return MenuItem::class;
             },
@@ -128,7 +123,7 @@ class Bootstrap
             },
 
             'roleRepository' => function (ContainerInterface $container) {
-                return new \Plasticode\StaticProxy($container->roleClass);
+                return new RoleRepository();
             },
 
             'tagRepository' => function (ContainerInterface $container) {

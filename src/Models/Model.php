@@ -9,9 +9,10 @@ use Plasticode\Core\Linker;
 use Plasticode\Data\Db;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;
-use Plasticode\Models\Role;
 use Plasticode\Models\User;
 use Plasticode\Parsing\Parsers\CompositeParser;
+use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
+use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Util\Cases;
 use Plasticode\Util\Strings;
 use Psr\Container\ContainerInterface;
@@ -45,8 +46,13 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     /** @var CompositeParser */
     protected static $parser;
     
+    /** @var UserRepositoryInterface */
     protected static $userRepository;
+
+    /** @var RoleRepositoryInterface */
     protected static $roleRepository;
+
+
     protected static $menuItemRepository;
 
     /**
@@ -118,16 +124,6 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     protected static function getSettings(string $path)
     {
         return self::$container->getSettings($path);
-    }
-    
-    protected static function getUser(int $id) : ?User
-    {
-        return self::$userRepository->get($id);
-    }
-    
-    protected static function getRole(int $id) : ?Role
-    {
-        return self::$roleRepository->get($id);
     }
     
     protected static function getCurrentUser() : ?User

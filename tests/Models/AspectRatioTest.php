@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Models;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Models\AspectRatio;
+use Plasticode\AspectRatio;
 
 final class AspectRatioTest extends TestCase
 {

@@ -7,10 +7,16 @@ use Plasticode\Models\Interfaces\LinkableInterface;
 
 class Menu extends DbModel implements LinkableInterface
 {
+    /**
+     * Todo: move this to repo
+     */
     protected static $sortField = 'position';
-
-    // PROPS
     
+    /**
+     * Todo: move this to mapper
+     *
+     * @return Collection
+     */
     public function items() : Collection
     {
         return self::$menuItemRepository
@@ -18,6 +24,11 @@ class Menu extends DbModel implements LinkableInterface
             ->all();
     }
 
+    /**
+     * Todo: move this to view model
+     *
+     * @return string|null
+     */
     public function url() : ?string
     {
         return self::$linker->rel($this->link);

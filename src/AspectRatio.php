@@ -1,10 +1,10 @@
 <?php
 
-namespace Plasticode\Models;
+namespace Plasticode;
 
 use Webmozart\Assert\Assert;
 
-class AspectRatio extends Model
+class AspectRatio
 {
     /** @var integer */
     private $width;

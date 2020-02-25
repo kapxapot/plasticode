@@ -1,17 +1,16 @@
 <?php
 
-namespace Plasticode\Models;
+namespace Plasticode;
 
 use Plasticode\Util\Date;
 
-class Moment extends Model
+class Moment
 {
     /** @var string */
     private $date;
 
     public function __construct(string $date)
     {
-        parent::__construct();
         $this->date = $date;
     }
     
@@ -25,7 +24,7 @@ class Moment extends Model
         return Date::hasTime($this->date);
     }
     
-    public function toString() : string
+    public function __toString() : string
     {
         return $this->date;
     }

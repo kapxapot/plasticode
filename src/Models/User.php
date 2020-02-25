@@ -21,7 +21,7 @@ class User extends DbModel
     
     public function role() : Role
     {
-        return self::getRole($this->roleId);
+        return self::$roleRepository->get($this->roleId);
     }
     
     public function toString() : string
