@@ -3,10 +3,8 @@
 namespace Plasticode\Tests\Mocks;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Models\News;
-use Plasticode\Models\Page;
 
-final class LinkerMock implements LinkerInterface
+class LinkerMock implements LinkerInterface
 {
     public function abs(string $url = null) : string
     {
