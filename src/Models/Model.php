@@ -13,6 +13,7 @@ use Plasticode\Models\User;
 use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
+use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Util\Cases;
 use Plasticode\Util\Strings;
@@ -56,6 +57,9 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     /** @var MenuItemRepositoryInterface */
     protected static $menuItemRepository;
 
+    /** @var TagRepositoryInterface */
+    protected static $tagRepository;
+
     /**
      * Data array or \ORM object
      *
@@ -91,6 +95,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
             self::$userRepository = self::$container->userRepository;
             self::$roleRepository = self::$container->roleRepository;
             self::$menuItemRepository = self::$container->menuItemRepository;
+            self::$tagRepository = self::$container->tagRepository;
             
             self::$auth = self::$container->auth;
             self::$linker = self::$container->linker;
@@ -127,6 +132,11 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         return self::$container->getSettings($path);
     }
     
+    /**
+     * Todo: this must die
+     *
+     * @return User|null
+     */
     protected static function getCurrentUser() : ?User
     {
         return self::$auth->getUser();

@@ -10,7 +10,7 @@ trait Stamps
 
     public function stamp()
     {
-        $user = self::$auth->getUser();
+        $user = self::getCurrentUser();
         
         if ($user) {
             $this->createdBy = $this->createdBy ?? $user->getId();

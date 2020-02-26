@@ -21,7 +21,7 @@ trait Publish
     {
         return self::wherePublished(self::query());
     }
-    
+
     protected static function wherePublished(Query $query) : Query
     {
         return $query->where('published', 1);
@@ -31,7 +31,7 @@ trait Publish
     {
         $this->published = 1;
     }
-    
+
     public function isPublished() : bool
     {
         return $this->published == 1;

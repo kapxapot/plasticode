@@ -2,11 +2,17 @@
 
 namespace Plasticode\Models\Traits;
 
+use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Query;
+use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\TagLink;
-use Plasticode\Models\Tag;
 use Plasticode\Util\Strings;
 
+/**
+ * @property string $tagsField
+ * @property LinkerInterface $linker
+ * @property TagRepositoryInterface $tagRepository
+ */
 trait Tags
 {
     protected static function getTagsEntityType() : string

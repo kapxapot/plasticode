@@ -22,7 +22,7 @@ trait FullPublish
      * Looks for a protected record by id.
      *
      * @param int|string $id
-     * @return null|\Plasticode\Models\DbModel
+     * @return null|DbModel
      */
     public static function findProtected($id) : ?DbModel
     {
@@ -38,11 +38,11 @@ trait FullPublish
             return $query;
         }
 
-        $published = "(published = 1 and published_at < now())";
-        $user = self::$auth->getUser();
+        $published = '(published = 1 and published_at < now())';
+        $user = self::getCurrentUser();
 
         if ($user) {
-            return $query->whereRaw("({$published} or created_by = ?)", [ $user->id ]);
+            return $query->whereRaw('(' . $published . ' or created_by = ?)', [$user->getId()]);
         }
         
         return $query->whereRaw($published);
@@ -62,12 +62,12 @@ trait FullPublish
             $this->publishedAt = Date::dbNow();
         }
     }
-    
+
     public function isPublished() : bool
     {
         return $this->parentIsPublished() && Date::happened($this->publishedAt);
     }
-    
+
     public function publishedAtIso() : string
     {
         return $this->publishedAt ? Date::iso($this->publishedAt) : null;

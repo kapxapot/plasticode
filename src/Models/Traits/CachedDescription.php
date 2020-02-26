@@ -60,8 +60,7 @@ trait CachedDescription
                     
                     $this->{$cacheField} = json_encode($parsed);
 
-                    // this is a dirty hack and must be changed later
-                    // to save in some cache or in a repository.
+                    // Todo: this is a dirty hack and must be changed later to save in some cache or in a repository
                     self::save($this);
                 }
                 
@@ -78,8 +77,7 @@ trait CachedDescription
         
         $this->{$cacheField} = null;
 
-        // this is a dirty hack and must be changed later
-        // to save in some cache or in a repository.
+        // Todo: this is a dirty hack and must be changed later to save in some cache or in a repository
         self::save($this);
         
         $this->resetLazy('parsedDescription');
