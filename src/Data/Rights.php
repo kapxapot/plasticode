@@ -2,8 +2,12 @@
 
 namespace Plasticode\Data;
 
-use Plasticode\Auth\Access;
+use Plasticode\Auth\Auth;
 
+/**
+ * Table rights that can be checked for
+ * the current user & exact entities (table records).
+ */
 class Rights
 {
     const API_READ = 'api_read';
@@ -20,12 +24,8 @@ class Rights
     const DELETE_OWN = 'delete_own';
     const PUBLISH = 'publish';
 
-    /**
-     * User
-     *
-     * @var Plasticode\Models\User
-     */
-    private $user;
+    /** @var Auth */
+    private $auth;
 
     /**
      * Table access rights
@@ -34,14 +34,14 @@ class Rights
      */
     private $rights;
 
-    public function __construct(Access $access, string $table)
+    public function __construct(Auth $auth, array $rights)
     {
-        $this->user = $access->getUser();
-        $this->rights = $access->getAllRights($table);
+        $this->auth = $auth;
+        $this->rights = $rights;
     }
 
     /**
-     * Get access rights for table
+     * Get access rights for table.
      *
      * @return array
      */
@@ -51,7 +51,7 @@ class Rights
     }
     
     /**
-     * Get access rights for entity
+     * Get access rights for entity.
      *
      * @param array $entity
      * @return array
@@ -61,7 +61,9 @@ class Rights
         $createdBy = $entity['created_by'] ?? null;
 
         $noOwner = is_null($createdBy);
-        $own = !is_null($this->user) && $createdBy == $this->user->getId();
+
+        $user = $this->auth->getUser();
+        $own = !is_null($user) && $createdBy == $user->getId();
 
         $can = $this->forTable();
 
@@ -79,7 +81,7 @@ class Rights
     }
 
     /**
-     * Adds edit/delete rights to entity
+     * Adds edit/delete rights to entity.
      *
      * @param array $entity
      * @return array

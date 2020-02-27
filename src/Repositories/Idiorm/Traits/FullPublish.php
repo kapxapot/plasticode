@@ -27,13 +27,13 @@ trait FullPublish
      *
      * @param Query $query
      * @param integer|string|null $id
-     * @param User|null $currentUser
+     * @param User|null user
      * @return DbModel|null
      */
-    public function findProtected(Query $query, $id, ?User $currentUser) : ?DbModel
+    public function findProtected(Query $query, $id, ?User $user) : ?DbModel
     {
         return $this
-            ->protect($query, $currentUser)
+            ->protect($query, $user)
             ->find($id);
     }
 
@@ -41,10 +41,10 @@ trait FullPublish
      * Modifies the query to protect access rights if needed.
      *
      * @param Query $query
-     * @param User|null $currentUser
+     * @param User|null $user
      * @return Query
      */
-    public function protect(Query $query, ?User $currentUser) : Query
+    public function protect(Query $query, ?User $user) : Query
     {
         $editor = $this->can(Rights::EDIT);
         
@@ -54,10 +54,10 @@ trait FullPublish
 
         $publishedCondition = '(' . static::$publishedField . ' = 1 and ' . static::$publishedAtField . ' < now())';
 
-        if ($currentUser) {
+        if ($user) {
             return $query->whereRaw(
                 '(' . $publishedCondition . ' or ' . static::$createdByField . ' = ?)',
-                [$currentUser->getId()]
+                [$user->getId()]
             );
         }
         

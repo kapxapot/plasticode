@@ -91,12 +91,13 @@ final class Db extends Contained
     
     public function getTableRights(string $table) : Rights
     {
-        return new Rights($this->access, $table);
+        return $this->access->getAllRights($table);
     }
     
     public function enrichRights(string $table, array $item) : array
     {
-        return $this->getTableRights($table)
+        return $this
+            ->getTableRights($table)
             ->enrichRights($item);
     }
     

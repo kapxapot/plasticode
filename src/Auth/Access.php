@@ -3,9 +3,8 @@
 namespace Plasticode\Auth;
 
 use Plasticode\Core\Interfaces\CacheInterface;
-use Plasticode\Exceptions\InvalidArgumentException;
+use Plasticode\Data\Rights;
 use Plasticode\Exceptions\InvalidConfigurationException;
-use Plasticode\Models\User;
 use Webmozart\Assert\Assert;
 
 class Access
@@ -53,11 +52,6 @@ class Access
         $this->actions = $this->flattenActions($accessSettings['actions']);
         $this->templates = $accessSettings['templates'];
         $this->rights = $accessSettings['rights'];
-    }
-
-    public function getUser() : ?User
-    {
-        return $this->auth->getUser();
     }
     
     /**
@@ -177,9 +171,9 @@ class Access
      * Get all rights for the entity for current user and role.
      *
      * @param string $entity
-     * @return array
+     * @return Rights
      */
-    public function getAllRights(string $entity) : array
+    public function getAllRights(string $entity) : Rights
     {
         $path = 'access.' . $entity;
 
@@ -193,7 +187,7 @@ class Access
                     $can[$r] = $this->checkRights($entity, $r);
                 }
 
-                return $can;
+                return new Rights($this->auth, $can);
             }
         );
     }
