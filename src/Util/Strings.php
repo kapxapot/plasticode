@@ -414,4 +414,18 @@ class Strings
 
         return $slug;
     }
+
+    /**
+     * Removes end from the string.
+     *
+     * @param string $str
+     * @param string $end
+     * @return string
+     */
+    public static function trimEnd(string $str, string $end) : string
+    {
+        return self::endsWith($str, $end)
+            ? mb_substr($str, 0, strlen($str) - strlen($end))
+            : $str;
+    }
 }

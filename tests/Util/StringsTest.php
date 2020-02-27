@@ -181,4 +181,36 @@ final class StringsTest extends TestCase
             ['доброе утро', ''],
         ];
     }
+
+    /**
+     * @dataProvider trimEndProvider
+     *
+     * @param string $original
+     * @param string $suffix
+     * @param string $expected
+     * @return void
+     */
+    public function testTrimEnd(string $original, string $suffix, string $expected) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Strings::trimEnd($original, $suffix)
+        );
+    }
+
+    public function trimEndProvider() : array
+    {
+        return [
+            [
+                'ArticleCategoryRepository',
+                'Repository',
+                'ArticleCategory'
+            ],
+            [
+                'Article',
+                'Repository',
+                'Article'
+            ],
+        ];
+    }
 }

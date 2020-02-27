@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Repositories;
+namespace Plasticode\Repositories\Idiorm;
 
 use Plasticode\Models\User;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;

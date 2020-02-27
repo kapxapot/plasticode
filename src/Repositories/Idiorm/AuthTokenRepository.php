@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Repositories;
+namespace Plasticode\Repositories\Idiorm;
 
 use Plasticode\Models\AuthToken;
 use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;

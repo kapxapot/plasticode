@@ -17,6 +17,8 @@ abstract class DbModel extends Model implements SerializableInterface
 {
     /**
      * Table name
+     * 
+     * Todo: delete, moved to repository
      *
      * @var string
      */
@@ -84,12 +86,22 @@ abstract class DbModel extends Model implements SerializableInterface
         return self::save($model);
     }
     
+    /**
+     * Todo: delete, moved to repository
+     *
+     * @return string
+     */
     private static function pluralClass() : string
     {
         $class = Classes::shortName(static::class);
         return Pluralizer::plural($class);
     }
     
+    /**
+     * Todo: delete, moved to repository
+     *
+     * @return string
+     */
     public static function getTable() : string
     {
         if (strlen(static::$table) > 0) {
@@ -239,6 +251,11 @@ abstract class DbModel extends Model implements SerializableInterface
         );
     }
 
+    /**
+     * Todo: delete, moved to repository
+     *
+     * @return Rights
+     */
     private static function tableRights() : Rights
     {
         return self::$db->getTableRights(
@@ -251,7 +268,13 @@ abstract class DbModel extends Model implements SerializableInterface
         return self::tableRights()->forTable();
     }
     
-    public static function can($rights) : bool
+    /**
+     * Todo: delete, moved to repository
+     *
+     * @param string $rights
+     * @return boolean
+     */
+    public static function can(string $rights) : bool
     {
         return self::tableRights()->can($rights);
     }

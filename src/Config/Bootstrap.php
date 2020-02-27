@@ -46,14 +46,14 @@ use Plasticode\Parsing\Parsers\MarkdownParser;
 use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 use Plasticode\Parsing\Steps\ReplacesStep;
 use Plasticode\Parsing\Steps\TitlesStep;
-use Plasticode\Repositories\AuthTokenRepository;
-use Plasticode\Repositories\MenuItemRepository;
-use Plasticode\Repositories\MenuRepository;
-use Plasticode\Repositories\NewsRepository;
-use Plasticode\Repositories\PageRepository;
-use Plasticode\Repositories\RoleRepository;
-use Plasticode\Repositories\TagRepository;
-use Plasticode\Repositories\UserRepository;
+use Plasticode\Repositories\Idiorm\AuthTokenRepository;
+use Plasticode\Repositories\Idiorm\MenuItemRepository;
+use Plasticode\Repositories\Idiorm\MenuRepository;
+use Plasticode\Repositories\Idiorm\NewsRepository;
+use Plasticode\Repositories\Idiorm\PageRepository;
+use Plasticode\Repositories\Idiorm\RoleRepository;
+use Plasticode\Repositories\Idiorm\TagRepository;
+use Plasticode\Repositories\Idiorm\UserRepository;
 use Plasticode\SettingsProvider;
 use Plasticode\Twig\Extensions\AccessRightsExtension;
 use Plasticode\Util\Cases;
@@ -98,36 +98,76 @@ class Bootstrap
     public function getMappings() : array
     {
         return [
+            'dbClass' => function (ContainerInterface $container) {
+                return Db::class;
+            },
+            
+            'db' => function (ContainerInterface $container) {
+                $dbs = $this->dbSettings;
+                
+                \ORM::configure(
+                    'mysql:host=' . $dbs['host'] . ';dbname=' . $dbs['database']
+                );
+                
+                \ORM::configure('username', $dbs['user']);
+                \ORM::configure('password', $dbs['password'] ?? '');
+                
+                \ORM::configure(
+                    'driver_options',
+                    [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']
+                );
+                
+                $dbClass = $container->dbClass;
+                
+                return new $dbClass($container);
+            },
+
             'authTokenRepository' => function (ContainerInterface $container) {
-                return new AuthTokenRepository();
+                return new AuthTokenRepository(
+                    $container->db
+                );
             },
             
             'menuRepository' => function (ContainerInterface $container) {
-                return new MenuRepository();
+                return new MenuRepository(
+                    $container->db
+                );
             },
             
             'menuItemRepository' => function (ContainerInterface $container) {
-                return new MenuItemRepository();
+                return new MenuItemRepository(
+                    $container->db
+                );
             },
 
             'newsRepository' => function (ContainerInterface $container) {
-                return new NewsRepository();
+                return new NewsRepository(
+                    $container->db
+                );
             },
 
             'pageRepository' => function (ContainerInterface $container) {
-                return new PageRepository();
+                return new PageRepository(
+                    $container->db
+                );
             },
 
             'roleRepository' => function (ContainerInterface $container) {
-                return new RoleRepository();
+                return new RoleRepository(
+                    $container->db
+                );
             },
 
             'tagRepository' => function (ContainerInterface $container) {
-                return new TagRepository();
+                return new TagRepository(
+                    $container->db
+                );
             },
 
             'userRepository' => function (ContainerInterface $container) {
-                return new UserRepository();
+                return new UserRepository(
+                    $container->db
+                );
             },
 
             'settingsProvider' => function (ContainerInterface $container) {
@@ -313,30 +353,6 @@ class Bootstrap
                 return new Validator($container);
             },
             
-            'dbClass' => function (ContainerInterface $container) {
-                return Db::class;
-            },
-            
-            'db' => function (ContainerInterface $container) {
-                $dbs = $this->dbSettings;
-                
-                \ORM::configure(
-                    'mysql:host=' . $dbs['host'] . ';dbname=' . $dbs['database']
-                );
-                
-                \ORM::configure('username', $dbs['user']);
-                \ORM::configure('password', $dbs['password'] ?? '');
-                
-                \ORM::configure(
-                    'driver_options',
-                    [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']
-                );
-                
-                $dbClass = $container->dbClass;
-                
-                return new $dbClass($container);
-            },
-
             'api' => function (ContainerInterface $container) {
                 return new Api($container);
             },
