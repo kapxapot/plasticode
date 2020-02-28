@@ -29,16 +29,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Plasticode\\": "src"
+            "Plasticode\\": "src",
+            "Plasticode\\Tests\\": "tests"
         },
         "files": [
             "src/functions.php"
         ]
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Plasticode\\Tests\\": "tests"
-        }
     },
     "scripts": {
         "test": "phpunit"
