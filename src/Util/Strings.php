@@ -428,4 +428,16 @@ class Strings
             ? mb_substr($str, 0, strlen($str) - strlen($end))
             : $str;
     }
+
+    /**
+     * Checks if the string contains the mask.
+     *
+     * @param string $str
+     * @param string $mask
+     * @return boolean
+     */
+    public static function contains(string $str, string $mask) : bool
+    {
+        return strpos($str, $mask) !== false;
+    }
 }

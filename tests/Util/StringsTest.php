@@ -213,4 +213,36 @@ final class StringsTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider containsProvider
+     *
+     * @param string $original
+     * @param string $mask
+     * @param boolean $expected
+     * @return void
+     */
+    public function testContains(string $original, string $mask, bool $expected) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Strings::contains($original, $mask)
+        );
+    }
+
+    public function containsProvider() : array
+    {
+        return [
+            [
+                'abcdefghijklmn',
+                'hij',
+                true
+            ],
+            [
+                'abcdefghijklmn',
+                'sux',
+                false
+            ],
+        ];
+    }
 }
