@@ -206,7 +206,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
             return $this->{$camelCase}();
         }
         
-        return $this->obj[$snakeCase];
+        return $this->obj[$snakeCase] ?? null;
     }
     
     public function __set(string $property, $value)
