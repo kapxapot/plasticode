@@ -6,6 +6,7 @@ use Plasticode\Parsing\LinkMappers\PageLinkMapper;
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Tests\BaseRenderTestCase;
+use Plasticode\Tests\Factories\PageLinkMapperFactory;
 use Plasticode\Tests\Mocks\LinkerMock;
 use Plasticode\Tests\Mocks\Repositories\PageRepositoryMock;
 use Plasticode\Tests\Mocks\Repositories\TagRepositoryMock;
@@ -20,13 +21,12 @@ final class PageLinkMapperTest extends BaseRenderTestCase
         parent::setUp();
         
         $linker = new LinkerMock();
+        $tagLinkMapper = new TagLinkMapper($this->renderer, $linker);
 
-        $this->mapper = new PageLinkMapper(
-            new PageRepositoryMock(),
-            new TagRepositoryMock(),
+        $this->mapper = PageLinkMapperFactory::make(
             $this->renderer,
             $linker,
-            new TagLinkMapper($this->renderer, $linker)
+            $tagLinkMapper
         );
     }
 

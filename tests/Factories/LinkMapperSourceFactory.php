@@ -11,6 +11,8 @@ use Plasticode\Tests\Mocks\GenericLinkMapperMock;
 use Plasticode\Tests\Mocks\LinkerMock;
 use Plasticode\Tests\Mocks\Repositories\PageRepositoryMock;
 use Plasticode\Tests\Mocks\Repositories\TagRepositoryMock;
+use Plasticode\Tests\Seeders\PageSeeder;
+use Plasticode\Tests\Seeders\TagSeeder;
 
 class LinkMapperSourceFactory
 {
@@ -20,9 +22,7 @@ class LinkMapperSourceFactory
 
         $tagLinkMapper = new TagLinkMapper($renderer, $linker);
 
-        $pageLinkMapper = new PageLinkMapper(
-            new PageRepositoryMock(),
-            new TagRepositoryMock(),
+        $pageLinkMapper = PageLinkMapperFactory::make(
             $renderer,
             $linker,
             $tagLinkMapper

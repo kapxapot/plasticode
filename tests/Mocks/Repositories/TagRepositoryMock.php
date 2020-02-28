@@ -5,26 +5,16 @@ namespace Plasticode\Tests\Mocks\Repositories;
 use Plasticode\Collection;
 use Plasticode\Models\Tag;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
+use Plasticode\Tests\Seeders\Interfaces\ArraySeederInterface;
 
 class TagRepositoryMock implements TagRepositoryInterface
 {
     /** @var Collection */
     private $tags;
 
-    public function __construct()
+    public function __construct(ArraySeederInterface $seeder)
     {
-        $this->tags = Collection::make(
-            [
-                new Tag(
-                    [
-                        'id' => 1,
-                        'tag' => 'warcraft',
-                        'entity_type' => 'pages',
-                        'entity_id' => 2
-                    ]
-                ),
-            ]
-        );
+        $this->tags = Collection::make($seeder->seed());
     }
 
     public function getIdsByTag(string $entityType, string $tag) : Collection
