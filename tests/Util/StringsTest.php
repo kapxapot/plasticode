@@ -217,12 +217,12 @@ final class StringsTest extends TestCase
     /**
      * @dataProvider containsProvider
      *
-     * @param string $original
+     * @param string|null $original
      * @param string $mask
      * @param boolean $expected
      * @return void
      */
-    public function testContains(string $original, string $mask, bool $expected) : void
+    public function testContains(?string $original, string $mask, bool $expected) : void
     {
         $this->assertEquals(
             $expected,
@@ -240,6 +240,11 @@ final class StringsTest extends TestCase
             ],
             [
                 'abcdefghijklmn',
+                'sux',
+                false
+            ],
+            [
+                null,
                 'sux',
                 false
             ],

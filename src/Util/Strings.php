@@ -432,12 +432,16 @@ class Strings
     /**
      * Checks if the string contains the mask.
      *
-     * @param string $str
+     * @param string|null $str
      * @param string $mask
      * @return boolean
      */
-    public static function contains(string $str, string $mask) : bool
+    public static function contains(?string $str, string $mask) : bool
     {
+        if (is_null($str)) {
+            return false;
+        }
+
         return strpos($str, $mask) !== false;
     }
 }
