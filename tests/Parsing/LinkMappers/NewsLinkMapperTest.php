@@ -3,7 +3,6 @@
 namespace Plasticode\Tests\Parsing\LinkMappers;
 
 use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
-use Plasticode\Parsing\LinkMappers\TagLinkMapper;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Tests\BaseRenderTestCase;
 use Plasticode\Tests\Mocks\LinkerMock;
