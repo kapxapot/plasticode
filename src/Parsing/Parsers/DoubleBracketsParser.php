@@ -55,6 +55,12 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
     private function parseDoubleBracketsMatch(?string $match) : ?string
     {
         $chunks = preg_split(self::ChunkDelimiterPattern, $match);
+        $chunks = Arrays::trim($chunks);
+
+        if (empty($chunks)) {
+            return null;
+        }
+
         $slug = SlugLinkMapper::toSlugChunk($chunks[0]);
 
         if (!$slug->hasTag()) {

@@ -337,6 +337,24 @@ class Arrays
     }
     
     /**
+     * Trims strings in array and removes empty ones (cleans array).
+     *
+     * @param string[] $strArray
+     * @return string[]
+     */
+    public static function trim(array $strArray) : array
+    {
+        $array = array_map(
+            function($chunk) {
+                return trim($chunk);
+            },
+            $strArray
+        );
+        
+        return Arrays::clean($array);
+    }
+    
+    /**
      * Removes empty strings and nulls from array.
      * 
      * @param array $array

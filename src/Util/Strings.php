@@ -130,7 +130,7 @@ class Strings
      */
     public static function explode(string $str, string $delimiter = ',') : array
     {
-        return self::trimArray(explode($delimiter, $str));
+        return Arrays::trim(explode($delimiter, $str));
     }
     
     /**
@@ -141,25 +141,7 @@ class Strings
      */
     public static function toWords(string $str) : array
     {
-        return self::trimArray(preg_split("/\s/", $str));
-    }
-    
-    /**
-     * Trims strings in array and removes empty ones (cleans array).
-     *
-     * @param string[] $strArray
-     * @return string[]
-     */
-    public static function trimArray(array $strArray) : array
-    {
-        $array = array_map(
-            function($chunk) {
-                return trim($chunk);
-            },
-            $strArray
-        );
-        
-        return Arrays::clean($array);
+        return Arrays::trim(preg_split("/\s/", $str));
     }
     
     /**

@@ -35,44 +35,78 @@ final class DoubleBracketsParserTest extends BaseRenderTestCase
         parent::tearDown();
     }
 
-    public function testParse() : void
+    /**
+     * @dataProvider parseProvider
+     */
+    public function testParse(string $original, string $expected) : void
     {
-        $context = ParsingContext::fromLines(
-            [
-                '[[Illidan Stormrage]]',
-                '[[illidan-stormrage|Illidanchick]]',
-                '[[about us]]',
-                '[[warcraft]]',
-                '[[tag:about us]]',
-                '[[tag:About us]]',
-                '[[tag:about us|About us]]',
-                '[[tag:warcraft]]',
-                '[[news:123]]',
-                '[[news:5|Some great news!]]',
-                '[[area:45|New area]]',
-            ]
-        );
-
-        $parsedContext = $this->parser->parseContext($context);
+        $context = $this->parser->parse($original);
 
         $this->assertEquals(
-            Text::fromLines(
-                [
-                    '<span class="no-url">Illidan Stormrage</span>',
-                    '<span class="no-url" data-toggle="tooltip" title="illidan-stormrage">Illidanchick</span>',
-                    '<a href="%page%/about-us" class="entity-url">about us</a>',
-                    '<a href="%tag%/warcraft" class="entity-url">warcraft</a>',
-                    '<a href="%tag%/about+us" class="entity-url">about us</a>',
-                    '<a href="%tag%/About+us" class="entity-url">About us</a>',
-                    '<a href="%tag%/about+us" class="entity-url">About us</a>',
-                    '<a href="%tag%/warcraft" class="entity-url">warcraft</a>',
-                    '<a href="%news%/123" class="entity-url">123</a>',
-                    '<a href="%news%/5" class="entity-url">Some great news!</a>',
-                    '<a href="http://generic/area/45">New area</a>',
-                ]
-            ),
-            $parsedContext->text
+            $expected,
+            $context->text
         );
+    }
+
+    public function parseProvider() : array
+    {
+        return [
+            [
+                '[[]]', '[[]]'
+            ],
+            [
+                '[[Illidan Stormrage]]',
+                '<span class="no-url">Illidan Stormrage</span>'
+            ],
+            [
+                '[[illidan-stormrage|Illidanchick]]',
+                '<span class="no-url" data-toggle="tooltip" title="illidan-stormrage">Illidanchick</span>'
+            ],
+            [
+                '[[about us]]',
+                '<a href="%page%/about-us" class="entity-url">about us</a>'
+            ],
+            [
+                '[[warcraft]]',
+                '<a href="%tag%/warcraft" class="entity-url">warcraft</a>'
+            ],
+            [
+                '[[tag:about us]]',
+                '<a href="%tag%/about+us" class="entity-url">about us</a>'
+            ],
+            [
+                '[[tag:About us]]',
+                '<a href="%tag%/About+us" class="entity-url">About us</a>'
+            ],
+            [
+                '[[tag:about us|About us]]',
+                '<a href="%tag%/about+us" class="entity-url">About us</a>'
+            ],
+            [
+                '[[tag:warcraft]]',
+                '<a href="%tag%/warcraft" class="entity-url">warcraft</a>'
+            ],
+            [
+                '[[news:123]]',
+                '<a href="%news%/123" class="entity-url">123</a>'
+            ],
+            [
+                '[[news:5|Some great news!]]',
+                '<a href="%news%/5" class="entity-url">Some great news!</a>'
+            ],
+            [
+                '[[area:45|New area]]',
+                '<a href="http://generic/area/45">New area</a>'
+            ],
+            [
+                '[[about us|]]',
+                '<a href="%page%/about-us" class="entity-url">about us</a>'
+            ],
+            [
+                '[[about us| ]]',
+                '<a href="%page%/about-us" class="entity-url">about us</a>'
+            ]
+        ];
     }
 
     public function testRenderLinks() : void

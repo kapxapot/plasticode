@@ -167,4 +167,36 @@ final class MiscTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider trimProvider
+     *
+     * @param array $array
+     * @param array $expected
+     * @return void
+     */
+    public function testTrim(array $array, array $expected) : void
+    {
+        $this->assertEquals($expected, Arrays::trim($array));
+    }
+
+    public function trimProvider() : array
+    {
+        return [
+            [[], []],
+            [
+                [
+                    'some  ',
+                    '   ',
+                    '  string',
+                    null
+                ],
+                ['some', 'string']
+            ],
+            [
+                ['already', 'clean'],
+                ['already', 'clean']
+            ],
+        ];
+    }
 }
