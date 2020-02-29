@@ -33,7 +33,7 @@
             "Plasticode\\Tests\\": "tests"
         },
         "files": [
-            "src/functions.php"
+            "functions/functions.php"
         ]
     },
     "scripts": {
