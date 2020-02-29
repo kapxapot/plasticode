@@ -59,4 +59,9 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface
             ->orderByAsc('tag')
             ->all();
     }
+
+    public function store(?array $data = null) : Tag
+    {
+        return Tag::store($data);
+    }
 }

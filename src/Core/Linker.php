@@ -5,8 +5,6 @@ namespace Plasticode\Core;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\IO\Image;
-use Plasticode\Models\News;
-use Plasticode\Models\Page;
 use Plasticode\Util\Numbers;
 use Plasticode\Util\Strings;
 use Slim\Interfaces\RouterInterface;

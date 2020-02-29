@@ -8,8 +8,6 @@ use Plasticode\Parsing\ParsingContext;
 use Plasticode\Tests\BaseRenderTestCase;
 use Plasticode\Tests\Factories\PageLinkMapperFactory;
 use Plasticode\Tests\Mocks\LinkerMock;
-use Plasticode\Tests\Mocks\Repositories\PageRepositoryMock;
-use Plasticode\Tests\Mocks\Repositories\TagRepositoryMock;
 
 final class PageLinkMapperTest extends BaseRenderTestCase
 {

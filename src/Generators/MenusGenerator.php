@@ -3,7 +3,11 @@
 namespace Plasticode\Generators;
 
 use Plasticode\Models\Menu;
+use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 
+/**
+ * @property MenuRepositoryInterface $menuRepository
+ */
 class MenusGenerator extends EntityGenerator
 {
     public function getRules(array $data, $id = null) : array
@@ -21,7 +25,7 @@ class MenusGenerator extends EntityGenerator
     {
         $item = parent::afterLoad($item);
 
-        $menu = Menu::get($item[$this->idField]);
+        $menu = $this->menuRepository->get($item[$this->idField]);
 
         $item['url'] = $menu->url();
 

@@ -25,18 +25,6 @@ class TagRepositoryMock implements TagRepositoryInterface
             ->extract('entity_id');
     }
 
-    public function deleteByEntity(string $entityType, int $entityId) : bool
-    {
-        $this->tags = $this->tags
-            ->where(
-                function (Tag $tag) use ($entityType, $entityId) {
-                    return !($tag->entityId == $entityId && $tag->entityType == $entityType);
-                }
-            );
-
-        return true;
-    }
-    
     public function getByTag(string $tag) : Collection
     {
         return $this->tags
@@ -52,5 +40,25 @@ class TagRepositoryMock implements TagRepositoryInterface
     {
         return $this->tags
             ->where('tag', $searchQuery);
+    }
+
+    public function store(?array $data = null) : Tag
+    {
+        $tag = new Tag($data);
+        $this->tags = $this->tags->add($tag);
+
+        return $tag;
+    }
+
+    public function deleteByEntity(string $entityType, int $entityId) : bool
+    {
+        $this->tags = $this->tags
+            ->where(
+                function (Tag $tag) use ($entityType, $entityId) {
+                    return !($tag->entityId == $entityId && $tag->entityType == $entityType);
+                }
+            );
+
+        return true;
     }
 }

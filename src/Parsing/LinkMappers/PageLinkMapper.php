@@ -18,7 +18,7 @@ class PageLinkMapper extends EntityLinkMapper
     /** @var PageRepositoryInterface */
     private $pageRepository;
 
-    /** @var TagRepository */
+    /** @var TagRepositoryInterface */
     private $tagRepository;
 
     /** @var TagLinkMapper */

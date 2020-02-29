@@ -20,7 +20,7 @@ class EntityGenerator extends Contained
      */
     protected $entity;
 
-    /** @var Plasticode\Validation\ValidationRules */
+    /** @var ValidationRules */
     protected $rules;
 
     /**
@@ -41,7 +41,7 @@ class EntityGenerator extends Contained
     }
 
     /**
-     * Get entity name
+     * Get entity name.
      *
      * @return string
      */
@@ -115,7 +115,7 @@ class EntityGenerator extends Contained
     }
 
     /**
-     * Generate API routes based on settings
+     * Generate API routes based on settings.
      *
      * @param App $app
      * @param \Closure $access Creates AccessMiddleware
@@ -133,7 +133,7 @@ class EntityGenerator extends Contained
     }
     
     /**
-     * Generate API route for loading all entities
+     * Generate API route for loading all entities.
      *
      * @param App $app
      * @param \Closure $access Creates AccessMiddleware
@@ -181,7 +181,7 @@ class EntityGenerator extends Contained
     }
     
     /**
-     * Generate CRUD routes
+     * Generate CRUD routes.
      *
      * @param App $app
      * @param \Closure $access
@@ -250,7 +250,7 @@ class EntityGenerator extends Contained
     }
 
     /**
-     * Generate admin page route
+     * Generate admin page route.
      *
      * @param App $app
      * @param \Closure $access

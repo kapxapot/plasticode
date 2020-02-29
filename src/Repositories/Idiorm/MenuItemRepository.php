@@ -8,6 +8,11 @@ use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 
 class MenuItemRepository extends IdiormRepository implements MenuItemRepositoryInterface
 {
+    public function get(int $id) : ?MenuItem
+    {
+        return MenuItem::get($id);
+    }
+
     public function getByMenu(int $menuId) : Collection
     {
         return MenuItem::query()
