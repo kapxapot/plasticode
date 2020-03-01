@@ -25,16 +25,11 @@ abstract class EntityLinkMapper extends SlugLinkMapper implements EntityLinkMapp
         $this->renderer = $renderer;
         $this->linker = $linker;
 
-        $this->validateEntity();
+        Assert::notEmpty($this->entity(), 'Entity is not specified.');
+        Assert::alnum($this->entity());
     }
 
     protected abstract function entity() : string;
-
-    private function validateEntity() : void
-    {
-        Assert::notEmpty($this->entity(), 'Entity name is not specified.');
-        Assert::alnum($this->entity());
-    }
 
     protected function renderPlaceholder(string $slug, string $text) : string
     {
