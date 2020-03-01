@@ -2,8 +2,12 @@
 
 namespace Plasticode\Parsing\LinkMappers;
 
+use Plasticode\Parsing\LinkMappers\Basic\TaggedEntityLinkMapper;
 use Plasticode\Util\Strings;
 
+/**
+ * Tag link format: [[tag:id|text]]
+ */
 class TagLinkMapper extends TaggedEntityLinkMapper
 {
     protected function entity() : string

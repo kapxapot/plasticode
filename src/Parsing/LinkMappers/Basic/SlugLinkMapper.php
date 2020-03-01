@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing\LinkMappers;
+namespace Plasticode\Parsing\LinkMappers\Basic;
 
 use Plasticode\Parsing\Interfaces\LinkMapperInterface;
 use Plasticode\Parsing\SlugChunk;

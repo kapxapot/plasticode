@@ -2,7 +2,7 @@
 
 namespace Plasticode\Tests\Mocks;
 
-use Plasticode\Parsing\LinkMappers\TaggedLinkMapper;
+use Plasticode\Parsing\LinkMappers\Basic\TaggedLinkMapper;
 
 class TaggedLinkMapperMock extends TaggedLinkMapper
 {

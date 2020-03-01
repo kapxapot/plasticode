@@ -4,6 +4,7 @@ namespace Plasticode\Parsing\LinkMappers;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
+use Plasticode\Parsing\LinkMappers\Basic\EntityLinkMapper;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\SlugChunk;
 use Plasticode\Repositories\Interfaces\PageRepositoryInterface;

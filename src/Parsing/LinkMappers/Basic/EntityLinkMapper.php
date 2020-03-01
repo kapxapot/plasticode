@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing\LinkMappers;
+namespace Plasticode\Parsing\LinkMappers\Basic;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\RendererInterface;

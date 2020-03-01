@@ -4,7 +4,7 @@ namespace Plasticode\Parsing\Parsers;
 
 use Plasticode\Parsing\Interfaces\LinkMapperSourceInterface;
 use Plasticode\Parsing\Interfaces\LinkRendererInterface;
-use Plasticode\Parsing\LinkMappers\SlugLinkMapper;
+use Plasticode\Parsing\LinkMappers\Basic\SlugLinkMapper;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Util\Arrays;

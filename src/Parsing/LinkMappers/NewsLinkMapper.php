@@ -2,6 +2,11 @@
 
 namespace Plasticode\Parsing\LinkMappers;
 
+use Plasticode\Parsing\LinkMappers\Basic\TaggedEntityLinkMapper;
+
+/**
+ * News link format: [[news:id|text]]
+ */
 class NewsLinkMapper extends TaggedEntityLinkMapper
 {
     protected function entity() : string

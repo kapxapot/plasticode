@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing\LinkMappers;
+namespace Plasticode\Parsing\LinkMappers\Basic;
 
 use Plasticode\Parsing\Interfaces\TaggedLinkMapperInterface;
 use Plasticode\Parsing\LinkMappers\Traits\Tagged;

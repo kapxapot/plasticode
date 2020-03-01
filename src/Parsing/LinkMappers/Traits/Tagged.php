@@ -11,8 +11,6 @@ trait Tagged
 {
     public abstract function tag() : string;
 
-    protected abstract function renderSlug(string $slug, string $text) : ?string;
-
     /**
      * Maps tagged slug and other chunks to a link.
      *
@@ -41,4 +39,6 @@ trait Tagged
     {
         return $slug;
     }
+
+    protected abstract function renderSlug(string $slug, string $text) : ?string;
 }

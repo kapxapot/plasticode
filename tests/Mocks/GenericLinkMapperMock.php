@@ -2,7 +2,7 @@
 
 namespace Plasticode\Tests\Mocks;
 
-use Plasticode\Parsing\LinkMappers\SlugLinkMapper;
+use Plasticode\Parsing\LinkMappers\Basic\SlugLinkMapper;
 use Plasticode\Parsing\SlugChunk;
 use Webmozart\Assert\Assert;
 
