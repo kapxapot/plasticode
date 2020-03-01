@@ -55,6 +55,9 @@ final class DoubleBracketsParserTest extends BaseRenderTestCase
                 '[[]]', '[[]]'
             ],
             [
+                '[[ ]]', '[[ ]]'
+            ],
+            [
                 '[[Illidan Stormrage]]',
                 '<span class="no-url">Illidan Stormrage</span>'
             ],
