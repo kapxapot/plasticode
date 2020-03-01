@@ -3,11 +3,12 @@
 namespace Plasticode\Parsing\LinkMappers\Basic;
 
 use Plasticode\Parsing\Interfaces\TaggedLinkMapperInterface;
+use Plasticode\Parsing\LinkMappers\Traits\SimpleMapSlug;
 use Plasticode\Parsing\LinkMappers\Traits\Tagged;
 
 abstract class TaggedEntityLinkMapper extends EntityLinkMapper implements TaggedLinkMapperInterface
 {
-    use Tagged;
+    use SimpleMapSlug, Tagged;
 
     public function tag() : string
     {

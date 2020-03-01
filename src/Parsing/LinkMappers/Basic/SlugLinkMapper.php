@@ -21,13 +21,25 @@ abstract class SlugLinkMapper implements LinkMapperInterface
     
         $slugChunk = self::toSlugChunk($chunks[0]);
 
+        $this->validateSlugChunk($slugChunk);
+
         return $this->mapSlug(
             $slugChunk,
             Arrays::skip($chunks, 1)
         );
     }
 
-    public abstract function mapSlug(SlugChunk $slugChunk, array $otherChunks) : ?string;
+    /**
+     * This method must throw exceptions (use Assert) if the slug chunk is not valid.
+     *
+     * @param SlugChunk $slugChunk
+     * @return void
+     */
+    protected function validateSlugChunk(SlugChunk $slugChunk) : void
+    {
+    }
+
+    protected abstract function mapSlug(SlugChunk $slugChunk, array $otherChunks) : ?string;
 
     /**
      * Parses chunk in the form of "tag:slug" or just "slug" as a slug chunk.
