@@ -9,13 +9,11 @@ use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\SlugChunk;
 use Webmozart\Assert\Assert;
 
+/**
+ * Entity link mapper.
+ */
 abstract class EntityLinkMapper extends SlugLinkMapper implements EntityLinkMapperInterface
 {
-    /**
-     * @var string Entity name
-     */
-    protected $entity;
-
     /** @var RendererInterface */
     protected $renderer;
 
@@ -26,18 +24,16 @@ abstract class EntityLinkMapper extends SlugLinkMapper implements EntityLinkMapp
     {
         $this->renderer = $renderer;
         $this->linker = $linker;
+
+        $this->validateEntity();
     }
 
-    public function entity() : string
-    {
-        $this->validateEntity();
-        return $this->entity;
-    }
+    protected abstract function entity() : string;
 
     private function validateEntity() : void
     {
-        Assert::notEmpty($this->entity, 'Entity name is not specified.');
-        Assert::alnum($this->entity);
+        Assert::notEmpty($this->entity(), 'Entity name is not specified.');
+        Assert::alnum($this->entity());
     }
 
     protected function renderPlaceholder(string $slug, string $text) : string

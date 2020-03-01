@@ -39,7 +39,10 @@ class PageLinkMapper extends EntityLinkMapper
         $this->tagLinkMapper = $tagLinkMapper;
     }
 
-    protected $entity = 'page';
+    protected function entity() : string
+    {
+        return 'page';
+    }
 
     protected function baseUrl() : string
     {

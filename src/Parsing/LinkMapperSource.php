@@ -2,17 +2,17 @@
 
 namespace Plasticode\Parsing;
 
-use Plasticode\Parsing\Interfaces\EntityLinkMapperInterface;
 use Plasticode\Parsing\Interfaces\LinkMapperInterface;
 use Plasticode\Parsing\Interfaces\LinkMapperSourceInterface;
+use Plasticode\Parsing\Interfaces\TaggedLinkMapperInterface;
 
 class LinkMapperSource implements LinkMapperSourceInterface
 {
     /** @var LinkMapperInterface|null */
     private $defaultMapper;
 
-    /** @var EntityLinkMapperInterface[] */
-    private $entityMappers = [];
+    /** @var TaggedLinkMapperInterface[] */
+    private $taggedMappers = [];
 
     /** @var LinkMapperInterface|null */
     private $genericMapper;
@@ -27,15 +27,15 @@ class LinkMapperSource implements LinkMapperSourceInterface
         $this->defaultMapper = $mapper;
     }
 
-    public function registerEntityMapper(EntityLinkMapperInterface $mapper) : void
+    public function registerTaggedMapper(TaggedLinkMapperInterface $mapper) : void
     {
-        $tag = $mapper->entity();
-        $this->entityMappers[$tag] = $mapper;
+        $tag = $mapper->tag();
+        $this->taggedMappers[$tag] = $mapper;
     }
 
-    public function getEntityMapper(string $tag) : ?EntityLinkMapperInterface
+    public function getTaggedMapper(string $tag) : ?TaggedLinkMapperInterface
     {
-        return $this->entityMappers[$tag] ?? null;
+        return $this->taggedMappers[$tag] ?? null;
     }
 
     public function getGenericMapper() : ?LinkMapperInterface
@@ -57,7 +57,7 @@ class LinkMapperSource implements LinkMapperSourceInterface
     {
         return array_filter(
             array_merge(
-                array_values($this->entityMappers),
+                array_values($this->taggedMappers),
                 [$this->defaultMapper, $this->genericMapper]
             )
         );

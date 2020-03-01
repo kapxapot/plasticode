@@ -95,7 +95,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
     private function renderTag(string $tag, array $chunks) : ?string
     {
         $mapper =
-            $this->config->getEntityMapper($tag)
+            $this->config->getTaggedMapper($tag)
             ??
             $this->config->getGenericMapper();
 

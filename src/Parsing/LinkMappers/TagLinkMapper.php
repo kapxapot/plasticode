@@ -6,7 +6,10 @@ use Plasticode\Util\Strings;
 
 class TagLinkMapper extends TaggedEntityLinkMapper
 {
-    protected $entity = 'tag';
+    protected function entity() : string
+    {
+        return 'tag';
+    }
 
     protected function baseUrl() : string
     {

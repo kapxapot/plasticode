@@ -20,20 +20,20 @@ interface LinkMapperSourceInterface
     public function setDefaultMapper(LinkMapperInterface $mapper) : void;
 
     /**
-     * Registers entity mapper.
+     * Registers tagged mapper.
      *
-     * @param EntityLinkMapperInterface $mapper
+     * @param TaggedLinkMapperInterface $mapper
      * @return void
      */
-    public function registerEntityMapper(EntityLinkMapperInterface $mapper) : void;
+    public function registerTaggedMapper(TaggedLinkMapperInterface $mapper) : void;
 
     /**
-     * Returns entity mapper for a tag.
+     * Returns tagged mapper for the tag.
      *
      * @param string $tag
-     * @return EntityLinkMapperInterface|null
+     * @return TaggedLinkMapperInterface|null
      */
-    public function getEntityMapper(string $tag) : ?EntityLinkMapperInterface;
+    public function getTaggedMapper(string $tag) : ?TaggedLinkMapperInterface;
 
     /**
      * Returns mapper for non-specified tags.

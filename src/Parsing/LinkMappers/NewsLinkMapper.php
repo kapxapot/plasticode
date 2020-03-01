@@ -4,7 +4,10 @@ namespace Plasticode\Parsing\LinkMappers;
 
 class NewsLinkMapper extends TaggedEntityLinkMapper
 {
-    protected $entity = 'news';
+    protected function entity() : string
+    {
+        return 'news';
+    }
 
     protected function baseUrl() : string
     {
