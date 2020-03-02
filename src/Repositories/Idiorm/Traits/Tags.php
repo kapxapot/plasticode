@@ -8,11 +8,16 @@ use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
 /**
+ * To use this trait you MUST declare:
+ * 
+ * - private TagRepositoryInterface $tagRepository
+ * - public function getTable() : string (already declared in IdiormRepository class)
+ * 
  * @property TagRepositoryInterface $tagRepository
  */
 trait Tags
 {
-    protected function getByTagQuery(string $tag, Query $query = null) : Query
+    protected function getByTagQuery(string $tag, Query $baseQuery) : Query
     {
         Assert::notNull($this->tagRepository);
 
@@ -23,8 +28,7 @@ trait Tags
             return Query::empty();
         }
         
-        $query = $query ?? $this->query();
-        $query = $query->whereIn('id', $ids);
+        $query = $baseQuery->whereIn('id', $ids);
 
         if (method_exists(static::class, 'tagsWhere')) {
             $query = $this->tagsWhere($query);
@@ -34,6 +38,4 @@ trait Tags
     }
 
     public abstract function getTable() : string;
-
-    protected abstract function query() : Query;
 }
