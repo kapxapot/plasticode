@@ -6,8 +6,8 @@ use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
 use Plasticode\Parsing\LinkMapperSource;
-use Plasticode\Tests\Mocks\GenericLinkMapperMock;
 use Plasticode\Tests\Mocks\LinkerMock;
+use Plasticode\Tests\Mocks\LinkMappers\GenericLinkMapperMock;
 
 class LinkMapperSourceFactory
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Tests\Mocks;
+namespace Plasticode\Tests\Mocks\LinkMappers;
 
 use Plasticode\Parsing\LinkMappers\Basic\SlugLinkMapper;
 use Plasticode\Parsing\SlugChunk;
