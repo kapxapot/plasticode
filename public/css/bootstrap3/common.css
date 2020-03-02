@@ -80,6 +80,11 @@ body {
     font-weight: bolder;
 }
 
+.nowrap,
+.no-wrap {
+    white-space: nowrap;
+}
+
 .button-create {
     margin-left: 5px;
 }

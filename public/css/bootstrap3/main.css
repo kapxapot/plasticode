@@ -785,10 +785,6 @@ fieldset[disabled] .btn-primary.focus {
     padding: 12px;
 }
 
-.nowrap {
-    white-space: nowrap;
-}
-
 a.important {
     font-weight: bolder;
 }
