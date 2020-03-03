@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ruleset name="Plasticode" namespace="Plasticode\CS\Standard">
+    <!-- source: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-Ruleset -->
+    <description>Plasticode coding standard</description>
+
+    <rule ref="Zend">
+        <exclude name="Generic.Files.LineLength"/>
+        <exclude name="Zend.NamingConventions.ValidVariableName"/>
+    </rule>
+
+    <rule ref="Generic.Files.LineEndings">
+        <properties>
+            <property name="eolChar" value="\r\n"/>
+        </properties>
+    </rule>
+</ruleset>
