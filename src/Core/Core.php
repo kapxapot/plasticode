@@ -38,7 +38,7 @@ class Core
         }
     }
 
-    public static function initModels($container): void
+    public static function initModels(ContainerInterface $container): void
     {
         Model::init($container);
     }
