@@ -8,6 +8,7 @@ use Plasticode\Exceptions\InvalidResultException;
 use Plasticode\Gallery\ThumbStrategies\Interfaces\ThumbStrategyInterface;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
+use Plasticode\Models\DbModel;
 use Psr\Container\ContainerInterface;
 
 class Gallery extends Contained
@@ -308,8 +309,11 @@ class Gallery extends Contained
 
     /**
      * Checks if thumb exists, creates it otherwise.
+     * 
+     * @param mixed $item
+     * @return void
      */
-    public function ensureThumbExists(\ORM $item) : void
+    public function ensureThumbExists($item) : void
     {
         $thumbPath = $this->buildThumbPath(
             $item->id,
@@ -328,11 +332,11 @@ class Gallery extends Contained
     /**
      * Calculates the average RBGA color for the picture.
      *
-     * @param \ORM $item
+     * @param DbModel|\ORM $item
      * @param Image|null $picture
      * @return string
      */
-    public function getAvgColor(\ORM $item, ?Image $picture = null) : string
+    public function getAvgColor($item, ?Image $picture = null) : string
     {
         $picture = $picture ?? $this->loadPicture($item);
         
