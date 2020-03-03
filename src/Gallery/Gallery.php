@@ -203,7 +203,11 @@ class Gallery extends Contained
         return $item;
     }
     
-    public function loadPicture(\ORM $item) : Image
+    /**
+     * @param DbModel|\ORM $item
+     * @return Image
+     */
+    public function loadPicture($item) : Image
     {
         $imgType = $item->{$this->pictureTypeField};
         $fileName = $this->buildPicturePath($item->id, $imgType);
