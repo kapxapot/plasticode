@@ -33,6 +33,13 @@ class LinkMapperSource implements LinkMapperSourceInterface
         $this->taggedMappers[$tag] = $mapper;
     }
 
+    public function registerTaggedMappers(array $mappers) : void
+    {
+        foreach ($mappers as $mapper) {
+            $this->registerTaggedMapper($mapper);
+        }
+    }
+
     public function getTaggedMapper(string $tag) : ?TaggedLinkMapperInterface
     {
         return $this->taggedMappers[$tag] ?? null;

@@ -28,6 +28,14 @@ interface LinkMapperSourceInterface
     public function registerTaggedMapper(TaggedLinkMapperInterface $mapper) : void;
 
     /**
+     * Registers many tagged mappers.
+     *
+     * @param TaggedLinkMapperInterface[] $mappers
+     * @return void
+     */
+    public function registerTaggedMappers(array $mappers) : void;
+
+    /**
      * Returns tagged mapper for the tag.
      *
      * @param string $tag
