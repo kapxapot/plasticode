@@ -1,11 +1,11 @@
 <?php
 
-namespace Plasticode\Tests\Mocks\Repositories;
+namespace Plasticode\Testing\Mocks\Repositories;
 
 use Plasticode\Collection;
 use Plasticode\Models\Page;
 use Plasticode\Repositories\Interfaces\PageRepositoryInterface;
-use Plasticode\Tests\Seeders\Interfaces\ArraySeederInterface;
+use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 
 class PageRepositoryMock implements PageRepositoryInterface
 {

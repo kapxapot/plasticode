@@ -1,13 +1,13 @@
 <?php
 
-namespace Plasticode\Tests\Factories;
+namespace Plasticode\Testing\Factories;
 
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
 use Plasticode\Parsing\LinkMapperSource;
-use Plasticode\Tests\Mocks\LinkerMock;
-use Plasticode\Tests\Mocks\LinkMappers\GenericLinkMapperMock;
+use Plasticode\Testing\Mocks\LinkerMock;
+use Plasticode\Testing\Mocks\LinkMappers\GenericLinkMapperMock;
 
 class LinkMapperSourceFactory
 {
@@ -27,8 +27,12 @@ class LinkMapperSourceFactory
 
         $config->setDefaultMapper($pageLinkMapper);
 
-        $config->registerTaggedMapper(new NewsLinkMapper($renderer, $linker));
-        $config->registerTaggedMapper($tagLinkMapper);
+        $config->registerTaggedMappers(
+            [
+                new NewsLinkMapper($renderer, $linker),
+                $tagLinkMapper,
+            ]
+        );
 
         $config->setGenericMapper(new GenericLinkMapperMock());
 

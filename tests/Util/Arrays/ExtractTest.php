@@ -4,7 +4,7 @@ namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Models\Model;
-use Plasticode\Tests\Dummies\DummyModel;
+use Plasticode\Testing\Dummies\DummyModel;
 use Plasticode\Util\Arrays;
 
 final class ExtractTest extends TestCase

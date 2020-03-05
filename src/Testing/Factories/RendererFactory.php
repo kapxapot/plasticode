@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Tests\Factories;
+namespace Plasticode\Testing\Factories;
 
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Core\Renderer;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Plasticode\Tests\Mocks\Repositories;
+namespace Plasticode\Testing\Mocks\Repositories;
 
 use Plasticode\Collection;
 use Plasticode\Models\Tag;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
-use Plasticode\Tests\Seeders\Interfaces\ArraySeederInterface;
+use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 
 class TagRepositoryMock implements TagRepositoryInterface
 {

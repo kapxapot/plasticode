@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Tests\Mocks\LinkMappers;
+namespace Plasticode\Testing\Mocks\LinkMappers;
 
 use Plasticode\Parsing\LinkMappers\Basic\SlugLinkMapper;
 use Plasticode\Parsing\SlugChunk;
@@ -8,6 +8,11 @@ use Webmozart\Assert\Assert;
 
 class GenericLinkMapperMock extends SlugLinkMapper
 {
+    protected function validateSlugChunk(SlugChunk $slugChunk): void
+    {
+        Assert::notNull($slugChunk->tag());
+    }
+
     /**
      * Maps slug and chunks to a generic link.
      *
@@ -18,8 +23,6 @@ class GenericLinkMapperMock extends SlugLinkMapper
     public function mapSlug(SlugChunk $slugChunk, array $otherChunks) : ?string
     {
         $tag = $slugChunk->tag();
-
-        Assert::notNull($tag);
 
         $slug = $slugChunk->slug();
         $text = $otherChunks[0] ?? $slug;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Tests\Seeders\Interfaces;
+namespace Plasticode\Testing\Seeders\Interfaces;
 
 interface ArraySeederInterface
 {

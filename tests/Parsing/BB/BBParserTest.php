@@ -5,8 +5,8 @@ namespace Plasticode\Tests\Parsing\BB;
 use Plasticode\Config\Parsing\BBParserConfig;
 use Plasticode\Parsing\Parsers\BB\BBParser;
 use Plasticode\Parsing\ParsingContext;
+use Plasticode\Testing\Mocks\LinkerMock;
 use Plasticode\Tests\BaseRenderTestCase;
-use Plasticode\Tests\Mocks\LinkerMock;
 
 final class BBParserTest extends BaseRenderTestCase
 {

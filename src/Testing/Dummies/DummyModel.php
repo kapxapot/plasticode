@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Tests\Dummies;
+namespace Plasticode\Testing\Dummies;
 
 class DummyModel
 {

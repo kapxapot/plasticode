@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Tests\Dummies\DummyModel;
+use Plasticode\Testing\Dummies\DummyModel;
 use Plasticode\Util\Arrays;
 
 final class FilterTest extends TestCase

@@ -1,15 +1,15 @@
 <?php
 
-namespace Plasticode\Tests\Factories;
+namespace Plasticode\Testing\Factories;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\Interfaces\LinkMapperInterface;
 use Plasticode\Parsing\LinkMappers\PageLinkMapper;
-use Plasticode\Tests\Mocks\Repositories\PageRepositoryMock;
-use Plasticode\Tests\Mocks\Repositories\TagRepositoryMock;
-use Plasticode\Tests\Seeders\PageSeeder;
-use Plasticode\Tests\Seeders\TagSeeder;
+use Plasticode\Testing\Mocks\Repositories\PageRepositoryMock;
+use Plasticode\Testing\Mocks\Repositories\TagRepositoryMock;
+use Plasticode\Testing\Seeders\PageSeeder;
+use Plasticode\Testing\Seeders\TagSeeder;
 
 class PageLinkMapperFactory
 {

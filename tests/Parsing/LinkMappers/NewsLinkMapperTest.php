@@ -4,8 +4,8 @@ namespace Plasticode\Tests\Parsing\LinkMappers;
 
 use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
 use Plasticode\Parsing\ParsingContext;
+use Plasticode\Testing\Mocks\LinkerMock;
 use Plasticode\Tests\BaseRenderTestCase;
-use Plasticode\Tests\Mocks\LinkerMock;
 
 final class NewsLinkMapperTest extends BaseRenderTestCase
 {

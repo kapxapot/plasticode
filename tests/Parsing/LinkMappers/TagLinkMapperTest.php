@@ -4,8 +4,8 @@ namespace Plasticode\Tests\Parsing\LinkMappers;
 
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
 use Plasticode\Parsing\ParsingContext;
+use Plasticode\Testing\Mocks\LinkerMock;
 use Plasticode\Tests\BaseRenderTestCase;
-use Plasticode\Tests\Mocks\LinkerMock;
 
 final class TagLinkMapperTest extends BaseRenderTestCase
 {

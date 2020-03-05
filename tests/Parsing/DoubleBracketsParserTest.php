@@ -4,9 +4,9 @@ namespace Plasticode\Tests\Parsing;
 
 use Plasticode\Parsing\Parsers\DoubleBracketsParser;
 use Plasticode\Parsing\ParsingContext;
+use Plasticode\Testing\Factories\LinkMapperSourceFactory;
+use Plasticode\Testing\Mocks\LinkerMock;
 use Plasticode\Tests\BaseRenderTestCase;
-use Plasticode\Tests\Factories\LinkMapperSourceFactory;
-use Plasticode\Tests\Mocks\LinkerMock;
 use Plasticode\Util\Text;
 
 final class DoubleBracketsParserTest extends BaseRenderTestCase

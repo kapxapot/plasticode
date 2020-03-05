@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Parsing\LinkMappers;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Tests\Mocks\LinkMappers\TaggedLinkMapperMock;
+use Plasticode\Testing\Mocks\LinkMappers\TaggedLinkMapperMock;
 
 final class TaggedLinkMapperTest extends TestCase
 {

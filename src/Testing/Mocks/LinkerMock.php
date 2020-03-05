@@ -1,8 +1,9 @@
 <?php
 
-namespace Plasticode\Tests\Mocks;
+namespace Plasticode\Testing\Mocks;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
+use Plasticode\IO\Image;
 
 class LinkerMock implements LinkerInterface
 {

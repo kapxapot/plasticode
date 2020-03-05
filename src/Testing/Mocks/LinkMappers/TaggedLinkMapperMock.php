@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Tests\Mocks\LinkMappers;
+namespace Plasticode\Testing\Mocks\LinkMappers;
 
 use Plasticode\Parsing\LinkMappers\Basic\TaggedLinkMapper;
 use Plasticode\Parsing\LinkMappers\Traits\SimpleMapSlug;

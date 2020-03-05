@@ -5,7 +5,7 @@ namespace Plasticode\Tests\Parsing;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\ViewContext;
-use Plasticode\Tests\Dummies\DummyViewModel;
+use Plasticode\Testing\Dummies\DummyViewModel;
 
 final class ViewContextTest extends TestCase
 {

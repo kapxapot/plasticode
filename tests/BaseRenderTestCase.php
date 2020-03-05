@@ -4,7 +4,7 @@ namespace Plasticode\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Core\Interfaces\RendererInterface;
-use Plasticode\Tests\Factories\RendererFactory;
+use Plasticode\Testing\Factories\RendererFactory;
 
 abstract class BaseRenderTestCase extends TestCase
 {

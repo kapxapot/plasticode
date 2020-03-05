@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Util;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Tests\Dummies\SortDummy;
+use Plasticode\Testing\Dummies\SortDummy;
 use Plasticode\Util\Sort;
 
 final class SortTest extends TestCase

@@ -1,9 +1,9 @@
 <?php
 
-namespace Plasticode\Tests\Seeders;
+namespace Plasticode\Testing\Seeders;
 
 use Plasticode\Models\Page;
-use Plasticode\Tests\Seeders\Interfaces\ArraySeederInterface;
+use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 use Plasticode\Util\Date;
 
 class PageSeeder implements ArraySeederInterface

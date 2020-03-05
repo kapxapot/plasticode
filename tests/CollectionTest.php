@@ -4,7 +4,7 @@ namespace Plasticode\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Collection;
-use Plasticode\Tests\Dummies\DummyModel;
+use Plasticode\Testing\Dummies\DummyModel;
 
 final class CollectionTest extends TestCase
 {
