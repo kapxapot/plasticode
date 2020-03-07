@@ -8,8 +8,6 @@ use Plasticode\Query;
 
 interface TagRepositoryInterface
 {
-    public function getByEntityQuery(string $entityType, int $entityId) : Query;
-
     public function getIdsByTag(string $entityType, string $tag) : Collection;
     public function getByTag(string $tag) : Collection;
     public function exists(string $tag) : bool;

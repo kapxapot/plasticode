@@ -12,7 +12,7 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface
 {
     protected $entityClass = Tag::class;
 
-    public function getByEntityQuery(string $entityType, int $entityId) : Query
+    protected function getByEntityQuery(string $entityType, int $entityId) : Query
     {
         return $this
             ->entityQuery($entityType)
