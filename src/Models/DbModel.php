@@ -2,56 +2,12 @@
 
 namespace Plasticode\Models;
 
-use Plasticode\Collection;
-use Plasticode\Query;
-use Plasticode\Data\Rights;
 use Plasticode\Models\Interfaces\SerializableInterface;
-use Plasticode\Util\Classes;
-use Plasticode\Util\Pluralizer;
-use Plasticode\Util\SortStep;
-use Plasticode\Util\Strings;
 use Plasticode\Generators\EntityGenerator;
 use Webmozart\Assert\Assert;
 
 abstract class DbModel extends Model implements SerializableInterface
 {
-    /**
-     * Table name
-     * 
-     * Todo: delete, moved to repository
-     *
-     * @var string
-     */
-    protected static $table;
-    
-    /**
-     * Id field name
-     *
-     * @var string
-     */
-    protected static $idField = 'id';
-
-    /**
-     * Tags field name
-     *
-     * @var string
-     */
-    protected static $tagsField = 'tags';
-
-    /**
-     * Default sort field name
-     *
-     * @var string
-     */
-    protected static $sortField = null;
-
-    /**
-     * Default sort direction
-     *
-     * @var boolean
-     */
-    protected static $sortReverse = false;
-
     /**
      * Static alias for new().
      * 
@@ -69,92 +25,9 @@ abstract class DbModel extends Model implements SerializableInterface
      * @param \ORM $obj
      * @return self
      */
-    private static function fromDbObj(\ORM $obj) : self
+    public static function fromDbObj(\ORM $obj) : self
     {
         return static::create($obj);
-    }
-    
-    /**
-     * Shortcut for create() + save().
-     * 
-     * @param array|\ORM $obj
-     * @return self
-     */
-    public static function store($obj = null) : self
-    {
-        $model = static::create($obj);
-        return self::save($model);
-    }
-    
-    /**
-     * Todo: delete, moved to repository
-     *
-     * @return string
-     */
-    private static function pluralClass() : string
-    {
-        $class = Classes::shortName(static::class);
-        return Pluralizer::plural($class);
-    }
-    
-    /**
-     * Todo: delete, moved to repository
-     *
-     * @return string
-     */
-    public static function getTable() : string
-    {
-        if (strlen(static::$table) > 0) {
-            return static::$table;
-        }
-
-        $plural = self::pluralClass();
-        $table = Strings::toSnakeCase($plural);
-
-        return $table;
-    }
-    
-    /**
-     * Bare query without sort.
-     */
-    private static function baseQuery() : Query
-    {
-        $dbQuery = self::$db->forTable(self::getTable());
-        
-        $toModel = function ($obj) {
-            return self::fromDbObj($obj);
-        };
-        
-        return new Query($dbQuery, static::$idField, $toModel);
-    }
-    
-    /**
-     * Query with default sort.
-     */
-    public static function query() : Query
-    {
-        $query = self::baseQuery();
-        $sortOrder = static::getSortOrder();
-
-        return !empty($sortOrder)
-            ? $query->withSort($sortOrder)
-            : $query;
-    }
-
-    /**
-     * Returns sort order.
-     *
-     * @return \Plasticode\Util\SortStep[]
-     */
-    protected static function getSortOrder() : array
-    {
-        if (strlen(static::$sortField) == 0) {
-            return [];
-        }
-
-        return [
-            new SortStep(static::$sortField, static::$sortReverse)
-        ];
     }
     
     /**
@@ -220,81 +93,6 @@ abstract class DbModel extends Model implements SerializableInterface
             $this->isPersisted(),
             'Object must be persisted.'
         );
-    }
-    
-    /**
-     * Shortcut for getting all models.
-     */
-    public static function getAll() : Collection
-    {
-        return self::query()->all();
-    }
-    
-    public static function getCount() : int
-    {
-        return self::baseQuery()->count();
-    }
-    
-    /**
-     * Shortcut for getting model by id.
-     */
-    public static function get($id, bool $ignoreCache = false) : ?self
-    {
-        $name = static::class . $id;
-        
-        return self::staticLazy(
-            function () use ($id) {
-                return self::baseQuery()->find($id);
-            },
-            $name,
-            $ignoreCache
-        );
-    }
-
-    /**
-     * Todo: delete, moved to repository
-     *
-     * @return Rights
-     */
-    private static function tableRights() : Rights
-    {
-        return self::$db->getTableRights(
-            self::getTable()
-        );
-    }
-    
-    public static function tableAccess() : array
-    {
-        return self::tableRights()->forTable();
-    }
-    
-    /**
-     * Todo: delete, moved to repository
-     *
-     * @param string $rights
-     * @return boolean
-     */
-    public static function can(string $rights) : bool
-    {
-        return self::tableRights()->can($rights);
-    }
-    
-    public function access() : array
-    {
-        return self::tableRights()->forEntity($this->obj->asArray());
-    }
-    
-    public static function save(self $model) : self
-    {
-        $obj = $model->getObj();
-
-        $ormObj = $obj instanceof \ORM
-            ? $obj
-            : self::$db->create(self::getTable(), $obj);
-            
-        $ormObj->save();
-
-        return static::create($ormObj);
     }
 
     public function serialize() : array

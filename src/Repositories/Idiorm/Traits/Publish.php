@@ -14,18 +14,19 @@ trait Publish
     /**
      * For Tags trait.
      */
-    protected function tagsWhere(Query $query) : Query
+    protected function tagsWhereQuery(Query $query) : Query
     {
-        return $this->wherePublished($query);
+        return $this->wherePublishedQuery($query);
     }
 
-    public function getPublished(Query $query) : Query
+    public function getPublishedQuery(Query $query) : Query
     {
-        return $this->wherePublished($query);
+        return $this->wherePublishedQuery($query);
     }
 
-    protected function wherePublished(Query $query) : Query
+    protected function wherePublishedQuery(Query $query) : Query
     {
-        return $query->where(static::$publishedField, 1);
+        return $query
+            ->where(static::$publishedField, 1);
     }
 }

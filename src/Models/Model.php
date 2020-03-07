@@ -2,19 +2,17 @@
 
 namespace Plasticode\Models;
 
-use Plasticode\Auth\Auth;
 use Plasticode\Contained;
-use Plasticode\Core\Cache;
 use Plasticode\Core\Linker;
 use Plasticode\Data\Db;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;
-use Plasticode\Models\User;
 use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Traits\LazyCache;
 use Plasticode\Util\Cases;
 use Plasticode\Util\Strings;
 use Psr\Container\ContainerInterface;
@@ -22,6 +20,8 @@ use Webmozart\Assert\Assert;
 
 class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
 {
+    use LazyCache;
+
     /**
      * DI container wrapper (!)
      *
@@ -35,9 +35,6 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
      * @var Db
      */
     protected static $db;
-
-    /** @var Auth */
-    protected static $auth;
 
     /** @var Linker */
     protected static $linker;
@@ -67,20 +64,6 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
      */
     protected $obj;
 
-    /**
-     * Instance cache
-     *
-     * @var Cache
-     */
-    protected $objCache;
-
-    /**
-     * Static cache
-     *
-     * @var Cache
-     */
-    private static $staticCache;
-
     /** @var boolean */
     private static $initialized = false;
 
@@ -97,7 +80,6 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
             self::$menuItemRepository = self::$container->menuItemRepository;
             self::$tagRepository = self::$container->tagRepository;
             
-            self::$auth = self::$container->auth;
             self::$linker = self::$container->linker;
             self::$cases = self::$container->cases;
             self::$parser = self::$container->parser;
@@ -114,7 +96,6 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     public function __construct($obj = null)
     {
         $this->obj = $obj ?? [];
-        $this->objCache = new Cache();
     }
 
     /**
@@ -130,57 +111,6 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     protected static function getSettings(string $path)
     {
         return self::$container->getSettings($path);
-    }
-    
-    /**
-     * Todo: this must die
-     *
-     * @return User|null
-     */
-    protected static function getCurrentUser() : ?User
-    {
-        return self::$auth->getUser();
-    }
-    
-    private static function getLazyFuncName() : string
-    {
-        list(, , $caller) = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
-        return $caller['function'];
-    }
-    
-    protected function lazy(\Closure $loader, string $name = null, bool $ignoreCache = false)
-    {
-        $name = $name ?? self::getLazyFuncName();
-        
-        return $this->objCache->getCached($name, $loader, $ignoreCache);
-    }
-    
-    protected function resetLazy(string $name) : void
-    {
-        $this->objCache->delete($name);
-    }
-    
-    protected static function staticLazy(\Closure $loader, string $name = null, bool $ignoreCache = false)
-    {
-        $cache = self::getStaticCache();
-        $name = $name ?? self::getLazyFuncName();
-        
-        return $cache->getCached($name, $loader, $ignoreCache);
-    }
-    
-    protected static function resetStaticLazy(string $name) : void
-    {
-        $cache = self::getStaticCache();
-        $cache->delete($name);
-    }
-
-    private static function getStaticCache(): Cache
-    {
-        if (is_null(self::$staticCache)) {
-            self::$staticCache = new Cache();
-        }
-
-        return self::$staticCache;
     }
     
     private function checkPropertyExists(string $property) : void

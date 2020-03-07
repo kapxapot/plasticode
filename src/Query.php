@@ -141,7 +141,7 @@ class Query implements \IteratorAggregate
             $objs = $query->findMany();
         
             $all = array_map(
-                function ($obj) {
+                function (\ORM $obj) {
                     return ($this->toModel)($obj);
                 },
                 $objs ?? []
@@ -180,8 +180,20 @@ class Query implements \IteratorAggregate
     public function find($id) : ?DbModel
     {
         return $this
-            ->where($this->idField, $id)
+            ->filterById($id)
             ->one();
+    }
+
+    /**
+     * Adds filter by id.
+     *
+     * @param string|int $id
+     * @return self
+     */
+    public function filterById($id) : self
+    {
+        return $this
+            ->where($this->idField, $id);
     }
     
     /**

@@ -42,7 +42,7 @@ class TagRepositoryMock implements TagRepositoryInterface
             ->where('tag', $searchQuery);
     }
 
-    public function store(?array $data = null) : Tag
+    public function store(array $data) : Tag
     {
         $tag = new Tag($data);
         $this->tags = $this->tags->add($tag);

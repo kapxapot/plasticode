@@ -23,8 +23,8 @@ trait Tags
         
         $query = $baseQuery->whereIn('id', $ids);
 
-        if (method_exists(static::class, 'tagsWhere')) {
-            $query = $this->tagsWhere($query);
+        if (method_exists(static::class, 'tagsWhereQuery')) {
+            $query = $this->tagsWhereQuery($query);
         }
         
         return $query;

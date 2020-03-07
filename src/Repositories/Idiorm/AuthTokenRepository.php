@@ -3,23 +3,27 @@
 namespace Plasticode\Repositories\Idiorm;
 
 use Plasticode\Models\AuthToken;
+use Plasticode\Repositories\Idiorm\Basic\IdiormRepository;
 use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
 
 class AuthTokenRepository extends IdiormRepository implements AuthTokenRepositoryInterface
 {
+    protected $entityClass = AuthToken::class;
+
     public function get(int $id) : ?AuthToken
     {
-        return AuthToken::get($id);
+        return $this->getEntity($id);
     }
 
     public function save(AuthToken $authToken) : AuthToken
     {
-        return AuthToken::save($authToken);
+        return $this->saveEntity($authToken);
     }
 
     public function getByToken(?string $token) : ?AuthToken
     {
-        return AuthToken::query()
+        return $this
+            ->query()
             ->where('token', $token)
             ->one();
     }
