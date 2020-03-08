@@ -6,7 +6,6 @@ use Plasticode\Collection;
 use Plasticode\Contained;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Data\Db;
-use Plasticode\Exceptions\ValidationException;
 use Plasticode\Handlers\NotFoundHandler;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Util\Arrays;
@@ -14,6 +13,7 @@ use Plasticode\Validation\Validator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
+use Slim\Http\Request as SlimRequest;
 use Slim\Views\Twig;
 use Webmozart\Assert\Assert;
 
@@ -146,12 +146,11 @@ class Controller extends Contained
         return $rendered;
     }
 
-    protected function validate(ServerRequestInterface $request, array $rules) : void
+    protected function validate(SlimRequest $request, array $rules) : void
     {
-        $validation = $this->validator->validateRequest($request, $rules);
-        
-        if ($validation->failed()) {
-            throw new ValidationException($validation->errors);
-        }
+        $this
+            ->validator
+            ->validateRequest($request, $rules)
+            ->throwOnFail();
     }
 }

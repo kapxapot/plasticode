@@ -350,7 +350,10 @@ class Bootstrap
             },
             
             'validator' => function (ContainerInterface $container) {
-                return new Validator($container);
+                return new Validator(
+                    $container,
+                    $container->translator
+                );
             },
             
             'api' => function (ContainerInterface $container) {

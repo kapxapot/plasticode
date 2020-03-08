@@ -3,17 +3,9 @@
 namespace Plasticode\Models;
 
 use Plasticode\Contained;
-use Plasticode\Core\Linker;
-use Plasticode\Data\Db;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;
-use Plasticode\Parsing\Parsers\CompositeParser;
-use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
-use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
-use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
-use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Traits\LazyCache;
-use Plasticode\Util\Cases;
 use Plasticode\Util\Strings;
 use Psr\Container\ContainerInterface;
 use Webmozart\Assert\Assert;
@@ -28,34 +20,6 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
      * @var Contained
      */
     protected static $container;
-    
-    /**
-     * Db layer
-     *
-     * @var Db
-     */
-    protected static $db;
-
-    /** @var Linker */
-    protected static $linker;
-
-    /** @var Cases */
-    protected static $cases;
-
-    /** @var CompositeParser */
-    protected static $parser;
-    
-    /** @var UserRepositoryInterface */
-    protected static $userRepository;
-
-    /** @var RoleRepositoryInterface */
-    protected static $roleRepository;
-
-    /** @var MenuItemRepositoryInterface */
-    protected static $menuItemRepository;
-
-    /** @var TagRepositoryInterface */
-    protected static $tagRepository;
 
     /**
      * Data array or \ORM object
@@ -72,17 +36,6 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         if (!self::$initialized) {
             // hack for getSettings()
             self::$container = new Contained($container);
-
-            self::$db = self::$container->db;
-            
-            self::$userRepository = self::$container->userRepository;
-            self::$roleRepository = self::$container->roleRepository;
-            self::$menuItemRepository = self::$container->menuItemRepository;
-            self::$tagRepository = self::$container->tagRepository;
-            
-            self::$linker = self::$container->linker;
-            self::$cases = self::$container->cases;
-            self::$parser = self::$container->parser;
 
             self::$initialized = true;
         }

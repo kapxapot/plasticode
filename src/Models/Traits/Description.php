@@ -2,22 +2,19 @@
 
 namespace Plasticode\Models\Traits;
 
-use Plasticode\Parsing\Parsers\CompositeParser;
+use Plasticode\Parsing\Interfaces\ParserInterface;
 use Plasticode\Parsing\ParsingContext;
 
-/**
- * @property CompositeParser $parser
- */
 trait Description
 {
-    public function parsedDescription() : ?ParsingContext
+    public function parsedDescription(ParserInterface $parser) : ?ParsingContext
     {
         if (strlen($this->description) == 0) {
             return null;
         }
 
-        $context = self::$parser->parse($this->description);
-        $context = self::$parser->renderLinks($context);
+        $context = $parser->parse($this->description);
+        $context = $parser->renderLinks($context);
 
         return $context;
     }

@@ -3,13 +3,14 @@
 namespace Plasticode\Parsing\Parsers;
 
 use Plasticode\Parsing\Interfaces\LinkRendererInterface;
+use Plasticode\Parsing\Interfaces\ParserInterface;
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Util\Arrays;
 use Webmozart\Assert\Assert;
 
-class CompositeParser extends BaseStep implements LinkRendererInterface
+class CompositeParser extends BaseStep implements ParserInterface
 {
     /** @var ParsingStepInterface[] */
     private $pipeline;

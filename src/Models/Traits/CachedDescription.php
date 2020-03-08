@@ -2,13 +2,10 @@
 
 namespace Plasticode\Models\Traits;
 
-use Plasticode\Parsing\Parsers\CompositeParser;
+use Plasticode\Parsing\Interfaces\ParserInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Util\Date;
 
-/**
- * @property CompositeParser $parser
- */
 trait CachedDescription
 {
     protected static function getDescriptionField() : string
@@ -26,10 +23,10 @@ trait CachedDescription
         return '1 hour';
     }
 
-    public function parsedDescription() : ?ParsingContext
+    public function parsedDescription(ParserInterface $parser) : ?ParsingContext
     {
         return $this->lazy(
-            function () {
+            function () use ($parser) {
                 $descriptionField = static::getDescriptionField();
                 $cacheField = static::getDescriptionCacheField();
                 
@@ -55,16 +52,16 @@ trait CachedDescription
                 }
 
                 if (!($parsed instanceof ParsingContext)) {
-                    $parsed = self::$parser->parse($description);
+                    $parsed = $parser->parse($description);
                     $parsed->updatedAt = Date::dbNow();
                     
                     $this->{$cacheField} = json_encode($parsed);
 
                     // Todo: this is a dirty hack and must be changed later to save in some cache or in a repository
-                    self::save($this);
+                    //self::save($this);
                 }
                 
-                $parsed = self::$parser->renderLinks($parsed);
+                $parsed = $parser->renderLinks($parsed);
 
                 return $parsed;
             }
@@ -74,12 +71,12 @@ trait CachedDescription
     public function resetDescription() : void
     {
         $cacheField = static::getDescriptionCacheField();
-        
+
         $this->{$cacheField} = null;
 
         // Todo: this is a dirty hack and must be changed later to save in some cache or in a repository
-        self::save($this);
-        
+        //self::save($this);
+
         $this->resetLazy('parsedDescription');
     }
 }

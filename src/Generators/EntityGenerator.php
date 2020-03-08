@@ -4,13 +4,16 @@ namespace Plasticode\Generators;
 
 use Plasticode\Contained;
 use Plasticode\Data\Rights;
-use Plasticode\Exceptions\ValidationException;
+use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Plasticode\Validation\ValidationRules;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Validator;
 use Slim\App;
+use Slim\Http\Request as SlimRequest;
 
+/**
+ * @property ValidatorInterface $validator
+ */
 class EntityGenerator extends Contained
 {
     /**
@@ -68,17 +71,17 @@ class EntityGenerator extends Contained
     }
     
     public function validate(
-        ServerRequestInterface $request,
+        SlimRequest $request,
         array $data,
         $id = null
     ) : void
     {
         $rules = $this->getRules($data, $id);
-        $validation = $this->validator->validateRequest($request, $rules);
-        
-        if ($validation->failed()) {
-            throw new ValidationException($validation->errors);
-        }
+
+        $this
+            ->validator
+            ->validateRequest($request, $rules)
+            ->throwOnFail();
     }
     
     protected function getOptions() : array

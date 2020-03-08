@@ -16,7 +16,7 @@ class Tag extends DbModel implements LinkableInterface, SerializableInterface
 {
     public function url() : ?string
     {
-        return self::$linker->tag($this->tag);
+        return self::$container->linker->tag($this->tag);
     }
     
     public function serialize() : array

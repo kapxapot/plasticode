@@ -19,7 +19,8 @@ class Menu extends DbModel implements LinkableInterface
      */
     public function items() : Collection
     {
-        return self::$menuItemRepository
+        return self::$container
+            ->menuItemRepository
             ->getByMenu($this->id);
     }
 
@@ -30,6 +31,6 @@ class Menu extends DbModel implements LinkableInterface
      */
     public function url() : ?string
     {
-        return self::$linker->rel($this->link);
+        return self::$container->linker->rel($this->link);
     }
 }

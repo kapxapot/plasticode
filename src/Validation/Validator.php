@@ -2,18 +2,33 @@
 
 namespace Plasticode\Validation;
 
-use Plasticode\Contained;
+use Plasticode\Core\Interfaces\TranslatorInterface;
+use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Plasticode\Validation\Rules\ContainerRule;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Container\ContainerInterface;
 use Respect\Validation\Exceptions\NestedValidationException;
+use Slim\Http\Request as SlimRequest;
 
-class Validator extends Contained
+class Validator implements ValidatorInterface
 {
-    public $errors;
+    /** @var ContainerInterface */
+    private $container;
 
-    private function validate(\Closure $getField, array $rules) : self
+    /** @var TranslatorInterface */
+    private $translator;
+
+    public function __construct(
+        ContainerInterface $container,
+        TranslatorInterface $translator
+    )
     {
-        $this->errors = [];
+        $this->container = $container;
+        $this->translator = $translator;
+    }
+
+    private function validate(\Closure $getField, array $rules) : ValidationResult
+    {
+        $errors = [];
         
         foreach ($rules as $field => $rule) {
             try {
@@ -34,10 +49,10 @@ class Validator extends Contained
             }
         }
 
-        return $this;
+        return new ValidationResult($errors);
     }
     
-    public function validateArray(array $data, array $rules) : self
+    public function validateArray(array $data, array $rules) : ValidationResult
     {
         return $this->validate(
             function ($field) use ($data) {
@@ -47,7 +62,7 @@ class Validator extends Contained
         );
     }
     
-    public function validateRequest(ServerRequestInterface $request, array $rules) : self
+    public function validateRequest(SlimRequest $request, array $rules) : ValidationResult
     {
         return $this->validate(
             function ($field) use ($request) {
@@ -55,10 +70,5 @@ class Validator extends Contained
             },
             $rules
         );
-    }
-    
-    public function failed() : bool
-    {
-        return !empty($this->errors);
     }
 }

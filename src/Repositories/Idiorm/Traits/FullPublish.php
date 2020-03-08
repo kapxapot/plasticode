@@ -18,7 +18,7 @@ trait FullPublish
         Publish::wherePublishedQuery as protected parentWherePublishedQuery;
     }
 
-    protected static $publishedAtField = 'published_at';
+    protected $publishedAtField = 'published_at';
 
     /**
      * Modifies the query to protect access rights if needed.
@@ -39,13 +39,13 @@ trait FullPublish
         }
 
         $publishedCondition =
-            '(' . static::$publishedField . ' = 1 and ' .
-            static::$publishedAtField . ' < now())';
+            '(' . $this->publishedField . ' = 1 and ' .
+            $this->publishedAtField . ' < now())';
 
         if ($user) {
             return $query->whereRaw(
                 '(' . $publishedCondition . ' or ' .
-                static::$createdByField . ' = ?)',
+                $this->createdByField . ' = ?)',
                 [$user->getId()]
             );
         }
@@ -59,6 +59,6 @@ trait FullPublish
     {
         return $this
             ->parentWherePublishedQuery($query)
-            ->whereRaw('(' . static::$publishedAtField . ' < now())');
+            ->whereRaw('(' . $this->publishedAtField . ' < now())');
     }
 }

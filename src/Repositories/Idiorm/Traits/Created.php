@@ -7,11 +7,12 @@ use Plasticode\Models\User;
 
 trait Created
 {
-    protected static $createdByField = 'created_by';
+    protected $createdAtField = 'created_at';
+    protected $createdByField = 'created_by';
 
     public function filterByCreatorQuery(Query $query, User $user) : Query
     {
         return $query
-            ->where(static::$createdByField, $user->getId());
+            ->where($this->createdByField, $user->getId());
     }
 }

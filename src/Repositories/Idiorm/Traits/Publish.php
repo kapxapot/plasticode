@@ -9,7 +9,7 @@ use Plasticode\Query;
  */
 trait Publish
 {
-    protected static $publishedField = 'published';
+    protected $publishedField = 'published';
 
     /**
      * For Tags trait.
@@ -27,6 +27,6 @@ trait Publish
     protected function wherePublishedQuery(Query $query) : Query
     {
         return $query
-            ->where(static::$publishedField, 1);
+            ->where($this->publishedField, 1);
     }
 }

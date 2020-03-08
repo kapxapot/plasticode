@@ -4,12 +4,8 @@ namespace Plasticode\Models\Traits;
 
 use Plasticode\Query;
 use Plasticode\Models\User;
-use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Util\Date;
 
-/**
- * @property UserRepositoryInterface $userRepository
- */
 trait Updated
 {
     public static function filterByUpdater(Query $query, User $user) : Query
@@ -19,7 +15,7 @@ trait Updated
 
     public function updater() : ?User
     {
-        return self::$userRepository->get($this->updatedBy);
+        return self::$container->userRepository->get($this->updatedBy);
     }
 
     public function updatedAtIso() : string

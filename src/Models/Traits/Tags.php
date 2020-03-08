@@ -2,15 +2,14 @@
 
 namespace Plasticode\Models\Traits;
 
-use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Query;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\TagLink;
 use Plasticode\Util\Strings;
+use Psr\Container\ContainerInterface;
 
 /**
  * @property string $tagsField
- * @property LinkerInterface $linker
+ * @property ContainerInterface $container
  * @property TagRepositoryInterface $tagRepository
  */
 trait Tags
@@ -44,29 +43,10 @@ trait Tags
         
         return array_map(
             function ($t) use ($tab) {
-                $url = self::$linker->tag($t, $tab);
+                $url = self::$container->linker->tag($t, $tab);
                 return new TagLink($t, $url);
             },
             $tags
         );
-    }
-
-    public static function getByTag(string $tag, Query $query = null) : Query
-    {
-        $tag = Strings::normalize($tag);
-        $ids = self::$tagRepository->getIdsByTag(static::getTable(), $tag);
-
-        if ($ids->empty()) {
-            return Query::empty();
-        }
-        
-        $query = $query ?? self::query();
-        $query = $query->whereIn('id', $ids);
-
-        if (method_exists(static::class, 'tagsWhere')) {
-            $query = static::tagsWhere($query);
-        }
-        
-        return $query;
     }
 }

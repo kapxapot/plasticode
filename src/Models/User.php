@@ -21,7 +21,7 @@ class User extends DbModel
     
     public function role() : Role
     {
-        return self::$roleRepository->get($this->roleId);
+        return self::$container->roleRepository->get($this->roleId);
     }
     
     public function toString() : string
@@ -45,7 +45,7 @@ class User extends DbModel
 
     public function gravatarUrl() : string
     {
-        return self::$linker->gravatarUrl(
+        return self::$container->linker->gravatarUrl(
             $this->gravatarHash()
         );
     }

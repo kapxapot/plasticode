@@ -5,13 +5,13 @@ namespace Plasticode\Controllers;
 use Plasticode\Contained;
 use Plasticode\Core\Env;
 use Plasticode\Core\Response;
-use Plasticode\Parsing\Parsers\CompositeParser;
+use Plasticode\Parsing\Interfaces\ParserInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * @property CompositeParser $parser
+ * @property ParserInterface $parser
  * @property CutParser $cutParser
  * @property Env $env
  * @property LoggerInterface $logger

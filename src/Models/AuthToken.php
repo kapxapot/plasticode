@@ -19,7 +19,7 @@ class AuthToken extends DbModel
      */
     public function user() : User
     {
-        return self::$userRepository->get($this->userId);
+        return self::$container->userRepository->get($this->userId);
     }
 
     public function toString() : string
