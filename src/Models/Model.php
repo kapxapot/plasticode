@@ -61,11 +61,6 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         return $this->obj;
     }
 
-    protected static function getSettings(string $path)
-    {
-        return self::$container->getSettings($path);
-    }
-    
     private function checkPropertyExists(string $property) : void
     {
         if (array_key_exists($property, $this->obj)) {
