@@ -272,6 +272,7 @@ a:focus {
 
 .panel-body {
     padding: 12px;
+    word-break: break-all;
 }
 
 .panel-body--nopad,

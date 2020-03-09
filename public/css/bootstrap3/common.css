@@ -85,6 +85,11 @@ body {
     white-space: nowrap;
 }
 
+.break-all,
+.wrap-all {
+    word-break: break-all;
+}
+
 .button-create {
     margin-left: 5px;
 }
