@@ -8,6 +8,8 @@ use Webmozart\Assert\Assert;
 
 abstract class DbModel extends Model implements SerializableInterface
 {
+    protected static $idField = 'id';
+
     /**
      * Static alias for new().
      * 
