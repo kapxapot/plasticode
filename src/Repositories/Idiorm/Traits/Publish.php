@@ -11,6 +11,8 @@ trait Publish
 {
     protected $publishedField = 'published';
 
+    protected abstract function query() : Query;
+
     /**
      * For Tags trait.
      */
@@ -19,8 +21,10 @@ trait Publish
         return $this->wherePublishedQuery($query);
     }
 
-    public function getPublishedQuery(Query $query) : Query
+    protected function publishedQuery(Query $query = null) : Query
     {
+        $query = $query ?? $this->query();
+        
         return $this->wherePublishedQuery($query);
     }
 
