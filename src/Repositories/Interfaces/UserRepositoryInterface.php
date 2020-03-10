@@ -4,7 +4,7 @@ namespace Plasticode\Repositories\Interfaces;
 
 use Plasticode\Models\User;
 
-interface UserRepositoryInterface
+interface UserRepositoryInterface extends RepositoryInterface
 {
     public function get(int $id) : ?User;
     public function create(array $data) : User;

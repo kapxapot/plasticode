@@ -7,6 +7,7 @@ use Plasticode\Contained;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Data\Db;
 use Plasticode\Handlers\NotFoundHandler;
+use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Util\Arrays;
 use Plasticode\Validation\Validator;
@@ -24,6 +25,7 @@ use Webmozart\Assert\Assert;
  * @property LoggerInterface $logger
  * @property MenuRepositoryInterface $menuRepository
  * @property NotFoundHandler $notFoundHandler
+ * @property SettingsProviderInterface $settingsProvider
  * @property TranslatorInterface $translator
  * @property Twig $view
  * @property Validator $validator
@@ -73,7 +75,7 @@ class Controller extends Contained
             $params['page_description'] = strip_tags($description);
         }
         
-        $params['debug'] = $this->getSettings('debug');
+        $params['debug'] = $this->settingsProvider->getSettings('debug');
 
         return array_merge($params, $settings['params']);
     }

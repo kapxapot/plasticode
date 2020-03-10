@@ -2,18 +2,26 @@
 
 namespace Plasticode\Generators;
 
-use Plasticode\Models\MenuItem;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
-use Slim\Interfaces\RouterInterface;
+use Psr\Container\ContainerInterface;
 
-/**
- * @property MenuItemRepositoryInterface $menuItemRepository
- * @property MenuRepositoryInterface $menuRepository
- * @property RouterInterface $router
- */
 class MenuItemsGenerator extends EntityGenerator
 {
+    /** @var MenuRepositoryInterface */
+    protected $menuRepository;
+
+    /** @var MenuItemRepositoryInterface */
+    protected $menuItemRepository;
+
+    public function __construct(ContainerInterface $container, string $entity)
+    {
+        parent::__construct($container, $entity);
+
+        $this->menuRepository = $container->menuRepository;
+        $this->menuItemRepository = $container->menuItemRepository;
+    }
+
     public function getRules(array $data, $id = null) : array
     {
         $rules = parent::getRules($data, $id);

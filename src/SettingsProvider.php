@@ -11,13 +11,11 @@ class SettingsProvider implements SettingsProviderInterface
     /**
      * DI container
      *
-     * @var \Psr\Container\ContainerInterface
+     * @var ContainerInterface
      */
     public $container;
 
     /**
-     * Creates new Contained instance.
-     * 
      * @param ContainerInterface $container DI container
      */
     public function __construct(ContainerInterface $container)

@@ -3,9 +3,21 @@
 namespace Plasticode\Generators;
 
 use Plasticode\Core\Security;
+use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Psr\Container\ContainerInterface;
 
 class UsersGenerator extends EntityGenerator
 {
+    /** @var UserRepositoryInterface */
+    protected $userRepository;
+
+    public function __construct(ContainerInterface $container, string $entity)
+    {
+        parent::__construct($container, $entity);
+
+        $this->userRepository = $container->userRepository;
+    }
+
     public function getRules(array $data, $id = null) : array
     {
         $rules = parent::getRules($data, $id);

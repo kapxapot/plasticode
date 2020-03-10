@@ -2,19 +2,18 @@
 
 namespace Plasticode\Gallery;
 
-use Plasticode\Contained;
-use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\InvalidResultException;
 use Plasticode\Gallery\ThumbStrategies\Interfaces\ThumbStrategyInterface;
+use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
 use Plasticode\Models\DbModel;
-use Psr\Container\ContainerInterface;
+use Webmozart\Assert\Assert;
 
-class Gallery extends Contained
+class Gallery
 {
     protected $thumbStrategy;
-    
+
     protected $baseDir;
 
     protected $pictureField;
@@ -29,10 +28,12 @@ class Gallery extends Contained
 
     protected $folders;
 
-    public function __construct(ContainerInterface $container, ThumbStrategyInterface $thumbStrategy, array $settings = [])
+    public function __construct(
+        SettingsProviderInterface $settingsProvider,
+        ThumbStrategyInterface $thumbStrategy,
+        array $settings = []
+    )
     {
-        parent::__construct($container);
-        
         $this->thumbStrategy = $thumbStrategy;
         
         $this->baseDir = $settings['base_dir'];
@@ -50,18 +51,19 @@ class Gallery extends Contained
         $this->thumbFolder = $folderSettings['thumb']['storage'];
         $this->thumbPublicFolder = $folderSettings['thumb']['public'];
 
-        $this->folders = $this->getSettings('folders');
+        $this->folders = $settingsProvider->getSettings('folders');
     }
     
-    protected function getFolder(string $folder) : string
+    protected function getFolder(string $name) : string
     {
-        if (!isset($this->folders[$folder])) {
-            throw new InvalidArgumentException(
-                'Unknown image folder: ' . $folder
-            );
-        }
+        $folder = $this->folders[$name] ?? null;
+
+        Assert::notNull(
+            $folder,
+            'Unknown image folder: ' . $name
+        );
         
-        return $this->folders[$folder];
+        return $folder;
     }
 
     protected function getItemUrl(string $folder, array $item, string $typeField) : string
@@ -81,7 +83,9 @@ class Gallery extends Contained
     public function getPictureUrl(array $item) : string
     {
         return $this->getItemUrl(
-            $this->picturePublicFolder, $item, $this->pictureTypeField
+            $this->picturePublicFolder,
+            $item,
+            $this->pictureTypeField
         );
     }
     
@@ -94,7 +98,9 @@ class Gallery extends Contained
     public function getThumbUrl(array $item) : string
     {
         return $this->getItemUrl(
-            $this->thumbPublicFolder, $item, $this->thumbTypeField
+            $this->thumbPublicFolder,
+            $item,
+            $this->thumbTypeField
         );
     }
 
@@ -156,8 +162,12 @@ class Gallery extends Contained
      * In this scenario 'picture' is empty.
      * 
      * 'Thumb' can be null too, we don't resave it then.
+     * 
+     * @param \ORM|array $item
+     * @param array $data
+     * @return void
      */
-    public function save(\ORM $item, array $data) : void
+    public function save($item, array $data) : void
     {
         $picture = $this->getPicture($item, $data);
 
@@ -184,6 +194,7 @@ class Gallery extends Contained
 
         $item = $this->beforeSave($item, $picture, $thumb);
         
+        // todo: this is bad / to be removed
         $item->save();
     }
 
@@ -248,17 +259,17 @@ class Gallery extends Contained
      */
     public function saveImage(\ORM $item, Image $picture) : void
     {
-        if (!$picture || $picture->empty()) {
-            throw new InvalidArgumentException(
-                'Gallery.saveImage() can\'t save empty image.'
-            );
-        }
+        Assert::true(
+            $picture && !$picture->empty(),
+            'Gallery.saveImage() can\'t save empty image.'
+        );
         
         $this->savePicture($item, $picture);
         
         $thumb = $this->createAndSaveThumb($item, $picture);
         $item = $this->beforeSave($item, $picture, $thumb);
 
+        // todo: this is bad / to be removed
         $item->save();
     }
     
@@ -273,18 +284,24 @@ class Gallery extends Contained
         return $thumb;
     }
     
-    public function delete(\ORM $item) : void
+    /**
+     * Delete picture
+     *
+     * @param \ORM|array $item
+     * @return void
+     */
+    public function delete($item) : void
     {
         $pictureFileName = $this->buildPicturePath(
-            $item->id,
-            $item->{$this->pictureTypeField}
+            $item['id'],
+            $item[$this->pictureTypeField]
         );
 
         File::delete($pictureFileName);
 
         $thumbFileName = $this->buildThumbPath(
-            $item->id,
-            $item->{$this->thumbTypeField}
+            $item['id'],
+            $item[$this->thumbTypeField]
         );
 
         File::delete($thumbFileName);
@@ -297,7 +314,7 @@ class Gallery extends Contained
     {
         $image = $picture->getGdImage();
         
-        if ($image === null) {
+        if (is_null($image)) {
             return null;
         }
 

@@ -6,8 +6,10 @@ use Plasticode\Auth\Auth;
 use Plasticode\Controllers\Controller;
 use Plasticode\Core\Response;
 use Plasticode\Core\Security;
+use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Validation\ValidationRules;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Respect\Validation\Validator as v;
 use Slim\Http\Request as SlimRequest;
@@ -18,6 +20,24 @@ use Slim\Http\Request as SlimRequest;
  */
 class PasswordController extends Controller
 {
+    /** @var SettingsProviderInterface */
+    private $settingsProvider;
+
+    /** @var Auth */
+    private $auth;
+
+    /** @var UserRepositoryInterface */
+    private $userRepository;
+
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct($container);
+
+        $this->settingsProvider = $container->settingsProvider;
+        $this->auth = $container->auth;
+        $this->userRepository = $container->userRepository;
+    }
+
     public function postChangePassword(SlimRequest $request, ResponseInterface $response) : ResponseInterface
     {
         $user = $this->auth->getUser();
@@ -49,7 +69,7 @@ class PasswordController extends Controller
      */
     private function getRules(array $data) : array
     {
-        $rules = new ValidationRules($this->container);
+        $rules = new ValidationRules($this->settingsProvider);
 
         return [
             'password_old' => v::matchesPassword($data['password']),

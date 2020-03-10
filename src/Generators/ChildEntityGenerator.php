@@ -5,7 +5,7 @@ namespace Plasticode\Generators;
 use Plasticode\Util\Pluralizer;
 use Psr\Container\ContainerInterface;
 
-class ChildEntityGenerator extends EntityGenerator
+abstract class ChildEntityGenerator extends EntityGenerator
 {
     /**
      * Parent entity name
@@ -42,9 +42,16 @@ class ChildEntityGenerator extends EntityGenerator
      */
     protected $parentNameField;
 
-    public function __construct(ContainerInterface $container, string $entity, array $options)
+    public function __construct(
+        ContainerInterface $container,
+        string $entity,
+        array $options
+    )
     {
-        parent::__construct($container, $entity);
+        parent::__construct(
+            $container,
+            $entity
+        );
         
         $this->parentName = $options['parent']['name'] ?? 'parent';
         $this->name = $options['child']['name'] ?? 'child';

@@ -98,10 +98,6 @@ class Bootstrap
     public function getMappings() : array
     {
         return [
-            'dbClass' => function (ContainerInterface $container) {
-                return Db::class;
-            },
-            
             'db' => function (ContainerInterface $container) {
                 $dbs = $this->dbSettings;
                 
@@ -117,9 +113,12 @@ class Bootstrap
                     [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']
                 );
                 
-                $dbClass = $container->dbClass;
-                
-                return new $dbClass($container);
+                return new Db(
+                    $container->access,
+                    $container->cache,
+                    $container->settingsProvider,
+                    $container->userRepository
+                );
             },
 
             'authTokenRepository' => function (ContainerInterface $container) {

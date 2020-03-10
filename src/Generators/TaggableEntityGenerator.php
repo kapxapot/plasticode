@@ -4,15 +4,23 @@ namespace Plasticode\Generators;
 
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\Util\Strings;
+use Psr\Container\ContainerInterface;
 use Respect\Validation\Validator;
 use Webmozart\Assert\Assert;
 
-/**
- * @property TagRepositoryInterface $tagRepository
- */
-class TaggableEntityGenerator extends EntityGenerator
+abstract class TaggableEntityGenerator extends EntityGenerator
 {
+    /** @var TagRepositoryInterface */
+    protected $tagRepository;
+
     protected $tagsField = 'tags';
+
+    public function __construct(ContainerInterface $container, string $entity)
+    {
+        parent::__construct($container, $entity);
+
+        $this->tagRepository = $container->tagRepository;
+    }
 
     public function getRules(array $data, $id = null) : array
     {

@@ -60,7 +60,10 @@ class GeneratorResolver
             );
         }
         
-        $generator = new $generatorClass($this->container, $entity);
+        $generator = new $generatorClass(
+            $this->container,
+            $entity
+        );
 
         return $generator;
     }

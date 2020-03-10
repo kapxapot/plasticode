@@ -2,28 +2,28 @@
 
 namespace Plasticode\Validation;
 
-use Plasticode\Contained;
 use Plasticode\Exceptions\InvalidConfigurationException;
-use Psr\Container\ContainerInterface;
+use Plasticode\Interfaces\SettingsProviderInterface;
 use Respect\Validation\Validatable;
 use Respect\Validation\Validator;
 
-class ValidationRules extends Contained
+class ValidationRules
 {
+    /** @var SettingsProviderInterface */
+    private $settingsProvider;
+
     /** @var array */
     private $rules;
     
-    public function __construct(ContainerInterface $container)
+    public function __construct(SettingsProviderInterface $settingsProvider)
     {
-        parent::__construct($container);
-        
+        $this->settingsProvider = $settingsProvider;
+
         $this->rules = $this->buildRules();
     }
     
     private function buildRules() : array
     {
-        $settings = $this->getSettings();
-        
         $notEmpty = function () {
             return Validator::notEmpty();
         };
@@ -61,15 +61,16 @@ class ValidationRules extends Contained
             'image' => function () {
                 return Validator::imageNotEmpty()->imageTypeAllowed();
             },
-            'password' => function () use ($settings) {
-                return Validator::noWhitespace()
-                    ->length($settings['password_min']);
+            'password' => function () {
+                $pwdMin = $this->settingsProvider->getSettings('password_min');
+
+                return Validator::noWhitespace()->length($pwdMin);
             },
-            'login' => function () use ($alias, $settings) {
-                return $alias()->length(
-                    $settings['login_min'],
-                    $settings['login_max']
-                );
+            'login' => function () use ($alias) {
+                $loginMin = $this->settingsProvider->getSettings('login_min');
+                $loginMax = $this->settingsProvider->getSettings('login_max');
+
+                return $alias()->length($loginMin, $loginMax);
             },
         ];
     }

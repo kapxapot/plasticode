@@ -3,7 +3,6 @@
 namespace Plasticode\Models;
 
 use Plasticode\Models\Interfaces\SerializableInterface;
-use Plasticode\Generators\EntityGenerator;
 use Webmozart\Assert\Assert;
 
 abstract class DbModel extends Model implements SerializableInterface
@@ -30,28 +29,6 @@ abstract class DbModel extends Model implements SerializableInterface
     public static function fromDbObj(\ORM $obj) : self
     {
         return static::create($obj);
-    }
-    
-    /**
-     * Returns entity generator for this model.
-     */
-    public static function getGenerator() : EntityGenerator
-    {
-        $plural = self::pluralClass();
-        $gen = self::$container->generatorResolver->resolveEntity($plural);
-
-        return $gen;
-    }
-    
-    /**
-     * Returns validation rules for this model.
-     */
-    public static function getRules(array $data) : array
-    {
-        $gen = self::getGenerator();
-        $rules = $gen->getRules($data);
-        
-        return $rules;
     }
     
     /**
@@ -100,11 +77,6 @@ abstract class DbModel extends Model implements SerializableInterface
     public function serialize() : array
     {
         return $this->toArray();
-    }
-    
-    public function entityAlias() : string
-    {
-        return self::getTable();
     }
 
     /**

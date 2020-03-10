@@ -5,6 +5,7 @@ namespace Plasticode\Repositories\Idiorm\Basic;
 use Plasticode\Collection;
 use Plasticode\Data\Db;
 use Plasticode\Data\Rights;
+use Plasticode\Generators\EntityGenerator;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\DbModel;
 use Plasticode\Query;
@@ -28,7 +29,7 @@ abstract class IdiormRepository implements RepositoryInterface
     protected $table;
 
     /**
-     * Entity class name
+     * Full entity class name
      *
      * @var string|null
      */

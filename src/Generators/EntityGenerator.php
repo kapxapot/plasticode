@@ -2,20 +2,37 @@
 
 namespace Plasticode\Generators;
 
-use Plasticode\Contained;
+use Plasticode\Data\Api;
 use Plasticode\Data\Rights;
+use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Plasticode\Validation\ValidationRules;
 use Psr\Container\ContainerInterface;
 use Respect\Validation\Validator;
 use Slim\App;
 use Slim\Http\Request as SlimRequest;
+use Slim\Interfaces\RouterInterface;
 
 /**
  * @property ValidatorInterface $validator
  */
-class EntityGenerator extends Contained
+class EntityGenerator
 {
+    /** @var ContainerInterface */
+    protected $container;
+
+    /** @var SettingsProviderInterface */
+    protected $settingsProvider;
+
+    /** @var RouterInterface */
+    protected $router;
+
+    /** @var Api */
+    protected $api;
+
+    /** @var ValidatorInterface */
+    protected $validator;
+
     /**
      * Entity name
      *
@@ -35,12 +52,19 @@ class EntityGenerator extends Contained
      */
     protected $idField = 'id';
 
-    public function __construct(ContainerInterface $container, string $entity)
+    public function __construct(
+        ContainerInterface $container,
+        string $entity
+    )
     {
-        parent::__construct($container);
-        
+        $this->container = $container;
+        $this->settingsProvider = $container->settingsProvider;
+        $this->router = $container->router;
+        $this->api = $container->api;
+        $this->validator = $container->validator;
+
         $this->entity = $entity;
-        $this->rules = new ValidationRules($container);
+        $this->rules = new ValidationRules($this->settingsProvider);
     }
 
     /**
@@ -109,9 +133,7 @@ class EntityGenerator extends Contained
     
     public function getAdminParams(array $args) : array
     {
-        $settings = $this->getSettings();
-        $params = $settings['entities'][$this->entity];
-        
+        $params = $this->settingsProvider->getSettings('entities.' . $this->entity);
         $params['base'] = $this->router->pathFor('admin.index');
 
         return $params;
@@ -128,7 +150,7 @@ class EntityGenerator extends Contained
     {
         $this->generateGetAllRoute($app, $access);
         
-        $api = $this->getSettings('tables.' . $this->entity . '.api');
+        $api = $this->settingsProvider->getSettings('tables.' . $this->entity . '.api');
         
         if ($api == 'full') {
             $this->generateCRUDRoutes($app, $access);

@@ -2,14 +2,21 @@
 
 namespace Plasticode\Generators;
 
-use Plasticode\Models\Menu;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
+use Psr\Container\ContainerInterface;
 
-/**
- * @property MenuRepositoryInterface $menuRepository
- */
 class MenusGenerator extends EntityGenerator
 {
+    /** @var MenuRepositoryInterface */
+    protected $menuRepository;
+
+    public function __construct(ContainerInterface $container, string $entity)
+    {
+        parent::__construct($container, $entity);
+
+        $this->menuRepository = $container->menuRepository;
+    }
+
     public function getRules(array $data, $id = null) : array
     {
         $rules = parent::getRules($data, $id);

@@ -2,11 +2,42 @@
 
 namespace Plasticode\Data;
 
-use Plasticode\Contained;
+use Plasticode\Auth\Access;
+use Plasticode\Core\Interfaces\CacheInterface;
+use Plasticode\Interfaces\SettingsProviderInterface;
+use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Util\Date;
 
-final class Db extends Contained
+/**
+ * Db layer via Idiorm (\ORM).
+ */
+final class Db
 {
+    /** @var Access */
+    private $access;
+
+    /** @var CacheInterface */
+    private $cache;
+
+    /** @var SettingsProviderInterface */
+    private $settingsProvider;
+
+    /** @var UserRepositoryInterface */
+    private $userRepository;
+
+    public function __construct(
+        Access $access,
+        CacheInterface $cache,
+        SettingsProviderInterface $settingsProvider,
+        UserRepositoryInterface $userRepository
+    )
+    {
+        $this->access = $access;
+        $this->cache = $cache;
+        $this->settingsProvider = $settingsProvider;
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * Tables settings
      *
@@ -17,7 +48,7 @@ final class Db extends Contained
     public function getTableSettings(string $table) : ?array
     {
         if (is_null($this->tables)) {
-            $this->tables = $this->getSettings('tables');
+            $this->tables = $this->settingsProvider->getSettings('tables');
         }
 
         return $this->tables[$table] ?? null;
@@ -75,7 +106,8 @@ final class Db extends Contained
         $value = $this->cache->get($path);
 
         if (is_null($value)) {
-            $entities = $this->forTable($table)
+            $entities = $this
+                ->forTable($table)
                 ->findArray();
             
             foreach ($entities as $entity) {
