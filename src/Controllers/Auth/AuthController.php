@@ -8,24 +8,43 @@ use Plasticode\Controllers\Controller;
 use Plasticode\Core\Response;
 use Plasticode\Core\Security;
 use Plasticode\Exceptions\Http\AuthenticationException;
+use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Request as SlimRequest;
 use Webmozart\Assert\Assert;
 
-/**
- * @property Auth $auth
- * @property CaptchaInterface $captcha
- * @property UserRepositoryInterface $userRepository
- */
 class AuthController extends Controller
 {
+    /** @var Auth */
+    private $auth;
+
+    /** @var CaptchaInterface */
+    private $captcha;
+
+    /** @var UserRepositoryInterface */
+    private $userRepository;
+
+    /** @var UserValidation */
+    private $userValidation;
+
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct($container);
+
+        $this->auth = $container->auth;
+        $this->captcha = $container->captcha;
+        $this->userRepository = $container->userRepository;
+        $this->userValidation = $container->userValidation;
+    }
+
     public function postSignUp(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
         $data = $request->getParsedBody();
 
-        $rules = $this->userRepository->getRules($data);
+        $rules = $this->userValidation->getRules($data);
         $this->validate($request, $rules);
 
         if (!$this->captcha->validate($data['captcha'])) {

@@ -6,9 +6,8 @@ use Plasticode\Models\User;
 
 interface UserRepositoryInterface extends RepositoryInterface
 {
-    public function get(int $id) : ?User;
-    public function create(array $data) : User;
-    public function save(User $user) : User;
-    public function getByLogin(string $login) : ?User;
-    public function getRules(array $data) : array;
+    function get(int $id) : ?User;
+    function create(array $data) : User;
+    function save(User $user) : User;
+    function getByLogin(string $login) : ?User;
 }

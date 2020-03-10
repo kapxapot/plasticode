@@ -29,6 +29,8 @@ use Plasticode\Handlers\NotAllowedHandler;
 use Plasticode\Handlers\NotFoundHandler;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
+use Plasticode\Models\Validation\PasswordValidation;
+use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
 use Plasticode\Parsing\LinkMappers\PageLinkMapper;
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
@@ -57,6 +59,7 @@ use Plasticode\Repositories\Idiorm\UserRepository;
 use Plasticode\SettingsProvider;
 use Plasticode\Twig\Extensions\AccessRightsExtension;
 use Plasticode\Util\Cases;
+use Plasticode\Validation\ValidationRules;
 use Plasticode\Validation\Validator;
 use Psr\Container\ContainerInterface;
 use Slim\Collection as SlimCollection;
@@ -352,6 +355,25 @@ class Bootstrap
                 return new Validator(
                     $container,
                     $container->translator
+                );
+            },
+
+            'validationRules' => function (ContainerInterface $container) {
+                return new ValidationRules(
+                    $container->settingsProvider
+                );
+            },
+
+            'passwordValidation' => function (ContainerInterface $container) {
+                return new PasswordValidation(
+                    $container->validationRules
+                );
+            },
+
+            'userValidation' => function (ContainerInterface $container) {
+                return new UserValidation(
+                    $container->validationRules,
+                    $container->userRepository
                 );
             },
             

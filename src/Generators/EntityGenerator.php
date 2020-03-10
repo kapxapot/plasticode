@@ -62,9 +62,9 @@ class EntityGenerator
         $this->router = $container->router;
         $this->api = $container->api;
         $this->validator = $container->validator;
+        $this->rules = $container->validationRules;
 
         $this->entity = $entity;
-        $this->rules = new ValidationRules($this->settingsProvider);
     }
 
     /**
@@ -150,7 +150,8 @@ class EntityGenerator
     {
         $this->generateGetAllRoute($app, $access);
         
-        $api = $this->settingsProvider->getSettings('tables.' . $this->entity . '.api');
+        $api = $this->settingsProvider
+            ->getSettings('tables.' . $this->entity . '.api');
         
         if ($api == 'full') {
             $this->generateCRUDRoutes($app, $access);

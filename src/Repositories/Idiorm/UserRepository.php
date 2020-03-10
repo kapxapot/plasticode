@@ -37,15 +37,4 @@ class UserRepository extends IdiormRepository implements UserRepositoryInterface
             )
             ->one();
     }
-
-    /**
-     * Todo: supposedly this belongs to a model or some validation settings
-     *
-     * @param array $data
-     * @return array
-     */
-    public function getRules(array $data) : array
-    {
-        return User::getRules($data);
-    }
 }

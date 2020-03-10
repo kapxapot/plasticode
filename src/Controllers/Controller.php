@@ -3,14 +3,13 @@
 namespace Plasticode\Controllers;
 
 use Plasticode\Collection;
-use Plasticode\Contained;
 use Plasticode\Core\Interfaces\TranslatorInterface;
-use Plasticode\Data\Db;
 use Plasticode\Handlers\NotFoundHandler;
 use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Util\Arrays;
 use Plasticode\Validation\Validator;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -20,22 +19,45 @@ use Webmozart\Assert\Assert;
 
 /**
  * Base controller for controllers showing views.
- * 
- * @property Db $db
- * @property LoggerInterface $logger
- * @property MenuRepositoryInterface $menuRepository
- * @property NotFoundHandler $notFoundHandler
- * @property SettingsProviderInterface $settingsProvider
- * @property TranslatorInterface $translator
- * @property Twig $view
- * @property Validator $validator
  */
-class Controller extends Contained
+class Controller
 {
+    /** @var SettingsProviderInterface */
+    protected $settingsProvider;
+
+    /** @var TranslatorInterface */
+    private $translator;
+
+    /** @var Validator */
+    private $validator;
+
+    /** @var Twig */
+    private $view;
+
+    /** @var LoggerInterface */
+    protected $logger;
+
+    /** @var NotFoundHandler */
+    private $notFoundHandler;
+
+    /** @var MenuRepositoryInterface */
+    protected $menuRepository;
+
     /**
      * @var boolean
      */
     protected $autoOneColumn = true;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->settingsProvider = $container->settingsProvider;
+        $this->translator = $container->translator;
+        $this->validator = $container->validator;
+        $this->view = $container->view;
+        $this->logger = $container->logger;
+        $this->notFoundHandler = $container->notFoundHandler;
+        $this->menuRepository = $container->menuRepository;
+    }
 
     protected function notFound(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
@@ -136,13 +158,13 @@ class Controller extends Contained
         ResponseInterface $response,
         string $template,
         array $params,
-        bool $logQueryCount = false
+        int $logQueryCount = null
     ) : ResponseInterface
     {
         $rendered = $this->view->render($response, $template, $params);
 
-        if ($logQueryCount) {
-            $this->logger->info('Query count: ' . $this->db->getQueryCount());
+        if ($logQueryCount !== null) {
+            $this->logger->info('Query count: ' . $logQueryCount);
         }
         
         return $rendered;

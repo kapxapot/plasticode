@@ -35,6 +35,7 @@ class GeneratorResolver
 
         foreach ($this->namespaces as $namespace) {
             $generatorClass = $this->buildClassName($namespace, $name);
+            
             if (class_exists($generatorClass)) {
                 break;
             }

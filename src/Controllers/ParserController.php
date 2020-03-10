@@ -2,22 +2,36 @@
 
 namespace Plasticode\Controllers;
 
-use Plasticode\Contained;
 use Plasticode\Core\Env;
 use Plasticode\Core\Response;
 use Plasticode\Parsing\Interfaces\ParserInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
-/**
- * @property ParserInterface $parser
- * @property CutParser $cutParser
- * @property Env $env
- * @property LoggerInterface $logger
- */
-class ParserController extends Contained
+class ParserController
 {
+    /** @var Env */
+    private $env;
+
+    /** @var LoggerInterface */
+    private $logger;
+
+    /** @var ParserInterface */
+    private $parser;
+
+    /** @var CutParser */
+    private $cutParser;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->env = $container->env;
+        $this->logger = $container->logger;
+        $this->parser = $container->parser;
+        $this->cutParser = $container->cutParser;
+    }
+
     public function parse(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
     {
         $data = $request->getParsedBody();

@@ -3,32 +3,24 @@
 namespace Plasticode\Generators;
 
 use Plasticode\Core\Security;
-use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Models\Interfaces\ValidationInterface;
 use Psr\Container\ContainerInterface;
 
 class UsersGenerator extends EntityGenerator
 {
-    /** @var UserRepositoryInterface */
-    protected $userRepository;
+    /** @var ValidationInterface */
+    protected $userValidation;
 
     public function __construct(ContainerInterface $container, string $entity)
     {
         parent::__construct($container, $entity);
 
-        $this->userRepository = $container->userRepository;
+        $this->userValidation = $container->userValidation;
     }
 
     public function getRules(array $data, $id = null) : array
     {
-        $rules = parent::getRules($data, $id);
-        
-        $table = $this->userRepository->getTable();
-        
-        $rules['login'] = $this->rule('login')->loginAvailable($table, $id);
-        $rules['email'] = $this->rule('url')->email()->emailAvailable($table, $id);
-        $rules['password'] = $this->rule('password', $id);
-        
-        return $rules;
+        return $this->userValidation->getRules($data, $id);
     }
     
     public function beforeSave(array $data, $id = null) : array
