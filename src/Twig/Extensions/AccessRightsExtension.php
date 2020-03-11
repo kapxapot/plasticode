@@ -3,14 +3,12 @@
 namespace Plasticode\Twig\Extensions;
 
 use Plasticode\Auth\Access;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class AccessRightsExtension extends \Twig_Extension
+class AccessRightsExtension extends AbstractExtension
 {
-    /**
-     * Access rights
-     *
-     * @var Plasticode\Auth\Access
-     */
+    /** @var Access */
     private $access;
 
     public function __construct(Access $access)
@@ -26,7 +24,7 @@ class AccessRightsExtension extends \Twig_Extension
     public function getFunctions() : array
     {
         return [
-            new \Twig_SimpleFunction('can', array($this, 'can')),
+            new TwigFunction('can', [$this, 'can']),
         ];
     }
     

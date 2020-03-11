@@ -5,16 +5,36 @@ namespace Plasticode\Handlers\Traits;
 use Plasticode\Core\Request;
 use Plasticode\Core\Response;
 use Plasticode\Exceptions\Http\NotFoundException;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 trait NotFound
 {
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
+    protected abstract function container() : ContainerInterface;
+
+    protected abstract function translate(string $value) : string;
+
+    protected abstract function render(
+        ResponseInterface $response,
+        string $template,
+        array $data = []
+    ) : ResponseInterface;
+
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ) : ResponseInterface
     {
         if (Request::isJson($request)) {
             $ex = new NotFoundException();
-            return Response::error($this->container, $request, $response, $ex);
+
+            return Response::error(
+                $this->container(),
+                $request,
+                $response,
+                $ex
+            );
         }
 
         $params = $this->buildParams(

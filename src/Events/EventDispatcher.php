@@ -2,12 +2,14 @@
 
 namespace Plasticode\Events;
 
-use Plasticode\Contained;
 use Plasticode\Util\Classes;
-use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
-class EventDispatcher extends Contained
+class EventDispatcher
 {
+    /** @var LoggerInterface */
+    private $eventLog;
+
     /**
      * Event processors
      *
@@ -29,16 +31,12 @@ class EventDispatcher extends Contained
      */
     private $queue = [];
 
-    /**
-     * Creates event dispatcher.
-     *
-     * @param object $container DI container
-     * @param array $processors Event processors
-     */
-    public function __construct(ContainerInterface $container, array $processors)
+    public function __construct(
+        LoggerInterface $eventLog,
+        array $processors
+    )
     {
-        parent::__construct($container);
-
+        $this->eventLog = $eventLog;
         $this->processors = $processors;
     }
 

@@ -3,35 +3,35 @@
 namespace Plasticode\Controllers;
 
 use Plasticode\Collection;
+use Plasticode\Core\AppContext;
+use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Core\Interfaces\TranslatorInterface;
+use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Handlers\NotFoundHandler;
-use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Util\Arrays;
-use Plasticode\Validation\Validator;
-use Psr\Container\ContainerInterface;
+use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Http\Request as SlimRequest;
-use Slim\Views\Twig;
 use Webmozart\Assert\Assert;
 
 /**
  * Base controller for controllers showing views.
  */
-class Controller
+abstract class Controller
 {
     /** @var SettingsProviderInterface */
-    protected $settingsProvider;
+    private $settingsProvider;
 
     /** @var TranslatorInterface */
     private $translator;
 
-    /** @var Validator */
+    /** @var ValidatorInterface */
     private $validator;
 
-    /** @var Twig */
+    /** @var ViewInterface */
     private $view;
 
     /** @var LoggerInterface */
@@ -48,22 +48,37 @@ class Controller
      */
     protected $autoOneColumn = true;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(AppContext $appContext)
     {
-        $this->settingsProvider = $container->settingsProvider;
-        $this->translator = $container->translator;
-        $this->validator = $container->validator;
-        $this->view = $container->view;
-        $this->logger = $container->logger;
-        $this->notFoundHandler = $container->notFoundHandler;
-        $this->menuRepository = $container->menuRepository;
+        $this->settingsProvider = $appContext->settingsProvider();
+        $this->translator = $appContext->translator();
+        $this->validator = $appContext->validator();
+        $this->view = $appContext->view();
+        $this->logger = $appContext->logger();
+        $this->notFoundHandler = $appContext->notFoundHandler();
+        $this->menuRepository = $appContext->menuRepository();
     }
 
-    protected function notFound(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
+    protected function notFound(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ) : ResponseInterface
     {
         $handler = $this->notFoundHandler;
 
         return $handler($request, $response);
+    }
+
+    /**
+     * Get settings.
+     *
+     * @param string $path
+     * @param mixed $default
+     * @return mixed
+     */
+    protected function getSettings(string $path, $default = null)
+    {
+        return $this->settingsProvider->get($path, $default);
     }
 
     protected function buildParams(array $settings) : array
@@ -97,7 +112,7 @@ class Controller
             $params['page_description'] = strip_tags($description);
         }
         
-        $params['debug'] = $this->settingsProvider->getSettings('debug');
+        $params['debug'] = $this->getSettings('debug');
 
         return array_merge($params, $settings['params']);
     }
@@ -157,17 +172,10 @@ class Controller
     protected function render(
         ResponseInterface $response,
         string $template,
-        array $params,
-        int $logQueryCount = null
+        array $params
     ) : ResponseInterface
     {
-        $rendered = $this->view->render($response, $template, $params);
-
-        if ($logQueryCount !== null) {
-            $this->logger->info('Query count: ' . $logQueryCount);
-        }
-        
-        return $rendered;
+        return $this->view->render($response, $template, $params);
     }
 
     protected function validate(SlimRequest $request, array $rules) : void

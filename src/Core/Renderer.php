@@ -3,20 +3,18 @@
 namespace Plasticode\Core;
 
 use Plasticode\Core\Interfaces\RendererInterface;
+use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\ViewModels\UrlViewModel;
-use Slim\Views\Twig;
 
 class Renderer implements RendererInterface
 {
     /**
-     * View
-     *
-     * @var Slim\Views\Twig
+     * @var ViewInterface
      */
     protected $view;
     
-    public function __construct(Twig $view)
+    public function __construct(ViewInterface $view)
     {
         $this->view = $view;
     }

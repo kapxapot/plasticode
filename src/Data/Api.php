@@ -4,20 +4,40 @@ namespace Plasticode\Data;
 
 use Plasticode\Auth\Auth;
 use Plasticode\Collection;
-use Plasticode\Contained;
 use Plasticode\Core\Response;
 use Plasticode\Exceptions\Http\NotFoundException;
 use Plasticode\Exceptions\Http\AuthorizationException;
 use Plasticode\Generators\EntityGenerator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @property Auth $auth
  * @property Db $db
  */
-class Api extends Contained
+class Api
 {
+    /** @var Db */
+    private $db;
+
+    /** @var Auth */
+    private $auth;
+
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(
+        Db $db,
+        Auth $auth,
+        LoggerInterface $logger
+    )
+    {
+        $this->db = $db;
+        $this->auth = $auth;
+        $this->logger = $logger;
+    }
+
     /**
      * Returns access rights for the table.
      *

@@ -2,12 +2,20 @@
 
 namespace Plasticode\Middleware;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Response;
+
 /**
  * Permanently redirects paths with a trailing slash to their non-trailing counterpart
  */
-class SlashMiddleware extends Middleware
+class SlashMiddleware
 {
-    public function __invoke($request, $response, $next)
+    public function __invoke(
+        ServerRequestInterface $request,
+        Response $response,
+        $next
+    ) : ResponseInterface
     {
         $uri = $request->getUri();
         $path = $uri->getPath();

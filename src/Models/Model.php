@@ -2,24 +2,15 @@
 
 namespace Plasticode\Models;
 
-use Plasticode\Contained;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Traits\LazyCache;
 use Plasticode\Util\Strings;
-use Psr\Container\ContainerInterface;
 use Webmozart\Assert\Assert;
 
 class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
 {
     use LazyCache;
-
-    /**
-     * DI container wrapper (!)
-     *
-     * @var Contained
-     */
-    protected static $container;
 
     /**
      * Data array or \ORM object
@@ -28,22 +19,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
      */
     protected $obj;
 
-    /** @var boolean */
-    private static $initialized = false;
-
-    public static function init(ContainerInterface $container) : void
-    {
-        if (!self::$initialized) {
-            // hack for getSettings()
-            self::$container = new Contained($container);
-
-            self::$initialized = true;
-        }
-    }
-
     /**
-     * Creates instance.
-     *
      * @param array|\ORM|null $obj
      */
     public function __construct($obj = null)

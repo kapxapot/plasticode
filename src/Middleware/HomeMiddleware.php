@@ -2,14 +2,15 @@
 
 namespace Plasticode\Middleware;
 
-class HomeMiddleware extends Middleware
-{
-	protected $homePath;
+use Slim\Interfaces\RouterInterface;
 
-	public function __construct($container, $home)
-	{
-		parent::__construct($container);
-		
-		$this->homePath = $this->router->pathFor($home);
-	}
+abstract class HomeMiddleware
+{
+    /** @var string */
+    protected $homePath;
+
+    public function __construct(RouterInterface $router, string $home)
+    {
+        $this->homePath = $router->pathFor($home);
+    }
 }

@@ -313,6 +313,7 @@ class EntityGenerator
                     $params['args'] = $adminArgs;
                 }
 
+                // $this = container
                 return $this->view->render(
                     $response, 'admin/' . $templateName . '.twig', $params
                 );

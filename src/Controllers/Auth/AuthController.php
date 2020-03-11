@@ -32,7 +32,7 @@ class AuthController extends Controller
 
     public function __construct(ContainerInterface $container)
     {
-        parent::__construct($container);
+        parent::__construct($container->appContext);
 
         $this->auth = $container->auth;
         $this->captcha = $container->captcha;

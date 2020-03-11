@@ -2,16 +2,40 @@
 
 namespace Plasticode\Middleware;
 
+use Plasticode\Auth\Auth;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Response;
+use Slim\Interfaces\RouterInterface;
+
 class GuestMiddleware extends HomeMiddleware
 {
-	public function __invoke($request, $response, $next)
-	{
-		if ($this->auth->check()) {
-			return $response->withRedirect($this->homePath);
-		}
+    /** @var Auth */
+    private $auth;
 
-		$response = $next($request, $response);
-		
-		return $response;
-	}
+    public function __construct(
+        RouterInterface $router,
+        Auth $auth,
+        string $home
+    )
+    {
+        parent::__construct($router, $home);
+
+        $this->auth = $auth;
+    }
+
+    public function __invoke(
+        ServerRequestInterface $request,
+        Response $response,
+        $next
+    ) : ResponseInterface
+    {
+        if ($this->auth->check()) {
+            return $response->withRedirect($this->homePath);
+        }
+
+        $response = $next($request, $response);
+        
+        return $response;
+    }
 }

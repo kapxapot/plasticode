@@ -2,38 +2,56 @@
 
 namespace Plasticode\Middleware;
 
+use Plasticode\Auth\Access;
 use Plasticode\Exceptions\Http\AuthenticationException;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Response as SlimResponse;
+use Slim\Interfaces\RouterInterface;
 
-class AccessMiddleware extends Middleware
+class AccessMiddleware
 {
+    /** @var Access */
+    private $access;
+
+    /** @var RouterInterface */
+    private $router;
+
     private $entity;
     private $action;
     private $redirect;
     
-    public function __construct(ContainerInterface $container, string $entity, string $action, string $redirect = null)
+    public function __construct(
+        Access $access,
+        RouterInterface $router,
+        string $entity,
+        string $action,
+        string $redirect = null
+    )
     {
-        parent::__construct($container);
-        
+        $this->access = $access;
+        $this->router = $router;
+
         $this->entity = $entity;
         $this->action = $action;
         $this->redirect = $redirect;
     }
     
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
+    public function __invoke(
+        ServerRequestInterface $request,
+        SlimResponse $response,
+        $next
+    )
     {
         if ($this->access->checkRights($this->entity, $this->action)) {
-            $response = $next($request, $response);
-        }
-        elseif ($this->redirect) {
-            return $response->withRedirect($this->router->pathFor($this->redirect));
-        }
-        else {
-            throw new AuthenticationException();
+            return $next($request, $response);
         }
 
-        return $response;
+        if ($this->redirect) {
+            return $response->withRedirect(
+                $this->router->pathFor($this->redirect)
+            );
+        }
+
+        throw new AuthenticationException();
     }
 }

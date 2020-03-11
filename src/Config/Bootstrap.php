@@ -11,11 +11,13 @@ use Plasticode\Auth\Captcha;
 use Plasticode\Config\Parsing\BBContainerConfig;
 use Plasticode\Config\Parsing\BBParserConfig;
 use Plasticode\Config\Parsing\ReplacesConfig;
+use Plasticode\Core\AppContext;
 use Plasticode\Core\Cache;
 use Plasticode\Core\Linker;
 use Plasticode\Core\Pagination;
 use Plasticode\Core\Renderer;
 use Plasticode\Core\Session;
+use Plasticode\Core\SettingsProvider;
 use Plasticode\Core\Translator;
 use Plasticode\Data\Api;
 use Plasticode\Data\Db;
@@ -56,8 +58,8 @@ use Plasticode\Repositories\Idiorm\PageRepository;
 use Plasticode\Repositories\Idiorm\RoleRepository;
 use Plasticode\Repositories\Idiorm\TagRepository;
 use Plasticode\Repositories\Idiorm\UserRepository;
-use Plasticode\SettingsProvider;
 use Plasticode\Twig\Extensions\AccessRightsExtension;
+use Plasticode\Twig\TwigView;
 use Plasticode\Util\Cases;
 use Plasticode\Validation\ValidationRules;
 use Plasticode\Validation\Validator;
@@ -172,8 +174,22 @@ class Bootstrap
                 );
             },
 
+            'appContext' => function (ContainerInterface $container) {
+                return new AppContext(
+                    $container->settingsProvider,
+                    $container->translator,
+                    $container->validator,
+                    $container->view,
+                    $container->logger,
+                    $container->notFoundHandler,
+                    $container->menuRepository
+                );
+            },
+
             'settingsProvider' => function (ContainerInterface $container) {
-                return new SettingsProvider($container);
+                return new SettingsProvider(
+                    $container->get('settings')
+                );
             },
             
             'session' => function (ContainerInterface $container) {
@@ -337,7 +353,8 @@ class Bootstrap
                     $view['auth_token_key'] = $this->settings['auth_token_key'];
                 }
             
-                return $view;
+                /** @var Twig $view */
+                return new TwigView($view);
             },
             
             'localizationConfig' => function (ContainerInterface $container) {
@@ -378,7 +395,11 @@ class Bootstrap
             },
             
             'api' => function (ContainerInterface $container) {
-                return new Api($container);
+                return new Api(
+                    $container->db,
+                    $container->auth,
+                    $container->logger
+                );
             },
             
             'renderer' => function (ContainerInterface $container) {
@@ -497,7 +518,7 @@ class Bootstrap
 
             'dispatcher' => function (ContainerInterface $container) {
                 return new EventDispatcher(
-                    $container,
+                    $container->eventLog,
                     $container->eventProcessors
                 );
             },
@@ -552,15 +573,23 @@ class Bootstrap
             // handlers
             
             'notFoundHandler' => function (ContainerInterface $container) {
-                return new NotFoundHandler($container);
+                return new NotFoundHandler(
+                    $container,
+                    $container->translator,
+                    $container->view
+                );
             },
             
             'errorHandler' => function (ContainerInterface $container) {
-                return new ErrorHandler($container);
+                return new ErrorHandler(
+                    $container
+                );
             },
             
             'notAllowedHandler' => function (ContainerInterface $container) {
-                return new NotAllowedHandler($container);
+                return new NotAllowedHandler(
+                    $container
+                );
             },
         ];
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Interfaces;
+namespace Plasticode\Core\Interfaces;
 
 interface SettingsProviderInterface
 {
@@ -11,5 +11,5 @@ interface SettingsProviderInterface
      * @param mixed $default Default value
      * @return mixed
      */
-    public function getSettings(string $path = null, $default = null);
+    function get(string $path, $default = null);
 }

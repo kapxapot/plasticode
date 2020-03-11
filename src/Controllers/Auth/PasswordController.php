@@ -11,7 +11,6 @@ use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Validation\ValidationRules;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Respect\Validation\Validator as v;
 use Slim\Http\Request as SlimRequest;
 
 class PasswordController extends Controller
@@ -30,7 +29,7 @@ class PasswordController extends Controller
 
     public function __construct(ContainerInterface $container)
     {
-        parent::__construct($container);
+        parent::__construct($container->appContext);
 
         $this->auth = $container->auth;
         $this->validationRules = $container->validationRules;

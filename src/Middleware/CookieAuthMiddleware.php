@@ -2,25 +2,36 @@
 
 namespace Plasticode\Middleware;
 
-class CookieAuthMiddleware extends Middleware
+use Plasticode\Auth\Auth;
+use Psr\Http\Message\ResponseInterface;
+use Slim\Http\Request;
+
+class CookieAuthMiddleware
 {
+    /** @var Auth */
+    private $auth;
+
     private $tokenKey = 'auth_token';
     
-    public function __construct($container, $tokenKey = null)
+    public function __construct(Auth $auth, string $tokenKey = null)
     {
-        parent::__construct($container);
+        $this->auth = $auth;
 
         if (strlen($tokenKey) > 0) {
             $this->tokenKey = $tokenKey;
         }
     }
     
-    public function __invoke($request, $response, $next)
+    public function __invoke(
+        Request $request,
+        ResponseInterface $response,
+        $next
+    ) : ResponseInterface
     {
         $token = $request->getCookieParam($this->tokenKey);
 
         $this->auth->validateCookie($token);
-        
+
         return $next($request, $response);
     }
 }

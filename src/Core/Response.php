@@ -2,7 +2,6 @@
 
 namespace Plasticode\Core;
 
-use Plasticode\Exceptions\InvalidArgumentException;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Exceptions\Interfaces\HttpExceptionInterface;
 use Plasticode\Exceptions\Interfaces\PropagatedExceptionInterface;
@@ -11,20 +10,26 @@ use Plasticode\Util\Text;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Http\Response as SlimResponse;
+use Webmozart\Assert\Assert;
 
 class Response
 {
-    const DEFAULT_ERROR_STATUS = 500;
+    private const DefaultErrorStatus = 500;
 
     /**
-     * Writes data to response object and returns it
+     * Writes data to response object and returns it.
      *
-     * @param ResponseInterface $response
-     * @param mixed $data
+     * @param SlimResponse $response
+     * @param ArrayableInterface|\ORM|array $data
      * @param array $options
      * @return ResponseInterface
      */
-    public static function json(ResponseInterface $response, $data, array $options = []) : ResponseInterface
+    public static function json(
+        SlimResponse $response,
+        $data,
+        array $options = []
+    ) : ResponseInterface
     {
         if ($data instanceof ArrayableInterface) {
             $data = $data->toArray();
@@ -32,9 +37,10 @@ class Response
             $data = $data->asArray();
         }
         
-        if (!is_array($data)) {
-            throw new InvalidArgumentException('Response::json expects an array, a Collection or a dbObj.');
-        }
+        Assert::isArray(
+            $data,
+            'Response::json expects an array, ArrayableInterface or \ORM.'
+        );
 
         if (isset($options['params']['format'])) {
             $format = $options['params']['format'];
@@ -52,20 +58,23 @@ class Response
     }
 
     /**
-     * Writes text to response object and returns it
+     * Writes text to response object and returns it.
      *
      * @param ResponseInterface $response
      * @param string $text
      * @return ResponseInterface
      */
-    public static function text(ResponseInterface $response, string $text) : ResponseInterface
+    public static function text(
+        ResponseInterface $response,
+        string $text
+    ) : ResponseInterface
     {
         $response->getBody()->write($text);
         return $response;
     }
 
     /**
-     * Writes error into response and returns it
+     * Writes error into response and returns it.
      * 
      * @param ContainerInterface $container DI container
      * @param ServerRequestInterface $request HTTP request object
@@ -73,7 +82,12 @@ class Response
      * @param \Exception $ex
      * @return ResponseInterface
      */
-    public static function error(ContainerInterface $container, ServerRequestInterface $request, ResponseInterface $response, \Exception $ex) : ResponseInterface
+    public static function error(
+        ContainerInterface $container,
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        \Exception $ex
+    ) : ResponseInterface
     {
         $settings = $container->get('settings');
         $debug = $settings['debug'];
@@ -87,7 +101,7 @@ class Response
 
         $status = ($ex instanceof HttpExceptionInterface)
             ? $ex->GetErrorCode()
-            : self::DEFAULT_ERROR_STATUS;
+            : self::DefaultErrorStatus;
         
         $msg = null;
         $errors = [];
