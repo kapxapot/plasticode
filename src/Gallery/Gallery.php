@@ -2,9 +2,9 @@
 
 namespace Plasticode\Gallery;
 
+use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Exceptions\InvalidResultException;
 use Plasticode\Gallery\ThumbStrategies\Interfaces\ThumbStrategyInterface;
-use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
 use Plasticode\Models\DbModel;
@@ -51,7 +51,7 @@ class Gallery
         $this->thumbFolder = $folderSettings['thumb']['storage'];
         $this->thumbPublicFolder = $folderSettings['thumb']['public'];
 
-        $this->folders = $settingsProvider->getSettings('folders');
+        $this->folders = $settingsProvider->get('folders');
     }
     
     protected function getFolder(string $name) : string

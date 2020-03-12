@@ -2,7 +2,7 @@
 
 namespace Plasticode\Config;
 
-use Plasticode\Interfaces\SettingsProviderInterface;
+use Plasticode\Core\Interfaces\SettingsProviderInterface;
 
 abstract class Config
 {
@@ -23,6 +23,6 @@ abstract class Config
      */
     protected function get(string $var, $def = null)
     {
-        return $this->settingsProvider->getSettings($var, $def);
+        return $this->settingsProvider->get($var, $def);
     }
 }

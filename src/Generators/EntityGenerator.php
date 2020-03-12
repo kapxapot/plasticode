@@ -2,9 +2,9 @@
 
 namespace Plasticode\Generators;
 
+use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Data\Api;
 use Plasticode\Data\Rights;
-use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Plasticode\Validation\ValidationRules;
 use Psr\Container\ContainerInterface;
@@ -133,7 +133,9 @@ class EntityGenerator
     
     public function getAdminParams(array $args) : array
     {
-        $params = $this->settingsProvider->getSettings('entities.' . $this->entity);
+        $params = $this->settingsProvider
+            ->get('entities.' . $this->entity);
+        
         $params['base'] = $this->router->pathFor('admin.index');
 
         return $params;
@@ -151,7 +153,7 @@ class EntityGenerator
         $this->generateGetAllRoute($app, $access);
         
         $api = $this->settingsProvider
-            ->getSettings('tables.' . $this->entity . '.api');
+            ->get('tables.' . $this->entity . '.api');
         
         if ($api == 'full') {
             $this->generateCRUDRoutes($app, $access);

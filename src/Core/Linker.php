@@ -3,7 +3,7 @@
 namespace Plasticode\Core;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Interfaces\SettingsProviderInterface;
+use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\IO\Image;
 use Plasticode\Util\Numbers;
 use Plasticode\Util\Strings;
@@ -17,7 +17,10 @@ class Linker implements LinkerInterface
     /** @var RouterInterface */
     protected $router;
 
-    public function __construct(SettingsProviderInterface $settingsProvider, RouterInterface $router)
+    public function __construct(
+        SettingsProviderInterface $settingsProvider,
+        RouterInterface $router
+    )
     {
         $this->settingsProvider = $settingsProvider;
         $this->router = $router;
@@ -32,7 +35,7 @@ class Linker implements LinkerInterface
     public function abs(string $url = null) : string
     {
         $siteUrl = $this->settingsProvider
-            ->getSettings('view_globals.site_url');
+            ->get('view_globals.site_url');
         
         $baseUrl = rtrim($siteUrl, '/');
         
@@ -50,7 +53,7 @@ class Linker implements LinkerInterface
     
     public function root() : string
     {
-        return $this->settingsProvider->getSettings('root');
+        return $this->settingsProvider->get('root');
     }
 
     public function getExtension(?string $type) : ?string

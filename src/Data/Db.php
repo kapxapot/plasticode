@@ -4,7 +4,7 @@ namespace Plasticode\Data;
 
 use Plasticode\Auth\Access;
 use Plasticode\Core\Interfaces\CacheInterface;
-use Plasticode\Interfaces\SettingsProviderInterface;
+use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Util\Date;
 
@@ -48,7 +48,7 @@ final class Db
     public function getTableSettings(string $table) : ?array
     {
         if (is_null($this->tables)) {
-            $this->tables = $this->settingsProvider->getSettings('tables');
+            $this->tables = $this->settingsProvider->get('tables');
         }
 
         return $this->tables[$table] ?? null;

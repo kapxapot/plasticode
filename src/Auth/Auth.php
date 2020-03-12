@@ -3,9 +3,9 @@
 namespace Plasticode\Auth;
 
 use Plasticode\Core\Interfaces\SessionInterface;
+use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Core\Security;
 use Plasticode\Exceptions\Http\AuthenticationException;
-use Plasticode\Interfaces\SettingsProviderInterface;
 use Plasticode\Models\AuthToken;
 use Plasticode\Models\Role;
 use Plasticode\Models\User;
@@ -208,7 +208,7 @@ class Auth
      */
     private function generateExpirationTime() : string
     {
-        $ttl = $this->settingsProvider->getSettings(
+        $ttl = $this->settingsProvider->get(
             self::TokenTtlPath,
             self::DefaultTokenTtl
         );

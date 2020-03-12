@@ -2,8 +2,8 @@
 
 namespace Plasticode\Validation;
 
+use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Exceptions\InvalidConfigurationException;
-use Plasticode\Interfaces\SettingsProviderInterface;
 use Respect\Validation\Validatable;
 use Respect\Validation\Validator;
 
@@ -62,13 +62,13 @@ class ValidationRules
                 return Validator::imageNotEmpty()->imageTypeAllowed();
             },
             'password' => function () {
-                $pwdMin = $this->settingsProvider->getSettings('password_min');
+                $pwdMin = $this->settingsProvider->get('password_min');
 
                 return Validator::noWhitespace()->length($pwdMin);
             },
             'login' => function () use ($alias) {
-                $loginMin = $this->settingsProvider->getSettings('login_min');
-                $loginMax = $this->settingsProvider->getSettings('login_max');
+                $loginMin = $this->settingsProvider->get('login_min');
+                $loginMax = $this->settingsProvider->get('login_max');
 
                 return $alias()->length($loginMin, $loginMax);
             },
