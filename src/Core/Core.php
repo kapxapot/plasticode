@@ -2,7 +2,6 @@
 
 namespace Plasticode\Core;
 
-use Plasticode\Models\Model;
 use Psr\Container\ContainerInterface;
 use Respect\Validation\Validator as v;
 
@@ -21,7 +20,11 @@ class Core
      * @param bool $withModels Should init models as well?
      * @return void
      */
-    public static function bootstrap(ContainerInterface $container, array $settings, array $validationNamespaces = [], bool $withModels = true)
+    public static function bootstrap(
+        ContainerInterface $container,
+        array $settings,
+        array $validationNamespaces = []
+    )
     {
         foreach ($settings as $key => $value) {
             $container[$key] = $value;
@@ -32,14 +35,5 @@ class Core
         foreach ($validationNamespaces as $namespace) {
             v::with($namespace);
         }
-        
-        if ($withModels) {
-            self::initModels($container);
-        }
-    }
-
-    public static function initModels(ContainerInterface $container): void
-    {
-        Model::init($container);
     }
 }
