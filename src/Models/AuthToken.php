@@ -12,14 +12,23 @@ namespace Plasticode\Models;
  */
 class AuthToken extends DbModel
 {
-    /**
-     * Todo: move this to mapper
-     *
-     * @return User
-     */
+    /** @var User */
+    private $user;
+
+    public function withUser(User $user) : self
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    public function userId() : int
+    {
+        return $this->userId;
+    }
+
     public function user() : User
     {
-        return self::$container->userRepository->get($this->userId);
+        return $this->user;
     }
 
     public function toString() : string

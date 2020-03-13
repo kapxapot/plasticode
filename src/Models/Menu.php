@@ -5,32 +5,41 @@ namespace Plasticode\Models;
 use Plasticode\Collection;
 use Plasticode\Models\Interfaces\LinkableInterface;
 
+/**
+ * @property int $id
+ * @property string $link
+ * @property string $text
+ * @property integer $position
+ * @property string $createdAt
+ * @property string $updatedAt
+ */
 class Menu extends DbModel implements LinkableInterface
 {
-    /**
-     * Todo: move this to repo
-     */
-    protected static $sortField = 'position';
-    
-    /**
-     * Todo: move this to mapper
-     *
-     * @return Collection
-     */
-    public function items() : Collection
+    /** @var Collection */
+    private $items;
+
+    /** @var string|null */
+    private $url;
+
+    public function withItems(Collection $items) : self
     {
-        return self::$container
-            ->menuItemRepository
-            ->getByMenu($this->id);
+        $this->items = $items;
+        return $this;
     }
 
-    /**
-     * Todo: move this to view model
-     *
-     * @return string|null
-     */
+    public function items() : Collection
+    {
+        return $this->items;
+    }
+
+    public function withUrl(?string $url) : self
+    {
+        $this->url = $url;
+        return $this;
+    }
+
     public function url() : ?string
     {
-        return self::$container->linker->rel($this->link);
+        return $this->url;
     }
 }

@@ -167,7 +167,7 @@ abstract class IdiormRepository implements RepositoryInterface
         return $this->saveOrmObj($ormObj);
     }
 
-    private function entityToOrmObj(DbModel $entity) : \ORM
+    protected function entityToOrmObj(DbModel $entity) : \ORM
     {
         $obj = $entity->getObj();
 
@@ -207,7 +207,7 @@ abstract class IdiormRepository implements RepositoryInterface
         return $entityClass::create($obj);
     }
 
-    private function ormObjToEntity(\ORM $ormObj) : DbModel
+    protected function ormObjToEntity(\ORM $ormObj) : DbModel
     {
         $entityClass = $this->getEntityClass();
 

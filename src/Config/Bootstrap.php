@@ -128,13 +128,16 @@ class Bootstrap
 
             'authTokenRepository' => function (ContainerInterface $container) {
                 return new AuthTokenRepository(
-                    $container->db
+                    $container->db,
+                    $container->userRepository
                 );
             },
             
             'menuRepository' => function (ContainerInterface $container) {
                 return new MenuRepository(
-                    $container->db
+                    $container->db,
+                    $container->menuItemRepository,
+                    $container->linker
                 );
             },
             

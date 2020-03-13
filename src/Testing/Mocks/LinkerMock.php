@@ -12,6 +12,11 @@ class LinkerMock implements LinkerInterface
         return 'http://abs' . $url;
     }
 
+    public function rel(string $url = null) : string
+    {
+        return '/' . rtrim($url, '/');
+    }
+
     public function getExtension(?string $type) : ?string
     {
         return Image::getExtension($type ?? 'jpeg');

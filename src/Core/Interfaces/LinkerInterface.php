@@ -5,6 +5,8 @@ namespace Plasticode\Core\Interfaces;
 interface LinkerInterface
 {
     public function abs(string $url = null) : string;
+    public function rel(string $url = null) : string;
+
     public function getExtension(?string $type) : ?string;
 
     public function page(string $slug = null) : string;
