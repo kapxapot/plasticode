@@ -143,7 +143,8 @@ class Bootstrap
             
             'menuItemRepository' => function (ContainerInterface $container) {
                 return new MenuItemRepository(
-                    $container->db
+                    $container->db,
+                    $container->linker
                 );
             },
 
@@ -167,7 +168,8 @@ class Bootstrap
 
             'tagRepository' => function (ContainerInterface $container) {
                 return new TagRepository(
-                    $container->db
+                    $container->db,
+                    $container->linker
                 );
             },
 

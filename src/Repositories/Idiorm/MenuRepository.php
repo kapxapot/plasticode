@@ -4,7 +4,6 @@ namespace Plasticode\Repositories\Idiorm;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Data\Db;
-use Plasticode\Models\DbModel;
 use Plasticode\Models\Menu;
 use Plasticode\Repositories\Idiorm\Basic\IdiormRepository;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
@@ -33,7 +32,7 @@ class MenuRepository extends IdiormRepository implements MenuRepositoryInterface
         $this->linker = $linker;
     }
 
-    protected function ormObjToEntity(\ORM $ormObj) : DbModel
+    protected function ormObjToEntity(\ORM $ormObj) : Menu
     {
         /** @var Menu */
         $menu = parent::ormObjToEntity($ormObj);

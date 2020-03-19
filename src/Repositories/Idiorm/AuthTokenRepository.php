@@ -4,7 +4,6 @@ namespace Plasticode\Repositories\Idiorm;
 
 use Plasticode\Data\Db;
 use Plasticode\Models\AuthToken;
-use Plasticode\Models\DbModel;
 use Plasticode\Repositories\Idiorm\Basic\IdiormRepository;
 use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
@@ -26,7 +25,7 @@ class AuthTokenRepository extends IdiormRepository implements AuthTokenRepositor
         $this->userRepository = $userRepository;
     }
 
-    protected function ormObjToEntity(\ORM $ormObj) : DbModel
+    protected function ormObjToEntity(\ORM $ormObj) : AuthToken
     {
         /** @var AuthToken */
         $token = parent::ormObjToEntity($ormObj);

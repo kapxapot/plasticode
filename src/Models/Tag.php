@@ -14,9 +14,17 @@ use Plasticode\Util\Strings;
  */
 class Tag extends DbModel implements LinkableInterface, SerializableInterface
 {
+    private ?string $url = null;
+
+    public function withUrl(string $url) : self
+    {
+        $this->url = $url;
+        return $this;
+    }
+
     public function url() : ?string
     {
-        return self::$container->linker->tag($this->tag);
+        return $this->url;
     }
     
     public function serialize() : array
