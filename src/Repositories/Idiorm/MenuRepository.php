@@ -33,7 +33,7 @@ class MenuRepository extends IdiormRepository implements MenuRepositoryInterface
         $this->linker = $linker;
     }
 
-    protected function ormObjToEntity(\ORM $ormObj): DbModel
+    protected function ormObjToEntity(\ORM $ormObj) : DbModel
     {
         /** @var Menu */
         $menu = parent::ormObjToEntity($ormObj);

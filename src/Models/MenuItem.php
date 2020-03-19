@@ -9,10 +9,13 @@ class MenuItem extends DbModel implements LinkableInterface
 {
     public const ParentIdField = 'menu_id';
 
+    /** @var string|null */
+    private $url;
+
     /**
      * @return SortStep[]
      */
-    protected static function getSortOrder() : array
+    protected function getSortOrder() : array
     {
         return [
             SortStep::create('position'),
@@ -20,8 +23,14 @@ class MenuItem extends DbModel implements LinkableInterface
         ];
     }
 
+    public function withUrl(string $url) : self
+    {
+        $this->url = $url;
+        return $this;
+    }
+
     public function url() : ?string
     {
-        return self::$container->linker->rel($this->link);
+        return $this->url;
     }
 }
