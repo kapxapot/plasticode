@@ -14,14 +14,29 @@ namespace Plasticode\Models;
  */
 class User extends DbModel
 {
+    private ?Role $role = null;
+    private ?string $gravatarUrl = null;
+
+    public function withRole(Role $role) : self
+    {
+        $this->role = $role;
+        return $this;
+    }
+
+    public function withGravatarUrl(string $url) : self
+    {
+        $this->gravatarUrl = $url;
+        return $this;
+    }
+
     public function displayName() : string
     {
         return $this->name ?? $this->login;
     }
     
-    public function role() : Role
+    public function role() : ?Role
     {
-        return self::$container->roleRepository->get($this->roleId);
+        return $this->role;
     }
     
     public function toString() : string
@@ -43,10 +58,8 @@ class User extends DbModel
         return $hash;
     }
 
-    public function gravatarUrl() : string
+    public function gravatarUrl() : ?string
     {
-        return self::$container->linker->gravatarUrl(
-            $this->gravatarHash()
-        );
+        return $this->gravatarUrl;
     }
 }

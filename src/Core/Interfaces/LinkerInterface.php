@@ -15,4 +15,6 @@ interface LinkerInterface
 
     public function twitch(string $id) : string;
     public function youtube(string $code) : string;
+
+    public function gravatarUrl(string $hash = null) : string;
 }

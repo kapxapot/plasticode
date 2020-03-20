@@ -2,20 +2,39 @@
 
 namespace Plasticode\Models\Traits;
 
-use Plasticode\Query;
 use Plasticode\Models\User;
 use Plasticode\Util\Date;
 
+/**
+ * @property integer|null $updatedBy
+ * @property string|null $updatedAt
+ */
 trait Updated
 {
-    public static function filterByUpdater(Query $query, User $user) : Query
+    protected ?User $updater = null;
+
+    public function withUpdater(User $updater) : self
     {
-        return $query->where('updated_by', $user->getId());
+        $this->updater = $updater;
+        return $this;
     }
 
     public function updater() : ?User
     {
-        return self::$container->userRepository->get($this->updatedBy);
+        return $this->updater;
+    }
+
+    /**
+     * Sets or updates updatedBy and updater.
+     *
+     * @param User $user
+     * @return self
+     */
+    protected function stampUpdater(User $user) : self
+    {
+        $this->updatedBy = $user->getId();
+
+        return $this->withUpdater($user);
     }
 
     public function updatedAtIso() : string

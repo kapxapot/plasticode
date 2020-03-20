@@ -2,20 +2,43 @@
 
 namespace Plasticode\Models\Traits;
 
-use Plasticode\Query;
 use Plasticode\Models\User;
 use Plasticode\Util\Date;
 
+/**
+ * @property integer|null $createdBy
+ * @property string|null $createdAt
+ */
 trait Created
 {
-    public static function filterByCreator(Query $query, User $user) : Query
+    protected ?User $creator = null;
+
+    public function withCreator(User $creator) : self
     {
-        return $query->where('created_by', $user->getId());
+        $this->creator = $creator;
+        return $this;
     }
 
     public function creator() : ?User
     {
-        return self::$container->userRepository->get($this->createdBy);
+        return $this->creator;
+    }
+
+    /**
+     * Sets or updates createdBy and creator.
+     *
+     * @param User $user
+     * @return self
+     */
+    protected function stampCreator(User $user) : self
+    {
+        if ($this->createdBy > 0) {
+            return $this;
+        }
+
+        $this->createdBy = $user->getId();
+
+        return $this->withCreator($user);
     }
 
     public function createdAtIso() : string

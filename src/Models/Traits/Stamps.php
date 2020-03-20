@@ -9,15 +9,23 @@ trait Stamps
 {
     use Created, Updated;
 
-    public function stamp(?User $user)
+    /**
+     * Updates createdBy/updatedBy/updatedAt.
+     *
+     * @param User|null $user
+     * @return void
+     */
+    public function stamp(?User $user = null) : void
     {
         if ($user) {
-            $this->createdBy = $this->createdBy ?? $user->getId();
-            $this->updatedBy = $user->getId();
+            $this->stampCreator($user);
+            $this->stampUpdater($user);
         }
-        
+
         if ($this->isPersisted()) {
             $this->updatedAt = Date::dbNow();
         }
     }
+
+    public abstract function isPersisted() : bool;
 }

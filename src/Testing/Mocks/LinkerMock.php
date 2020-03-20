@@ -46,4 +46,11 @@ class LinkerMock implements LinkerInterface
     {
         return 'https://youtube.com/watch?v=' . $code;
     }
+
+    public function gravatarUrl(string $hash = null) : string
+    {
+        $hash = $hash ?? '0';
+
+        return 'https://www.gravatar.com/avatar/' . $hash . '?s=100&d=mp';
+    }
 }
