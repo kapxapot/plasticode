@@ -11,7 +11,7 @@ use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 
 class UserRepository extends IdiormRepository implements UserRepositoryInterface
 {
-    protected $entityClass = User::class;
+    protected string $entityClass = User::class;
 
     private RoleRepositoryInterface $roleRepository;
     private LinkerInterface $linker;
@@ -44,7 +44,7 @@ class UserRepository extends IdiormRepository implements UserRepositoryInterface
             );
     }
 
-    public function get(int $id) : ?User
+    public function get(?int $id) : ?User
     {
         return $this->getEntity($id);
     }

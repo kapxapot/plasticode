@@ -6,5 +6,5 @@ use Plasticode\Models\Role;
 
 interface RoleRepositoryInterface
 {
-    public function get(int $id) : ?Role;
+    function get(?int $id) : ?Role;
 }

@@ -21,17 +21,6 @@ abstract class DbModel extends Model implements SerializableInterface
     }
 
     /**
-     * Wrapper for model creation.
-     * 
-     * @param \ORM $obj
-     * @return self
-     */
-    public static function fromDbObj(\ORM $obj) : self
-    {
-        return static::create($obj);
-    }
-    
-    /**
      * Returns the id of the model.
      * 
      * Use getId() instead of id when $idField is custom.

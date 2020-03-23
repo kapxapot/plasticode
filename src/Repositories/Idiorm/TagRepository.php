@@ -12,10 +12,9 @@ use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 
 class TagRepository extends IdiormRepository implements TagRepositoryInterface
 {
-    protected $entityClass = Tag::class;
+    protected string $entityClass = Tag::class;
 
-    /** @var LinkerInterface */
-    private $linker;
+    private LinkerInterface $linker;
 
     public function __construct(
         Db $db,

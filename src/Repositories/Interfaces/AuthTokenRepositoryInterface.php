@@ -6,7 +6,7 @@ use Plasticode\Models\AuthToken;
 
 interface AuthTokenRepositoryInterface
 {
-    public function get(int $id) : ?AuthToken;
-    public function save(AuthToken $authToken) : AuthToken;
-    public function getByToken(?string $token) : ?AuthToken;
+    function get(?int $id) : ?AuthToken;
+    function save(AuthToken $authToken) : AuthToken;
+    function getByToken(?string $token) : ?AuthToken;
 }

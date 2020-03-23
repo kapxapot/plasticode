@@ -10,10 +10,9 @@ use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 
 class AuthTokenRepository extends IdiormRepository implements AuthTokenRepositoryInterface
 {
-    protected $entityClass = AuthToken::class;
+    protected string $entityClass = AuthToken::class;
 
-    /** @var UserRepositoryInterface */
-    private $userRepository;
+    private UserRepositoryInterface $userRepository;
 
     public function __construct(
         Db $db,
@@ -36,7 +35,7 @@ class AuthTokenRepository extends IdiormRepository implements AuthTokenRepositor
             );
     }
 
-    public function get(int $id) : ?AuthToken
+    public function get(?int $id) : ?AuthToken
     {
         return $this->getEntity($id);
     }

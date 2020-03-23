@@ -14,11 +14,14 @@ use Psr\Container\ContainerInterface;
  */
 trait Tags
 {
-    protected static function getTagsEntityType() : string
+    /** @var TagLink[]|null */
+    protected ?array $tagLinks = null;
+
+    protected function getTagsField() : string
     {
-        return static::getTable();
+        return 'tags';
     }
-    
+
     /**
      * Returns tags as an array of TRIMMED strings.
      * 
@@ -26,27 +29,31 @@ trait Tags
      */
     public function getTags() : array
     {
-        $tags = $this->{static::$tagsField};
+        $tagsField = $this->getTagsField();
+        $tags = $this->{$tagsField};
         
         return Strings::explode($tags);
     }
-    
+
+    /**
+     * Adds tag links.
+     *
+     * @param TagLink[] $tagLinks
+     * @return self
+     */
+    public function withTagLinks(array $tagLinks) : self
+    {
+        $this->tagLinks = $tagLinks;
+        return $this;
+    }
+
     /**
      * Returns tag links.
      *
-     * @return TagLink[]
+     * @return TagLink[]|null
      */
-    public function tagLinks() : array
+    public function tagLinks() : ?array
     {
-        $tab = static::getTagsEntityType();
-        $tags = $this->getTags();
-        
-        return array_map(
-            function ($t) use ($tab) {
-                $url = self::$container->linker->tag($t, $tab);
-                return new TagLink($t, $url);
-            },
-            $tags
-        );
+        return $this->tagLinks;
     }
 }

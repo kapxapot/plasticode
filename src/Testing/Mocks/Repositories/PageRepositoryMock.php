@@ -9,15 +9,14 @@ use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 
 class PageRepositoryMock implements PageRepositoryInterface
 {
-    /** @var Collection */
-    private $pages;
+    private Collection $pages;
 
     public function __construct(ArraySeederInterface $pageSeeder)
     {
         $this->pages = Collection::make($pageSeeder->seed());
     }
 
-    public function getBySlug(string $slug): ?Page
+    public function getBySlug(?string $slug): ?Page
     {
         return $this->pages
             ->where('slug', $slug)

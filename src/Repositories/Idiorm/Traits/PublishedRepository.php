@@ -7,9 +7,9 @@ use Plasticode\Query;
 /**
  * Limited publish support: only published (no published_at).
  */
-trait Publish
+trait PublishedRepository
 {
-    protected $publishedField = 'published';
+    protected string $publishedField = 'published';
 
     protected abstract function query() : Query;
 

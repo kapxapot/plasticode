@@ -9,16 +9,16 @@ use Plasticode\Query;
 /**
  * Full publish support: published + published_at.
  */
-trait FullPublish
+trait FullPublishedRepository
 {
-    use Created;
+    use CreatedRepository;
 
-    use Publish
+    use PublishedRepository
     {
-        Publish::wherePublishedQuery as protected parentWherePublishedQuery;
+        PublishedRepository::wherePublishedQuery as protected parentWherePublishedQuery;
     }
 
-    protected $publishedAtField = 'published_at';
+    protected string $publishedAtField = 'published_at';
 
     /**
      * Modifies the query to protect access rights if needed.

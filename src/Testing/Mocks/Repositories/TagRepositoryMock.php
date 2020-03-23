@@ -9,8 +9,7 @@ use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 
 class TagRepositoryMock implements TagRepositoryInterface
 {
-    /** @var Collection */
-    private $tags;
+    private Collection $tags;
 
     public function __construct(ArraySeederInterface $seeder)
     {

@@ -5,11 +5,9 @@ namespace Plasticode\Repositories\Idiorm\Basic;
 use Plasticode\Collection;
 use Plasticode\Data\Db;
 use Plasticode\Data\Rights;
-use Plasticode\Generators\EntityGenerator;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\DbModel;
 use Plasticode\Query;
-use Plasticode\Repositories\Interfaces\RepositoryInterface;
 use Plasticode\Traits\LazyCache;
 use Plasticode\Util\Classes;
 use Plasticode\Util\Pluralizer;
@@ -17,54 +15,36 @@ use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
-abstract class IdiormRepository implements RepositoryInterface
+abstract class IdiormRepository
 {
     use LazyCache;
 
     /**
-     * Table name
-     *
-     * @var string|null
+     * Overriden table name
      */
-    protected $table;
+    protected ?string $table = null;
 
     /**
      * Full entity class name
-     *
-     * @var string|null
      */
-    protected $entityClass;
+    protected string $entityClass;
     
     /**
      * Id field name
-     *
-     * @var string
      */
-    protected $idField = 'id';
-
-    /**
-     * Tags field name
-     *
-     * @var string
-     */
-    protected $tagsField = 'tags';
+    protected string $idField = 'id';
 
     /**
      * Default sort field name
-     *
-     * @var string|null
      */
-    protected $sortField = null;
+    protected ?string $sortField = null;
 
     /**
      * Default sort direction
-     *
-     * @var boolean
      */
-    protected $sortReverse = false;
+    protected bool $sortReverse = false;
 
-    /** @var Db */
-    private $db;
+    private Db $db;
 
     public function __construct(Db $db)
     {
@@ -209,9 +189,7 @@ abstract class IdiormRepository implements RepositoryInterface
 
     protected function ormObjToEntity(\ORM $ormObj) : DbModel
     {
-        $entityClass = $this->getEntityClass();
-
-        return $entityClass::fromDbObj($ormObj);
+        return $this->createEntity($ormObj);
     }
 
     public function tableAccess() : array

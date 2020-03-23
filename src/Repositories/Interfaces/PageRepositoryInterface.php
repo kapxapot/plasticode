@@ -6,5 +6,5 @@ use Plasticode\Models\Page;
 
 interface PageRepositoryInterface
 {
-    public function getBySlug(string $slug) : ?Page;
+    function getBySlug(?string $slug) : ?Page;
 }

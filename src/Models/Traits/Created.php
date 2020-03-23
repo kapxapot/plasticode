@@ -13,6 +13,11 @@ trait Created
 {
     protected ?User $creator = null;
 
+    public function createdBy() : ?int
+    {
+        return $this->createdBy;
+    }
+
     public function withCreator(User $creator) : self
     {
         $this->creator = $creator;

@@ -2,12 +2,26 @@
 
 namespace Plasticode\Repositories\Idiorm\Traits;
 
+use Plasticode\Core\Interfaces\LinkerInterface;
+use Plasticode\Models\Interfaces\TagsInterface;
 use Plasticode\Query;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
+use Plasticode\TagLink;
 use Plasticode\Util\Strings;
 
-trait Tags
+/**
+ * @property LinkerInterface $linker
+ */
+trait TagsRepository
 {
+    /**
+     * Override this if entity type is different from table name.
+     */
+    protected function getTagsEntityType() : string
+    {
+        return $this->getTable();
+    }
+
     protected function getByTagQuery(
         TagRepositoryInterface $tagRepository,
         Query $baseQuery,
@@ -31,4 +45,17 @@ trait Tags
     }
 
     public abstract function getTable() : string;
+
+    protected function withTagLinks(TagsInterface $entity) : TagsInterface
+    {
+        $tab = $this->getTagsEntityType();
+        $tags = $entity->getTags();
+
+        $tagLinks = array_map(
+            fn ($t) => new TagLink($t, $this->linker->tag($t, $tab)),
+            $tags
+        );
+
+        return $entity->withTagLinks($tagLinks);
+    }
 }

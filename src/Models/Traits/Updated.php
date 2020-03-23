@@ -13,6 +13,11 @@ trait Updated
 {
     protected ?User $updater = null;
 
+    public function updatedBy() : ?int
+    {
+        return $this->updatedBy;
+    }
+
     public function withUpdater(User $updater) : self
     {
         $this->updater = $updater;

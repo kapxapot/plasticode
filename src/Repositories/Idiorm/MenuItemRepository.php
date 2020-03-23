@@ -11,12 +11,11 @@ use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 
 class MenuItemRepository extends IdiormRepository implements MenuItemRepositoryInterface
 {
-    protected $entityClass = MenuItem::class;
+    protected string $entityClass = MenuItem::class;
 
     protected const ParentIdField = 'menu_id';
 
-    /** @var LinkerInterface */
-    private $linker;
+    private LinkerInterface $linker;
 
     public function __construct(
         Db $db,
@@ -39,7 +38,7 @@ class MenuItemRepository extends IdiormRepository implements MenuItemRepositoryI
             );
     }
 
-    public function get(int $id) : ?MenuItem
+    public function get(?int $id) : ?MenuItem
     {
         return $this->getEntity($id);
     }

@@ -11,14 +11,12 @@ use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 
 class MenuRepository extends IdiormRepository implements MenuRepositoryInterface
 {
-    protected $entityClass = Menu::class;
-    protected $sortField = 'position';
+    protected string $entityClass = Menu::class;
 
-    /** @var MenuItemRepositoryInterface */
-    private $menuItemRepository;
+    protected ?string $sortField = 'position';
 
-    /** @var LinkerInterface */
-    private $linker;
+    private MenuItemRepositoryInterface $menuItemRepository;
+    private LinkerInterface $linker;
 
     public function __construct(
         Db $db,
@@ -46,7 +44,7 @@ class MenuRepository extends IdiormRepository implements MenuRepositoryInterface
             );
     }
 
-    public function get(int $id) : ?Menu
+    public function get(?int $id) : ?Menu
     {
         return $this->getEntity($id);
     }

@@ -7,6 +7,6 @@ use Plasticode\Models\MenuItem;
 
 interface MenuItemRepositoryInterface
 {
-    public function get(int $id) : ?MenuItem;
-    public function getByMenu(int $menuId) : Collection;
+    function get(?int $id) : ?MenuItem;
+    function getByMenu(int $menuId) : Collection;
 }

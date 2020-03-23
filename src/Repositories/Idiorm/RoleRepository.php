@@ -8,9 +8,9 @@ use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
 
 class RoleRepository extends IdiormRepository implements RoleRepositoryInterface
 {
-    protected $entityClass = Role::class;
+    protected string $entityClass = Role::class;
 
-    public function get(int $id) : ?Role
+    public function get(?int $id) : ?Role
     {
         return $this->getEntity($id);
     }
