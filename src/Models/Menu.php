@@ -15,11 +15,8 @@ use Plasticode\Models\Interfaces\LinkableInterface;
  */
 class Menu extends DbModel implements LinkableInterface
 {
-    /** @var Collection */
-    private $items;
-
-    /** @var string|null */
-    private $url;
+    private Collection $items;
+    private ?string $url;
 
     public function withItems(Collection $items) : self
     {

@@ -28,11 +28,6 @@ abstract class IdiormRepository
      * Full entity class name
      */
     protected string $entityClass;
-    
-    /**
-     * Id field name
-     */
-    protected string $idField = 'id';
 
     /**
      * Default sort field name
@@ -49,6 +44,12 @@ abstract class IdiormRepository
     public function __construct(Db $db)
     {
         $this->db = $db;
+    }
+
+    protected function idField() : string
+    {
+        $entityClass = $this->getEntityClass();
+        return $entityClass::idField();
     }
     
     /**
@@ -72,12 +73,12 @@ abstract class IdiormRepository
         $dbQuery = $this->db->forTable(
             $this->getTable()
         );
-        
-        $toModel = function (\ORM $obj) {
-            return $this->ormObjToEntity($obj);
-        };
-        
-        return new Query($dbQuery, $this->idField, $toModel);
+
+        return new Query(
+            $dbQuery,
+            $this->idField(),
+            fn (\ORM $obj) => $this->ormObjToEntity($obj)
+        );
     }
 
     private function getEntityClass() : ?string
@@ -118,23 +119,17 @@ abstract class IdiormRepository
     
     /**
      * Shortcut for getting model by id.
-     * 
-     * @param integer|string|null $id
-     * @param boolean $ignoreCache
-     * @return DbModel|null
      */
-    protected function getEntity($id, bool $ignoreCache = false) : ?DbModel
+    protected function getEntity(?int $id, bool $ignoreCache = false) : ?DbModel
     {
         if (is_null($id)) {
             return null;
         }
 
         $name = $this->getTable() . $id;
-        
+
         return self::staticLazy(
-            function () use ($id) {
-                return $this->baseQuery()->find($id);
-            },
+            fn () => $this->baseQuery()->find($id),
             $name,
             $ignoreCache
         );
@@ -166,7 +161,7 @@ abstract class IdiormRepository
     /**
      * Shortcut for create() + save().
      * 
-     * @param array|\ORM $obj
+     * @param array|\ORM|null $obj
      * @return DbModel
      */
     protected function storeEntity($obj = null) : DbModel
@@ -225,8 +220,6 @@ abstract class IdiormRepository
      * The table name is generated as a plural form of 'entity_class'.
      * 
      * Alternatively, the table name can be specified explicitly in static $table var.
-     *
-     * @return string
      */
     public function getTable() : string
     {

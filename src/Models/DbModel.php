@@ -7,7 +7,12 @@ use Webmozart\Assert\Assert;
 
 abstract class DbModel extends Model implements SerializableInterface
 {
-    protected static $idField = 'id';
+    protected static string $idField = 'id';
+
+    public static function idField() : string
+    {
+        return static::$idField;
+    }
 
     /**
      * Static alias for new().
@@ -25,28 +30,18 @@ abstract class DbModel extends Model implements SerializableInterface
      * 
      * Use getId() instead of id when $idField is custom.
      * It is recommended to use getId() always for safer code.
-     * 
-     * @return integer|string|null
      */
-    public function getId()
+    public function getId() : ?int
     {
-        $idField = static::$idField;
-        $id = $this->{$idField};
-        
-        return is_numeric($id)
-            ? intval($id)
-            : $id;
+        $idField = self::idField();
+        return $this->{$idField};
     }
-    
+
     public function hasId() : bool
     {
-        $id = $this->getId();
-        
-        return is_numeric($id)
-            ? $id > 0
-            : strlen($id) > 0;
+        return $this->getId() > 0;
     }
-    
+
     /**
      * Was model saved or not.
      */
@@ -74,9 +69,6 @@ abstract class DbModel extends Model implements SerializableInterface
      * Equal means:
      *  - Same class.
      *  - Same id.
-     * 
-     * @param self|null $model
-     * @return boolean
      */
     public function equals(?self $model) : bool
     {

@@ -23,38 +23,30 @@ class Query implements \IteratorAggregate
 {
     /**
      * Empty query
-     *
-     * @var self
      */
-    private static $empty;
+    private static self $empty;
 
     /**
      * ORM query
-     *
-     * @var \ORM
      */
-    private $query;
+    private \ORM $query;
 
     /**
      * Id field name
-     *
-     * @var string
      */
-    private $idField;
+    private string $idField;
     
     /**
      * Method for conversion of dbObj to model
-     *
-     * @var \Closure
      */
-    private $toModel;
+    private \Closure $toModel;
 
     /**
      * Array of sort settings
      *
      * @var SortStep[]
      */
-    private $sortOrder;
+    private array $sortOrder;
     
     /**
      * Constructor.
@@ -64,7 +56,12 @@ class Query implements \IteratorAggregate
      * @param \Closure $toModel Must be provided for non-empty query
      * @param SortStep[] $sortOrder
      */
-    public function __construct(\ORM $query = null, string $idField = null, \Closure $toModel = null, array $sortOrder = [])
+    public function __construct(
+        \ORM $query = null,
+        string $idField = null,
+        \Closure $toModel = null,
+        ?array $sortOrder = null
+    )
     {
         if (is_null($query)) {
             return;
@@ -84,13 +81,11 @@ class Query implements \IteratorAggregate
     
         $this->idField = $idField;
         $this->toModel = $toModel;
-        $this->sortOrder = $sortOrder;
+        $this->sortOrder = $sortOrder ?? [];
     }
 
     /**
      * Get underlying \ORM query.
-     *
-     * @return \ORM|null
      */
     public function getOrmQuery() : ?\ORM
     {
@@ -99,8 +94,6 @@ class Query implements \IteratorAggregate
     
     /**
      * Returns "empty" query (without table and filters).
-     *
-     * @return self
      */
     public static function empty() : self
     {
@@ -113,12 +106,10 @@ class Query implements \IteratorAggregate
     
     /**
      * Checks if the query is empty (without table and filters).
-     *
-     * @return boolean
      */
     public function isEmpty() : bool
     {
-        return $this->query === null;
+        return is_null($this->query);
     }
     
     /**
@@ -126,8 +117,6 @@ class Query implements \IteratorAggregate
      * 
      * "Select all".
      * In case of empty Query returns empty collection.
-     *
-     * @return Collection
      */
     public function all() : Collection
     {
@@ -141,9 +130,7 @@ class Query implements \IteratorAggregate
             $objs = $query->findMany();
         
             $all = array_map(
-                function (\ORM $obj) {
-                    return ($this->toModel)($obj);
-                },
+                fn (\ORM $obj) => ($this->toModel)($obj),
                 $objs ?? []
             );
             
@@ -157,9 +144,6 @@ class Query implements \IteratorAggregate
 
     /**
      * Gets SQL statement for the ORM query.
-     *
-     * @param \ORM $query
-     * @return string
      */
     private static function queryToString(\ORM $query) : string
     {
@@ -173,11 +157,8 @@ class Query implements \IteratorAggregate
     
     /**
      * Looks for a record with provided id.
-     *
-     * @param string|int $id
-     * @return null|DbModel
      */
-    public function find($id) : ?DbModel
+    public function find(?int $id) : ?DbModel
     {
         return $this
             ->filterById($id)
@@ -186,11 +167,8 @@ class Query implements \IteratorAggregate
 
     /**
      * Adds filter by id.
-     *
-     * @param string|int $id
-     * @return self
      */
-    public function filterById($id) : self
+    public function filterById(?int $id) : self
     {
         return $this
             ->where($this->idField, $id);
@@ -201,8 +179,6 @@ class Query implements \IteratorAggregate
      * 
      * "Select one".
      * In case of empty query returns null.
-     *
-     * @return null|DbModel
      */
     public function one() : ?DbModel
     {
@@ -219,8 +195,6 @@ class Query implements \IteratorAggregate
 
     /**
      * Returns query with applied sort order.
-     *
-     * @return \ORM
      */
     private function getSortedQuery() : \ORM
     {
@@ -246,8 +220,6 @@ class Query implements \IteratorAggregate
      * Executes query and returns a random record.
      *
      * In case of empty query (or no records) returns null.
-     * 
-     * @return null|DbModel
      */
     public function random() : ?DbModel
     {
@@ -269,8 +241,6 @@ class Query implements \IteratorAggregate
      * 
      * "Select count(*)".
      * In case of empty query returns 0.
-     *
-     * @return integer
      */
     public function count() : int
     {
@@ -283,8 +253,6 @@ class Query implements \IteratorAggregate
     
     /**
      * Executes query and checks if there are any records.
-     *
-     * @return bool
      */
     public function any() : bool
     {
@@ -296,8 +264,6 @@ class Query implements \IteratorAggregate
      * 
      * "Delete all".
      * In case of empty query returns null.
-     *
-     * @return null|bool
      */
     public function delete() : ?bool
     {
@@ -312,11 +278,14 @@ class Query implements \IteratorAggregate
      * Creates new Query based on the current one
      * plus applied modification.
      *
-     * @param \Closure $queryModifier
-     * @param SortStep[] $sortOrder
+     * @param \Closure|null $queryModifier
+     * @param SortStep[]|null $sortOrder
      * @return mixed
      */
-    private function branch(\Closure $queryModifier = null, array $sortOrder = null)
+    private function branch(
+        ?\Closure $queryModifier = null,
+        ?array $sortOrder = null
+    )
     {
         if ($this->isEmpty()) {
             return $this;
@@ -352,9 +321,7 @@ class Query implements \IteratorAggregate
     public function __call(string $name, array $args)
     {
         return $this->branch(
-            function ($q) use ($name, $args) {
-                return $q->{$name}(...$args);
-            }
+            fn ($q) => $q->{$name}(...$args)
         );
     }
 
@@ -381,9 +348,7 @@ class Query implements \IteratorAggregate
         Assert::notEmpty($values);
         
         return $this->branch(
-            function ($q) use ($field, $values) {
-                return $q->whereIn($field, $values);
-            }
+            fn ($q) => $q->whereIn($field, $values)
         );
     }
 
@@ -410,9 +375,7 @@ class Query implements \IteratorAggregate
         Assert::notEmpty($values);
         
         return $this->branch(
-            function ($q) use ($field, $values) {
-                return $q->whereNotIn($field, $values);
-            }
+            fn ($q) => $q->whereNotIn($field, $values)
         );
     }
 
@@ -420,9 +383,6 @@ class Query implements \IteratorAggregate
      * Wrapper method for the underlying offset().
      * 
      * Applies only if $offset > 0.
-     *
-     * @param integer $offset
-     * @return self
      */
     public function offset(int $offset) : self
     {
@@ -431,9 +391,7 @@ class Query implements \IteratorAggregate
         }
         
         return $this->branch(
-            function ($q) use ($offset) {
-                return $q->offset($offset);
-            }
+            fn ($q) => $q->offset($offset)
         );
     }
     
@@ -441,9 +399,6 @@ class Query implements \IteratorAggregate
      * Wrapper method for the underlying limit().
      * 
      * Applies only if $limit > 0.
-     *
-     * @param integer $limit
-     * @return self
      */
     public function limit(int $limit) : self
     {
@@ -452,9 +407,7 @@ class Query implements \IteratorAggregate
         }
         
         return $this->branch(
-            function ($q) use ($limit) {
-                return $q->limit($limit);
-            }
+            fn ($q) => $q->limit($limit)
         );
     }
     
@@ -462,10 +415,6 @@ class Query implements \IteratorAggregate
      * Gets chunk based on offset and limit.
      * 
      * Shortcut for offset() + limit().
-     *
-     * @param integer $offset
-     * @param integer $limit
-     * @return self
      */
     public function slice(int $offset, int $limit) : self
     {
@@ -476,9 +425,6 @@ class Query implements \IteratorAggregate
 
     /**
      * Clears sorting and creates ASC sort step.
-     *
-     * @param string $field
-     * @return Query
      */
     public function orderByAsc(string $field) : Query
     {
@@ -486,14 +432,11 @@ class Query implements \IteratorAggregate
             SortStep::create($field)
         ];
 
-        return $this->branch(null, $sortOrder);
+        return $this->withSort($sortOrder);
     }
 
     /**
      * Clears sorting and creates DESC sort step.
-     *
-     * @param string $field
-     * @return Query
      */
     public function orderByDesc(string $field) : Query
     {
@@ -501,35 +444,29 @@ class Query implements \IteratorAggregate
             SortStep::createDesc($field)
         ];
 
-        return $this->branch(null, $sortOrder);
+        return $this->withSort($sortOrder);
     }
 
     /**
      * Adds ASC sort step.
-     *
-     * @param string $field
-     * @return Query
      */
     public function thenByAsc(string $field) : Query
     {
         $sortOrder = $this->sortOrder;
         $sortOrder[] = SortStep::create($field);
 
-        return $this->branch(null, $sortOrder);
+        return $this->withSort($sortOrder);
     }
 
     /**
      * Adds DESC sort step.
-     *
-     * @param string $field
-     * @return Query
      */
     public function thenByDesc(string $field) : Query
     {
         $sortOrder = $this->sortOrder;
         $sortOrder[] = SortStep::createDesc($field);
 
-        return $this->branch(null, $sortOrder);
+        return $this->withSort($sortOrder);
     }
 
     /**
@@ -553,7 +490,11 @@ class Query implements \IteratorAggregate
      * @param integer $paramCount How many times every word must be passed to where()
      * @return self
      */
-    public function search(string $searchStr, string $where, int $paramCount = 1) : self
+    public function search(
+        string $searchStr,
+        string $where,
+        int $paramCount = 1
+    ) : self
     {
         return $this->branch(
             function ($q) use ($searchStr, $where, $paramCount) {

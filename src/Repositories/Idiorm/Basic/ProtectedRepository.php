@@ -33,13 +33,7 @@ class ProtectedRepository extends IdiormRepository
         );
     }
 
-    /**
-     * Gets protected entity.
-     *
-     * @param string|integer $id
-     * @return DbModel|null
-     */
-    protected function getProtectedEntity($id) : ?DbModel
+    protected function getProtectedEntity(?int $id) : ?DbModel
     {
         return $this
             ->protectedQuery()

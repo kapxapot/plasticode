@@ -7,13 +7,21 @@ use Plasticode\Parsing\ParsingContext;
 
 trait Description
 {
+    protected static function getDescriptionField() : string
+    {
+        return 'description';
+    }
+
     public function parsedDescription(ParserInterface $parser) : ?ParsingContext
     {
-        if (strlen($this->description) == 0) {
+        $descriptionField = static::getDescriptionField();
+        $description = $this->{$descriptionField};
+
+        if (strlen($description) == 0) {
             return null;
         }
 
-        $context = $parser->parse($this->description);
+        $context = $parser->parse($description);
         $context = $parser->renderLinks($context);
 
         return $context;

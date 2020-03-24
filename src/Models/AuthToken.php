@@ -12,8 +12,7 @@ namespace Plasticode\Models;
  */
 class AuthToken extends DbModel
 {
-    /** @var User */
-    private $user;
+    private User $user;
 
     public function withUser(User $user) : self
     {

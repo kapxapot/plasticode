@@ -9,8 +9,7 @@ class MenuItem extends DbModel implements LinkableInterface
 {
     public const ParentIdField = 'menu_id';
 
-    /** @var string|null */
-    private $url;
+    private ?string $url;
 
     /**
      * @return SortStep[]

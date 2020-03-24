@@ -79,4 +79,8 @@ trait CachedDescription
 
         $this->resetLazy('parsedDescription');
     }
+
+    protected abstract function lazy(\Closure $loader, string $name = null, bool $ignoreCache = false);
+
+    protected abstract function resetLazy(string $name) : void;
 }

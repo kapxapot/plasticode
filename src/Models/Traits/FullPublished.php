@@ -9,11 +9,11 @@ use Plasticode\Util\Date;
 /**
  * Full publish support: published + published_at.
  */
-trait FullPublish
+trait FullPublished
 {
-    use Publish
+    use Published
     {
-        Publish::wherePublished as protected parentWherePublished;
+        Published::wherePublished as protected parentWherePublished;
         publish as protected parentPublish;
         isPublished as protected parentIsPublished;
     }

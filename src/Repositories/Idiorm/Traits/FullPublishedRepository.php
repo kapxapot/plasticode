@@ -25,10 +25,6 @@ trait FullPublishedRepository
      * 
      * Entity is filtered out if it isn't published and
      * the user isn't its creator.
-     *
-     * @param Query $query
-     * @param User|null $user
-     * @return Query
      */
     public function protectQuery(Query $query, ?User $user) : Query
     {

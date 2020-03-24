@@ -7,7 +7,7 @@ use Plasticode\Query;
 /**
  * Limited publish support: only published (no published_at).
  */
-trait Publish
+trait Published
 {
     /**
      * For Tags trait.

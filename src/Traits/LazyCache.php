@@ -26,7 +26,7 @@ trait LazyCache
         list(, , $caller) = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
         return $caller['function'];
     }
-    
+
     protected function lazy(\Closure $loader, string $name = null, bool $ignoreCache = false)
     {
         $name = $name ?? self::getLazyFuncName();
@@ -35,14 +35,14 @@ trait LazyCache
             ->getCache()
             ->getCached($name, $loader, $ignoreCache);
     }
-    
+
     protected function resetLazy(string $name) : void
     {
         $this
             ->getCache()
             ->delete($name);
     }
-    
+
     protected static function staticLazy(\Closure $loader, string $name = null, bool $ignoreCache = false)
     {
         $name = $name ?? self::getLazyFuncName();
@@ -50,7 +50,7 @@ trait LazyCache
         return self::getStaticCache()
             ->getCached($name, $loader, $ignoreCache);
     }
-    
+
     protected static function resetStaticLazy(string $name) : void
     {
         self::getStaticCache()

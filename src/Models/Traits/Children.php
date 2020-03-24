@@ -6,26 +6,28 @@ use Plasticode\Collection;
 
 trait Children
 {
-    public function parent()
+    protected ?self $parent = null;
+    protected ?Collection $children = null;
+
+    public function parent() : ?self
     {
-        return $this->lazy(function () {
-            return self::get($this->parentId);
-        });
+        return $this->parent;
+    }
+
+    public function withParent(?self $parent) : self
+    {
+        $this->parent = $parent;
+        return $this;
     }
     
     public function children() : Collection
     {
-        return $this->lazy(function () {
-            return self::query()
-                ->where('parent_id', $this->id)
-                ->all();
-        });
+        return $this->children;
     }
-    
-    public function orphans() : Collection
+
+    public function withChildren(Collection $children) : self
     {
-        return self::query()
-            ->whereNull('parent_id')
-            ->all();
+        $this->children = $children;
+        return $this;
     }
 }
