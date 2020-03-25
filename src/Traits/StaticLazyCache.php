@@ -4,11 +4,11 @@ namespace Plasticode\Traits;
 
 use Plasticode\Core\Interfaces\CacheInterface;
 
-trait LazyCache
+trait StaticLazyCache
 {
     use LazyBase;
 
-    protected function lazy(
+    protected static function staticLazy(
         \Closure $loader,
         string $name = null,
         bool $ignoreCache = false
@@ -16,17 +16,15 @@ trait LazyCache
     {
         $name = $name ?? self::getLazyFuncName();
         
-        return $this
-            ->getCache()
+        return self::getStaticCache()
             ->getCached($name, $loader, $ignoreCache);
     }
 
-    protected function resetLazy(string $name) : void
+    protected static function resetStaticLazy(string $name) : void
     {
-        $this
-            ->getCache()
+        self::getStaticCache()
             ->delete($name);
     }
 
-    protected abstract function getCache() : CacheInterface;
+    protected abstract static function getStaticCache(): CacheInterface;
 }

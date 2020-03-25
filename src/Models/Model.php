@@ -4,14 +4,11 @@ namespace Plasticode\Models;
 
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;
-use Plasticode\Traits\LazyCache;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
 class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
 {
-    use LazyCache;
-
     /**
      * Data array or \ORM object
      *

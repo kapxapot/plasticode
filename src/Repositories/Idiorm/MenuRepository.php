@@ -4,6 +4,7 @@ namespace Plasticode\Repositories\Idiorm;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Data\Db;
+use Plasticode\Models\DbModel;
 use Plasticode\Models\Menu;
 use Plasticode\Repositories\Idiorm\Basic\IdiormRepository;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
@@ -30,17 +31,17 @@ class MenuRepository extends IdiormRepository implements MenuRepositoryInterface
         $this->linker = $linker;
     }
 
-    protected function ormObjToEntity(\ORM $ormObj) : Menu
+    /**
+     * @param Menu $entity
+     */
+    protected function hydrate(DbModel $entity) : Menu
     {
-        /** @var Menu */
-        $menu = parent::ormObjToEntity($ormObj);
-
-        return $menu
+        return $entity
             ->withItems(
-                $this->menuItemRepository->getByMenu($menu->id)
+                $this->menuItemRepository->getByMenu($entity->getId())
             )
             ->withUrl(
-                $this->linker->rel($menu->link)
+                $this->linker->rel($entity->link)
             );
     }
 

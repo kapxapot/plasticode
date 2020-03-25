@@ -25,47 +25,43 @@ trait CachedDescription
 
     public function parsedDescription(ParserInterface $parser) : ?ParsingContext
     {
-        return $this->lazy(
-            function () use ($parser) {
-                $descriptionField = static::getDescriptionField();
-                $cacheField = static::getDescriptionCacheField();
-                
-                $description = $this->{$descriptionField};
-                $cache = $this->{$cacheField};
+        $descriptionField = static::getDescriptionField();
+        $cacheField = static::getDescriptionCacheField();
+        
+        $description = $this->{$descriptionField};
+        $cache = $this->{$cacheField};
 
-                if (strlen($description) == 0) {
-                    return null;
-                }
+        if (strlen($description) == 0) {
+            return null;
+        }
 
-                if (strlen($cache) > 0) {
-                    $parsed = ParsingContext::fromJson($cache);
-                }
-                
-                if ($parsed instanceof ParsingContext) {
-                    $updatedAt = $parsed->updatedAt;
-                    
-                    if (is_null($updatedAt) ||
-                        Date::expired($updatedAt, static::getDescriptionTTL())
-                    ) {
-                        unset($parsed);
-                    }
-                }
-
-                if (!($parsed instanceof ParsingContext)) {
-                    $parsed = $parser->parse($description);
-                    $parsed->updatedAt = Date::dbNow();
-                    
-                    $this->{$cacheField} = json_encode($parsed);
-
-                    // Todo: this is a dirty hack and must be changed later to save in some cache or in a repository
-                    //self::save($this);
-                }
-                
-                $parsed = $parser->renderLinks($parsed);
-
-                return $parsed;
+        if (strlen($cache) > 0) {
+            $parsed = ParsingContext::fromJson($cache);
+        }
+        
+        if ($parsed instanceof ParsingContext) {
+            $updatedAt = $parsed->updatedAt;
+            
+            if (is_null($updatedAt) ||
+                Date::expired($updatedAt, static::getDescriptionTTL())
+            ) {
+                unset($parsed);
             }
-        );
+        }
+
+        if (!($parsed instanceof ParsingContext)) {
+            $parsed = $parser->parse($description);
+            $parsed->updatedAt = Date::dbNow();
+            
+            $this->{$cacheField} = json_encode($parsed);
+
+            // Todo: this is a dirty hack and must be changed later to save in some cache or in a repository
+            //self::save($this);
+        }
+        
+        $parsed = $parser->renderLinks($parsed);
+
+        return $parsed;
     }
 
     public function resetDescription() : void
@@ -76,11 +72,5 @@ trait CachedDescription
 
         // Todo: this is a dirty hack and must be changed later to save in some cache or in a repository
         //self::save($this);
-
-        $this->resetLazy('parsedDescription');
     }
-
-    protected abstract function lazy(\Closure $loader, string $name = null, bool $ignoreCache = false);
-
-    protected abstract function resetLazy(string $name) : void;
 }

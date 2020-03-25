@@ -182,9 +182,15 @@ abstract class IdiormRepository
         return $entityClass::create($obj);
     }
 
-    protected function ormObjToEntity(\ORM $ormObj) : DbModel
+    private function ormObjToEntity(\ORM $ormObj) : DbModel
     {
-        return $this->createEntity($ormObj);
+        $entity = $this->createEntity($ormObj);
+        return $this->hydrate($entity);
+    }
+
+    protected function hydrate(DbModel $entity) : DbModel
+    {
+        return $entity;
     }
 
     public function tableAccess() : array

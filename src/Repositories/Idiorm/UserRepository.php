@@ -4,6 +4,7 @@ namespace Plasticode\Repositories\Idiorm;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Data\Db;
+use Plasticode\Models\DbModel;
 use Plasticode\Models\User;
 use Plasticode\Repositories\Idiorm\Basic\IdiormRepository;
 use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
@@ -28,18 +29,18 @@ class UserRepository extends IdiormRepository implements UserRepositoryInterface
         $this->linker = $linker;
     }
 
-    protected function ormObjToEntity(\ORM $ormObj) : User
+    /**
+     * @param User $entity
+     */
+    protected function hydrate(DbModel $entity) : User
     {
-        /** @var User */
-        $user = parent::ormObjToEntity($ormObj);
-
-        return $user
+        return $entity
             ->withRole(
-                $this->roleRepository->get($user->roleId)
+                $this->roleRepository->get($entity->roleId)
             )
             ->withGravatarUrl(
                 $this->linker->gravatarUrl(
-                    $user->gravatarHash()
+                    $entity->gravatarHash()
                 )
             );
     }

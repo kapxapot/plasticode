@@ -5,6 +5,7 @@ namespace Plasticode\Repositories\Idiorm;
 use Plasticode\Collection;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Data\Db;
+use Plasticode\Models\DbModel;
 use Plasticode\Models\MenuItem;
 use Plasticode\Repositories\Idiorm\Basic\IdiormRepository;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
@@ -13,7 +14,7 @@ class MenuItemRepository extends IdiormRepository implements MenuItemRepositoryI
 {
     protected string $entityClass = MenuItem::class;
 
-    protected const ParentIdField = 'menu_id';
+    protected string $parentIdField = 'menu_id';
 
     private LinkerInterface $linker;
 
@@ -27,14 +28,14 @@ class MenuItemRepository extends IdiormRepository implements MenuItemRepositoryI
         $this->linker = $linker;
     }
 
-    protected function ormObjToEntity(\ORM $ormObj) : MenuItem
+    /**
+     * @param MenuItem $entity
+     */
+    protected function hydrate(DbModel $entity) : MenuItem
     {
-        /** @var MenuItem */
-        $menuItem = parent::ormObjToEntity($ormObj);
-
-        return $menuItem
+        return $entity
             ->withUrl(
-                $this->linker->rel($menuItem->link)
+                $this->linker->rel($entity->link)
             );
     }
 
@@ -47,7 +48,7 @@ class MenuItemRepository extends IdiormRepository implements MenuItemRepositoryI
     {
         return $this
             ->query()
-            ->where(self::ParentIdField, $menuId)
+            ->where($this->parentIdField, $menuId)
             ->all();
     }
 }
