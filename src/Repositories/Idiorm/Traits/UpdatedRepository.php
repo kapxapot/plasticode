@@ -15,7 +15,7 @@ trait UpdatedRepository
     protected $updatedAtField = 'updated_at';
     protected $updatedByField = 'updated_by';
 
-    public static function filterByUpdaterQuery(Query $query, User $user) : Query
+    public static function filterByUpdater(Query $query, User $user) : Query
     {
         return $query
             ->where($this->updatedByField, $user->getId());

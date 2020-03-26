@@ -15,7 +15,7 @@ trait CreatedRepository
     protected string $createdAtField = 'created_at';
     protected string $createdByField = 'created_by';
 
-    protected function filterByCreatorQuery(Query $query, User $user) : Query
+    protected function filterByCreator(Query $query, User $user) : Query
     {
         return $query
             ->where($this->createdByField, $user->getId());
