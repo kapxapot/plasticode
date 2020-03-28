@@ -3,14 +3,14 @@
 namespace Plasticode\Models\Traits;
 
 use Plasticode\Models\User;
-use Plasticode\Util\Date;
 
 /**
  * @property integer|null $updatedBy
- * @property string|null $updatedAt
  */
 trait Updated
 {
+    use UpdatedAt;
+
     protected ?User $updater = null;
 
     public function updatedBy() : ?int
@@ -40,10 +40,5 @@ trait Updated
         $this->updatedBy = $user->getId();
 
         return $this->withUpdater($user);
-    }
-
-    public function updatedAtIso() : string
-    {
-        return Date::iso($this->updatedAt);
     }
 }

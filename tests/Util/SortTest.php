@@ -5,6 +5,7 @@ namespace Plasticode\Tests\Util;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Testing\Dummies\SortDummy;
 use Plasticode\Util\Sort;
+use Plasticode\Util\SortStep;
 
 final class SortTest extends TestCase
 {
@@ -34,10 +35,12 @@ final class SortTest extends TestCase
 
     /**
      * @dataProvider multiProvider
+     * 
+     * @param SortStep[] $steps
      */
-    public function testMulti(array $array, array $sorts, array $expected) : void
+    public function testMulti(array $array, array $steps, array $expected) : void
     {
-        $actual = Sort::multi($array, $sorts);
+        $actual = Sort::multi($array, $steps);
 
         $this->assertEquals($expected, $actual);
     }
@@ -52,167 +55,151 @@ final class SortTest extends TestCase
             [[], [], []],
             [$array, [], $array],
             [
-                $array, ['num' => []], $array
+                $array,
+                [
+                    SortStep::create('num'),
+                ],
+                $array
             ],
             [
                 $array,
                 [
-                    'num' => ['dir' => Sort::DESC],
+                    SortStep::createDesc('num'),
                 ],
                 [$this->third, $this->second, $this->first]
             ],
             [
                 $array,
                 [
-                    'str' => ['type' => Sort::STRING],
+                    SortStep::create('str')->withType(Sort::STRING),
                 ],
                 [$this->first, $this->third, $this->second]
             ],
             [
                 $array,
                 [
-                    'str' => [
-                        'type' => Sort::STRING,
-                        'dir' => Sort::DESC
-                    ],
+                    SortStep::createDesc('str')->withType(Sort::STRING),
                 ],
                 [$this->second, $this->third, $this->first]
             ],
             [
                 $array,
                 [
-                    'bool' => ['type' => Sort::BOOL],
-                    'num' => [],
+                    SortStep::create('bool')->withType(Sort::BOOL),
+                    SortStep::create('num'),
                 ],
                 [$this->second, $this->third, $this->first]
             ],
             [
                 $array,
                 [
-                    'bool' => [
-                        'type' => Sort::BOOL,
-                        'dir' => Sort::DESC
-                    ],
-                    'num' => [],
+                    SortStep::createDesc('bool')->withType(Sort::BOOL),
+                    SortStep::create('num'),
                 ],
                 [$this->first, $this->second, $this->third]
             ],
             [
                 $array,
                 [
-                    'null' => ['type' => Sort::NULL],
-                    'num' => [],
+                    SortStep::create('null')->withType(Sort::NULL),
+                    SortStep::create('num'),
                 ],
                 [$this->first, $this->third, $this->second]
             ],
             [
                 $array,
                 [
-                    'null' => [
-                        'type' => Sort::NULL,
-                        'dir' => Sort::DESC
-                    ],
-                    'num' => [],
+                    SortStep::createDesc('null')->withType(Sort::NULL),
+                    SortStep::create('num'),
                 ],
                 [$this->second, $this->first, $this->third]
             ],
             [
                 $array,
                 [
-                    'date' => ['type' => Sort::DATE],
+                    SortStep::create('date')->withType(Sort::DATE),
                 ],
                 [$this->third, $this->second, $this->first]
             ],
             [
                 $array,
                 [
-                    'date' => [
-                        'type' => Sort::DATE,
-                        'dir' => Sort::DESC
-                    ],
+                    SortStep::createDesc('date')->withType(Sort::DATE),
                 ],
                 [$this->first, $this->second, $this->third]
             ],
             [$arrayObj, [], $arrayObj],
             [
-                $arrayObj, ['num' => []], $arrayObj
+                $arrayObj,
+                [
+                    SortStep::create('num'),
+                ],
+                $arrayObj
             ],
             [
                 $arrayObj,
                 [
-                    'num' => ['dir' => Sort::DESC],
+                    SortStep::createDesc('num'),
                 ],
                 $this->toObjArray([$this->third, $this->second, $this->first])
             ],
             [
                 $arrayObj,
                 [
-                    'str' => ['type' => Sort::STRING],
+                    SortStep::create('str')->withType(Sort::STRING),
                 ],
                 $this->toObjArray([$this->first, $this->third, $this->second])
             ],
             [
                 $arrayObj,
                 [
-                    'str' => [
-                        'type' => Sort::STRING,
-                        'dir' => Sort::DESC
-                    ],
+                    SortStep::createDesc('str')->withType(Sort::STRING),
                 ],
                 $this->toObjArray([$this->second, $this->third, $this->first])
             ],
             [
                 $arrayObj,
                 [
-                    'bool' => ['type' => Sort::BOOL],
-                    'num' => [],
+                    SortStep::create('bool')->withType(Sort::BOOL),
+                    SortStep::create('num'),
                 ],
                 $this->toObjArray([$this->second, $this->third, $this->first])
             ],
             [
                 $arrayObj,
                 [
-                    'bool' => [
-                        'type' => Sort::BOOL,
-                        'dir' => Sort::DESC
-                    ],
-                    'num' => [],
+                    SortStep::createDesc('bool')->withType(Sort::BOOL),
+                    SortStep::create('num'),
                 ],
                 $this->toObjArray([$this->first, $this->second, $this->third])
             ],
             [
                 $arrayObj,
                 [
-                    'null' => ['type' => Sort::NULL],
-                    'num' => [],
+                    SortStep::create('null')->withType(Sort::NULL),
+                    SortStep::create('num'),
                 ],
                 $this->toObjArray([$this->first, $this->third, $this->second])
             ],
             [
                 $arrayObj,
                 [
-                    'null' => [
-                        'type' => Sort::NULL,
-                        'dir' => Sort::DESC
-                    ],
-                    'num' => [],
+                    SortStep::createDesc('null')->withType(Sort::NULL),
+                    SortStep::create('num'),
                 ],
                 $this->toObjArray([$this->second, $this->first, $this->third])
             ],
             [
                 $arrayObj,
                 [
-                    'date' => ['type' => Sort::DATE],
+                    SortStep::create('date')->withType(Sort::DATE),
                 ],
                 $this->toObjArray([$this->third, $this->second, $this->first])
             ],
             [
                 $arrayObj,
                 [
-                    'date' => [
-                        'type' => Sort::DATE,
-                        'dir' => Sort::DESC
-                    ],
+                    SortStep::createDesc('date')->withType(Sort::DATE),
                 ],
                 $this->toObjArray([$this->first, $this->second, $this->third])
             ],
@@ -223,8 +210,8 @@ final class SortTest extends TestCase
                     ['id' => 3, 'name' => 'Alex'],
                 ],
                 [
-                    'name' => ['type' => Sort::STRING],
-                    'id' => ['dir' => Sort::DESC],
+                    SortStep::create('name')->withType(Sort::STRING),
+                    SortStep::createDesc('id'),
                 ],
                 [
                     ['id' => 3, 'name' => 'Alex'],
@@ -240,7 +227,7 @@ final class SortTest extends TestCase
                     ['v' => true],
                 ],
                 [
-                    'v' => ['type' => Sort::BOOL],
+                    SortStep::create('v')->withType(Sort::BOOL),
                 ],
                 [
                     ['v' => false],

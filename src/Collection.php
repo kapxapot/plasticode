@@ -75,9 +75,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
     
     /**
-     * Groups collection by column/property or callable.
+     * Groups collection by column/property or \Closure.
      * 
-     * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
+     * @param mixed $by Column/property name or \Closure, returning generated column/property name. Default = 'id'.
      * @return array Returns associative array of collections.
      */
     public function group($by = null) : array

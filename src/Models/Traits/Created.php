@@ -3,14 +3,14 @@
 namespace Plasticode\Models\Traits;
 
 use Plasticode\Models\User;
-use Plasticode\Util\Date;
 
 /**
  * @property integer|null $createdBy
- * @property string|null $createdAt
  */
 trait Created
 {
+    use CreatedAt;
+
     protected ?User $creator = null;
 
     public function createdBy() : ?int
@@ -29,6 +29,13 @@ trait Created
         return $this->creator;
     }
 
+    public function isCreatedBy(User $user) : bool
+    {
+        return $this->creator
+            ? $this->creator->equals($user)
+            : false;
+    }
+
     /**
      * Sets or updates createdBy and creator.
      *
@@ -44,10 +51,5 @@ trait Created
         $this->createdBy = $user->getId();
 
         return $this->withCreator($user);
-    }
-
-    public function createdAtIso() : string
-    {
-        return Date::iso($this->createdAt);
     }
 }

@@ -175,10 +175,10 @@ class Arrays
     }
     
     /**
-     * Groups array by column/property or Closure.
+     * Groups array by column/property or \Closure.
      * 
      * @param array $array
-     * @param string|\Closure $by Column/property name or Closure, returning generated column/property name.
+     * @param string|\Closure $by Column/property name or \Closure, returning generated column/property name.
      * @return array
      */
     public static function groupBy(array $array, $by) : array
@@ -528,11 +528,11 @@ class Arrays
      * Shortcut for Sort::multi().
      *
      * @param array $array
-     * @param array $sorts
+     * @param SortStep[] $steps
      * @return array
      */
-    public static function multiSort(array $array, array $sorts) : array
+    public static function multiSort(array $array, array $steps) : array
     {
-        return Sort::multi($array, $sorts);
+        return Sort::multi($array, $steps);
     }
 }

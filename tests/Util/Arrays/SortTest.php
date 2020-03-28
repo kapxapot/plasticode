@@ -5,6 +5,7 @@ namespace Plasticode\Tests\Util\Arrays;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\Sort;
+use Plasticode\Util\SortStep;
 
 final class SortTest extends TestCase
 {
@@ -88,9 +89,9 @@ final class SortTest extends TestCase
             ['id' => 3, 'name' => 'Alex'],
         ];
 
-        $sorts = [
-            'name' => ['type' => Sort::STRING],
-            'id' => ['dir' => Sort::DESC],
+        $steps = [
+            SortStep::create('name')->withType(Sort::STRING),
+            SortStep::createDesc('id'),
         ];
 
         $this->assertEquals(
@@ -99,7 +100,7 @@ final class SortTest extends TestCase
                 ['id' => 1, 'name' => 'Alex'],
                 ['id' => 2, 'name' => 'Peter'],
             ],
-            Arrays::multiSort($array, $sorts)
+            Arrays::multiSort($array, $steps)
         );
     }
 }

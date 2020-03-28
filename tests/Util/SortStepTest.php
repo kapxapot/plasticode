@@ -7,27 +7,36 @@ use Plasticode\Util\SortStep;
 
 final class SortStepTest extends TestCase
 {
-    public function testDefault() : void
+    public function testFieldImplicitAsc() : void
     {
         $field = 'field';
-        $step = new SortStep($field);
+        $step = SortStep::create($field);
 
         $this->assertEquals($field, $step->getField());
         $this->assertEquals(false, $step->isDesc());
     }
 
-    /**
-     * @dataProvider explicitProvider
-     */
-    public function testExplicitAsc(string $field, bool $desc) : void
+    public function testFieldImplicitDesc() : void
     {
-        $step = new SortStep($field, $desc);
+        $field = 'field';
+        $step = SortStep::createDesc($field);
+
+        $this->assertEquals($field, $step->getField());
+        $this->assertEquals(true, $step->isDesc());
+    }
+
+    /**
+     * @dataProvider explicitSortDirectionProvider
+     */
+    public function testExplicitSortDirection(string $field, bool $desc) : void
+    {
+        $step = new SortStep($field, null, $desc);
 
         $this->assertEquals($field, $step->getField());
         $this->assertEquals($desc, $step->isDesc());
     }
 
-    public function explicitProvider() : array
+    public function explicitSortDirectionProvider() : array
     {
         return [
             ['field', false],

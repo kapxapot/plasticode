@@ -3,6 +3,7 @@
 namespace Plasticode\Util;
 
 use Plasticode\Util\Traits\PropertyAccess;
+use Webmozart\Assert\Assert;
 
 class Sort
 {
@@ -11,6 +12,7 @@ class Sort
     const ASC = 'asc';
     const DESC = 'desc';
     
+    const NUMBER = 'number';
     const STRING = 'string';
     const NULL = 'null';
     const BOOL = 'bool';
@@ -19,35 +21,29 @@ class Sort
     /**
      * Sorts array by multiple fields.
      * 
-     * Example config:
-     *
-     * $sorts = [
-     *  'remote_online' => [], // dir = asc by default
-     *  'priority' => [ 'dir' => 'desc' ], // type is numeric by default
-     *  'priority_game' => [ 'dir' => 'desc' ],
-     *  'remote_viewers' => [ 'dir' => 'desc' ],
-     *  'title' => [ 'type' => 'string' ],
-     * ];
+     * @param SortStep[] $steps
      */
-    public static function multi(array $array, array $sorts) : array
+    public static function multi(array $array, array $steps) : array
     {
         if (empty($array)) {
             return [];
         }
 
-        if (empty($sorts)) {
+        if (empty($steps)) {
             return $array;
         }
 
+        Assert::allIsInstanceOf($steps, SortStep::class);
+
         usort(
             $array,
-            function($itemA, $itemB) use ($sorts) {
-                foreach ($sorts as $field => $settings) {
-                    $dir = $settings['dir'] ?? self::ASC;
-                    $type = $settings['type'] ?? null;
+            function($itemA, $itemB) use ($steps) {
+                foreach ($steps as $step) {
+                    $dir = $step->isDesc() ? self::DESC : self::ASC;
+                    $type = $step->getType();
 
-                    $propA = self::getProperty($itemA, $field);
-                    $propB = self::getProperty($itemB, $field);
+                    $propA = $step->getValue($itemA);
+                    $propB = $step->getValue($itemB);
                     
                     switch ($type) {
                         case self::STRING:
@@ -111,61 +107,90 @@ class Sort
      * Sorts array by $field asc/desc.
      * 
      * @param array $array
-     * @param string $field
-     * @param string|null $dir 'asc' or 'desc'. null = 'asc'
-     * @param string|null $type null = numeric
+     * @param string|\Closure $by
+     * @param string|null $dir Sort::ASC (default) or Sort::DESC
+     * @param string|null $type null = Sort::NUMBER
      * 
      * @return array
      */
-    public static function by(array $array, string $field, ?string $dir = null, ?string $type = null) : array
+    public static function by(
+        array $array,
+        $by,
+        ?string $dir = null,
+        ?string $type = null
+    ) : array
     {
-        $sorts = [
-            $field => [
-                'dir' => $dir ?? self::ASC,
-                'type' => $type
-            ],
+        /** @var string|null */
+        $field = null;
+
+        /** @var \Closure|null */
+        $closure = null;
+
+        if ($by instanceof \Closure) {
+            $closure = $by;
+        } else {
+            $field = $by;
+        }
+
+        $steps = [
+            new SortStep(
+                $field,
+                $closure,
+                $dir === self::DESC,
+                $type
+            )
         ];
         
-        return self::multi($array, $sorts);
+        return self::multi($array, $steps);
     }
     
     /**
      * Alias for by($array, $field).
+     * 
+     * @param string|\Closure $by
      */
-    public static function asc(array $array, string $field, ?string $type = null) : array
+    public static function asc(array $array, $by, ?string $type = null) : array
     {
-        return self::by($array, $field, null, $type);
+        return self::by($array, $by, null, $type);
     }
     
     /**
-     * Shortcut for by($array, $field, 'desc').
+     * Shortcut for by($array, $field, Sort::DESC).
+     * 
+     * @param string|\Closure $by
      */
-    public static function desc(array $array, string $field, ?string $type = null) : array
+    public static function desc(array $array, $by, ?string $type = null) : array
     {
-        return self::by($array, $field, self::DESC, $type);
+        return self::by($array, $by, self::DESC, $type);
     }
     
     /**
      * Sort by $field as strings.
+     * 
+     * @param string|\Closure $by
      */
-    public static function byStr(array $array, string $field, ?string $dir = null) : array
+    public static function byStr(array $array, $by, ?string $dir = null) : array
     {
-        return self::by($array, $field, $dir, self::STRING);
+        return self::by($array, $by, $dir, self::STRING);
     }
     
     /**
      * Sort ascending by $field as strings.
+     * 
+     * @param string|\Closure $by
      */
-    public static function ascStr(array $array, string $field) : array
+    public static function ascStr(array $array, $by) : array
     {
-        return self::byStr($array, $field);
+        return self::byStr($array, $by);
     }
     
     /**
      * Sort descending by $field as strings.
+     * 
+     * @param string|\Closure $by
      */
-    public static function descStr(array $array, string $field) : array
+    public static function descStr(array $array, $by) : array
     {
-        return self::byStr($array, $field, self::DESC);
+        return self::byStr($array, $by, self::DESC);
     }
 }
