@@ -5,6 +5,7 @@ namespace Plasticode\Repositories\Idiorm\Basic;
 use Plasticode\Collection;
 use Plasticode\Data\Db;
 use Plasticode\Data\Rights;
+use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\DbModel;
 use Plasticode\Query;
@@ -41,9 +42,17 @@ abstract class IdiormRepository
 
     private Db $db;
 
+    private ?HydratorInterface $hydrator = null;
+
     public function __construct(Db $db)
     {
         $this->db = $db;
+    }
+
+    public function withHydrator(HydratorInterface $hydrator) : self
+    {
+        $this->hydrator = $hydrator;
+        return $this;
     }
 
     protected function idField() : string
@@ -187,11 +196,11 @@ abstract class IdiormRepository
     private function ormObjToEntity(\ORM $ormObj) : DbModel
     {
         $entity = $this->createEntity($ormObj);
-        return $this->hydrate($entity);
-    }
 
-    protected function hydrate(DbModel $entity) : DbModel
-    {
+        if ($this->hydrator) {
+            $entity = $this->hydrator->hydrate($entity);
+        }
+
         return $entity;
     }
 

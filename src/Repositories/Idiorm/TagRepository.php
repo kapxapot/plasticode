@@ -3,9 +3,6 @@
 namespace Plasticode\Repositories\Idiorm;
 
 use Plasticode\Collection;
-use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Data\Db;
-use Plasticode\Models\DbModel;
 use Plasticode\Models\Tag;
 use Plasticode\Query;
 use Plasticode\Repositories\Idiorm\Basic\IdiormRepository;
@@ -14,29 +11,6 @@ use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 class TagRepository extends IdiormRepository implements TagRepositoryInterface
 {
     protected string $entityClass = Tag::class;
-
-    private LinkerInterface $linker;
-
-    public function __construct(
-        Db $db,
-        LinkerInterface $linker
-    )
-    {
-        parent::__construct($db);
-
-        $this->linker = $linker;
-    }
-
-    /**
-     * @param Tag $entity
-     */
-    protected function hydrate(DbModel $entity) : Tag
-    {
-        return $entity
-            ->withUrl(
-                $this->linker->tag($entity->tag)
-            );
-    }
 
     protected function getByEntityQuery(string $entityType, int $entityId) : Query
     {

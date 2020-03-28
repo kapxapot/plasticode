@@ -29,6 +29,11 @@ use Plasticode\Generators\GeneratorResolver;
 use Plasticode\Handlers\ErrorHandler;
 use Plasticode\Handlers\NotAllowedHandler;
 use Plasticode\Handlers\NotFoundHandler;
+use Plasticode\Hydrators\AuthTokenHydrator;
+use Plasticode\Hydrators\MenuHydrator;
+use Plasticode\Hydrators\MenuItemHydrator;
+use Plasticode\Hydrators\TagHydrator;
+use Plasticode\Hydrators\UserHydrator;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
 use Plasticode\Models\Validation\PasswordValidation;
@@ -127,25 +132,24 @@ class Bootstrap
             },
 
             'authTokenRepository' => function (ContainerInterface $container) {
-                return new AuthTokenRepository(
-                    $container->db,
-                    $container->userRepository
-                );
+                return (new AuthTokenRepository($container->db))
+                    ->withHydrator(
+                        $container->authTokenHydrator
+                    );
             },
             
             'menuRepository' => function (ContainerInterface $container) {
-                return new MenuRepository(
-                    $container->db,
-                    $container->menuItemRepository,
-                    $container->linker
-                );
+                return (new MenuRepository($container->db))
+                    ->withHydrator(
+                        $container->menuHydrator
+                    );
             },
             
             'menuItemRepository' => function (ContainerInterface $container) {
-                return new MenuItemRepository(
-                    $container->db,
-                    $container->linker
-                );
+                return (new MenuItemRepository($container->db))
+                    ->withHydrator(
+                        $container->menuItemHydrator
+                    );
             },
 
             'newsRepository' => function (ContainerInterface $container) {
@@ -167,15 +171,48 @@ class Bootstrap
             },
 
             'tagRepository' => function (ContainerInterface $container) {
-                return new TagRepository(
-                    $container->db,
+                return (new TagRepository($container->db))
+                    ->withHydrator(
+                        $container->tagHydrator
+                    );
+            },
+
+            'userRepository' => function (ContainerInterface $container) {
+                return (new UserRepository($container->db))
+                    ->withHydrator(
+                        $container->userHydrator
+                    );
+            },
+
+            'authTokenHydrator' => function (ContainerInterface $container) {
+                return new AuthTokenHydrator(
+                    $container->userRepository
+                );
+            },
+
+            'menuHydrator' => function (ContainerInterface $container) {
+                return new MenuHydrator(
+                    $container->menuItemRepository,
                     $container->linker
                 );
             },
 
-            'userRepository' => function (ContainerInterface $container) {
-                return new UserRepository(
-                    $container->db
+            'menuItemHydrator' => function (ContainerInterface $container) {
+                return new MenuItemHydrator(
+                    $container->linker
+                );
+            },
+
+            'tagHydrator' => function (ContainerInterface $container) {
+                return new TagHydrator(
+                    $container->linker
+                );
+            },
+
+            'userHydrator' => function (ContainerInterface $container) {
+                return new UserHydrator(
+                    $container->roleRepository,
+                    $container->linker
                 );
             },
 
