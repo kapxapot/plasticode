@@ -4,39 +4,36 @@ namespace Plasticode\Models;
 
 use Plasticode\Collection;
 use Plasticode\Models\Interfaces\LinkableInterface;
+use Plasticode\Models\Traits\CreatedAt;
+use Plasticode\Models\Traits\UpdatedAt;
+use Plasticode\Models\Traits\WithUrl;
+use Webmozart\Assert\Assert;
 
 /**
- * @property int $id
  * @property string $link
  * @property string $text
  * @property integer $position
- * @property string $createdAt
- * @property string $updatedAt
  */
 class Menu extends DbModel implements LinkableInterface
 {
-    private Collection $items;
-    private ?string $url;
+    use CreatedAt, UpdatedAt, WithUrl;
+
+    protected ?Collection $items = null;
+
+    private bool $itemsInitialized = false;
 
     public function withItems(Collection $items) : self
     {
         $this->items = $items;
+        $this->itemsInitialized = true;
+
         return $this;
     }
 
     public function items() : Collection
     {
+        Assert::true($this->itemsInitialized);
+
         return $this->items;
-    }
-
-    public function withUrl(?string $url) : self
-    {
-        $this->url = $url;
-        return $this;
-    }
-
-    public function url() : ?string
-    {
-        return $this->url;
     }
 }

@@ -3,13 +3,18 @@
 namespace Plasticode\Models;
 
 use Plasticode\Models\Interfaces\LinkableInterface;
+use Plasticode\Models\Traits\WithUrl;
 use Plasticode\Util\SortStep;
 
+/**
+ * @property integer $position
+ * @property string $text
+ */
 class MenuItem extends DbModel implements LinkableInterface
 {
-    public const ParentIdField = 'menu_id';
+    use WithUrl;
 
-    private ?string $url;
+    protected string $parentIdField = 'menu_id';
 
     /**
      * @return SortStep[]
@@ -20,16 +25,5 @@ class MenuItem extends DbModel implements LinkableInterface
             SortStep::create('position'),
             SortStep::create('text')
         ];
-    }
-
-    public function withUrl(string $url) : self
-    {
-        $this->url = $url;
-        return $this;
-    }
-
-    public function url() : ?string
-    {
-        return $this->url;
     }
 }

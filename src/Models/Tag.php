@@ -4,29 +4,18 @@ namespace Plasticode\Models;
 
 use Plasticode\Models\Interfaces\LinkableInterface;
 use Plasticode\Models\Interfaces\SerializableInterface;
+use Plasticode\Models\Traits\WithUrl;
 use Plasticode\Util\Strings;
 
 /**
- * @property integer $id
  * @property string $tag
  * @property integer $entityId
  * @property string $entityType
  */
 class Tag extends DbModel implements LinkableInterface, SerializableInterface
 {
-    private ?string $url = null;
+    use WithUrl;
 
-    public function withUrl(string $url) : self
-    {
-        $this->url = $url;
-        return $this;
-    }
-
-    public function url() : ?string
-    {
-        return $this->url;
-    }
-    
     public function serialize() : array
     {
         return [
@@ -34,7 +23,7 @@ class Tag extends DbModel implements LinkableInterface, SerializableInterface
             'tag' => $this->tag,
         ];
     }
-    
+
     public function code() : string
     {
         return Strings::doubleBracketsTag('tag', $this->tag);

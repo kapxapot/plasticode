@@ -2,30 +2,40 @@
 
 namespace Plasticode\Models;
 
+use Plasticode\Models\Traits\CreatedAt;
+use Plasticode\Models\Traits\UpdatedAt;
+use Webmozart\Assert\Assert;
+
 /**
- * @property integer $id
  * @property string $name
  * @property string $login
  * @property string $password
  * @property string $email
  * @property integer $roleId
- * @property string $createdAt
- * @property string $updatedAt
  */
 class User extends DbModel
 {
-    private ?Role $role = null;
-    private ?string $gravatarUrl = null;
+    use CreatedAt, UpdatedAt;
+
+    protected ?Role $role = null;
+    protected ?string $gravatarUrl = null;
+
+    private bool $roleInitialized = false;
+    private bool $gravatarUrlInitialized = false;
 
     public function withRole(Role $role) : self
     {
         $this->role = $role;
+        $this->roleInitialized = true;
+
         return $this;
     }
 
     public function withGravatarUrl(string $url) : self
     {
         $this->gravatarUrl = $url;
+        $this->gravatarUrlInitialized = true;
+
         return $this;
     }
 
@@ -33,9 +43,11 @@ class User extends DbModel
     {
         return $this->name ?? $this->login;
     }
-    
+
     public function role() : ?Role
     {
+        Assert::true($this->roleInitialized);
+
         return $this->role;
     }
     
@@ -60,6 +72,8 @@ class User extends DbModel
 
     public function gravatarUrl() : ?string
     {
+        Assert::true($this->gravatarUrlInitialized);
+
         return $this->gravatarUrl;
     }
 }

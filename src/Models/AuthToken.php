@@ -2,33 +2,17 @@
 
 namespace Plasticode\Models;
 
+use Plasticode\Models\Traits\CreatedAt;
+use Plasticode\Models\Traits\UpdatedAt;
+use Plasticode\Models\Traits\WithUser;
+
 /**
- * @property integer $id
- * @property integer $userId
  * @property string $token
  * @property string|null $expiresAt
- * @property string $createdAt
- * @property string $updatedAt
  */
 class AuthToken extends DbModel
 {
-    private User $user;
-
-    public function withUser(User $user) : self
-    {
-        $this->user = $user;
-        return $this;
-    }
-
-    public function userId() : int
-    {
-        return $this->userId;
-    }
-
-    public function user() : User
-    {
-        return $this->user;
-    }
+    use CreatedAt, UpdatedAt, WithUser;
 
     public function toString() : string
     {
