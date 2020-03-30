@@ -4,32 +4,24 @@ namespace Plasticode\Util;
 
 class Text
 {
-    /** @var string */
-    public const Br = '<br/>';
+    public const BR = '<br/>';
+    public const BR_BR = self::BR . self::BR;
+    private const BR_PATTERN = '\<br\s*\/?\>';
 
-    /** @var string */
-    public const BrBr = self::Br . self::Br;
-
-    private const BrPattern = '\<br\s*\/?\>';
-
-    /** @var string */
-    public const POpen = '<p>';
-
-    /** @var string */
-    public const PClose = '</p>';
+    public const P_OPEN = '<p>';
+    public const P_CLOSE = '</p>';
 
     /** @var string[] */
-    private const NewLines = ["\r\n", "\r", "\n"];
+    private const NEW_LINES = ["\r\n", "\r", "\n"];
 
     /**
      * Breaks text into array of lines.
      * 
-     * @param string|null $text
      * @return string[]
      */
     public static function toLines(?string $text) : array
     {
-        $newLines = implode('|', self::NewLines);
+        $newLines = implode('|', self::NEW_LINES);
 
         return strlen($text) > 0
             ? preg_split("/" . $newLines . "/", $text)
@@ -40,7 +32,6 @@ class Text
      * Joins array of lines into text.
      * 
      * @param string[] $lines
-     * @return string
      */
     public static function fromLines(array $lines) : string
     {
@@ -68,25 +59,19 @@ class Text
     
     /**
      * Trims <br/>s from start and end of text.
-     * 
-     * @param string $text
-     * @return string
      */
     public static function trimBrs(string $text) : string
     {
-        return self::trimPattern(self::BrPattern, $text);
+        return self::trimPattern(self::BR_PATTERN, $text);
     }
 
     /**
      * Trims <br/>s and new line symbols from start and end of text.
-     *
-     * @param string $text
-     * @return string
      */
     public static function trimNewLinesAndBrs(string $text) : string
     {
-        $patterns = self::NewLines;
-        $patterns[] = self::BrPattern;
+        $patterns = self::NEW_LINES;
+        $patterns[] = self::BR_PATTERN;
 
         return self::trimMultiPattern($patterns, $text);
     }
@@ -95,8 +80,6 @@ class Text
      * Trims the string both from start & end using regex patterns.
      *
      * @param string[] $patterns
-     * @param string $text
-     * @return string
      */
     public static function trimMultiPattern(array $patterns, string $text) : string
     {
@@ -107,10 +90,6 @@ class Text
 
     /**
      * Trims the string both from start & end using regex pattern.
-     *
-     * @param string $pattern
-     * @param string $text
-     * @return string
      */
     public static function trimPattern(string $pattern, string $text) : string
     {
@@ -122,44 +101,39 @@ class Text
 
     /**
      * ~\n -> <br/>.
-     *
-     * @param string $text
-     * @return string
      */
     public static function newLinesToBrs(string $text) : string
     {
-        return str_replace(self::NewLines, self::Br, $text);
+        return str_replace(self::NEW_LINES, self::BR, $text);
     }
 
     /**
      * <br/>{3,} -> <br/><br/>.
-     *
-     * @param string $text
-     * @return string
      */
     public static function squishBrs(string $text) : string
     {
-        return preg_replace('/(' . self::BrPattern . '){3,}/', self::BrBr, $text);
+        return preg_replace(
+            '/(' . self::BR_PATTERN . '){3,}/',
+            self::BR_BR,
+            $text
+        );
     }
 
     /**
      * Changes <br/>{2,} to </p><p>. Also ensures that text is wrapped in <p>...</p>.
-     *
-     * @param string $text
-     * @return string
      */
     public static function brsToPs(string $text) : string
     {
         $text = self::squishBrs($text);
 
-        $text = str_replace(self::BrBr, self::PClose . self::POpen, $text);
+        $text = str_replace(self::BR_BR, self::P_CLOSE . self::P_OPEN, $text);
 
-        if (!Strings::startsWith($text, self::POpen)) {
-            $text = self::POpen . $text;
+        if (!Strings::startsWith($text, self::P_OPEN)) {
+            $text = self::P_OPEN . $text;
         }
 
-        if (!Strings::endsWith($text, self::PClose)) {
-            $text = $text . self::PClose;
+        if (!Strings::endsWith($text, self::P_CLOSE)) {
+            $text = $text . self::P_CLOSE;
         }
 
         return $text;
@@ -167,10 +141,6 @@ class Text
 
     /**
      * Makes <a href=""></a> tag links absolute from relative.
-     *
-     * @param string $text
-     * @param string $baseUrl
-     * @return string
      */
     public static function toAbsoluteUrls(string $text, string $baseUrl) : string
     {
@@ -185,9 +155,7 @@ class Text
     /**
      * Applies the array of regex replacements.
      *
-     * @param string $text
      * @param array $replaces Key/value pair of replaces from/to
-     * @return string
      */
     public static function applyRegexReplaces(string $text, array $replaces) : string
     {

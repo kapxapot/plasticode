@@ -43,7 +43,7 @@ class BBTreeRenderer
             $parts[] = $this->renderer->text($node->text());
         }
         
-        return implode(Text::BrBr, $parts);
+        return implode(Text::BR_BR, $parts);
     }
     
     private function renderNode(TagNode $node, TagMapperSourceInterface $mapperSource) : string
