@@ -19,9 +19,20 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $this->data = $data ?? [];
     }
 
+    /**
+     * Creates collection from array.
+     */
     public static function make(?array $data = null) : self
     {
         return new static($data);
+    }
+
+    /**
+     * Creates collection from arrayable (including other Colection).
+     */
+    public static function from(ArrayableInterface $arrayable) : self
+    {
+        return self::make($arrayable->toArray());
     }
 
     public static function empty() : self
