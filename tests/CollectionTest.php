@@ -77,7 +77,7 @@ final class CollectionTest extends TestCase
     {
         return [
             [
-                Collection::makeEmpty(),
+                Collection::empty(),
                 []
             ],
             [

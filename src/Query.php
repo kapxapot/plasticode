@@ -24,7 +24,7 @@ class Query implements \IteratorAggregate
     /**
      * Empty query
      */
-    private static self $empty;
+    private static ?self $empty = null;
 
     /**
      * ORM query
@@ -121,7 +121,7 @@ class Query implements \IteratorAggregate
     public function all() : Collection
     {
         if ($this->isEmpty()) {
-            return Collection::makeEmpty();
+            return Collection::empty();
         }
         
         $query = $this->getSortedQuery();

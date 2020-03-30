@@ -30,7 +30,7 @@ class TitlesContext
         $this->minLevel = $minLevel;
         $this->maxLevel = $maxLevel;
 
-        $this->contents = Collection::makeEmpty();
+        $this->contents = Collection::empty();
 
         $this->zeroCount($this->minLevel);
     }

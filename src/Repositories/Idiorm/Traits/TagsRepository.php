@@ -31,7 +31,7 @@ trait TagsRepository
         $tag = Strings::normalize($tag);
         $ids = $tagRepository->getIdsByTag($this->getTable(), $tag);
 
-        if ($ids->empty()) {
+        if ($ids->isEmpty()) {
             return Query::empty();
         }
         

@@ -7,38 +7,47 @@ use Plasticode\Util\Arrays;
 
 class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializable, ArrayableInterface
 {
-    protected $data;
-    
-    protected function __construct(array $data)
+    /**
+     * Empty collection
+     */
+    private static ?self $empty = null;
+
+    protected array $data;
+
+    protected function __construct(?array $data)
     {
-        $this->data = $data;
+        $this->data = $data ?? [];
     }
-    
-    public static function make(array $data = null) : self
+
+    public static function make(?array $data = null) : self
     {
-        return new static($data ?? []);
+        return new static($data);
     }
-    
-    public static function makeEmpty() : self
+
+    public static function empty() : self
     {
-        return self::make();
+        if (is_null(self::$empty)) {
+            self::$empty = self::make();
+        }
+
+        return self::$empty;
     }
-    
+
     public function add($item) : self
     {
-        $col = self::make([ $item ]);
+        $col = self::make([$item]);
         return $this->concat($col);
     }
-    
+
     public function concat(Collection $other) : self
     {
         $data = array_merge($this->data, $other->toArray());
         return self::make($data);
     }
-    
+
     public static function merge(...$collections) : self
     {
-        $merged = self::makeEmpty();
+        $merged = self::empty();
         
         foreach ($collections as $collection) {
             $merged = $merged->concat($collection);
@@ -57,7 +66,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $data = Arrays::distinctBy($this->data, $by ?? 'id');
         return self::make($data);
     }
-    
+
     /**
      * Converts collection to associative array by column/property or callable.
      * Selector must be unique, otherwise only first element is taken, others are discarded.
@@ -68,12 +77,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     {
         return Arrays::toAssocBy($this->data, $by ?? 'id');
     }
-    
+
     public function toArray() : array
     {
         return $this->data;
     }
-    
+
     /**
      * Groups collection by column/property or \Closure.
      * 
@@ -92,7 +101,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         
         return $result;
     }
-    
+
     /**
      * Flattens a collection of elements, arrays and collections one level.
      * 
@@ -114,7 +123,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         
         return self::make($data);
     }
-    
+
     /**
      * Skips $offset elements from the start and returns the remaining collection.
      */
@@ -123,7 +132,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $data = Arrays::skip($this->data, $offset);
         return self::make($data);
     }
-    
+
     /**
      * Returns first $limit elements.
      */
@@ -132,7 +141,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $data = Arrays::take($this->data, $limit);
         return self::make($data);
     }
-    
+
     /**
      * Skips $offset elements and takes $limit elements.
      * Negative $offset is counted from the end backwards.
@@ -151,7 +160,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $data = Arrays::trimEnd($this->data, $limit);
         return self::make($data);
     }
-    
+
     /**
      * Return random item.
      * 
@@ -187,7 +196,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $data = Arrays::extract($this->data, $column);
         return self::make($data);
     }
-    
+
     public function any($by = null, $value = null) : bool
     {
         if ($by !== null) {
@@ -196,14 +205,14 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
                 ->any();
         }
 
-        return !$this->empty();
+        return !$this->isEmpty();
     }
 
-    public function empty() : bool
+    public function isEmpty() : bool
     {
         return $this->count() == 0;
     }
-    
+
     public function contains($value) : bool
     {
         return in_array($value, $this->data);
@@ -232,7 +241,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
             ? Arrays::lastBy($this->data, $by, $value)
             : Arrays::last($this->data);
     }
-    
+
     /**
      * Filters collection by column/property value or callable.
      */
@@ -241,7 +250,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $data = Arrays::filter($this->data, $by, $value);
         return self::make($data);
     }
-    
+
     public function whereIn($column, $values) : self
     {
         if ($values instanceof Collection) {
@@ -251,7 +260,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $data = Arrays::filterIn($this->data, $column, $values);
         return self::make($data);
     }
-    
+
     public function whereNotIn($column, $values) : self
     {
         if ($values instanceof Collection) {
@@ -267,17 +276,17 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $data = array_map($func, $this->data);
         return self::make($data);
     }
-    
+
     public function apply(\Closure $func) : void
     {
         array_walk($this->data, $func);
     }
-    
+
     public function asc($column, $type = null) : self
     {
         return $this->orderBy($column, null, $type);
     }
-    
+
     public function desc($column, $type = null) : self
     {
         $data = Arrays::orderByDesc($this->data, $column, $type);
@@ -289,12 +298,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $data = Arrays::orderBy($this->data, $column, $dir, $type);
         return self::make($data);
     }
-    
+
     public function ascStr($column) : self
     {
         return $this->orderByStr($column);
     }
-    
+
     public function descStr($column) : self
     {
         $data = Arrays::orderByStrDesc($this->data, $column);
@@ -306,7 +315,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $data = Arrays::orderByStr($this->data, $column, $dir);
         return self::make($data);
     }
-    
+
     public function multiSort($sorts) : self
     {
         $data = Arrays::multiSort($this->data, $sorts);
@@ -320,15 +329,15 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
 
         return self::make($data);
     }
-    
+
     public function reverse() : self
     {
         $data = array_reverse($this->data);
         return self::make($data);
     }
-    
+
     // ArrayAccess
-    
+
     public function offsetSet($offset, $value)
     {
         if (is_null($offset)) {
@@ -354,37 +363,37 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
             ? $this->data[$offset]
             : null;
     }
-    
+
     // Iterator
-    
+
     public function rewind()
     {
         reset($this->data);
     }
-  
+
     public function current()
     {
         return current($this->data);
     }
-  
+
     public function key() 
     {
         return key($this->data);
     }
-  
+
     public function next() 
     {
         return next($this->data);
     }
-  
+
     public function valid()
     {
         $key = key($this->data);
         return ($key !== null && $key !== false);
     }
-    
+
     // Countable
-    
+
     public function count()
     {
         return count($this->data);

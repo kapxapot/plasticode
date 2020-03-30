@@ -28,7 +28,7 @@ class ParsingContext
 
     private function __construct()
     {
-        $this->contents = Collection::makeEmpty();
+        $this->contents = Collection::empty();
     }
 
     /**
