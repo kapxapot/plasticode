@@ -23,17 +23,17 @@ abstract class IdiormRepository
     /**
      * Overriden table name
      */
-    protected ?string $table = null;
+    protected string $table = '';
 
     /**
      * Full entity class name
      */
-    protected string $entityClass;
+    protected string $entityClass = '';
 
     /**
      * Default sort field name
      */
-    protected ?string $sortField = null;
+    protected string $sortField = '';
 
     /**
      * Default sort direction

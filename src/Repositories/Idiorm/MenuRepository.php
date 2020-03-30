@@ -10,7 +10,7 @@ class MenuRepository extends IdiormRepository implements MenuRepositoryInterface
 {
     protected string $entityClass = Menu::class;
 
-    protected ?string $sortField = 'position';
+    protected string $sortField = 'position';
 
     public function get(?int $id) : ?Menu
     {
