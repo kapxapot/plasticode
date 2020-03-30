@@ -208,6 +208,13 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         return self::make($data);
     }
 
+    /**
+     * Is there any value in this collection?
+     *
+     * @param string|\Closure|null $by
+     * @param mixed $value
+     * @return boolean
+     */
     public function any($by = null, $value = null) : bool
     {
         if ($by !== null) {
@@ -232,6 +239,8 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     /**
      * Filters collection by column/property value or callable, then returns first item or null.
      * 
+     * @param string|\Closure|null $by
+     * @param mixed $value
      * @return mixed
      */
     public function first($by = null, $value = null)
@@ -244,6 +253,8 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     /**
      * Filters collection by column/property value or callable, then returns last item or null.
      * 
+     * @param string|\Closure|null %by
+     * @param mixed $value
      * @return mixed
      */
     public function last($by = null, $value = null)
@@ -255,6 +266,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
 
     /**
      * Filters collection by column/property value or callable.
+     * 
+     * @param string|\Closure $by
+     * @param mixed $value
      */
     public function where($by, $value = null) : self
     {
