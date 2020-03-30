@@ -4,6 +4,8 @@ namespace Plasticode\Models;
 
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;
+use Plasticode\Util\Convert;
+use Plasticode\Util\Date;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
@@ -32,6 +34,26 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     public function getObj()
     {
         return $this->obj;
+    }
+
+    protected static function toBool(?int $value) : bool
+    {
+        return Convert::fromBit($value);
+    }
+
+    protected static function toBit(?bool $value) : int
+    {
+        return Convert::toBit($value);
+    }
+
+    /**
+     * Null => null!
+     */
+    protected static function toIso(?string $date) : string
+    {
+        return $date
+            ? Date::iso($date)
+            : null;
     }
 
     private function checkPropertyExists(string $property) : void
