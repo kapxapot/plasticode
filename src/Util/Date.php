@@ -7,7 +7,7 @@ class Date
     const DATE_FORMAT = 'Y-m-d H:i:s';
     const TIME_FORMAT_SHORT = 'H:i МСК';
     const TIME_FORMAT = 'H:i:s';
-    
+
     const SHORT_MONTHS = [
         1 => 'Янв',
         2 => 'Фев',
@@ -22,7 +22,7 @@ class Date
         11 => 'Ноя',
         12 => 'Дек',
     ];
-    
+
     const MONTHS = [
         1 => 'Январь',
         2 => 'Февраль',
@@ -52,9 +52,16 @@ class Date
         11 => 'ноября',
         12 => 'декабря',
     ];
-    
-    // null = now()
-    public static function dt($date = null, $timeZone = null) : \DateTime
+
+    /**
+     * Converts to \DateTime with time zone.
+     * null = now()
+     *
+     * @param string|\DateTime|null $date
+     * @param string|null $timeZone
+     * @return \DateTime
+     */
+    public static function dt($date = null, ?string $timeZone = null) : \DateTime
     {
         $tz = (!is_null($timeZone))
             ? new \DateTimeZone($timeZone)
@@ -66,7 +73,14 @@ class Date
                 : $date)
             : new \DateTime($date, $tz);
     }
-    
+
+    /**
+     * Sets time zone.
+     *
+     * @param string|\DateTime $date
+     * @param string|\DateTimeZone $timeZone
+     * @return \DateTime
+     */
     public static function toTimeZone($date, $timeZone) : \DateTime
     {
         if (!($timeZone instanceof \DateTimeZone)) {
@@ -78,7 +92,7 @@ class Date
         
         return $copy;
     }
-    
+
     public static function utc($date = null) : \DateTime
     {
         return self::dt($date, 'UTC');
@@ -88,12 +102,20 @@ class Date
     {
         return self::toTimeZone($utc, date_default_timezone_get());
     }
-    
+
+    /**
+     * Formats date as ISO.
+     *
+     * @param string|\DateTime|null $date
+     * @return string
+     */
     public static function iso($date = null) : string
     {
-        return self::formatIso(self::dt($date));
+        return self::formatIso(
+            self::dt($date)
+        );
     }
-    
+
     public static function interval($interval) : \DateInterval
     {
         return ($interval instanceof \DateInterval)
@@ -101,12 +123,6 @@ class Date
             : new \DateInterval($interval);
     }
 
-    // deprecated, use dbNow
-    /*public static function now()
-    {
-        return date(self::DATE_FORMAT);	
-    }*/
-    
     public static function dbNow() : string
     {
         return self::formatDb(self::dt());
@@ -173,11 +189,9 @@ class Date
     
             if ($dt < $tomorrow) {
                 $str = 'сегодня';
-            }
-            elseif ($dt < $dayAfterTomorrow) {
+            } elseif ($dt < $dayAfterTomorrow) {
                 $str = 'завтра';
-            }
-            else {
+            } else {
                 $diff = self::diff($now, $dt);
                 $days = $diff->days;
                 
@@ -211,15 +225,13 @@ class Date
                     (($lang == 'en')
                         ? 'minute' . ($minutes > 1 ? 's' : '') . ' ago'
                         : $cases->caseForNumber('минута', $minutes) . ' назад');
-            }
-            elseif ($dt > $dayAgo) {
+            } elseif ($dt > $dayAgo) {
                 $hours = $age->h;
                 $str = $hours . ' ' .
                     (($lang == 'en')
                         ? 'hour' . ($hours > 1 ? 's' : '') . ' ago'
                         : $cases->caseForNumber('час', $hours) . ' назад');
-            }
-            else {
+            } else {
                 $days = $age->days;
                 $str = $days . ' ' .
                     (($lang == 'en')
@@ -270,34 +282,46 @@ class Date
     {
         return self::dt($date)->format(self::DATE_FORMAT);
     }
-    
+
+    /**
+     * Formats date in ISO format.
+     *
+     * @param string|\DateTime $date
+     * @return string
+     */
     public static function formatIso($date) : string
     {
         return ($date instanceof \DateTime)
             ? $date->format('c')
             : strftime('%FT%T%z', $date);
     }
-    
+
     public static function generateExpirationTime($minutes = 60) : string
     {
         return date(self::DATE_FORMAT, strtotime("+{$minutes} minutes"));
     }
-    
+
     const TIME_OFF = 0;
     const TIME_SOFT = 1;
     const TIME_HARD = 2;
-    
+
     const YEAR_OFF = 0;
     const YEAR_ON = 1;
     const YEAR_EXTRA = 2;
     const YEAR_EXPLICIT = 3; // not used
     const YEAR_EXPLICIT_EXTRA = 4; // not used
-    
+
     const MONTH_OFF = 0;
     const MONTH_ON = 1;
     const MONTH_NUM = 2;
-    
-    public static function formatIntervalUi($start, $end, $timeMode = self::TIME_OFF, $monthMode = self::MONTH_ON, $yearMode = self::YEAR_ON) : string
+
+    public static function formatIntervalUi(
+        $start,
+        $end,
+        $timeMode = self::TIME_OFF,
+        $monthMode = self::MONTH_ON,
+        $yearMode = self::YEAR_ON
+    ) : string
     {
         if (!$start || !$end) {
             return self::formatUi($start ?? $end, $timeMode, $monthMode, $yearMode);
@@ -329,24 +353,28 @@ class Date
             if (!$sameDay) {
                 $result = self::day($start) . '–' . $result;
             }
-        }
-        else {
+        } else {
             $result = self::formatUi($start, $timeMode, $firstMonthMode, $firstYearMode) . ' — ' . $result;
         }
         
         return $result;
     }
-    
+
     public static function formatDateUi($date) : string
     {
         return self::formatUi($date, self::TIME_OFF);
     }
-    
-    public static function formatUi($date, $timeMode = self::TIME_SOFT, $monthMode = self::MONTH_ON, $yearMode = self::YEAR_ON) : string
+
+    public static function formatUi(
+        $date,
+        $timeMode = self::TIME_SOFT,
+        $monthMode = self::MONTH_ON,
+        $yearMode = self::YEAR_ON
+    ) : string
     {
         $dt = self::dt($date);
         
-        $parts = [ self::day($dt) ];
+        $parts = [self::day($dt)];
         
         if ($monthMode !== self::MONTH_OFF) {
             $month = self::month($dt);
@@ -381,47 +409,47 @@ class Date
 
         return $result;
     }
-    
+
     private static function part($date, $part) : int
     {
         return intval(self::dt($date)->format($part));
     }
-    
+
     public static function day($date) : int
     {
         return self::part($date, 'd');
     }
-    
+
     public static function month($date) : int
     {
         return self::part($date, 'm');
     }
-    
+
     public static function year($date) : int
     {
         return self::part($date, 'Y');
     }
-    
+
     public static function hour($date) : int
     {
         return self::part($date, 'H');
     }
-    
+
     public static function minute($date) : int
     {
         return self::part($date, 'i');
     }
-    
+
     public static function second($date) : int
     {
         return self::part($date, 's');
     }
-    
+
     public static function hasTime($date) : bool
     {
         return self::hour($date) + self::minute($date) + self::second($date) > 0;
     }
-        
+
     public static function formatTime($date, $withSeconds = false) : string
     {
         $format = $withSeconds
