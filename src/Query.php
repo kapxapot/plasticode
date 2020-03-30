@@ -19,7 +19,7 @@ use Webmozart\Assert\Assert;
  * @method self whereNotNull(string $field)
  * @method self whereRaw(string $condition, array $params = null)
  */
-class Query implements \IteratorAggregate
+class Query implements \IteratorAggregate, ArrayableInterface
 {
     /**
      * Empty query
@@ -516,5 +516,12 @@ class Query implements \IteratorAggregate
     public function getIterator() : Collection
     {
         return $this->all();
+    }
+
+    // ArrayableInterface
+
+    public function toArray(): array
+    {
+        return $this->all()->toArray();
     }
 }
