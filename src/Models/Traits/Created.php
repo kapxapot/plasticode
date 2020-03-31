@@ -3,6 +3,7 @@
 namespace Plasticode\Models\Traits;
 
 use Plasticode\Models\User;
+use Webmozart\Assert\Assert;
 
 /**
  * @property integer|null $createdBy
@@ -13,6 +14,8 @@ trait Created
 
     protected ?User $creator = null;
 
+    private bool $creatorInitialized = false;
+
     public function createdBy() : ?int
     {
         return $this->createdBy;
@@ -21,18 +24,22 @@ trait Created
     public function withCreator(User $creator) : self
     {
         $this->creator = $creator;
+        $this->creatorInitialized = true;
+
         return $this;
     }
 
     public function creator() : ?User
     {
+        Assert::true($this->creatorInitialized);
+
         return $this->creator;
     }
 
     public function isCreatedBy(User $user) : bool
     {
-        return $this->creator
-            ? $this->creator->equals($user)
+        return $this->creator()
+            ? $this->creator()->equals($user)
             : false;
     }
 
