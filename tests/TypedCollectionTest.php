@@ -10,16 +10,24 @@ use Plasticode\Testing\Dummies\InvalidTypedCollection;
 
 final class TypedCollectionTest extends TestCase
 {
-    public function testCreate() : void
+    public function testCreateAndFilter() : void
     {
-        $dc = DummyCollection::make(
+        $typed = DummyCollection::make(
             [
                 new DummyModel(1, 'one'),
                 new DummyModel(2, 'two'),
             ]
         );
 
-        $this->assertCount(2, $dc);
+        $this->assertInstanceOf(DummyCollection::class, $typed);
+        $this->assertCount(2, $typed);
+
+        $filtered = $typed->where(
+            fn (DummyModel $dm) => $dm->id == 2
+        );
+
+        $this->assertInstanceOf(DummyCollection::class, $filtered);
+        $this->assertCount(1, $filtered);
     }
 
     public function testFrom() : void

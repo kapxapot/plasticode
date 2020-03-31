@@ -3,13 +3,10 @@
 namespace Plasticode;
 
 use Plasticode\Interfaces\ArrayableInterface;
-use Plasticode\Traits\CollectionFrom;
 use Plasticode\Util\Arrays;
 
 class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializable, ArrayableInterface
 {
-    use CollectionFrom;
-
     /**
      * Empty collection
      */
@@ -28,6 +25,14 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     public static function make(?array $data = null) : self
     {
         return new static($data);
+    }
+
+    /**
+     * Creates collection from arrayable (including other Colection).
+     */
+    public static function from(ArrayableInterface $arrayable) : self
+    {
+        return self::make($arrayable->toArray());
     }
 
     public static function empty() : self
