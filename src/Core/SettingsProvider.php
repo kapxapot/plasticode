@@ -7,16 +7,15 @@ use Plasticode\Util\Arrays;
 
 class SettingsProvider implements SettingsProviderInterface
 {
-    /**
-     * Settings array
-     *
-     * @var array
-     */
+    /** @var array|\ArrayAccess */
     public $settings;
 
-    public function __construct(array $settings)
+    /**
+     * @param array|\ArrayAccess $settings
+     */
+    public function __construct($settings)
     {
-        $this->settings = $settings ?? [];
+        $this->settings = $settings;
     }
 
     /**
@@ -28,6 +27,6 @@ class SettingsProvider implements SettingsProviderInterface
      */
     public function get(string $path, $default = null)
     {
-        return Arrays::get($this->result, $path) ?? $default;
+        return Arrays::get($this->settings, $path) ?? $default;
     }
 }
