@@ -131,13 +131,17 @@ class Bootstrap
                 );
             },
 
+            'cache' => function (ContainerInterface $container) {
+                return new Cache();
+            },
+
             'authTokenRepository' => function (ContainerInterface $container) {
                 return (new AuthTokenRepository($container->db))
                     ->withHydrator(
                         $container->authTokenHydrator
                     );
             },
-            
+
             'menuRepository' => function (ContainerInterface $container) {
                 return (new MenuRepository($container->db))
                     ->withHydrator(
@@ -239,10 +243,6 @@ class Bootstrap
                 $name = 'sessionContainer' . $root;
                 
                 return new Session($name);
-            },
-            
-            'cache' => function (ContainerInterface $container) {
-                return new Cache();
             },
             
             'auth' => function (ContainerInterface $container) {

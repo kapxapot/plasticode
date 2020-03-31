@@ -9,7 +9,6 @@ use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\DbModel;
 use Plasticode\Query;
-use Plasticode\Traits\LazyCache;
 use Plasticode\Util\Classes;
 use Plasticode\Util\Pluralizer;
 use Plasticode\Util\SortStep;
@@ -18,8 +17,6 @@ use Webmozart\Assert\Assert;
 
 abstract class IdiormRepository
 {
-    use LazyCache;
-
     /**
      * Overriden table name
      */

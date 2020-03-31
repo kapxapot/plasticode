@@ -8,6 +8,9 @@ trait LazyCache
 {
     use LazyBase;
 
+    /**
+     * @return mixed
+     */
     protected function lazy(
         \Closure $loader,
         string $name = null,
@@ -21,12 +24,12 @@ trait LazyCache
             ->getCached($name, $loader, $ignoreCache);
     }
 
-    protected function resetLazy(string $name) : void
+    protected function resetLazy(string $name): void
     {
         $this
             ->getCache()
             ->delete($name);
     }
 
-    protected abstract function getCache() : CacheInterface;
+    abstract protected function getCache(): CacheInterface;
 }
