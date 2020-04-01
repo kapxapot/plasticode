@@ -56,6 +56,7 @@ use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 use Plasticode\Parsing\Steps\ReplacesStep;
 use Plasticode\Parsing\Steps\TitlesStep;
 use Plasticode\Repositories\Idiorm\AuthTokenRepository;
+use Plasticode\Repositories\Idiorm\Basic\RepositoryContext;
 use Plasticode\Repositories\Idiorm\MenuItemRepository;
 use Plasticode\Repositories\Idiorm\MenuRepository;
 use Plasticode\Repositories\Idiorm\NewsRepository;
@@ -68,7 +69,7 @@ use Plasticode\Twig\TwigView;
 use Plasticode\Util\Cases;
 use Plasticode\Validation\ValidationRules;
 use Plasticode\Validation\Validator;
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as CI;
 use Slim\Collection as SlimCollection;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
@@ -76,563 +77,503 @@ use Twig\Extension\DebugExtension;
 
 class Bootstrap
 {
-    /** @var SlimCollection */
-    protected $settings;
+    protected SlimCollection $settings;
 
     /**
      * Database settings
-     *
-     * @var array
      */
-    protected $dbSettings;
+    protected array $dbSettings;
 
     /**
      * Current directory
-     *
-     * @var string
      */
-    protected $dir;
-    
+    protected string $dir;
+
     public function __construct(SlimCollection $settings, string $dir)
     {
         $this->settings = $settings;
         $this->dbSettings = $this->settings['db'];
         $this->dir = $dir;
     }
-    
+
     /**
      * Get mappings for DI container.
-     *
-     * @return array
      */
     public function getMappings() : array
     {
-        return [
-            'db' => function (ContainerInterface $container) {
-                $dbs = $this->dbSettings;
-                
-                \ORM::configure(
-                    'mysql:host=' . $dbs['host'] . ';dbname=' . $dbs['database']
-                );
-                
-                \ORM::configure('username', $dbs['user']);
-                \ORM::configure('password', $dbs['password'] ?? '');
-                
-                \ORM::configure(
-                    'driver_options',
-                    [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']
-                );
-                
-                return new Db(
-                    $container->access,
-                    $container->cache,
-                    $container->settingsProvider,
-                    $container->userRepository
-                );
-            },
+        $map = [];
 
-            'cache' => function (ContainerInterface $container) {
-                return new Cache();
-            },
+        $map['cache'] = fn (CI $c) =>
+            new Cache();
 
-            'authTokenRepository' => function (ContainerInterface $container) {
-                return (new AuthTokenRepository($container->db))
-                    ->withHydrator(
-                        $container->authTokenHydrator
-                    );
-            },
+        $map['access'] = fn (CI $c) =>
+            new Access(
+                $c->cache,
+                $this->settings['access']
+            );
 
-            'menuRepository' => function (ContainerInterface $container) {
-                return (new MenuRepository($container->db))
-                    ->withHydrator(
-                        $container->menuHydrator
-                    );
-            },
+        $map['settingsProvider'] = fn (CI $c) =>
+            new SettingsProvider(
+                $c->get('settings')
+            );
+
+        $map['db'] = function (CI $c) {
+            $dbs = $this->dbSettings;
             
-            'menuItemRepository' => function (ContainerInterface $container) {
-                return (new MenuItemRepository($container->db))
-                    ->withHydrator(
-                        $container->menuItemHydrator
-                    );
-            },
-
-            'newsRepository' => function (ContainerInterface $container) {
-                return new NewsRepository(
-                    $container->db
-                );
-            },
-
-            'pageRepository' => function (ContainerInterface $container) {
-                return new PageRepository(
-                    $container->db
-                );
-            },
-
-            'roleRepository' => function (ContainerInterface $container) {
-                return new RoleRepository(
-                    $container->db
-                );
-            },
-
-            'tagRepository' => function (ContainerInterface $container) {
-                return (new TagRepository($container->db))
-                    ->withHydrator(
-                        $container->tagHydrator
-                    );
-            },
-
-            'userRepository' => function (ContainerInterface $container) {
-                return (new UserRepository($container->db))
-                    ->withHydrator(
-                        $container->userHydrator
-                    );
-            },
-
-            'authTokenHydrator' => function (ContainerInterface $container) {
-                return new AuthTokenHydrator(
-                    $container->userRepository
-                );
-            },
-
-            'menuHydrator' => function (ContainerInterface $container) {
-                return new MenuHydrator(
-                    $container->menuItemRepository,
-                    $container->linker
-                );
-            },
-
-            'menuItemHydrator' => function (ContainerInterface $container) {
-                return new MenuItemHydrator(
-                    $container->linker
-                );
-            },
-
-            'tagHydrator' => function (ContainerInterface $container) {
-                return new TagHydrator(
-                    $container->linker
-                );
-            },
-
-            'userHydrator' => function (ContainerInterface $container) {
-                return new UserHydrator(
-                    $container->roleRepository,
-                    $container->linker
-                );
-            },
-
-            'appContext' => function (ContainerInterface $container) {
-                return new AppContext(
-                    $container->settingsProvider,
-                    $container->translator,
-                    $container->validator,
-                    $container->view,
-                    $container->logger,
-                    $container->notFoundHandler,
-                    $container->menuRepository
-                );
-            },
-
-            'settingsProvider' => function (ContainerInterface $container) {
-                return new SettingsProvider(
-                    $container->get('settings')
-                );
-            },
+            \ORM::configure(
+                'mysql:host=' . $dbs['host'] . ';dbname=' . $dbs['database']
+            );
             
-            'session' => function (ContainerInterface $container) {
-                $root = $this->settings['root'];
-                $name = 'sessionContainer' . $root;
-                
-                return new Session($name);
-            },
+            \ORM::configure('username', $dbs['user']);
+            \ORM::configure('password', $dbs['password'] ?? '');
             
-            'auth' => function (ContainerInterface $container) {
-                return new Auth(
-                    $container->session,
-                    $container->settingsProvider,
-                    $container->authTokenRepository,
-                    $container->userRepository
-                );
-            },
+            \ORM::configure(
+                'driver_options',
+                [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']
+            );
             
-            'logger' => function (ContainerInterface $container) {
-                $logger = new Logger(
-                    $this->settings['logger']['name']
-                );
-            
-                $logger->pushProcessor(
-                    function ($record) use ($container) {
-                        $user = $container->auth->getUser();
+            return new Db(
+                $c->cache,
+                $c->settingsProvider,
+                $c->userRepository
+            );
+        };
 
-                        if ($user) {
-                            $record['extra']['user'] = $user->toString();
-                        }
-                        
-                        $token = $container->auth->getToken();
+        $map['auth'] = fn (CI $c) =>
+            new Auth(
+                $c->session,
+                $c->settingsProvider,
+                $c->authTokenRepository,
+                $c->userRepository
+            );
 
-                        if ($token) {
-                            $record['extra']['token'] = $token->toString();
-                        }
-                    
-                        return $record;
+        $map['session'] = function (CI $c) {
+            $root = $this->settings['root'];
+            $name = 'sessionContainer' . $root;
+            
+            return new Session($name);
+        };
+
+        $map['logger'] = function (CI $c) {
+            $logger = new Logger(
+                $this->settings['logger']['name']
+            );
+
+            $logger->pushProcessor(
+                function ($record) use ($c) {
+                    $user = $c->auth->getUser();
+
+                    if ($user) {
+                        $record['extra']['user'] = $user->toString();
                     }
-                );
+                    
+                    $token = $c->auth->getToken();
 
-                $path = $this->settings['logger']['path'];
-                $path = File::absolutePath($this->dir, $path);
-
-                $handler = new StreamHandler(
-                    $path,
-                    Logger::DEBUG
-                );
-
-                $formatter = new LineFormatter(
-                    null, null, false, true
-                );
-
-                $handler->setFormatter($formatter);
-                $logger->pushHandler($handler);
-            
-                return $logger;
-            },
-            
-            'captchaConfig' => function (ContainerInterface $container) {
-                return new CaptchaConfig();
-            },
-            
-            'captcha' => function (ContainerInterface $container) {
-                return new Captcha(
-                    $container->session,
-                    $container->captchaConfig
-                );
-            },
-            
-            'access' => function (ContainerInterface $container) {
-                return new Access(
-                    $container->auth,
-                    $container->cache,
-                    $this->settings['access']
-                );
-            },
-            
-            'generatorResolver' => function (ContainerInterface $container) {
-                return new GeneratorResolver(
-                    $container,
-                    ['\\App\\Generators']
-                );
-            },
-            
-            'cases' => function (ContainerInterface $container) {
-                return new Cases();
-            },
-            
-            'view' => function (ContainerInterface $container) {
-                $tws = $this->settings['view'];
-            
-                $path = $tws['templates_path'];
-                $path = is_array($path) ? $path : [$path];
-            
-                $templatesPath = array_map(
-                    function ($tPath) {
-                        return File::combine($this->dir, $tPath);
-                    },
-                    $path
-                );
-            
-                $cachePath = $tws['cache_path'];
-
-                if ($cachePath) {
-                    $cachePath = File::combine($this->dir, $cachePath);
+                    if ($token) {
+                        $record['extra']['token'] = $token->toString();
+                    }
+                
+                    return $record;
                 }
-            
-                $view = new Twig(
-                    $templatesPath,
-                    [
-                        'cache' => $cachePath,
-                        'debug' => $this->settings['debug'],
-                    ]
-                );
-            
-                $twigExt = new TwigExtension(
-                    $container->router,
-                    $container->request->getUri()
-                );
-                
-                $view->addExtension($twigExt);
+            );
 
-                $accessExt = new AccessRightsExtension(
-                    $container->access
-                );
+            $path = $this->settings['logger']['path'];
+            $path = File::absolutePath($this->dir, $path);
 
-                $view->addExtension($accessExt);
-                $view->addExtension(new DebugExtension);
+            $handler = new StreamHandler(
+                $path,
+                Logger::DEBUG
+            );
 
-                // set globals
-                $globals = $this->settings['view_globals'];
-                foreach ($globals as $key => $value) {
-                    $view[$key] = $value;
-                }
+            $formatter = new LineFormatter(
+                null, null, false, true
+            );
 
-                $user = $container->auth->getUser();
-            
-                $view['auth'] = [
-                    'check' => $container->auth->check(),
-                    'user' => $user,
-                    'role' => $container->auth->getRole(),
-                    'avatar' => is_null($user)
-                        ? $container->linker->defaultGravatarUrl()
-                        : $user->gravatarUrl(),
-                ];
-            
-                $view['image_types'] = Image::buildTypesString();
-                
-                $view['tables'] = $this->settings['tables'];
-                $view['entities'] = $this->settings['entities'];
-                
-                $view['root'] = $this->settings['root'];
-                $view['api'] = $this->settings['api'];
-            
-                if (isset($this->settings['auth_token_key'])) {
-                    $view['auth_token_key'] = $this->settings['auth_token_key'];
-                }
-            
-                /** @var Twig $view */
-                return new TwigView($view);
-            },
-            
-            'localizationConfig' => function (ContainerInterface $container) {
-                return new LocalizationConfig();
-            },
-            
-            'translator' => function (ContainerInterface $container) {
-                $lang = $this->settings['view_globals']['lang'] ?? 'ru';
-                $loc = $container->localizationConfig->get($lang);
-                
-                return new Translator($loc);
-            },
-            
-            'validator' => function (ContainerInterface $container) {
-                return new Validator(
-                    $container,
-                    $container->translator
-                );
-            },
-
-            'validationRules' => function (ContainerInterface $container) {
-                return new ValidationRules(
-                    $container->settingsProvider
-                );
-            },
-
-            'passwordValidation' => function (ContainerInterface $container) {
-                return new PasswordValidation(
-                    $container->validationRules
-                );
-            },
-
-            'userValidation' => function (ContainerInterface $container) {
-                return new UserValidation(
-                    $container->validationRules,
-                    $container->userRepository
-                );
-            },
-            
-            'api' => function (ContainerInterface $container) {
-                return new Api(
-                    $container->db,
-                    $container->auth,
-                    $container->logger
-                );
-            },
-            
-            'renderer' => function (ContainerInterface $container) {
-                return new Renderer($container->view);
-            },
-            
-            'pagination' => function (ContainerInterface $container) {
-                return new Pagination(
-                    $container->linker,
-                    $container->renderer
-                );
-            },
-            
-            'linker' => function (ContainerInterface $container) {
-                return new Linker(
-                    $container->settingsProvider,
-                    $container->router
-                );
-            },
-            
-            'replacesConfig' => function (ContainerInterface $container) {
-                return new ReplacesConfig();
-            },
-
-            'cleanupParser' => function (ContainerInterface $container) {
-                return new CleanupParser($container->replacesConfig);
-            },
-
-            'bbParserConfig' => function (ContainerInterface $container) {
-                return new BBParserConfig($container->linker);
-            },
-
-            'bbParser' => function (ContainerInterface $container) {
-                return new BBParser(
-                    $container->bbParserConfig,
-                    $container->renderer
-                );
-            },
-
-            'tagLinkMapper' => function (ContainerInterface $container) {
-                return new TagLinkMapper(
-                    $container->renderer,
-                    $container->linker
-                );
-            },
-
-            'pageLinkMapper' => function (ContainerInterface $container) {
-                return new PageLinkMapper(
-                    $container->pageRepository,
-                    $container->tagRepository,
-                    $container->renderer,
-                    $container->linker,
-                    $container->tagLinkMapper
-                );
-            },
-
-            'newsLinkMapper' => function (ContainerInterface $container) {
-                return new NewsLinkMapper(
-                    $container->renderer,
-                    $container->linker
-                );
-            },
-
-            'doubleBracketsConfig' => function (ContainerInterface $container) {
-                // no double brackets link mappers by default
-                // add them!
-                return new LinkMapperSource();
-            },
-
-            'doubleBracketsParser' => function (ContainerInterface $container) {
-                return new DoubleBracketsParser(
-                    $container->doubleBracketsConfig
-                );
-            },
-
-            'lineParser' => function (ContainerInterface $container) {
-                return new CompositeParser(
-                    [
-                        $container->bbParser,
-                        $container->doubleBracketsParser,
-                    ]
-                );
-            },
-
-            'bbContainerConfig' => function (ContainerInterface $container) {
-                return new BBContainerConfig();
-            },
-
-            'bbContainerParser' => function (ContainerInterface $container) {
-                return new BBContainerParser(
-                    $container->bbContainerConfig,
-                    new BBSequencer(),
-                    new BBTreeBuilder(),
-                    new BBTreeRenderer($container->renderer)
-                );
-            },
-            
-            'parser' => function (ContainerInterface $container) {
-                return new CompositeParser(
-                    [
-                        new TitlesStep($container->renderer, $container->lineParser),
-                        new MarkdownParser($container->renderer),
-                        new NewLinesToBrsStep(),
-                        $container->bbContainerParser,
-                        $container->bbParser,
-                        new ReplacesStep($container->replacesConfig),
-                        $container->doubleBracketsParser,
-                        $container->cleanupParser
-                    ]
-                );
-            },
-
-            'cutParser' => function (ContainerInterface $container) {
-                return new CutParser($container->cleanupParser);
-            },
-
-            'dispatcher' => function (ContainerInterface $container) {
-                return new EventDispatcher(
-                    $container->eventLog,
-                    $container->eventProcessors
-                );
-            },
-
-            'eventProcessors' => function (ContainerInterface $container) {
-                return [];
-            },
-                
-            'eventLog' => function (ContainerInterface $container) {
-                $logger = new Logger(
-                    $this->settings['event_log']['name']
-                );
-                
-                $path = $this->settings['event_log']['path'];
-                $path = File::absolutePath($this->dir, $path);
-
-                $handler = new StreamHandler(
-                    $path,
-                    Logger::DEBUG
-                );
-
-                $formatter = new LineFormatter(
-                    null, null, false, true
-                );
-
-                $handler->setFormatter($formatter);
-                $logger->pushHandler($handler);
-            
-                return $logger;
-            },
+            $handler->setFormatter($formatter);
+            $logger->pushHandler($handler);
         
-            // external
-            
-            'twitch' => function (ContainerInterface $container) {
-                return new Twitch(
-                    $this->settings['twitch']
+            return $logger;
+        };
+
+        $map['captchaConfig'] = fn (CI $c) =>
+            new CaptchaConfig();
+
+        $map['captcha'] = fn (CI $c) =>
+            new Captcha(
+                $c->session,
+                $c->captchaConfig
+            );
+
+        $map['generatorResolver'] = fn (CI $c) =>
+            new GeneratorResolver(
+                $c,
+                ['\\App\\Generators']
+            );
+
+        $map['cases'] = fn (CI $c) =>
+            new Cases();
+
+        $map['repoContext'] = fn (CI $c) =>
+            new RepositoryContext(
+                $c->access,
+                $c->auth,
+                $c->db
+            );
+
+        $map['authTokenRepository'] = fn (CI $c) =>
+            (new AuthTokenRepository($c->repoContext))
+                ->withHydrator(
+                    $c->authTokenHydrator
                 );
-            },
-            
-            'telegram' => function (ContainerInterface $container) {
-                return new Telegram(
-                    $this->settings['telegram']
+
+        $map['menuRepository'] = fn (CI $c) =>
+            (new MenuRepository($c->repoContext))
+                ->withHydrator(
+                    $c->menuHydrator
                 );
-            },
-            
-            'twitter' => function (ContainerInterface $container) {
-                return new Twitter(
-                    $this->settings['twitter']
+
+        $map['menuItemRepository'] = fn (CI $c) =>
+            (new MenuItemRepository($c->repoContext))
+                ->withHydrator(
+                    $c->menuItemHydrator
                 );
-            },
-            
-            // handlers
-            
-            'notFoundHandler' => function (ContainerInterface $container) {
-                return new NotFoundHandler(
-                    $container,
-                    $container->translator,
-                    $container->view
+
+        $map['newsRepository'] = fn (CI $c) =>
+            new NewsRepository($c->repoContext);
+
+        $map['pageRepository'] = fn (CI $c) =>
+            new PageRepository($c->repoContext);
+
+        $map['roleRepository'] = fn (CI $c) =>
+            new RoleRepository($c->repoContext);
+
+        $map['tagRepository'] = fn (CI $c) =>
+            (new TagRepository($c->repoContext))
+                ->withHydrator(
+                    $c->tagHydrator
                 );
-            },
-            
-            'errorHandler' => function (ContainerInterface $container) {
-                return new ErrorHandler(
-                    $container
+
+        $map['userRepository'] = fn (CI $c) =>
+            (new UserRepository($c->repoContext))
+                ->withHydrator(
+                    $c->userHydrator
                 );
-            },
+
+        $map['authTokenHydrator'] = fn (CI $c) =>
+            new AuthTokenHydrator(
+                $c->userRepository
+            );
+
+        $map['menuHydrator'] = fn (CI $c) =>
+            new MenuHydrator(
+                $c->menuItemRepository,
+                $c->linker
+            );
+
+        $map['menuItemHydrator'] = fn (CI $c) =>
+            new MenuItemHydrator(
+                $c->linker
+            );
+
+        $map['tagHydrator'] = fn (CI $c) =>
+            new TagHydrator(
+                $c->linker
+            );
+
+        $map['userHydrator'] = fn (CI $c) =>
+            new UserHydrator(
+                $c->roleRepository,
+                $c->linker
+            );
+
+        $map['appContext'] = fn (CI $c) =>
+            new AppContext(
+                $c->settingsProvider,
+                $c->translator,
+                $c->validator,
+                $c->view,
+                $c->logger,
+                $c->notFoundHandler,
+                $c->menuRepository
+            );
+
+        $map['view'] = function (CI $c) {
+            $tws = $this->settings['view'];
+
+            $path = $tws['templates_path'];
+            $path = is_array($path) ? $path : [$path];
+
+            $templatesPath = array_map(
+                function ($tPath) {
+                    return File::combine($this->dir, $tPath);
+                },
+                $path
+            );
+
+            $cachePath = $tws['cache_path'];
+
+            if ($cachePath) {
+                $cachePath = File::combine($this->dir, $cachePath);
+            }
+
+            $view = new Twig(
+                $templatesPath,
+                [
+                    'cache' => $cachePath,
+                    'debug' => $this->settings['debug'],
+                ]
+            );
+
+            $twigExt = new TwigExtension(
+                $c->router,
+                $c->request->getUri()
+            );
+
+            $view->addExtension($twigExt);
+
+            $accessExt = new AccessRightsExtension(
+                $c->access
+            );
+
+            $view->addExtension($accessExt);
+            $view->addExtension(new DebugExtension);
+
+            // set globals
+            $globals = $this->settings['view_globals'];
+            foreach ($globals as $key => $value) {
+                $view[$key] = $value;
+            }
+
+            $user = $c->auth->getUser();
+
+            $view['auth'] = [
+                'check' => $c->auth->check(),
+                'user' => $user,
+                'role' => $c->auth->getRole(),
+                'avatar' => is_null($user)
+                    ? $c->linker->defaultGravatarUrl()
+                    : $user->gravatarUrl(),
+            ];
+
+            $view['image_types'] = Image::buildTypesString();
+
+            $view['tables'] = $this->settings['tables'];
+            $view['entities'] = $this->settings['entities'];
+
+            $view['root'] = $this->settings['root'];
+            $view['api'] = $this->settings['api'];
+
+            if (isset($this->settings['auth_token_key'])) {
+                $view['auth_token_key'] = $this->settings['auth_token_key'];
+            }
+
+            /** @var Twig $view */
+            return new TwigView($view);
+        };
+
+        $map['localizationConfig'] = fn (CI $c) =>
+            new LocalizationConfig();
+
+        $map['translator'] = function (CI $c) {
+            $lang = $this->settings['view_globals']['lang'] ?? 'ru';
+            $loc = $c->localizationConfig->get($lang);
             
-            'notAllowedHandler' => function (ContainerInterface $container) {
-                return new NotAllowedHandler(
-                    $container
-                );
-            },
-        ];
+            return new Translator($loc);
+        };
+
+        $map['validator'] = fn (CI $c) =>
+            new Validator(
+                $c,
+                $c->translator
+            );
+
+        $map['validationRules'] = fn (CI $c) =>
+            new ValidationRules(
+                $c->settingsProvider
+            );
+
+        $map['passwordValidation'] = fn (CI $c) =>
+            new PasswordValidation(
+                $c->validationRules
+            );
+
+        $map['userValidation'] = fn (CI $c) =>
+            new UserValidation(
+                $c->validationRules,
+                $c->userRepository
+            );
+
+        $map['api'] = fn (CI $c) =>
+            new Api(
+                $c->access,
+                $c->auth,
+                $c->db,
+                $c->logger
+            );
+
+        $map['renderer'] = fn (CI $c) =>
+            new Renderer(
+                $c->view
+            );
+
+        $map['pagination'] = fn (CI $c) =>
+            new Pagination(
+                $c->linker,
+                $c->renderer
+            );
+
+        $map['linker'] = fn (CI $c) =>
+            new Linker(
+                $c->settingsProvider,
+                $c->router
+            );
+
+        $map['replacesConfig'] = fn (CI $c) =>
+            new ReplacesConfig();
+
+        $map['cleanupParser'] = fn (CI $c) =>
+            new CleanupParser(
+                $c->replacesConfig
+            );
+
+        $map['bbParserConfig'] = fn (CI $c) =>
+            new BBParserConfig(
+                $c->linker
+            );
+
+        $map['bbParser'] = fn (CI $c) =>
+            new BBParser(
+                $c->bbParserConfig,
+                $c->renderer
+            );
+
+        $map['tagLinkMapper'] = fn (CI $c) =>
+            new TagLinkMapper(
+                $c->renderer,
+                $c->linker
+            );
+
+        $map['pageLinkMapper'] = fn (CI $c) =>
+            new PageLinkMapper(
+                $c->pageRepository,
+                $c->tagRepository,
+                $c->renderer,
+                $c->linker,
+                $c->tagLinkMapper
+            );
+
+        $map['newsLinkMapper'] = fn (CI $c) =>
+            new NewsLinkMapper(
+                $c->renderer,
+                $c->linker
+            );
+
+        // no double brackets link mappers by default
+        // add them!
+        $map['doubleBracketsConfig'] = fn (CI $c) =>
+            new LinkMapperSource();
+
+        $map['doubleBracketsParser'] = fn (CI $c) =>
+            new DoubleBracketsParser(
+                $c->doubleBracketsConfig
+            );
+
+        $map['lineParser'] = fn (CI $c) =>
+            new CompositeParser(
+                $c->bbParser,
+                $c->doubleBracketsParser
+            );
+
+        $map['bbContainerConfig'] = fn (CI $c) =>
+            new BBContainerConfig();
+
+        $map['bbContainerParser'] = fn (CI $c) =>
+            new BBContainerParser(
+                $c->bbContainerConfig,
+                new BBSequencer(),
+                new BBTreeBuilder(),
+                new BBTreeRenderer($c->renderer)
+            );
+
+        $map['parser'] = fn (CI $c) =>
+            new CompositeParser(
+                new TitlesStep($c->renderer, $c->lineParser),
+                new MarkdownParser($c->renderer),
+                new NewLinesToBrsStep(),
+                $c->bbContainerParser,
+                $c->bbParser,
+                new ReplacesStep($c->replacesConfig),
+                $c->doubleBracketsParser,
+                $c->cleanupParser
+            );
+
+        $map['cutParser'] = fn (CI $c) =>
+            new CutParser($c->cleanupParser);
+
+        $map['dispatcher'] = fn (CI $c) =>
+            new EventDispatcher(
+                $c->eventLog,
+                $c->eventProcessors
+            );
+
+        $map['eventProcessors'] = fn (CI $c) =>
+            [];
+
+        $map['eventLog'] = function (CI $c) {
+            $logger = new Logger(
+                $this->settings['event_log']['name']
+            );
+            
+            $path = $this->settings['event_log']['path'];
+            $path = File::absolutePath($this->dir, $path);
+
+            $handler = new StreamHandler(
+                $path,
+                Logger::DEBUG
+            );
+
+            $formatter = new LineFormatter(
+                null, null, false, true
+            );
+
+            $handler->setFormatter($formatter);
+            $logger->pushHandler($handler);
+        
+            return $logger;
+        };
+
+        // external
+
+        $map['twitch'] = fn (CI $c) =>
+            new Twitch(
+                $this->settings['twitch']
+            );
+
+        $map['telegram'] = fn (CI $c) =>
+            new Telegram(
+                $this->settings['telegram']
+            );
+
+        $map['twitter'] = fn (CI $c) =>
+            new Twitter(
+                $this->settings['twitter']
+            );
+
+        // handlers
+
+        $map['notFoundHandler'] = fn (CI $c) =>
+            new NotFoundHandler(
+                $c,
+                $c->translator,
+                $c->view
+            );
+
+        $map['errorHandler'] = fn (CI $c) =>
+            new ErrorHandler($c);
+
+        $map['notAllowedHandler'] = fn (CI $c) =>
+            new NotAllowedHandler($c);
+
+        return $map;
     }
 }

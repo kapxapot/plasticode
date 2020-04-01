@@ -24,12 +24,12 @@ trait LazyCache
             ->getCached($name, $loader, $ignoreCache);
     }
 
-    protected function resetLazy(string $name): void
+    protected function resetLazy(string $name) : void
     {
         $this
             ->getCache()
             ->delete($name);
     }
 
-    abstract protected function getCache(): CacheInterface;
+    abstract protected function getCache() : CacheInterface;
 }

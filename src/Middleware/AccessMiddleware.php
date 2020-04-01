@@ -3,6 +3,7 @@
 namespace Plasticode\Middleware;
 
 use Plasticode\Auth\Access;
+use Plasticode\Auth\Auth;
 use Plasticode\Exceptions\Http\AuthenticationException;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response as SlimResponse;
@@ -10,25 +11,25 @@ use Slim\Interfaces\RouterInterface;
 
 class AccessMiddleware
 {
-    /** @var Access */
-    private $access;
+    private Access $access;
+    private Auth $auth;
+    private RouterInterface $router;
 
-    /** @var RouterInterface */
-    private $router;
-
-    private $entity;
-    private $action;
-    private $redirect;
+    private string $entity;
+    private string $action;
+    private ?string $redirect = null;
     
     public function __construct(
         Access $access,
+        Auth $auth,
         RouterInterface $router,
         string $entity,
         string $action,
-        string $redirect = null
+        ?string $redirect = null
     )
     {
         $this->access = $access;
+        $this->auth = $auth;
         $this->router = $router;
 
         $this->entity = $entity;
@@ -42,7 +43,15 @@ class AccessMiddleware
         $next
     )
     {
-        if ($this->access->checkRights($this->entity, $this->action)) {
+        $user = $this->auth->getUser();
+
+        $hasRights = $this->access->checkRights(
+            $this->entity,
+            $this->action,
+            $user
+        );
+
+        if ($hasRights) {
             return $next($request, $response);
         }
 

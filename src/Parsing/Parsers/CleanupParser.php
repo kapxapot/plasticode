@@ -11,10 +11,8 @@ class CleanupParser extends CompositeParser
     public function __construct(ReplacesConfigInterface $config)
     {
         parent::__construct(
-            [
-                new BrsToPsStep(),
-                new CleanupStep($config)
-            ]
+            new BrsToPsStep(),
+            new CleanupStep($config)
         );
     }
 }

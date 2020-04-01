@@ -54,7 +54,7 @@ abstract class EntityLinkMapper extends SlugLinkMapper implements EntityLinkMapp
         );
     }
 
-    public function renderLinks(ParsingContext $context): ParsingContext
+    public function renderLinks(ParsingContext $context) : ParsingContext
     {
         $context = clone $context;
 

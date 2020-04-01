@@ -26,5 +26,5 @@ trait StaticLazyCache
             ->delete($name);
     }
 
-    protected abstract static function getStaticCache(): CacheInterface;
+    protected abstract static function getStaticCache() : CacheInterface;
 }

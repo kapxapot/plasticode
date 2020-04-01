@@ -5,48 +5,33 @@ namespace Plasticode\Auth;
 use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Data\Rights;
 use Plasticode\Exceptions\InvalidConfigurationException;
+use Plasticode\Models\User;
 use Webmozart\Assert\Assert;
 
 class Access
 {
-    /**
-     * Authentication context
-     *
-     * @var Auth
-     */
-    private $auth;
-
-    /** @var CacheInterface */
-    private $cache;
+    private CacheInterface $cache;
 
     /**
      * Flattened actions
-     *
-     * @var array
      */
-    private $actions;
+    private array $actions;
 
     /**
      * Templates settings
-     *
-     * @var array
      */
-    private $templates;
+    private array $templates;
 
     /**
      * Rights settings
-     *
-     * @var array
      */
-    private $rights;
+    private array $rights;
     
     public function __construct(
-        Auth $auth,
         CacheInterface $cache,
         array $accessSettings
     )
     {
-        $this->auth = $auth;
         $this->cache = $cache;
 
         $this->actions = $this->flattenActions($accessSettings['actions']);
@@ -56,13 +41,12 @@ class Access
     
     /**
      * Flattens action tree.
-     *
-     * @param array $tree
-     * @param array $path
-     * @param array $flat
-     * @return array
      */
-    private function flattenActions(array $tree, array $path = [], array $flat = []) : array
+    private function flattenActions(
+        array $tree,
+        array $path = [],
+        array $flat = []
+    ) : array
     {
         $add = function ($node) use ($path, &$flat) {
             $path[] = $node;
@@ -89,12 +73,12 @@ class Access
     /**
      * Check entity rights for action (also inherited)
      * for current user and role.
-     *
-     * @param string $entity
-     * @param string $action
-     * @return boolean
      */
-    public function checkRights(string $entity, string $action) : bool
+    public function checkRights(
+        string $entity,
+        string $action,
+        ?User $user
+    ) : bool
     {
         $actionData = $this->actions[$action] ?? null;
 
@@ -104,8 +88,8 @@ class Access
         );
         
         $grantAccess = false;
-        
-        $role = $this->auth->getRole();
+
+        $role = $user->role();
 
         if (is_null($role)) {
             return false;
@@ -136,13 +120,12 @@ class Access
     
     /**
      * Checks entity rights for exact action based on roleTag.
-     *
-     * @param array $rights
-     * @param string $action
-     * @param string $roleTag
-     * @return boolean
      */
-    private function checkRightsForExactAction(array $rights, string $action, string $roleTag) : bool
+    private function checkRightsForExactAction(
+        array $rights,
+        string $action,
+        string $roleTag
+    ) : bool
     {
         $grantAccess = false;
 
@@ -168,26 +151,26 @@ class Access
     }
     
     /**
-     * Get all rights for the entity for current user and role.
-     *
-     * @param string $entity
-     * @return Rights
+     * Get all entity rights for user.
      */
-    public function getAllRights(string $entity) : Rights
+    public function getEntityRights(
+        string $entity,
+        ?User $user
+    ) : Rights
     {
         $path = 'access.' . $entity;
 
         return $this->cache->getCached(
             $path,
-            function () use ($entity) {
+            function () use ($entity, $user) {
                 $can = [];
                 $rights = array_keys($this->actions);
                 
                 foreach ($rights as $r) {
-                    $can[$r] = $this->checkRights($entity, $r);
+                    $can[$r] = $this->checkRights($entity, $r, $user);
                 }
 
-                return new Rights($this->auth, $can);
+                return new Rights($user, $can);
             }
         );
     }

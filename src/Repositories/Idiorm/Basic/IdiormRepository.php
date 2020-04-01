@@ -2,6 +2,8 @@
 
 namespace Plasticode\Repositories\Idiorm\Basic;
 
+use Plasticode\Auth\Access;
+use Plasticode\Auth\Auth;
 use Plasticode\Collection;
 use Plasticode\Data\Db;
 use Plasticode\Data\Rights;
@@ -37,13 +39,17 @@ abstract class IdiormRepository
      */
     protected bool $sortReverse = false;
 
+    private Access $access;
+    private Auth $auth;
     private Db $db;
 
     private ?HydratorInterface $hydrator = null;
 
-    public function __construct(Db $db)
+    public function __construct(RepositoryContext $context)
     {
-        $this->db = $db;
+        $this->access = $context->access();
+        $this->auth = $context->auth();
+        $this->db = $context->db();
     }
 
     public function withHydrator(HydratorInterface $hydrator) : self
@@ -224,8 +230,9 @@ abstract class IdiormRepository
 
     private function tableRights() : Rights
     {
-        return $this->db->getTableRights(
-            $this->getTable()
+        return $this->access->getEntityRights(
+            $this->getTable(),
+            $this->auth->getUser()
         );
     }
 

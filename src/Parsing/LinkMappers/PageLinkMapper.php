@@ -87,7 +87,7 @@ class PageLinkMapper extends EntityLinkMapper
         return $this->tagLinkMapper->mapSlug($slugChunk, $otherChunks);
     }
 
-    public function renderLinks(ParsingContext $context): ParsingContext
+    public function renderLinks(ParsingContext $context) : ParsingContext
     {
         $context = parent::renderLinks($context);
 

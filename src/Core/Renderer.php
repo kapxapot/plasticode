@@ -42,7 +42,7 @@ class Renderer implements RendererInterface
         return $this->component('url', $model);
     }
 
-    public function entityUrl(string $url, string $text, ?string $title = null): string
+    public function entityUrl(string $url, string $text, ?string $title = null) : string
     {
         return $this->component(
             'entity_url',

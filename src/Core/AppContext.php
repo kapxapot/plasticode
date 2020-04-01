@@ -12,26 +12,13 @@ use Psr\Log\LoggerInterface;
 
 class AppContext
 {
-    /** @var SettingsProviderInterface */
-    private $settingsProvider;
-
-    /** @var TranslatorInterface */
-    private $translator;
-
-    /** @var ValidatorInterface */
-    private $validator;
-
-    /** @var ViewInterface */
-    private $view;
-
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var NotFoundHandler */
-    private $notFoundHandler;
-
-    /** @var MenuRepositoryInterface */
-    private $menuRepository;
+    private SettingsProviderInterface $settingsProvider;
+    private TranslatorInterface $translator;
+    private ValidatorInterface $validator;
+    private ViewInterface $view;
+    private LoggerInterface $logger;
+    private NotFoundHandler $notFoundHandler;
+    private MenuRepositoryInterface $menuRepository;
 
     public function __construct(
         SettingsProviderInterface $settingsProvider,

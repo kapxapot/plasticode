@@ -20,7 +20,7 @@ class TagLinkMapper extends TaggedEntityLinkMapper
         return $this->linker->tag();
     }
 
-    protected function escapeSlug(string $slug): string
+    protected function escapeSlug(string $slug) : string
     {
         return Strings::fromSpaces($slug, '+');
     }

@@ -46,7 +46,7 @@ abstract class TagMapperSource implements TagMapperSourceInterface
         return $this->map[$tag] ?? null;
     }
 
-    public function getComponentName(string $tag): string
+    public function getComponentName(string $tag) : string
     {
         return $this->componentMap[$tag] ?? $tag;
     }

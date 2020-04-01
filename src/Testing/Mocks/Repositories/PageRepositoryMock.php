@@ -16,7 +16,7 @@ class PageRepositoryMock implements PageRepositoryInterface
         $this->pages = Collection::make($pageSeeder->seed());
     }
 
-    public function getBySlug(?string $slug): ?Page
+    public function getBySlug(?string $slug) : ?Page
     {
         return $this->pages
             ->where('slug', $slug)

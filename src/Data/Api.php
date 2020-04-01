@@ -2,6 +2,7 @@
 
 namespace Plasticode\Data;
 
+use Plasticode\Auth\Access;
 use Plasticode\Auth\Auth;
 use Plasticode\Collection;
 use Plasticode\Core\Response;
@@ -12,41 +13,35 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
-/**
- * @property Auth $auth
- * @property Db $db
- */
 class Api
 {
-    /** @var Db */
-    private $db;
-
-    /** @var Auth */
-    private $auth;
-
-    /** @var LoggerInterface */
-    private $logger;
+    private Access $access;
+    private Auth $auth;
+    private Db $db;
+    private LoggerInterface $logger;
 
     public function __construct(
-        Db $db,
+        Access $access,
         Auth $auth,
+        Db $db,
         LoggerInterface $logger
     )
     {
-        $this->db = $db;
+        $this->access = $access;
         $this->auth = $auth;
+        $this->db = $db;
         $this->logger = $logger;
     }
 
     /**
      * Returns access rights for the table.
-     *
-     * @param string $table
-     * @return Rights
      */
     private function getRights(string $table) : Rights
     {
-        return $this->db->getTableRights($table);
+        return $this->access->getEntityRights(
+            $table,
+            $this->auth->getUser()
+        );
     }
 
     /**
@@ -84,7 +79,7 @@ class Api
 
         $item = $provider->afterLoad($item);
         $item = $this->db->addUserNames($table, $item);
-        $item = $this->db->enrichRights($table, $item);
+        $item = $rights->enrichRights($item);
 
         return Response::json($response, $item);
     }

@@ -18,9 +18,7 @@ final class CompositeParserTest extends BaseRenderTestCase
         $config = LinkMapperSourceFactory::make($this->renderer);
 
         $parser = new CompositeParser(
-            [
-                new DoubleBracketsParser($config)
-            ]
+            new DoubleBracketsParser($config)
         );
 
         $context = ParsingContext::fromLines(

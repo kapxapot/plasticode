@@ -144,9 +144,7 @@ class EntityGenerator
     /**
      * Generate API routes based on settings.
      *
-     * @param App $app
      * @param \Closure $access Creates AccessMiddleware
-     * @return void
      */
     public function generateAPIRoutes(App $app, \Closure $access) : void
     {

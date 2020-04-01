@@ -520,7 +520,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
 
     // ArrayableInterface
 
-    public function toArray(): array
+    public function toArray() : array
     {
         return $this->all()->toArray();
     }

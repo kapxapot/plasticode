@@ -2,7 +2,7 @@
 
 namespace Plasticode\Data;
 
-use Plasticode\Auth\Auth;
+use Plasticode\Models\User;
 
 /**
  * Table rights that can be checked for
@@ -24,37 +24,29 @@ class Rights
     const DELETE_OWN = 'delete_own';
     const PUBLISH = 'publish';
 
-    /** @var Auth */
-    private $auth;
+    private ?User $user;
 
     /**
      * Table access rights
-     *
-     * @var array
      */
-    private $rights;
+    private array $rights;
 
-    public function __construct(Auth $auth, array $rights)
+    public function __construct(?User $user, array $rights)
     {
-        $this->auth = $auth;
+        $this->user = $user;
         $this->rights = $rights;
     }
 
     /**
      * Get access rights for table.
-     *
-     * @return array
      */
     public function forTable() : array
     {
         return $this->rights;
     }
-    
+
     /**
      * Get access rights for entity.
-     *
-     * @param array $entity
-     * @return array
      */
     public function forEntity(array $entity) : array
     {
@@ -62,8 +54,8 @@ class Rights
 
         $noOwner = is_null($createdBy);
 
-        $user = $this->auth->getUser();
-        $own = !is_null($user) && $createdBy == $user->getId();
+        $own = !is_null($this->user)
+            && $createdBy == $this->user->getId();
 
         $can = $this->forTable();
 
@@ -82,9 +74,6 @@ class Rights
 
     /**
      * Adds edit/delete rights to entity.
-     *
-     * @param array $entity
-     * @return array
      */
     public function enrichRights(array $entity) : array
     {
@@ -100,9 +89,6 @@ class Rights
 
     /**
      * Has table rights?
-     *
-     * @param string $rights
-     * @return boolean
      */
     public function can(string $rights) : bool
     {
@@ -111,10 +97,6 @@ class Rights
 
     /**
      * Has entity rights?
-     *
-     * @param array $entity
-     * @param string $rights
-     * @return boolean
      */
     public function canEntity(array $entity, string $rights) : bool
     {

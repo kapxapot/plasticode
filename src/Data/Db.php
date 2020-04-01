@@ -2,7 +2,6 @@
 
 namespace Plasticode\Data;
 
-use Plasticode\Auth\Access;
 use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
@@ -13,26 +12,16 @@ use Plasticode\Util\Date;
  */
 final class Db
 {
-    /** @var Access */
-    private $access;
-
-    /** @var CacheInterface */
-    private $cache;
-
-    /** @var SettingsProviderInterface */
-    private $settingsProvider;
-
-    /** @var UserRepositoryInterface */
-    private $userRepository;
+    private CacheInterface $cache;
+    private SettingsProviderInterface $settingsProvider;
+    private UserRepositoryInterface $userRepository;
 
     public function __construct(
-        Access $access,
         CacheInterface $cache,
         SettingsProviderInterface $settingsProvider,
         UserRepositoryInterface $userRepository
     )
     {
-        $this->access = $access;
         $this->cache = $cache;
         $this->settingsProvider = $settingsProvider;
         $this->userRepository = $userRepository;
@@ -40,10 +29,8 @@ final class Db
 
     /**
      * Tables settings
-     *
-     * @var array
      */
-    private $tables;
+    private array $tables;
 
     public function getTableSettings(string $table) : ?array
     {
@@ -120,25 +107,10 @@ final class Db
 
         return $this->cache->get($path);
     }
-    
-    public function getTableRights(string $table) : Rights
-    {
-        return $this->access->getAllRights($table);
-    }
-    
-    public function enrichRights(string $table, array $item) : array
-    {
-        return $this
-            ->getTableRights($table)
-            ->enrichRights($item);
-    }
-    
+
     /**
      * Returns new updated_at value for the table,
-     * if it has the corresponding field
-     *
-     * @param string $table
-     * @return string|null
+     * if it has the corresponding field.
      */
     public function updatedAt(string $table) : ?string
     {

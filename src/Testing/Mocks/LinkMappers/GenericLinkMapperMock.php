@@ -8,7 +8,7 @@ use Webmozart\Assert\Assert;
 
 class GenericLinkMapperMock extends SlugLinkMapper
 {
-    protected function validateSlugChunk(SlugChunk $slugChunk): void
+    protected function validateSlugChunk(SlugChunk $slugChunk) : void
     {
         Assert::notNull($slugChunk->tag());
     }

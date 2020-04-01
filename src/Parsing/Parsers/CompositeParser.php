@@ -13,23 +13,20 @@ use Webmozart\Assert\Assert;
 class CompositeParser extends BaseStep implements ParserInterface
 {
     /** @var ParsingStepInterface[] */
-    private $pipeline;
+    private array $pipeline;
 
     /**
      * Creates composite parser without any steps by default.
-     *
-     * @param ParsingStepInterface[]|null $pipeline
      */
-    public function __construct(?array $pipeline = null)
+    public function __construct(ParsingStepInterface ...$pipeline)
     {
-        $this->setPipeline($pipeline ?? []);
+        $this->setPipeline($pipeline);
     }
 
     /**
      * Sets parsing steps pipeline.
      *
      * @param ParsingStepInterface[] $pipeline
-     * @return self
      */
     public function setPipeline(array $pipeline) : self
     {
