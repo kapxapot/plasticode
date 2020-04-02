@@ -405,7 +405,8 @@ class Bootstrap
                 $c->access,
                 $c->auth,
                 $c->db,
-                $c->logger
+                $c->logger,
+                $c->userRepository
             );
 
         $map['renderer'] = fn (CI $c) =>
