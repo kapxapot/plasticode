@@ -25,7 +25,7 @@ class UserHydrator implements HydratorInterface
     /**
      * @param User $entity
      */
-    protected function hydrate(DbModel $entity) : User
+    public function hydrate(DbModel $entity) : User
     {
         return $entity
             ->withRole(

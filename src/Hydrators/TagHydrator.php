@@ -19,7 +19,7 @@ class TagHydrator implements HydratorInterface
     /**
      * @param Tag $entity
      */
-    protected function hydrate(DbModel $entity) : Tag
+    public function hydrate(DbModel $entity) : Tag
     {
         return $entity
             ->withUrl(

@@ -19,7 +19,7 @@ class AuthTokenHydrator implements HydratorInterface
     /**
      * @param AuthToken $entity
      */
-    protected function hydrate(DbModel $entity) : AuthToken
+    public function hydrate(DbModel $entity) : AuthToken
     {
         return $entity
             ->withUser(

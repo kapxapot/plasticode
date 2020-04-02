@@ -25,7 +25,7 @@ class MenuHydrator implements HydratorInterface
     /**
      * @param Menu $entity
      */
-    protected function hydrate(DbModel $entity) : Menu
+    public function hydrate(DbModel $entity) : Menu
     {
         return $entity
             ->withItems(
