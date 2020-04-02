@@ -9,6 +9,7 @@ use Plasticode\Core\Response;
 use Plasticode\Exceptions\Http\NotFoundException;
 use Plasticode\Exceptions\Http\AuthorizationException;
 use Plasticode\Generators\EntityGenerator;
+use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -19,18 +20,21 @@ class Api
     private Auth $auth;
     private Db $db;
     private LoggerInterface $logger;
+    private UserRepositoryInterface $userRepository;
 
     public function __construct(
         Access $access,
         Auth $auth,
         Db $db,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        UserRepositoryInterface $userRepository
     )
     {
         $this->access = $access;
         $this->auth = $auth;
         $this->db = $db;
         $this->logger = $logger;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -47,10 +51,7 @@ class Api
     /**
      * Returns entity by id.
      *
-     * @param ResponseInterface $response
-     * @param mixed $id
-     * @param EntityGenerator $provider
-     * @return ResponseInterface
+     * @param string|integer $id
      */
     public function get(
         ResponseInterface $response,
@@ -78,7 +79,7 @@ class Api
         }
 
         $item = $provider->afterLoad($item);
-        $item = $this->db->addUserNames($table, $item);
+        $item = $this->addUserNames($table, $item);
         $item = $rights->enrichRights($item);
 
         return Response::json($response, $item);
@@ -86,11 +87,6 @@ class Api
 
     /**
      * Returns many entities.
-     *
-     * @param ResponseInterface $response
-     * @param EntityGenerator $provider
-     * @param array $options
-     * @return ResponseInterface
      */
     public function getMany(
         ResponseInterface $response,
@@ -141,7 +137,7 @@ class Api
             ->map(
                 function ($item) use ($provider, $table, $rights) {
                     $item = $provider->afterLoad($item);
-                    $item = $this->db->addUserNames($table, $item);
+                    $item = $this->addUserNames($table, $item);
                     $item = $rights->enrichRights($item);
 
                     return $item;
@@ -150,14 +146,9 @@ class Api
 
         return Response::json($response, $items, $options);
     }
-    
+
     /**
      * Creates entity.
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param EntityGenerator $provider
-     * @return ResponseInterface
      */
     public function create(
         ServerRequestInterface $request,
@@ -195,15 +186,11 @@ class Api
         return $this->get($response, $entity->id, $provider)
             ->withStatus(201);
     }
-    
+
     /**
      * Updates entity.
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param mixed $id
-     * @param EntityGenerator $provider
-     * @return ResponseInterface
+     * @param string|integer $id
      */
     public function update(
         ServerRequestInterface $request,
@@ -253,10 +240,7 @@ class Api
     /**
      * Deletes entity.
      *
-     * @param ResponseInterface $response
-     * @param mixed $id
-     * @param EntityGenerator $provider
-     * @return ResponseInterface
+     * @param string|integer $id
      */
     public function delete(
         ResponseInterface $response,
@@ -291,16 +275,42 @@ class Api
         
         return $response->withStatus(204);
     }
+    
+    /**
+     * Adds user names for created_by / updated_by.
+     */
+    private function addUserNames(string $table, array $item) : array
+    {
+        if ($this->db->hasField($table, 'created_by')) {
+            $creator = '[no data]';
+
+            if (isset($item['created_by'])) {
+                $created = $this->userRepository->get($item['created_by']);
+                $creator = $created->login ?? $item['created_by'];
+            }
+    
+            $item['created_by_name'] = $creator;
+        }
+
+        if ($this->db->hasField($table, 'updated_by')) {
+            $updater = '[no data]';
+
+            if (isset($item['updated_by'])) {
+                $updated = $this->userRepository->get($item['updated_by']);
+                $updater = $updated->login ?? $item['updated_by'];
+            }
+    
+            $item['updated_by_name'] = $updater;
+        }
+        
+        return $item;
+    }
 
     /**
      * Unsets 'published' property if the user has no rights to change it.
      * 
      * This is a security check,
      * alternatively ~NotAuthorized() exception can be thrown.
-     *
-     * @param string $table
-     * @param array $data
-     * @return array
      */
     private function securePublished(string $table, array $data) : array
     {
@@ -316,10 +326,6 @@ class Api
     
     /**
      * Adds updated_at / created_by / updated_by values.
-     *
-     * @param string $table
-     * @param array $data
-     * @return array
      */
     private function stamps(string $table, array $data) : array
     {

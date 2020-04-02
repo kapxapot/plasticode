@@ -14,6 +14,11 @@ class AuthToken extends DbModel
 {
     use CreatedAt, UpdatedAt, WithUser;
 
+    public function isExpired() : bool
+    {
+        return $this->expiresAt && strtotime($this->expiresAt) < time();
+    }
+
     public function toString() : string
     {
         return $this->token . ', expires at ' . $this->expiresAt;

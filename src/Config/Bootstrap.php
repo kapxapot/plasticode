@@ -64,6 +64,7 @@ use Plasticode\Repositories\Idiorm\PageRepository;
 use Plasticode\Repositories\Idiorm\RoleRepository;
 use Plasticode\Repositories\Idiorm\TagRepository;
 use Plasticode\Repositories\Idiorm\UserRepository;
+use Plasticode\Services\AuthService;
 use Plasticode\Twig\Extensions\AccessRightsExtension;
 use Plasticode\Twig\TwigView;
 use Plasticode\Util\Cases;
@@ -134,17 +135,13 @@ class Bootstrap
             
             return new Db(
                 $c->cache,
-                $c->settingsProvider,
-                $c->userRepository
+                $c->settingsProvider
             );
         };
 
         $map['auth'] = fn (CI $c) =>
             new Auth(
-                $c->session,
-                $c->settingsProvider,
-                $c->authTokenRepository,
-                $c->userRepository
+                $c->session
             );
 
         $map['session'] = function (CI $c) {
@@ -541,6 +538,16 @@ class Bootstrap
         
             return $logger;
         };
+
+        // services
+
+        $map['authService'] = fn (CI $c) =>
+            new AuthService(
+                $c->auth,
+                $c->settingsProvider,
+                $c->authTokenRepository,
+                $c->userRepository
+            );
 
         // external
 

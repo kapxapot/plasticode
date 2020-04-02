@@ -4,7 +4,6 @@ namespace Plasticode\Data;
 
 use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
-use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Util\Date;
 
 /**
@@ -14,17 +13,14 @@ final class Db
 {
     private CacheInterface $cache;
     private SettingsProviderInterface $settingsProvider;
-    private UserRepositoryInterface $userRepository;
 
     public function __construct(
         CacheInterface $cache,
-        SettingsProviderInterface $settingsProvider,
-        UserRepositoryInterface $userRepository
+        SettingsProviderInterface $settingsProvider
     )
     {
         $this->cache = $cache;
         $this->settingsProvider = $settingsProvider;
-        $this->userRepository = $userRepository;
     }
 
     /**
@@ -40,34 +36,34 @@ final class Db
 
         return $this->tables[$table] ?? null;
     }
-    
+
     private function getTableName(string $table) : string
     {
         $tableSettings = $this->getTableSettings($table);
         return $tableSettings['table'] ?? $table;
     }
-    
+
     public function forTable(string $table) : \ORM
     {
         $tableName = $this->getTableName($table);
         
         return \ORM::forTable($tableName);
     }
-    
+
     private function fields(string $table) : ?array
     {
         $tableSettings = $this->getTableSettings($table);
         return $tableSettings['fields'] ?? null;
     }
-    
-    private function hasField(string $table, string $field) : bool
+
+    public function hasField(string $table, string $field) : bool
     {
         $tableSettings = $this->getTableSettings($table);
         $has = $tableSettings['has'] ?? null;
 
         return $has && in_array($field, $has);
     }
-    
+
     public function selectMany(string $table, array $exclude = null) : \ORM
     {
         $t = $this->forTable($table);
@@ -81,12 +77,12 @@ final class Db
             ? $t->selectMany($fields)
             : $t->selectMany();
     }
-    
+
     public function filterBy($items, string $field, array $args) : \ORM
     {
         return $items->where($field, $args['id']);
     }
-    
+
     public function getEntityById(string $table, $id) : array
     {
         $path = 'data.' . $table . '.' . $id;
@@ -122,10 +118,7 @@ final class Db
     /**
      * Updated created_by / updated_by fields if applicable
      *
-     * @param string $table
-     * @param array $data
      * @param mixed $userId
-     * @return array
      */
     public function stampBy(string $table, array $data, $userId) : array
     {
@@ -141,41 +134,7 @@ final class Db
 
         return $data;
     }
-    
-    /**
-     * Adds user names for created_by / updated_by
-     *
-     * @param string $table
-     * @param array $item
-     * @return array
-     */
-    public function addUserNames(string $table, array $item) : array
-    {
-        if ($this->hasField($table, 'created_by')) {
-            $creator = '[no data]';
 
-            if (isset($item['created_by'])) {
-                $created = $this->userRepository->get($item['created_by']);
-                $creator = $created->login ?? $item['created_by'];
-            }
-    
-            $item['created_by_name'] = $creator;
-        }
-
-        if ($this->hasField($table, 'updated_by')) {
-            $updater = '[no data]';
-
-            if (isset($item['updated_by'])) {
-                $updated = $this->userRepository->get($item['updated_by']);
-                $updater = $updated->login ?? $item['updated_by'];
-            }
-    
-            $item['updated_by_name'] = $updater;
-        }
-        
-        return $item;
-    }
-    
     public function getObj(string $table, $id, \Closure $where = null) : \ORM
     {
         $query = $this
@@ -194,13 +153,9 @@ final class Db
         return isset($item['published_at'])
             && Date::happened($item['published_at']);
     }
-    
+
     /**
      * Creates record and fills it with data
-     *
-     * @param string $table
-     * @param array $data
-     * @return \ORM
      */
     public function create(string $table, array $data = null) : \ORM
     {
@@ -212,9 +167,12 @@ final class Db
         
         return $item;
     }
-    
+
     public function isRecursiveParent(
-        string $table, $id, $parentId, string $parentField = null
+        string $table,
+        $id,
+        $parentId,
+        string $parentField = null
     ) : bool
     {
         $parentField = $parentField ?? 'parent_id';
@@ -237,7 +195,7 @@ final class Db
 
         return $recursive;
     }
-    
+
     public function getQueryCount() : int
     {
         return \ORM::forTable(null)

@@ -2,7 +2,6 @@
 
 namespace Plasticode\Controllers\Auth;
 
-use Plasticode\Auth\Auth;
 use Plasticode\Auth\Interfaces\CaptchaInterface;
 use Plasticode\Controllers\Controller;
 use Plasticode\Core\Response;
@@ -10,6 +9,7 @@ use Plasticode\Core\Security;
 use Plasticode\Exceptions\Http\AuthenticationException;
 use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Services\AuthService;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -18,29 +18,25 @@ use Webmozart\Assert\Assert;
 
 class AuthController extends Controller
 {
-    /** @var Auth */
-    private $auth;
-
-    /** @var CaptchaInterface */
-    private $captcha;
-
-    /** @var UserRepositoryInterface */
-    private $userRepository;
-
-    /** @var UserValidation */
-    private $userValidation;
+    private AuthService $authService;
+    private CaptchaInterface $captcha;
+    private UserRepositoryInterface $userRepository;
+    private UserValidation $userValidation;
 
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container->appContext);
 
-        $this->auth = $container->auth;
+        $this->authService = $container->authService;
         $this->captcha = $container->captcha;
         $this->userRepository = $container->userRepository;
         $this->userValidation = $container->userValidation;
     }
 
-    public function postSignUp(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
+    public function postSignUp(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ) : ResponseInterface
     {
         $data = $request->getParsedBody();
 
@@ -61,11 +57,10 @@ class AuthController extends Controller
         $this->userRepository->save($user);
 
         // signing in
-        $user = $this->auth->attempt($user->login, $password);
+        $token = $this->authService->attempt($user->login, $password);
         
         $this->logger->info('User signed up: ' . $user);
 
-        $token = $this->auth->getToken();
         $response = $response->withStatus(201);
 
         $response = Response::json(
@@ -79,20 +74,23 @@ class AuthController extends Controller
         return $response;
     }
 
-    public function postSignIn(SlimRequest $request, ResponseInterface $response) : ResponseInterface
+    public function postSignIn(
+        SlimRequest $request,
+        ResponseInterface $response
+    ) : ResponseInterface
     {
-        $user = $this->auth->attempt(
+        $token = $this->authService->attempt(
             $request->getParam('login'),
             $request->getParam('password')
         );
         
-        if (!$user) {
+        if (!$token) {
             throw new AuthenticationException('Incorrect user/password.');
         }
 
+        $user = $token->user();
+
         $this->logger->info('User logged in: ' . $user);
-    
-        $token = $this->auth->getToken();
 
         Assert::notNull($token);
 
@@ -105,9 +103,12 @@ class AuthController extends Controller
         );
     }
 
-    public function postSignOut(ServerRequestInterface $request, ResponseInterface $response) : ResponseInterface
+    public function postSignOut(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ) : ResponseInterface
     {
-        $this->auth->logout();
+        $this->authService->logout();
         return $response;
     }
 }

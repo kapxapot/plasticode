@@ -2,19 +2,18 @@
 
 namespace Plasticode\Middleware;
 
-use Plasticode\Auth\Auth;
 use Plasticode\Exceptions\Http\AuthenticationException;
+use Plasticode\Services\AuthService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class TokenAuthMiddleware
 {
-    /** @var Auth */
-    private $auth;
+    private AuthService $authService;
 
-    public function __construct(Auth $auth)
+    public function __construct(AuthService $authService)
     {
-        $this->auth = $auth;
+        $this->authService = $authService;
     }
 
     public function __invoke(
@@ -34,7 +33,7 @@ class TokenAuthMiddleware
         
         $token = $lineParts[1];
 
-        if ($this->auth->validateToken($token)) {
+        if ($this->authService->validateToken($token)) {
             $response = $next($request, $response);
         }
 

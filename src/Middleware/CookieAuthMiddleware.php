@@ -2,24 +2,19 @@
 
 namespace Plasticode\Middleware;
 
-use Plasticode\Auth\Auth;
+use Plasticode\Services\AuthService;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 
 class CookieAuthMiddleware
 {
-    /** @var Auth */
-    private $auth;
+    private AuthService $authService;
+    private string $tokenKey;
 
-    private $tokenKey = 'auth_token';
-    
-    public function __construct(Auth $auth, string $tokenKey = null)
+    public function __construct(AuthService $authService, string $tokenKey = null)
     {
-        $this->auth = $auth;
-
-        if (strlen($tokenKey) > 0) {
-            $this->tokenKey = $tokenKey;
-        }
+        $this->authService = $authService;
+        $this->tokenKey = $tokenKey ?? 'auth_token';
     }
     
     public function __invoke(
@@ -30,7 +25,7 @@ class CookieAuthMiddleware
     {
         $token = $request->getCookieParam($this->tokenKey);
 
-        $this->auth->validateCookie($token);
+        $this->authService->validateCookie($token);
 
         return $next($request, $response);
     }

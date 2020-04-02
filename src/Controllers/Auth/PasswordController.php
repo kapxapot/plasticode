@@ -8,31 +8,21 @@ use Plasticode\Core\Response;
 use Plasticode\Core\Security;
 use Plasticode\Models\Validation\PasswordValidation;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
-use Plasticode\Validation\ValidationRules;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request as SlimRequest;
 
 class PasswordController extends Controller
 {
-    /** @var Auth */
-    private $auth;
-
-    /** @var ValidationRules */
-    private $validationRules;
-
-    /** @var UserRepositoryInterface */
-    private $userRepository;
-
-    /** @var PasswordValidation */
-    private $passwordValidation;
+    private Auth $auth;
+    private UserRepositoryInterface $userRepository;
+    private PasswordValidation $passwordValidation;
 
     public function __construct(ContainerInterface $container)
     {
         parent::__construct($container->appContext);
 
         $this->auth = $container->auth;
-        $this->validationRules = $container->validationRules;
         $this->userRepository = $container->userRepository;
         $this->passwordValidation = $container->passwordValidation;
     }
