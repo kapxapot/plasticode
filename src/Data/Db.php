@@ -14,6 +14,11 @@ final class Db
     private CacheInterface $cache;
     private SettingsProviderInterface $settingsProvider;
 
+    /**
+     * Tables settings
+     */
+    private ?array $tables = null;
+
     public function __construct(
         CacheInterface $cache,
         SettingsProviderInterface $settingsProvider
@@ -22,11 +27,6 @@ final class Db
         $this->cache = $cache;
         $this->settingsProvider = $settingsProvider;
     }
-
-    /**
-     * Tables settings
-     */
-    private array $tables;
 
     public function getTableSettings(string $table) : ?array
     {
