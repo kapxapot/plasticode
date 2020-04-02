@@ -214,6 +214,7 @@ class Bootstrap
             new RepositoryContext(
                 $c->access,
                 $c->auth,
+                $c->cache,
                 $c->db
             );
 

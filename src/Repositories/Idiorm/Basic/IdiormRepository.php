@@ -5,6 +5,7 @@ namespace Plasticode\Repositories\Idiorm\Basic;
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Auth;
 use Plasticode\Collection;
+use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Data\Db;
 use Plasticode\Data\Rights;
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
@@ -41,6 +42,7 @@ abstract class IdiormRepository
 
     private Access $access;
     private Auth $auth;
+    private CacheInterface $cache;
     private Db $db;
 
     private ?HydratorInterface $hydrator = null;
@@ -49,6 +51,7 @@ abstract class IdiormRepository
     {
         $this->access = $context->access();
         $this->auth = $context->auth();
+        $this->cache = $context->cache();
         $this->db = $context->db();
     }
 
@@ -142,9 +145,9 @@ abstract class IdiormRepository
 
         $name = $this->getTable() . $id;
 
-        return self::staticLazy(
-            fn () => $this->baseQuery()->find($id),
+        return $this->cache->getCached(
             $name,
+            fn () => $this->baseQuery()->find($id),
             $ignoreCache
         );
     }
