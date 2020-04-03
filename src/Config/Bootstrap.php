@@ -210,7 +210,7 @@ class Bootstrap
         $map['cases'] = fn (CI $c) =>
             new Cases();
 
-        $map['repoContext'] = fn (CI $c) =>
+        $map['repositoryContext'] = fn (CI $c) =>
             new RepositoryContext(
                 $c->access,
                 $c->auth,
@@ -219,69 +219,60 @@ class Bootstrap
             );
 
         $map['authTokenRepository'] = fn (CI $c) =>
-            (new AuthTokenRepository($c->repoContext))
-                ->withHydrator(
-                    $c->authTokenHydrator
-                );
+            new AuthTokenRepository(
+                $c->repositoryContext,
+                new AuthTokenHydrator(
+                    $c->userRepository
+                )
+            );
 
         $map['menuRepository'] = fn (CI $c) =>
-            (new MenuRepository($c->repoContext))
-                ->withHydrator(
-                    $c->menuHydrator
-                );
+            new MenuRepository(
+                $c->repositoryContext,
+                new MenuHydrator(
+                    $c->menuItemRepository,
+                    $c->linker
+                )
+            );
 
         $map['menuItemRepository'] = fn (CI $c) =>
-            (new MenuItemRepository($c->repoContext))
-                ->withHydrator(
-                    $c->menuItemHydrator
-                );
+            new MenuItemRepository(
+                $c->repositoryContext,
+                new MenuItemHydrator(
+                    $c->linker
+                )
+            );
 
         $map['newsRepository'] = fn (CI $c) =>
-            new NewsRepository($c->repoContext);
+            new NewsRepository(
+                $c->repositoryContext
+            );
 
         $map['pageRepository'] = fn (CI $c) =>
-            new PageRepository($c->repoContext);
+            new PageRepository(
+                $c->repositoryContext
+            );
 
         $map['roleRepository'] = fn (CI $c) =>
-            new RoleRepository($c->repoContext);
+            new RoleRepository(
+                $c->repositoryContext
+            );
 
         $map['tagRepository'] = fn (CI $c) =>
-            (new TagRepository($c->repoContext))
-                ->withHydrator(
-                    $c->tagHydrator
-                );
+            new TagRepository(
+                $c->repositoryContext,
+                new TagHydrator(
+                    $c->linker
+                )
+            );
 
         $map['userRepository'] = fn (CI $c) =>
-            (new UserRepository($c->repoContext))
-                ->withHydrator(
-                    $c->userHydrator
-                );
-
-        $map['authTokenHydrator'] = fn (CI $c) =>
-            new AuthTokenHydrator(
-                $c->userRepository
-            );
-
-        $map['menuHydrator'] = fn (CI $c) =>
-            new MenuHydrator(
-                $c->menuItemRepository,
-                $c->linker
-            );
-
-        $map['menuItemHydrator'] = fn (CI $c) =>
-            new MenuItemHydrator(
-                $c->linker
-            );
-
-        $map['tagHydrator'] = fn (CI $c) =>
-            new TagHydrator(
-                $c->linker
-            );
-
-        $map['userHydrator'] = fn (CI $c) =>
-            new UserHydrator(
-                $c->roleRepository,
-                $c->linker
+            new UserRepository(
+                $c->repositoryContext,
+                new UserHydrator(
+                    $c->roleRepository,
+                    $c->linker
+                )
             );
 
         $map['appContext'] = fn (CI $c) =>

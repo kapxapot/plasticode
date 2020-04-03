@@ -45,14 +45,19 @@ abstract class IdiormRepository
     private CacheInterface $cache;
     private Db $db;
 
-    private ?HydratorInterface $hydrator = null;
+    private ?HydratorInterface $hydrator;
 
-    public function __construct(RepositoryContext $context)
+    public function __construct(
+        RepositoryContext $context,
+        ?HydratorInterface $hydrator = null
+    )
     {
         $this->access = $context->access();
         $this->auth = $context->auth();
         $this->cache = $context->cache();
         $this->db = $context->db();
+
+        $this->hydrator = $hydrator;
     }
 
     public function withHydrator(HydratorInterface $hydrator) : self
