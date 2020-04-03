@@ -2,19 +2,18 @@
 
 namespace Plasticode\Handlers;
 
+use Plasticode\Core\AppContext;
 use Plasticode\Core\Response;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ErrorHandler
 {
-    /** @var ContainerInterface */
-    private $container;
+    private AppContext $appContext;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(AppContext $appContext)
     {
-        $this->container = $container;
+        $this->appContext = $appContext;
     }
 
     public function __invoke(
@@ -24,7 +23,7 @@ class ErrorHandler
     ) : ResponseInterface
     {
         return Response::error(
-            $this->container,
+            $this->appContext,
             $request,
             $response,
             $exception

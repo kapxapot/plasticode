@@ -22,34 +22,23 @@ use Webmozart\Assert\Assert;
  */
 abstract class Controller
 {
-    /** @var SettingsProviderInterface */
-    private $settingsProvider;
+    private SettingsProviderInterface $settingsProvider;
+    private TranslatorInterface $translator;
+    private ValidatorInterface $validator;
+    private ViewInterface $view;
+    private NotFoundHandler $notFoundHandler;
 
-    /** @var TranslatorInterface */
-    private $translator;
+    protected LoggerInterface $logger;
+    protected MenuRepositoryInterface $menuRepository;
 
-    /** @var ValidatorInterface */
-    private $validator;
+    protected AppContext $appContext;
 
-    /** @var ViewInterface */
-    private $view;
-
-    /** @var LoggerInterface */
-    protected $logger;
-
-    /** @var NotFoundHandler */
-    private $notFoundHandler;
-
-    /** @var MenuRepositoryInterface */
-    protected $menuRepository;
-
-    /**
-     * @var boolean
-     */
-    protected $autoOneColumn = true;
+    protected bool $autoOneColumn = true;
 
     public function __construct(AppContext $appContext)
     {
+        $this->appContext = $appContext;
+
         $this->settingsProvider = $appContext->settingsProvider();
         $this->translator = $appContext->translator();
         $this->validator = $appContext->validator();
@@ -72,7 +61,6 @@ abstract class Controller
     /**
      * Get settings.
      *
-     * @param string $path
      * @param mixed $default
      * @return mixed
      */
@@ -116,12 +104,12 @@ abstract class Controller
 
         return array_merge($params, $settings['params']);
     }
-    
+
     protected function buildMenu(array $settings) : Collection
     {
         return $this->menuRepository->getAll();
     }
-    
+
     protected function buildSidebar(array $settings) : array
     {
         $result = [];
@@ -136,7 +124,7 @@ abstract class Controller
 
         return $result;
     }
-    
+
     protected function buildActionPart(array $result, string $part) : array
     {
         $bits = explode('.', $part);
@@ -149,33 +137,28 @@ abstract class Controller
 
         return $result;
     }
-    
+
     /**
      * Builds sidebar part and adds it to result.
      * If the part is not built, returns null.
-     *
-     * @param array $settings
-     * @param array $result
-     * @param string $part
-     * @return array|null
      */
     protected function buildPart(array $settings, array $result, string $part) : ?array
     {
         return null;
     }
-    
+
     protected function translate(string $message) : string
     {
         return $this->translator->translate($message);
     }
-    
+
     protected function render(
         ResponseInterface $response,
         string $template,
-        array $params
+        array $data = []
     ) : ResponseInterface
     {
-        return $this->view->render($response, $template, $params);
+        return $this->view->render($response, $template, $data);
     }
 
     protected function validate(SlimRequest $request, array $rules) : void

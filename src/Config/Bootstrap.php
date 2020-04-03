@@ -563,16 +563,18 @@ class Bootstrap
 
         $map['notFoundHandler'] = fn (CI $c) =>
             new NotFoundHandler(
-                $c,
-                $c->translator,
-                $c->view
+                $c->appContext
             );
 
         $map['errorHandler'] = fn (CI $c) =>
-            new ErrorHandler($c);
+            new ErrorHandler(
+                $c->appContext
+            );
 
         $map['notAllowedHandler'] = fn (CI $c) =>
-            new NotAllowedHandler($c);
+            new NotAllowedHandler(
+                $c->appContext
+            );
 
         return $map;
     }

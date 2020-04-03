@@ -76,21 +76,24 @@ class Response
     /**
      * Writes error into response and returns it.
      * 
-     * @param ContainerInterface $container DI container
+     * @param AppContext $appContext DI container
      * @param ServerRequestInterface $request HTTP request object
      * @param ResponseInterface $response HTTP response object
      * @param \Exception $ex
      * @return ResponseInterface
      */
     public static function error(
-        ContainerInterface $container,
+        AppContext $appContext,
         ServerRequestInterface $request,
         ResponseInterface $response,
         \Exception $ex
     ) : ResponseInterface
     {
-        $settings = $container->get('settings');
-        $debug = $settings['debug'];
+        $settingsProvider = $appContext->settingsProvider();
+        $translator = $appContext->translator();
+        $logger = $appContext->logger();
+
+        $debug = $settingsProvider->get('debug');
 
         $jsonRequest = Request::isJson($request);
 
@@ -117,12 +120,13 @@ class Response
             }
         } else {
             $msg = $ex->getMessage();
-            $msg = $container->translator->translate($msg);
+            $msg = $translator->translate($msg);
         }
 
         // log stack trace if the exception is non-propagated
-        if ($settings['log_errors'] && !($ex instanceof PropagatedExceptionInterface)) {
-            $container->logger->error("Error: {$msg}");
+        if ($settingsProvider->get('log_errors')
+            && !($ex instanceof PropagatedExceptionInterface)) {
+            $logger->error("Error: {$msg}");
             
             if (!($ex instanceof ValidationException)) {
                 $lines = [];
@@ -131,7 +135,7 @@ class Response
                     $lines[] = "{$trace['file']} ({$trace['line']}), {$trace['class']}{$trace['type']}{$trace['function']}";
                 }
 
-                $container->logger->info(Text::fromLines($lines));
+                $logger->info(Text::fromLines($lines));
             }
         }
 
