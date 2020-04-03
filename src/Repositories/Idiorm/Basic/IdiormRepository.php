@@ -45,11 +45,15 @@ abstract class IdiormRepository
     private CacheInterface $cache;
     private Db $db;
 
-    private ?HydratorInterface $hydrator;
+    /** @var HydratorInterface|ObjectProxy|null */
+    private $hydrator;
 
+    /**
+     * @param HydratorInterface|ObjectProxy|null $hydrator
+     */
     public function __construct(
         RepositoryContext $context,
-        ?HydratorInterface $hydrator = null
+        $hydrator = null
     )
     {
         $this->access = $context->access();

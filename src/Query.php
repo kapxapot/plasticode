@@ -278,7 +278,6 @@ class Query implements \IteratorAggregate, ArrayableInterface
      * Creates new Query based on the current one
      * plus applied modification.
      *
-     * @param \Closure|null $queryModifier
      * @param SortStep[]|null $sortOrder
      * @return mixed
      */
@@ -314,8 +313,6 @@ class Query implements \IteratorAggregate, ArrayableInterface
     /**
      * Delegates method call to the underlying \ORM query.
      *
-     * @param string $name
-     * @param array $args
      * @return mixed
      */
     public function __call(string $name, array $args)

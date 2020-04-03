@@ -11,11 +11,8 @@ use Slim\Interfaces\RouterInterface;
 
 class Linker implements LinkerInterface
 {
-    /** @var SettingsProviderInterface */
-    protected $settingsProvider;
-
-    /** @var RouterInterface */
-    protected $router;
+    protected SettingsProviderInterface $settingsProvider;
+    protected RouterInterface $router;
 
     public function __construct(
         SettingsProviderInterface $settingsProvider,
@@ -50,7 +47,7 @@ class Linker implements LinkerInterface
     {
         return $this->root() . rtrim($url, '/');
     }
-    
+
     public function root() : string
     {
         return $this->settingsProvider->get('root');
@@ -87,12 +84,12 @@ class Linker implements LinkerInterface
     {
         return 'https://static-cdn.jtvnw.net/previews-ttv/live_user_' . $id . '-320x180.jpg';
     }
-    
+
     public function twitchLargeImg(string $id) : string
     {
         return 'https://static-cdn.jtvnw.net/previews-ttv/live_user_' . $id . '-640x360.jpg';
     }
-    
+
     public function twitch(string $id) : string
     {
         return 'https://twitch.tv/' . $id;

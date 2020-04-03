@@ -34,9 +34,9 @@ class Access
     {
         $this->cache = $cache;
 
-        $this->actions = $this->flattenActions($accessSettings['actions']);
-        $this->templates = $accessSettings['templates'];
-        $this->rights = $accessSettings['rights'];
+        $this->actions = $this->flattenActions($accessSettings['actions'] ?? []);
+        $this->templates = $accessSettings['templates'] ?? [];
+        $this->rights = $accessSettings['rights'] ?? [];
     }
     
     /**

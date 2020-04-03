@@ -18,7 +18,6 @@ abstract class DbModel extends Model implements SerializableInterface
      * Static alias for new().
      * 
      * @param array|\ORM|null $obj
-     * @return self
      */
     public static function create($obj = null) : self
     {

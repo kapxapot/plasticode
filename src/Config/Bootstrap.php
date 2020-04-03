@@ -38,6 +38,7 @@ use Plasticode\IO\File;
 use Plasticode\IO\Image;
 use Plasticode\Models\Validation\PasswordValidation;
 use Plasticode\Models\Validation\UserValidation;
+use Plasticode\ObjectProxy;
 use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
 use Plasticode\Parsing\LinkMappers\PageLinkMapper;
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
@@ -221,17 +222,23 @@ class Bootstrap
         $map['authTokenRepository'] = fn (CI $c) =>
             new AuthTokenRepository(
                 $c->repositoryContext,
-                new AuthTokenHydrator(
-                    $c->userRepository
+                new ObjectProxy(
+                    fn () =>
+                    new AuthTokenHydrator(
+                        $c->userRepository
+                    )
                 )
             );
 
         $map['menuRepository'] = fn (CI $c) =>
             new MenuRepository(
                 $c->repositoryContext,
-                new MenuHydrator(
-                    $c->menuItemRepository,
-                    $c->linker
+                new ObjectProxy(
+                    fn () =>
+                    new MenuHydrator(
+                        $c->menuItemRepository,
+                        $c->linker
+                    )
                 )
             );
 
@@ -269,9 +276,12 @@ class Bootstrap
         $map['userRepository'] = fn (CI $c) =>
             new UserRepository(
                 $c->repositoryContext,
-                new UserHydrator(
-                    $c->roleRepository,
-                    $c->linker
+                new ObjectProxy(
+                    fn () =>
+                    new UserHydrator(
+                        $c->roleRepository,
+                        $c->linker
+                    )
                 )
             );
 
