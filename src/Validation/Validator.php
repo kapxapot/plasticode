@@ -11,11 +11,8 @@ use Slim\Http\Request as SlimRequest;
 
 class Validator implements ValidatorInterface
 {
-    /** @var ContainerInterface */
-    private $container;
-
-    /** @var TranslatorInterface */
-    private $translator;
+    private ContainerInterface $container;
+    private TranslatorInterface $translator;
 
     public function __construct(
         ContainerInterface $container,
@@ -51,7 +48,7 @@ class Validator implements ValidatorInterface
 
         return new ValidationResult($errors);
     }
-    
+
     public function validateArray(array $data, array $rules) : ValidationResult
     {
         return $this->validate(
@@ -61,8 +58,11 @@ class Validator implements ValidatorInterface
             $rules
         );
     }
-    
-    public function validateRequest(SlimRequest $request, array $rules) : ValidationResult
+
+    public function validateRequest(
+        SlimRequest $request,
+        array $rules
+    ) : ValidationResult
     {
         return $this->validate(
             function ($field) use ($request) {

@@ -2,17 +2,13 @@
 
 namespace Plasticode\Validation;
 
-use Respect\Validation\Exceptions\ValidationException;
+use Plasticode\Exceptions\ValidationException;
 
 class ValidationResult
 {
-    /** @var array */
-    private $errors;
+    private array $errors;
 
-    /**
-     * @param array $errors
-     */
-    public function __construct(array $errors)
+    public function __construct(?array $errors = null)
     {
         $this->errors = $errors ?? [];
     }
@@ -26,17 +22,16 @@ class ValidationResult
     {
         return empty($this->errors);
     }
-    
+
     public function isFail() : bool
     {
-        return !$this->isFail();
+        return !$this->isSuccess();
     }
 
     /**
      * Throws ValidationException on errors.
      *
      * @throws ValidationException
-     * @return void
      */
     public function throwOnFail() : void
     {
