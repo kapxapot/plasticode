@@ -2,7 +2,7 @@
 
 namespace Plasticode\Util;
 
-use Plasticode\Util\Traits\PropertyAccess;
+use Plasticode\Traits\PropertyAccess;
 use Webmozart\Assert\Assert;
 
 class SortStep

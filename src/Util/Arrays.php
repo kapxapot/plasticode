@@ -2,21 +2,20 @@
 
 namespace Plasticode\Util;
 
-use Plasticode\Util\Traits\PropertyAccess;
+use Plasticode\Traits\PropertyAccess;
 use Webmozart\Assert\Assert;
 
 class Arrays
 {
     use PropertyAccess;
 
-    const IdField = 'id';
-    const Dot = '.';
+    const ID_FIELD = 'id';
+    const DOT = '.';
 
     /**
      * Checks if $array is an array or implements \ArrayAccess.
      *
      * @param array|\ArrayAccess $array
-     * @return void
      */
     private static function checkArray($array) : void
     {
@@ -31,7 +30,6 @@ class Arrays
      *
      * @param array|\ArrayAccess $array
      * @param string|integer|null $key
-     * @return boolean
      */
     public static function exists($array, $key) : bool
     {
@@ -39,7 +37,7 @@ class Arrays
 
         return !is_null($array[$key] ?? null);
     }
-    
+
     /**
      * Get an item from an associative array using "dot" notation.
      * Taken from Illuminate\Support\Arr.
@@ -60,7 +58,7 @@ class Arrays
             return $array[$key];
         }
 
-        foreach (explode(self::Dot, $key) as $segment) {
+        foreach (explode(self::DOT, $key) as $segment) {
             if (!self::exists($array, $segment)) {
                 return null;
             }
@@ -75,16 +73,13 @@ class Arrays
      * Set an array item to a given value using "dot" notation.
      * Taken from Illuminate\Support\Arr.
      *
-     * @param array $array
-     * @param string $key
      * @param mixed $value
-     * @return array|null
      */
     public static function set(array &$array, $key, $value) : ?array
     {
         Assert::notNull($key);
 
-        $keys = explode(self::Dot, $key);
+        $keys = explode(self::DOT, $key);
 
         while (count($keys) > 1) {
             $key = array_shift($keys);
@@ -103,51 +98,41 @@ class Arrays
 
         return $array;
     }
-    
+
     /**
      * Returns distinct values from array grouped by 'id'.
-     * 
-     * @param array $array
-     * @return array
      */
     public static function distinctById(array $array) : array
     {
-        return self::distinctBy($array, self::IdField);
+        return self::distinctBy($array, self::ID_FIELD);
     }
-    
+
     /**
      * Returns distinct values from array grouped by selector.
      * 
-     * @param array $array
      * @param string|\Closure $by Column/property name or Closure, returning generated column/property name.
-     * @return array
      */
     public static function distinctBy(array $array, $by) : array
     {
         return array_values(self::toAssocBy($array, $by));
     }
-    
+
     /**
      * Converts array to associative array by 'id'.
      * Selector must be unique, otherwise only first element is taken,
      * others are discarded.
-     * 
-     * @param array $array
-     * @return array
      */
     public static function toAssocById(array $array) : array
     {
-        return self::toAssocBy($array, self::IdField);
+        return self::toAssocBy($array, self::ID_FIELD);
     }
-    
+
     /**
      * Converts array to associative array by column/property or Closure.
      * Selector must be unique, otherwise only first element is taken,
      * others are discarded.
      * 
-     * @param array $array
      * @param string|\Closure $by Column/property name or Closure, returning generated column/property name.
-     * @return array
      */
     public static function toAssocBy(array $array, $by) : array
     {
@@ -162,24 +147,19 @@ class Arrays
         
         return $groups;
     }
-    
+
     /**
      * Groups array by 'id'.
-     * 
-     * @param array $array
-     * @return array
      */
     public static function groupById(array $array) : array
     {
-        return self::groupBy($array, self::IdField);
+        return self::groupBy($array, self::ID_FIELD);
     }
-    
+
     /**
      * Groups array by column/property or \Closure.
      * 
-     * @param array $array
      * @param string|\Closure $by Column/property name or \Closure, returning generated column/property name.
-     * @return array
      */
     public static function groupBy(array $array, $by) : array
     {
@@ -202,21 +182,14 @@ class Arrays
 
     /**
      * Extracts non-null 'id' column/property values.
-     * 
-     * @param array $array
-     * @return array
      */
     public static function extractIds(array $array) : array
     {
-        return self::extract($array, self::IdField);
+        return self::extract($array, self::ID_FIELD);
     }
-    
+
     /**
      * Extracts unique (!) non-null column/property values from array.
-     * 
-     * @param array $array
-     * @param string $column
-     * @return array
      */
     public static function extract(array $array, string $column) : array
     {
@@ -240,12 +213,11 @@ class Arrays
 
         return array_values($values);
     }
-    
+
     /**
      * Filters array by column/property value or Closure,
      * then returns first item or null.
      * 
-     * @param array $array
      * @param string|\Closure
      * @param mixed $value
      * @return mixed
@@ -255,12 +227,11 @@ class Arrays
         $filtered = self::filter($array, $by, $value);
         return self::first($filtered);
     }
-    
+
     /**
      * Filters array by column/property value or Closure,
      * then returns last item or null.
      * 
-     * @param array $array
      * @param string|\Closure
      * @param mixed $value
      * @return mixed
@@ -270,14 +241,12 @@ class Arrays
         $filtered = self::filter($array, $by, $value);
         return self::last($filtered);
     }
-    
+
     /**
      * Filters array by column/property value or Closure.
      * 
-     * @param array $array
      * @param string|\Closure $by
      * @param mixed $value
-     * @return array
      */
     public static function filter(array $array, $by, $value = null) : array
     {
@@ -299,16 +268,15 @@ class Arrays
 
         return array_values($values);
     }
-    
+
     /**
      * Filters array by specified column values.
-     *
-     * @param array $array
-     * @param string $column
-     * @param array $values
-     * @return array
      */
-    public static function filterIn(array $array, string $column, array $values) : array
+    public static function filterIn(
+        array $array,
+        string $column,
+        array $values
+    ) : array
     {
         return self::filter(
             $array,
@@ -317,16 +285,15 @@ class Arrays
             }
         );
     }
-    
+
     /**
      * Filters array by all column values except specified.
-     *
-     * @param array $array
-     * @param string $column
-     * @param array $values
-     * @return array
      */
-    public static function filterNotIn(array $array, string $column, array $values) : array
+    public static function filterNotIn(
+        array $array,
+        string $column,
+        array $values
+    ) : array
     {
         return self::filter(
             $array,
@@ -335,7 +302,7 @@ class Arrays
             }
         );
     }
-    
+
     /**
      * Trims strings in array and removes empty ones (cleans array).
      *
@@ -353,12 +320,9 @@ class Arrays
         
         return Arrays::clean($array);
     }
-    
+
     /**
      * Removes empty strings and nulls from array.
-     * 
-     * @param array $array
-     * @return array
      */
     public static function clean(array $array) : array
     {
@@ -371,36 +335,30 @@ class Arrays
 
         return array_values($values);
     }
-    
+
     /**
      * Returns first item from array or null.
      * 
-     * @param array $array
      * @return mixed
      */
     public static function first(array $array)
     {
         return !empty($array) ? reset($array) : null;
     }
-    
+
     /**
      * Returns last item from array or null.
      * 
-     * @param array $array
      * @return mixed
      */
     public static function last(array $array)
     {
         return !empty($array) ? end($array) : null;
     }
-    
+
     /**
      * Filters associative array by provided key set.
      * If key is absent, it is ignored.
-     * 
-     * @param array $array
-     * @param array $keys
-     * @return array
      */
     public static function filterKeys(array $array, array $keys) : array
     {
@@ -414,41 +372,28 @@ class Arrays
         
         return $result;
     }
-    
+
     /**
      * Skips $offset elements from the start and returns the remaining array.
      * If the $offset is negative, starts backwards from the end towards it.
-     * 
-     * @param array $array
-     * @param integer $offset
-     * @return array
      */
     public static function skip(array $array, int $offset) : array
     {
         return array_slice($array, $offset);
     }
-    
+
     /**
      * Returns first $limit elements.
      * If the $limit is negative, takes all the elements from the start
      * until |$limit| from the end.
-     * 
-     * @param array $array
-     * @param integer $limit
-     * @return array
      */
     public static function take(array $array, int $limit) : array
     {
         return array_slice($array, 0, $limit);
     }
-    
+
     /**
      * Combines skip() and take().
-     * 
-     * @param array $array
-     * @param integer $offset
-     * @param integer $limit
-     * @return array
      */
     public static function slice(array $array, int $offset, int $limit) : array
     {
@@ -457,79 +402,66 @@ class Arrays
 
     /**
      * Removes $limit (1 by default) elements from the array.
-     *
-     * @param array $array
-     * @param integer $limit
-     * @return array
      */
     public static function trimEnd(array $array, int $limit = null) : array
     {
         return self::slice($array, 0, -($limit ?? 1));
     }
-    
+
     /**
      * Orders array items, ascending / numeric by default.
      * Shortcut for Sort::by().
-     *
-     * @param array $array
-     * @param string $column
-     * @param string|null $dir
-     * @param string|null $type
-     * @return array
      */
-    public static function orderBy(array $array, string $column, ?string $dir = null, ?string $type = null) : array
+    public static function orderBy(
+        array $array,
+        string $column,
+        ?string $dir = null,
+        ?string $type = null
+    ) : array
     {
         return Sort::by($array, $column, $dir, $type);
     }
-    
+
     /**
      * Orders array items descending, numeric by default.
      * Shortcut for Sort::desc().
-     *
-     * @param array $array
-     * @param string $column
-     * @param string|null $type
-     * @return array
      */
-    public static function orderByDesc(array $array, string $column, ?string $type = null) : array
+    public static function orderByDesc(
+        array $array,
+        string $column,
+        ?string $type = null
+    ) : array
     {
         return Sort::desc($array, $column, $type);
     }
-    
+
     /**
      * Orders array items as strings, ascending by default.
      * Shortcut for Sort::byStr().
-     *
-     * @param array $array
-     * @param string $column
-     * @param string|null $dir
-     * @return array
      */
-    public static function orderByStr(array $array, string $column, ?string $dir = null) : array
+    public static function orderByStr(
+        array $array,
+        string $column,
+        ?string $dir = null
+    ) : array
     {
         return Sort::byStr($array, $column, $dir);
     }
-    
+
     /**
      * Orders array items descending as strings.
      * Shortcut for Sort::descStr().
-     *
-     * @param array $array
-     * @param string $column
-     * @return array
      */
     public static function orderByStrDesc(array $array, string $column) : array
     {
         return Sort::descStr($array, $column);
     }
-    
+
     /**
      * Orders array items based on array of sort conditions.
      * Shortcut for Sort::multi().
      *
-     * @param array $array
      * @param SortStep[] $steps
-     * @return array
      */
     public static function multiSort(array $array, array $steps) : array
     {

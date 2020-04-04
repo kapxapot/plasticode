@@ -4,6 +4,7 @@ namespace Plasticode\Models;
 
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;
+use Plasticode\Traits\PropertyAccess;
 use Plasticode\Util\Convert;
 use Plasticode\Util\Date;
 use Plasticode\Util\Strings;
@@ -11,6 +12,8 @@ use Webmozart\Assert\Assert;
 
 class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
 {
+    use PropertyAccess;
+
     /**
      * Data array or \ORM object
      *
@@ -58,7 +61,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
 
     private function checkPropertyExists(string $property) : void
     {
-        if (array_key_exists($property, $this->obj)) {
+        if (self::propertyExists($this->obj, $property)) {
             $className = static::class;
 
             throw new InvalidConfigurationException(
