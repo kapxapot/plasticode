@@ -22,11 +22,6 @@ trait WithUser
         return $this;
     }
 
-    public function userId() : int
-    {
-        return $this->userId;
-    }
-
     public function user() : User
     {
         Assert::true($this->userInitialized);

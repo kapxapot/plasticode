@@ -23,7 +23,7 @@ class AuthTokenHydrator implements HydratorInterface
     {
         return $entity
             ->withUser(
-                $this->userRepository->get($entity->userId())
+                $this->userRepository->get($entity->userId)
             );
     }
 }
