@@ -52,9 +52,7 @@ class Validator implements ValidatorInterface
     public function validateArray(array $data, array $rules) : ValidationResult
     {
         return $this->validate(
-            function ($field) use ($data) {
-                return $data[$field] ?? null;
-            },
+            fn ($field) => $data[$field] ?? null,
             $rules
         );
     }
@@ -65,9 +63,7 @@ class Validator implements ValidatorInterface
     ) : ValidationResult
     {
         return $this->validate(
-            function ($field) use ($request) {
-                return $request->getParam($field);
-            },
+            fn ($field) => $request->getParam($field),
             $rules
         );
     }

@@ -327,9 +327,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
      * 
      * Allows passing an array or a ArrayableInterface.
      *
-     * @param string $field
      * @param array|ArrayableInterface $values
-     * @return self
      */
     public function whereIn(string $field, $values) : self
     {
@@ -354,9 +352,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
      *
      * Allows passing an array or a ArrayableInterface.
      * 
-     * @param string $field
      * @param array|ArrayableInterface $values
-     * @return self
      */
     public function whereNotIn(string $field, $values) : self
     {
@@ -423,7 +419,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     /**
      * Clears sorting and creates ASC sort step.
      */
-    public function orderByAsc(string $field) : Query
+    public function orderByAsc(string $field) : self
     {
         $sortOrder = [
             SortStep::create($field)
@@ -435,7 +431,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     /**
      * Clears sorting and creates DESC sort step.
      */
-    public function orderByDesc(string $field) : Query
+    public function orderByDesc(string $field) : self
     {
         $sortOrder = [
             SortStep::createDesc($field)
@@ -447,7 +443,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     /**
      * Adds ASC sort step.
      */
-    public function thenByAsc(string $field) : Query
+    public function thenByAsc(string $field) : self
     {
         $sortOrder = $this->sortOrder;
         $sortOrder[] = SortStep::create($field);
@@ -458,7 +454,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     /**
      * Adds DESC sort step.
      */
-    public function thenByDesc(string $field) : Query
+    public function thenByDesc(string $field) : self
     {
         $sortOrder = $this->sortOrder;
         $sortOrder[] = SortStep::createDesc($field);
@@ -470,9 +466,8 @@ class Query implements \IteratorAggregate, ArrayableInterface
      * Applies sort order as array.
      *
      * @param SortStep[] $sortOrder
-     * @return Query
      */
-    public function withSort(array $sortOrder) : Query
+    public function withSort(array $sortOrder) : self
     {
         return $this->branch(null, $sortOrder);
     }
@@ -483,9 +478,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
      * using AND.
      *
      * @param string $searchStr One or several words
-     * @param string $where
      * @param integer $paramCount How many times every word must be passed to where()
-     * @return self
      */
     public function search(
         string $searchStr,
