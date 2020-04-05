@@ -216,8 +216,9 @@ abstract class IdiormRepository
     protected function createEntity($obj = null) : DbModel
     {
         $entityClass = $this->getEntityClass();
+        $entity = $entityClass::create($obj);
 
-        return $entityClass::create($obj);
+        return $entity->hydrate($this->hydrator);
     }
 
     private function ormObjToEntity(\ORM $ormObj) : DbModel
@@ -229,7 +230,8 @@ abstract class IdiormRepository
             return $entity;
         }
 
-        $entity = $this->createEntity($ormObj);
+        $entityClass = $this->getEntityClass();
+        $entity = $entityClass::create($ormObj);
 
         $this->cacheEntity($entity);
 
