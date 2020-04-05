@@ -42,7 +42,7 @@ class Validator implements ValidatorInterface
             }
             catch (NestedValidationException $e) {
                 $e->setParam('translator', [$this->translator, 'translate']);
-                $this->errors[$field] = $e->getMessages();
+                $errors[$field] = $e->getMessages();
             }
         }
 
