@@ -2,12 +2,20 @@
 
 namespace Plasticode\Models;
 
+use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Models\Interfaces\SerializableInterface;
+use Plasticode\ObjectProxy;
 use Webmozart\Assert\Assert;
 
 abstract class DbModel extends Model implements SerializableInterface
 {
+    private const NOT_HYDRATED = 1;
+    private const BEING_HYDRATED = 2;
+    private const HYDRATED = 3;
+
     protected static string $idField = 'id';
+
+    protected int $hydratedState = self::NOT_HYDRATED;
 
     public static function idField() : string
     {
@@ -48,7 +56,32 @@ abstract class DbModel extends Model implements SerializableInterface
     {
         return $this->hasId();
     }
-    
+
+    public function isNotHydrated() : bool
+    {
+        return $this->hydratedState == self::NOT_HYDRATED;
+    }
+
+    /**
+     * @param HydratorInterface|ObjectProxy|null $hydrator
+     */
+    public function hydrate($hydrator) : self
+    {
+        if (!$this->isNotHydrated()) {
+            return $this;
+        }
+
+        $this->hydratedState = self::BEING_HYDRATED;
+
+        if ($hydrator) {
+            $hydrator->hydrate($this);
+        }
+
+        $this->hydratedState = self::HYDRATED;
+
+        return $this;
+    }
+
     public function failIfNotPersisted() : void
     {
         Assert::true(

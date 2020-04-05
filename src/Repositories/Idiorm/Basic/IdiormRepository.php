@@ -64,12 +64,6 @@ abstract class IdiormRepository
         $this->hydrator = $hydrator;
     }
 
-    public function withHydrator(HydratorInterface $hydrator) : self
-    {
-        $this->hydrator = $hydrator;
-        return $this;
-    }
-
     protected function idField() : string
     {
         $entityClass = $this->getEntityClass();
@@ -152,13 +146,33 @@ abstract class IdiormRepository
             return null;
         }
 
-        $name = $this->getTable() . $id;
+        /** @var DbModel */
+        $entity = null;
 
-        return $this->cache->getCached(
-            $name,
-            fn () => $this->baseQuery()->find($id),
-            $ignoreCache
-        );
+        if (!$ignoreCache) {
+            $entity = $this->getCachedEntity($id);
+        }
+
+        return $entity ?? $this->baseQuery()->find($id);
+    }
+
+    private function entityCacheKey(int $id) : string
+    {
+        return $this->getTable() . '_' . $id;
+    }
+
+    private function getCachedEntity(int $id) : ?DbModel
+    {
+        $key = $this->entityCacheKey($id);
+
+        return $this->cache->get($key);
+    }
+
+    private function cacheEntity(DbModel $entity) : void
+    {
+        $key = $this->entityCacheKey($entity->getId());
+
+        $this->cache->set($key, $entity);
     }
 
     protected function saveEntity(DbModel $entity) : DbModel
@@ -188,7 +202,6 @@ abstract class IdiormRepository
      * Shortcut for create() + save().
      * 
      * @param array|\ORM|null $obj
-     * @return DbModel
      */
     protected function storeEntity($obj = null) : DbModel
     {
@@ -198,8 +211,7 @@ abstract class IdiormRepository
     }
 
     /**
-     * @param array|\ORM $obj
-     * @return DbModel
+     * @param array|\ORM|null $obj
      */
     protected function createEntity($obj = null) : DbModel
     {
@@ -210,13 +222,18 @@ abstract class IdiormRepository
 
     private function ormObjToEntity(\ORM $ormObj) : DbModel
     {
-        $entity = $this->createEntity($ormObj);
+        $id = $ormObj[$this->idField()];
+        $entity = $this->getCachedEntity($id);
 
-        if ($this->hydrator) {
-            $entity = $this->hydrator->hydrate($entity);
+        if ($entity) {
+            return $entity;
         }
 
-        return $entity;
+        $entity = $this->createEntity($ormObj);
+
+        $this->cacheEntity($entity);
+
+        return $entity->hydrate($this->hydrator);
     }
 
     public function tableAccess() : array
