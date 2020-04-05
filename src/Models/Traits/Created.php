@@ -16,11 +16,6 @@ trait Created
 
     private bool $creatorInitialized = false;
 
-    public function createdBy() : ?int
-    {
-        return $this->createdBy;
-    }
-
     public function withCreator(User $creator) : self
     {
         $this->creator = $creator;
@@ -45,9 +40,6 @@ trait Created
 
     /**
      * Sets or updates createdBy and creator.
-     *
-     * @param User $user
-     * @return self
      */
     protected function stampCreator(User $user) : self
     {

@@ -3,6 +3,7 @@
 namespace Plasticode\Models\Traits;
 
 use Plasticode\Models\User;
+use Webmozart\Assert\Assert;
 
 /**
  * @property integer|null $updatedBy
@@ -13,27 +14,32 @@ trait Updated
 
     protected ?User $updater = null;
 
-    public function updatedBy() : ?int
-    {
-        return $this->updatedBy;
-    }
+    private bool $updaterInitialized = false;
 
     public function withUpdater(User $updater) : self
     {
         $this->updater = $updater;
+        $this->updaterInitialized = true;
+
         return $this;
     }
 
     public function updater() : ?User
     {
+        Assert::true($this->updaterInitialized);
+
         return $this->updater;
+    }
+
+    public function isUpdatedBy(User $user) : bool
+    {
+        return $this->updater()
+            ? $this->updater()->equals($user)
+            : false;
     }
 
     /**
      * Sets or updates updatedBy and updater.
-     *
-     * @param User $user
-     * @return self
      */
     protected function stampUpdater(User $user) : self
     {
