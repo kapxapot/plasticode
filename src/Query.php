@@ -111,7 +111,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     {
         return is_null($this->query);
     }
-    
+
     /**
      * Executes query and returns all records.
      * 
@@ -123,17 +123,17 @@ class Query implements \IteratorAggregate, ArrayableInterface
         if ($this->isEmpty()) {
             return Collection::empty();
         }
-        
+
         $query = $this->getSortedQuery();
 
         try {
             $objs = $query->findMany();
-        
+
             $all = array_map(
                 fn (\ORM $obj) => ($this->toModel)($obj),
                 $objs ?? []
             );
-            
+
             return Collection::make($all);
         } catch (\PDOException $pdoEx) {
             throw new SqlException(
