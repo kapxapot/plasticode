@@ -3,16 +3,19 @@
 namespace Plasticode\Twig\Extensions;
 
 use Plasticode\Auth\Access;
-use Plasticode\Auth\Auth;
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class AccessRightsExtension extends AbstractExtension
 {
     private Access $access;
-    private Auth $auth;
+    private AuthInterface $auth;
 
-    public function __construct(Access $access, Auth $auth)
+    public function __construct(
+        Access $access,
+        AuthInterface $auth
+    )
     {
         $this->access = $access;
         $this->auth = $auth;

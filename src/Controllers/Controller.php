@@ -7,12 +7,10 @@ use Plasticode\Core\AppContext;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Core\Interfaces\ViewInterface;
-use Plasticode\Handlers\NotFoundHandler;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Util\Arrays;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Http\Request as SlimRequest;
 use Webmozart\Assert\Assert;
@@ -26,7 +24,6 @@ abstract class Controller
     private TranslatorInterface $translator;
     private ValidatorInterface $validator;
     private ViewInterface $view;
-    private NotFoundHandler $notFoundHandler;
 
     protected LoggerInterface $logger;
     protected MenuRepositoryInterface $menuRepository;
@@ -44,18 +41,7 @@ abstract class Controller
         $this->validator = $appContext->validator();
         $this->view = $appContext->view();
         $this->logger = $appContext->logger();
-        $this->notFoundHandler = $appContext->notFoundHandler();
         $this->menuRepository = $appContext->menuRepository();
-    }
-
-    protected function notFound(
-        ServerRequestInterface $request,
-        ResponseInterface $response
-    ) : ResponseInterface
-    {
-        $handler = $this->notFoundHandler;
-
-        return $handler($request, $response);
     }
 
     /**

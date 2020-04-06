@@ -20,6 +20,11 @@ class AuthTokenRepository extends IdiormRepository implements AuthTokenRepositor
         return $this->saveEntity($authToken);
     }
 
+    public function store(array $data) : AuthToken
+    {
+        return $this->storeEntity($data);
+    }
+
     public function getByToken(?string $token) : ?AuthToken
     {
         return $this

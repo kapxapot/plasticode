@@ -2,7 +2,7 @@
 
 namespace Plasticode\Controllers\Auth;
 
-use Plasticode\Auth\Auth;
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Controllers\Controller;
 use Plasticode\Core\Response;
 use Plasticode\Core\Security;
@@ -14,7 +14,7 @@ use Slim\Http\Request as SlimRequest;
 
 class PasswordController extends Controller
 {
-    private Auth $auth;
+    private AuthInterface $auth;
     private UserRepositoryInterface $userRepository;
     private PasswordValidation $passwordValidation;
 

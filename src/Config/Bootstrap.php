@@ -292,7 +292,6 @@ class Bootstrap
                 $c->validator,
                 $c->view,
                 $c->logger,
-                $c->notFoundHandler,
                 $c->menuRepository
             );
 
@@ -331,7 +330,8 @@ class Bootstrap
             $view->addExtension($twigExt);
 
             $accessExt = new AccessRightsExtension(
-                $c->access
+                $c->access,
+                $c->auth
             );
 
             $view->addExtension($accessExt);
@@ -346,7 +346,7 @@ class Bootstrap
             $user = $c->auth->getUser();
 
             $view['auth'] = [
-                'check' => $c->auth->check(),
+                'check' => $c->authService->check(),
                 'user' => $user,
                 'role' => $c->auth->getRole(),
                 'avatar' => is_null($user)

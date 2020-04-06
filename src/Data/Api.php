@@ -3,7 +3,7 @@
 namespace Plasticode\Data;
 
 use Plasticode\Auth\Access;
-use Plasticode\Auth\Auth;
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Collection;
 use Plasticode\Core\Response;
 use Plasticode\Exceptions\Http\NotFoundException;
@@ -17,14 +17,14 @@ use Psr\Log\LoggerInterface;
 class Api
 {
     private Access $access;
-    private Auth $auth;
+    private AuthInterface $auth;
     private Db $db;
     private LoggerInterface $logger;
     private UserRepositoryInterface $userRepository;
 
     public function __construct(
         Access $access,
-        Auth $auth,
+        AuthInterface $auth,
         Db $db,
         LoggerInterface $logger,
         UserRepositoryInterface $userRepository

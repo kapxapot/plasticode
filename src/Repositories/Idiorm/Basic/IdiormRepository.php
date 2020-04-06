@@ -3,11 +3,12 @@
 namespace Plasticode\Repositories\Idiorm\Basic;
 
 use Plasticode\Auth\Access;
-use Plasticode\Auth\Auth;
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Collection;
 use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Data\Db;
 use Plasticode\Data\Rights;
+use Plasticode\Exceptions\InvalidResultException;
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\DbModel;
@@ -41,7 +42,7 @@ abstract class IdiormRepository
     protected bool $sortReverse = false;
 
     private Access $access;
-    private Auth $auth;
+    private AuthInterface $auth;
     private CacheInterface $cache;
     private Db $db;
 
@@ -175,11 +176,22 @@ abstract class IdiormRepository
         $this->cache->set($key, $entity);
     }
 
+    /**
+     * Saves entity, adds it to cache and hydrates it.
+     */
     protected function saveEntity(DbModel $entity) : DbModel
     {
         $ormObj = $this->entityToOrmObj($entity);
 
-        return $this->saveOrmObj($ormObj);
+        $saveResult = $ormObj->save();
+
+        if (!$saveResult) {
+            throw new InvalidResultException(
+                'Failed to save the entity.'
+            );
+        }
+
+        return $this->ormObjToEntity($ormObj, true);
     }
 
     protected function entityToOrmObj(DbModel $entity) : \ORM
@@ -191,51 +203,76 @@ abstract class IdiormRepository
             : $this->db->create($this->getTable(), $obj);
     }
 
-    protected function saveOrmObj(\ORM $ormObj) : DbModel
-    {
-        $ormObj->save();
-
-        return $this->ormObjToEntity($ormObj);
-    }
-
     /**
-     * Shortcut for create() + save().
+     * Creates a bare entity and saves it (hydrating afterwards).
      * 
      * @param array|\ORM|null $obj
      */
     protected function storeEntity($obj = null) : DbModel
     {
-        $entity = $this->createEntity($obj);
+        $entity = $this->createBareEntity($obj);
 
         return $this->saveEntity($entity);
     }
 
     /**
+     * Just creates an entity, no hydration.
+     *
+     * @param array|\ORM|null $obj
+     */
+    private function createBareEntity($obj = null) : DbModel
+    {
+        $entityClass = $this->getEntityClass();
+        return $entityClass::create($obj);
+    }
+
+    /**
+     * Creates an entity and hydrates it.
+     * 
      * @param array|\ORM|null $obj
      */
     protected function createEntity($obj = null) : DbModel
     {
-        $entityClass = $this->getEntityClass();
-        $entity = $entityClass::create($obj);
+        $entity = $this->createBareEntity($obj);
 
+        return $this->hydrateEntity($entity);
+    }
+
+    protected function hydrateEntity(DbModel $entity) : DbModel
+    {
         return $entity->hydrate($this->hydrator);
     }
 
-    private function ormObjToEntity(\ORM $ormObj) : DbModel
+    /**
+     * Converts ORM object to entity.
+     * 
+     * If the object is present in cache and
+     * $ignoreCache != true, it is loaded from cache.
+     * 
+     * Otherwise, the new entity is created, cached and hydrated.
+     */
+    private function ormObjToEntity(
+        \ORM $ormObj,
+        bool $ignoreCache = false
+    ) : DbModel
     {
-        $id = $ormObj[$this->idField()];
-        $entity = $this->getCachedEntity($id);
+        /** @var DbModel */
+        $entity = null;
+
+        if (!$ignoreCache) {
+            $id = $ormObj[$this->idField()];
+            $entity = $this->getCachedEntity($id);
+        }
 
         if ($entity) {
             return $entity;
         }
 
-        $entityClass = $this->getEntityClass();
-        $entity = $entityClass::create($ormObj);
+        $entity = $this->createBareEntity($ormObj);
 
         $this->cacheEntity($entity);
 
-        return $entity->hydrate($this->hydrator);
+        return $this->hydrateEntity($entity);
     }
 
     public function tableAccess() : array

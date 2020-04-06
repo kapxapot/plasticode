@@ -5,6 +5,7 @@ namespace Plasticode\Controllers;
 use Plasticode\Core\Env;
 use Plasticode\Core\Response;
 use Plasticode\Parsing\Interfaces\ParserInterface;
+use Plasticode\Parsing\Parsers\CutParser;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,17 +13,10 @@ use Psr\Log\LoggerInterface;
 
 class ParserController
 {
-    /** @var Env */
-    private $env;
-
-    /** @var LoggerInterface */
-    private $logger;
-
-    /** @var ParserInterface */
-    private $parser;
-
-    /** @var CutParser */
-    private $cutParser;
+    private Env $env;
+    private LoggerInterface $logger;
+    private ParserInterface $parser;
+    private CutParser $cutParser;
 
     public function __construct(ContainerInterface $container)
     {

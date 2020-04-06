@@ -2,7 +2,7 @@
 
 namespace Plasticode\Services;
 
-use Plasticode\Auth\Auth;
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Core\Security;
 use Plasticode\Exceptions\Http\AuthenticationException;
@@ -23,13 +23,13 @@ class AuthService
      */
     private const DEFAULT_TOKEN_TTL = 24;
 
-    private Auth $auth;
+    private AuthInterface $auth;
     private SettingsProviderInterface $settingsProvider;
     private AuthTokenRepositoryInterface $authTokenRepository;
     private UserRepositoryInterface $userRepository;
 
     public function __construct(
-        Auth $auth,
+        AuthInterface $auth,
         SettingsProviderInterface $settingsProvider,
         AuthTokenRepositoryInterface $authTokenRepository,
         UserRepositoryInterface $userRepository
@@ -89,14 +89,12 @@ class AuthService
             $user = $this->userRepository->save($user);
         }
         
-        $token = $this->authTokenRepository->save(
-            new AuthToken(
-                [
-                    'user_id' => $user->getId(),
-                    'token' => Security::generateToken(),
-                    'expires_at' => $this->generateExpirationTime(),
-                ]
-            )
+        $token = $this->authTokenRepository->store(
+            [
+                'user_id' => $user->getId(),
+                'token' => Security::generateToken(),
+                'expires_at' => $this->generateExpirationTime(),
+            ]
         );
         
         $this->auth->setToken($token);

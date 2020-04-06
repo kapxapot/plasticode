@@ -3,7 +3,7 @@
 namespace Plasticode\Middleware;
 
 use Plasticode\Auth\Access;
-use Plasticode\Auth\Auth;
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Exceptions\Http\AuthenticationException;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response as SlimResponse;
@@ -12,7 +12,7 @@ use Slim\Interfaces\RouterInterface;
 class AccessMiddleware
 {
     private Access $access;
-    private Auth $auth;
+    private AuthInterface $auth;
     private RouterInterface $router;
 
     private string $entity;
@@ -21,7 +21,7 @@ class AccessMiddleware
     
     public function __construct(
         Access $access,
-        Auth $auth,
+        AuthInterface $auth,
         RouterInterface $router,
         string $entity,
         string $action,

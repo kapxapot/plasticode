@@ -2,12 +2,13 @@
 
 namespace Plasticode\Auth;
 
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Core\Interfaces\SessionInterface;
 use Plasticode\Models\AuthToken;
 use Plasticode\Models\Role;
 use Plasticode\Models\User;
 
-class Auth
+class Auth implements AuthInterface
 {
     private SessionInterface $session;
 
@@ -41,7 +42,7 @@ class Auth
         $this->session->delete('token_id');
     }
 
-    public function getTokenId() : int
+    public function getTokenId() : ?int
     {
         return $this->session->get('token_id');
     }

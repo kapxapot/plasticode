@@ -3,20 +3,20 @@
 namespace Plasticode\Repositories\Idiorm\Basic;
 
 use Plasticode\Auth\Access;
-use Plasticode\Auth\Auth;
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Data\Db;
 
 class RepositoryContext
 {
     private Access $access;
-    private Auth $auth;
+    private AuthInterface $auth;
     private CacheInterface $cache;
     private Db $db;
 
     public function __construct(
         Access $access,
-        Auth $auth,
+        AuthInterface $auth,
         CacheInterface $cache,
         Db $db
     )
@@ -32,7 +32,7 @@ class RepositoryContext
         return $this->access;
     }
 
-    public function auth() : Auth
+    public function auth() : AuthInterface
     {
         return $this->auth;
     }

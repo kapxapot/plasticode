@@ -17,7 +17,6 @@ class AppContext
     private ValidatorInterface $validator;
     private ViewInterface $view;
     private LoggerInterface $logger;
-    private NotFoundHandler $notFoundHandler;
     private MenuRepositoryInterface $menuRepository;
 
     public function __construct(
@@ -26,7 +25,6 @@ class AppContext
         ValidatorInterface $validator,
         ViewInterface $view,
         LoggerInterface $logger,
-        NotFoundHandler $notFoundHandler,
         MenuRepositoryInterface $menuRepository
     )
     {
@@ -35,7 +33,6 @@ class AppContext
         $this->validator = $validator;
         $this->view = $view;
         $this->logger = $logger;
-        $this->notFoundHandler = $notFoundHandler;
         $this->menuRepository = $menuRepository;
     }
 
@@ -62,11 +59,6 @@ class AppContext
     public function logger() : LoggerInterface
     {
         return $this->logger;
-    }
-
-    public function notFoundHandler() : NotFoundHandler
-    {
-        return $this->notFoundHandler;
     }
 
     public function menuRepository() : MenuRepositoryInterface
