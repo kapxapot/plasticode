@@ -121,6 +121,8 @@ class Arrays
      * Converts array to associative array by 'id'.
      * Selector must be unique, otherwise only first element is taken,
      * others are discarded.
+     * 
+     * @return array<string, mixed>
      */
     public static function toAssocById(array $array) : array
     {
@@ -133,6 +135,7 @@ class Arrays
      * others are discarded.
      * 
      * @param string|\Closure $by Column/property name or Closure, returning generated column/property name.
+     * @return array<string, mixed>
      */
     public static function toAssocBy(array $array, $by) : array
     {
@@ -150,6 +153,8 @@ class Arrays
 
     /**
      * Groups array by 'id'.
+     * 
+     * @return array<string, mixed>
      */
     public static function groupById(array $array) : array
     {
@@ -160,6 +165,7 @@ class Arrays
      * Groups array by column/property or \Closure.
      * 
      * @param string|\Closure $by Column/property name or \Closure, returning generated column/property name.
+     * @return array<string, mixed>
      */
     public static function groupBy(array $array, $by) : array
     {

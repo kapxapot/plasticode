@@ -83,6 +83,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Selector must be unique, otherwise only first element is taken, others are discarded.
      * 
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
+     * @return array<string, mixed>
      */
     public function toAssoc($by = null) : array
     {
@@ -98,7 +99,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Groups collection by column/property or \Closure.
      * 
      * @param mixed $by Column/property name or \Closure, returning generated column/property name. Default = 'id'.
-     * @return array Returns associative array of collections.
+     * @return array<string, self>
      */
     public function group($by = null) : array
     {
