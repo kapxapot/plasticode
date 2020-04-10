@@ -410,50 +410,58 @@ class Arrays
     /**
      * Orders array items, ascending / numeric by default.
      * Shortcut for Sort::by().
+     * 
+     * @param string|\Closure $by
      */
     public static function orderBy(
         array $array,
-        string $column,
+        $by,
         ?string $dir = null,
         ?string $type = null
     ) : array
     {
-        return Sort::by($array, $column, $dir, $type);
+        return Sort::by($array, $by, $dir, $type);
     }
 
     /**
      * Orders array items descending, numeric by default.
      * Shortcut for Sort::desc().
+     * 
+     * @param string|\Closure $by
      */
     public static function orderByDesc(
         array $array,
-        string $column,
+        $by,
         ?string $type = null
     ) : array
     {
-        return Sort::desc($array, $column, $type);
+        return Sort::desc($array, $by, $type);
     }
 
     /**
      * Orders array items as strings, ascending by default.
      * Shortcut for Sort::byStr().
+     * 
+     * @param string|\Closure $by
      */
     public static function orderByStr(
         array $array,
-        string $column,
+        $by,
         ?string $dir = null
     ) : array
     {
-        return Sort::byStr($array, $column, $dir);
+        return Sort::byStr($array, $by, $dir);
     }
 
     /**
      * Orders array items descending as strings.
      * Shortcut for Sort::descStr().
+     * 
+     * @param string|\Closure $by
      */
-    public static function orderByStrDesc(array $array, string $column) : array
+    public static function orderByStrDesc(array $array, $by) : array
     {
-        return Sort::descStr($array, $column);
+        return Sort::descStr($array, $by);
     }
 
     /**

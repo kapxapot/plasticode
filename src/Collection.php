@@ -253,11 +253,10 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Filters collection by column/property value or callable, then returns last item or null.
+     * Filters collection by column/property value or callable,
+     * then returns last item or null.
      * 
-     * @param string|\Closure|null %by
-     * @param mixed $value
-     * @return mixed
+     * @param string|\Closure|null $by
      */
     public function last($by = null, $value = null)
     {
@@ -267,10 +266,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Filters collection by column/property value or callable.
+     * Filters collection by property value or closure.
      * 
      * @param string|\Closure $by
-     * @param mixed $value
      */
     public function where($by, $value = null) : self
     {
@@ -304,59 +302,106 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         return Collection::make($data);
     }
 
+    /**
+     * Applies closure to all collection's items.
+     */
     public function apply(\Closure $func) : void
     {
         array_walk($this->data, $func);
     }
 
-    public function asc($column, $type = null) : self
+    /**
+     * Sorts collection ascending using property or closure.
+     *
+     * @param string|\Closure $by
+     */
+    public function asc($by, ?string $type = null) : self
     {
-        return $this->orderBy($column, null, $type);
+        return $this->orderBy($by, null, $type);
     }
 
-    public function desc($column, $type = null) : self
+    /**
+     * Sorts collection descending using property or closure.
+     *
+     * @param string|\Closure $by
+     */
+    public function desc($by, ?string $type = null) : self
     {
-        $data = Arrays::orderByDesc($this->data, $column, $type);
+        $data = Arrays::orderByDesc($this->data, $by, $type);
         return self::make($data);
     }
 
-    public function orderBy(string $column, string $dir = null, string $type = null) : self
+    /**
+     * Sorts collection by column or closure.
+     * Ascending by default.
+     *
+     * @param string|\Closure $by
+     */
+    public function orderBy($by, ?string $dir = null, ?string $type = null) : self
     {
-        $data = Arrays::orderBy($this->data, $column, $dir, $type);
+        $data = Arrays::orderBy($this->data, $by, $dir, $type);
         return self::make($data);
     }
 
-    public function ascStr($column) : self
+    /**
+     * Sorts collection ascending by column or closure as strings.
+     *
+     * @param string|\Closure $by
+     */
+    public function ascStr($by) : self
     {
-        return $this->orderByStr($column);
+        return $this->orderByStr($by);
     }
 
-    public function descStr($column) : self
+    /**
+     * Sorts collection descending by column or closure as strings.
+     *
+     * @param string|\Closure $by
+     */
+    public function descStr($by) : self
     {
-        $data = Arrays::orderByStrDesc($this->data, $column);
+        $data = Arrays::orderByStrDesc($this->data, $by);
         return self::make($data);
     }
 
-    public function orderByStr($column, $dir = null) : self
+    /**
+     * Sorts collection by column or closure as strings.
+     * Ascending by default.
+     *
+     * @param string|\Closure $by
+     */
+    public function orderByStr($by, ?string $dir = null) : self
     {
-        $data = Arrays::orderByStr($this->data, $column, $dir);
+        $data = Arrays::orderByStr($this->data, $by, $dir);
         return self::make($data);
     }
 
-    public function multiSort($sorts) : self
+    /**
+     * Sorts collection using sort steps.
+     *
+     * @param SortStep[] $steps
+     */
+    public function multiSort(array $steps) : self
     {
-        $data = Arrays::multiSort($this->data, $sorts);
+        $data = Arrays::multiSort($this->data, $steps);
         return self::make($data);
     }
 
-    public function orderByFunc(\Closure $func) : self
+    /**
+     * Sorts collection using comparer function
+     * which receives two items to compare.
+     */
+    public function orderByComparer(\Closure $comparer) : self
     {
         $data = $this->data; // cloning
-        usort($data, $func);
+        usort($data, $comparer);
 
         return self::make($data);
     }
 
+    /**
+     * Reorders collection's items in reverse.
+     */
     public function reverse() : self
     {
         $data = array_reverse($this->data);
