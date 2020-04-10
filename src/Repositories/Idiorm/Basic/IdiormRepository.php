@@ -87,7 +87,7 @@ abstract class IdiormRepository
     /**
      * Bare query without sort.
      */
-    protected function baseQuery() : Query
+    private function baseQuery() : Query
     {
         $dbQuery = $this->db->forTable(
             $this->getTable()
@@ -120,8 +120,8 @@ abstract class IdiormRepository
 
         return [
             $this->sortReverse
-                ? SortStep::create($this->sortField)
-                : SortStep::createDesc($this->sortField)
+                ? SortStep::createDesc($this->sortField)
+                : SortStep::create($this->sortField)
         ];
     }
 

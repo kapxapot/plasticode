@@ -91,7 +91,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     {
         return $this->query;
     }
-    
+
     /**
      * Returns "empty" query (without table and filters).
      */
