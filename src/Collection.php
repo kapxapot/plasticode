@@ -10,7 +10,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     /**
      * Empty collection
      */
-    private static ?self $empty = null;
+    private static ?Collection $empty = null;
 
     protected array $data;
 
@@ -35,10 +35,10 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         return self::make($arrayable->toArray());
     }
 
-    public static function empty() : self
+    public static function empty() : Collection
     {
         if (is_null(self::$empty)) {
-            self::$empty = self::make();
+            self::$empty = Collection::make();
         }
 
         return self::$empty;
@@ -50,16 +50,22 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         return $this->concat($col);
     }
 
-    public function concat(Collection $other) : self
+    /**
+     * Concats the collection of the same type.
+     */
+    public function concat(self $other) : self
     {
         $data = array_merge($this->data, $other->toArray());
         return self::make($data);
     }
 
-    public static function merge(...$collections) : self
+    /**
+     * Merges several heterogenous collections.
+     */
+    public static function merge(Collection ...$collections) : Collection
     {
-        $merged = self::empty();
-        
+        $merged = Collection::empty();
+
         foreach ($collections as $collection) {
             $merged = $merged->concat($collection);
         }
@@ -90,11 +96,6 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         return Arrays::toAssocBy($this->data, $by ?? 'id');
     }
 
-    public function toArray() : array
-    {
-        return $this->data;
-    }
-
     /**
      * Groups collection by column/property or \Closure.
      * 
@@ -106,11 +107,11 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $result = [];
 
         $groups = Arrays::groupBy($this->data, $by ?? 'id');
-        
+
         foreach ($groups as $key => $group) {
             $result[$key] = self::make($group);
         }
-        
+
         return $result;
     }
 
@@ -119,12 +120,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * 
      * Does not make collection distinct!
      */
-    public function flatten() : self
+    public function flatten() : Collection
     {
         $data = [];
-        
+
         foreach ($this->data as $item) {
-            if (is_array($item) || $item instanceof self) {
+            if (is_array($item) || $item instanceof Collection) {
                 foreach ($item as $subItem) {
                     $data[] = $subItem;
                 }
@@ -132,8 +133,8 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
                 $data[] = $item;
             }
         }
-        
-        return self::make($data);
+
+        return Collection::make($data);
     }
 
     /**
@@ -181,32 +182,32 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     public function random()
     {
         $count = $this->count();
-        
+
         if ($count === 0) {
             return null;
         }
-        
+
         $offset = rand(0, $count - 1);
-        
+
         return $this->slice($offset, 1)->first();
     }
 
     /**
      * Extracts non-null 'id' column/property values.
      */
-    public function ids() : self
+    public function ids() : Collection
     {
         $data = Arrays::extractIds($this->data);
-        return self::make($data);
+        return Collection::make($data);
     }
 
     /**
      * Extracts non-null column/property values from collection.
      */
-    public function extract($column) : self
+    public function extract($column) : Collection
     {
         $data = Arrays::extract($this->data, $column);
-        return self::make($data);
+        return Collection::make($data);
     }
 
     /**
@@ -297,10 +298,10 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         return self::make($data);
     }
 
-    public function map(\Closure $func) : self
+    public function map(\Closure $func) : Collection
     {
         $data = array_map($func, $this->data);
-        return self::make($data);
+        return Collection::make($data);
     }
 
     public function apply(\Closure $func) : void
@@ -430,5 +431,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     public function jsonSerialize()
     {
         return $this->toArray();
+    }
+
+    // ArrayableInterface
+
+    public function toArray() : array
+    {
+        return $this->data;
     }
 }

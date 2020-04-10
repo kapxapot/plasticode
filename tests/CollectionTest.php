@@ -4,6 +4,7 @@ namespace Plasticode\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Collection;
+use Plasticode\Testing\Dummies\DummyCollection;
 use Plasticode\Testing\Dummies\DummyModel;
 
 final class CollectionTest extends TestCase
@@ -61,6 +62,164 @@ final class CollectionTest extends TestCase
                 )
             ],
         ];
+    }
+
+    public function testFlattenCreatesBaseCollection() : void
+    {
+        $col = DummyCollection::make(
+            [
+                new DummyModel(1, 'one'),
+                new DummyModel(2, 'two'),
+            ]
+        );
+
+        $flat = $col->flatten();
+
+        $this->assertEquals(Collection::class, get_class($flat));
+    }
+
+    public function testConcatPreservesCollectionType() : void
+    {
+        $col = DummyCollection::make(
+            [
+                new DummyModel(1, 'one'),
+                new DummyModel(2, 'two'),
+            ]
+        );
+
+        $concat = $col->concat(
+            DummyCollection::make(
+                [
+                    new DummyModel(3, 'three'),
+                ]
+            )
+        );
+
+        $this->assertEquals(DummyCollection::class, get_class($concat));
+        $this->assertCount(3, $concat);
+    }
+
+    public function testConcatBaseCollectionAllowsHeteroTypes() : void
+    {
+        $col = Collection::make(
+            [
+                new DummyModel(1, 'one'),
+                new DummyModel(2, 'two'),
+            ]
+        );
+
+        $concat = $col->concat(
+            Collection::make(
+                [1, 2, 3]
+            )
+        );
+
+        $this->assertEquals(Collection::class, get_class($concat));
+        $this->assertCount(5, $concat);
+    }
+
+    public function testConcatTypedCollectionDoesntAllowHeteroTypes() : void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $col = DummyCollection::make(
+            [
+                new DummyModel(1, 'one'),
+                new DummyModel(2, 'two'),
+            ]
+        );
+
+        $col->concat(
+            Collection::make(
+                [1, 2, 3]
+            )
+        );
+    }
+
+    public function testAddPreservesCollectionType() : void
+    {
+        $col = DummyCollection::make(
+            [
+                new DummyModel(1, 'one'),
+                new DummyModel(2, 'two'),
+            ]
+        );
+
+        $concat = $col->add(
+            new DummyModel(3, 'three'),
+        );
+
+        $this->assertEquals(DummyCollection::class, get_class($concat));
+        $this->assertCount(3, $concat);
+    }
+
+    public function testAddBaseCollectionAllowsHeteroTypes() : void
+    {
+        $col = Collection::make(
+            [
+                new DummyModel(1, 'one'),
+                new DummyModel(2, 'two'),
+            ]
+        );
+
+        $concat = $col->add(1)->add(2)->add(3);
+
+        $this->assertEquals(Collection::class, get_class($concat));
+        $this->assertCount(5, $concat);
+    }
+
+    public function testAddTypedCollectionDoesntAllowHeteroTypes() : void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $col = DummyCollection::make(
+            [
+                new DummyModel(1, 'one'),
+                new DummyModel(2, 'two'),
+            ]
+        );
+
+        $col->add(1);
+    }
+
+    public function testMergeReturnsBaseCollection() : void
+    {
+        $col1 = DummyCollection::make(
+            [
+                new DummyModel(1, 'one'),
+                new DummyModel(2, 'two'),
+            ]
+        );
+
+        $col2 = DummyCollection::make(
+            [
+                new DummyModel(3, 'three'),
+            ]
+        );
+
+        $col = DummyCollection::merge($col1, $col2);
+
+        $this->assertEquals(Collection::class, get_class($col));
+        $this->assertCount(3, $col);
+    }
+
+    public function testMergeAllowsHeteroTypes() : void
+    {
+        $col1 = DummyCollection::make(
+            [
+                new DummyModel(1, 'one'),
+                new DummyModel(2, 'two'),
+            ]
+        );
+
+        $col2 = Collection::make(
+            [1, 2, 3]
+        );
+
+        $col = Collection::merge($col1, $col2);
+
+        $this->assertEquals(Collection::class, get_class($col));
+        $this->assertCount(5, $col);
     }
 
     /**
