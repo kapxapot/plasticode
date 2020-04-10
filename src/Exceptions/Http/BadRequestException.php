@@ -2,7 +2,7 @@
 
 namespace Plasticode\Exceptions\Http;
 
-class BadRequestException extends Exception
+class BadRequestException extends HttpException
 {
     protected static $defaultMessage = 'Bad request.';
     protected static $errorCode = 400;
