@@ -315,4 +315,44 @@ final class CollectionTest extends TestCase
 
         $this->assertEquals('three', $col->last()['name']);
     }
+
+    /**
+     * @dataProvider cleanProvider
+     */
+    public function testClean(Collection $col, Collection $result) : void
+    {
+        $this->assertEquals(
+            $result->toArray(),
+            $col->clean()->toArray()
+        );
+    }
+
+    public function cleanProvider() : array
+    {
+        return [
+            [
+                Collection::empty(),
+                Collection::empty()
+            ],
+            [
+                Collection::make(
+                    [
+                        'some',
+                        '',
+                        'string',
+                        null,
+                        [1, 2, 3],
+                        0
+                    ]
+                ),
+                Collection::make(
+                    ['some', 'string', [1, 2, 3]]
+                )
+            ],
+            [
+                Collection::make(['already', 'clean']),
+                Collection::make(['already', 'clean'])
+            ],
+        ];
+    }
 }

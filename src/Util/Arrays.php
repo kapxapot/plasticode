@@ -328,18 +328,11 @@ class Arrays
     }
 
     /**
-     * Removes empty strings and nulls from array.
+     * Removes empty strings, nulls and 0s from array.
      */
     public static function clean(array $array) : array
     {
-        $values = array_filter(
-            $array,
-            function ($item) {
-                return strlen($item) > 0;
-            }
-        );
-
-        return array_values($values);
+        return array_values(array_filter($array));
     }
 
     /**

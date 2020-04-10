@@ -138,10 +138,6 @@ final class MiscTest extends TestCase
 
     /**
      * @dataProvider cleanProvider
-     *
-     * @param array $array
-     * @param array $result
-     * @return void
      */
     public function testClean(array $array, array $result) : void
     {
@@ -157,9 +153,11 @@ final class MiscTest extends TestCase
                     'some',
                     '',
                     'string',
-                    null
+                    null,
+                    [1, 2, 3],
+                    0
                 ],
-                ['some', 'string']
+                ['some', 'string', [1, 2, 3]]
             ],
             [
                 ['already', 'clean'],

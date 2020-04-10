@@ -363,6 +363,15 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         return self::make($data);
     }
 
+    /**
+     * Removes nulls, empty strings and 0s.
+     */
+    public function clean() : self
+    {
+        $data = Arrays::clean($this->data);
+        return self::make($data);
+    }
+
     // ArrayAccess
 
     public function offsetSet($offset, $value)
