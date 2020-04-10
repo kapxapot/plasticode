@@ -5,7 +5,6 @@ namespace Plasticode\Core;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Core\Interfaces\ViewInterface;
-use Plasticode\Handlers\NotFoundHandler;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Psr\Log\LoggerInterface;
