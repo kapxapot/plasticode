@@ -89,7 +89,7 @@ class Access
         
         $grantAccess = false;
 
-        $role = $user->role();
+        $role = $user ? $user->role() : null;
 
         if (is_null($role)) {
             return false;
