@@ -65,9 +65,9 @@ abstract class DbModel extends Model implements SerializableInterface
     /**
      * @param HydratorInterface|ObjectProxy|null $hydrator
      */
-    public function hydrate($hydrator) : self
+    public function hydrate($hydrator, bool $forced = false) : self
     {
-        if (!$this->isNotHydrated()) {
+        if (!$forced && !$this->isNotHydrated()) {
             return $this;
         }
 

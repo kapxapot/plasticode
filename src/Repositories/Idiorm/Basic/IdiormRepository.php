@@ -266,6 +266,11 @@ abstract class IdiormRepository
         return $entity->hydrate($this->hydrator);
     }
 
+    protected function rehydrateEntity(DbModel $entity) : DbModel
+    {
+        return $entity->hydrate($this->hydrator, true);
+    }
+
     /**
      * Converts ORM object to entity.
      * 
