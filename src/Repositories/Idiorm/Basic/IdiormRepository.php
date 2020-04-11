@@ -156,7 +156,13 @@ abstract class IdiormRepository
             $entity = $this->getCachedEntity($id);
         }
 
-        return $entity ?? $this->baseQuery()->find($id);
+        $entity ??= $this->baseQuery()->find($id);
+
+        if (is_null($entity)) {
+            $this->deleteCachedEntity($id);
+        }
+
+        return $entity;
     }
 
     /**
@@ -184,6 +190,13 @@ abstract class IdiormRepository
         $key = $this->entityCacheKey($entity->getId());
 
         $this->cache->set($key, $entity);
+    }
+
+    private function deleteCachedEntity(int $id) : void
+    {
+        $key = $this->entityCacheKey($id);
+
+        $this->cache->delete($key);
     }
 
     /**
