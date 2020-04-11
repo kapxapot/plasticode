@@ -52,7 +52,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     /**
      * Null => null!
      */
-    protected static function toIso(?string $date) : string
+    protected static function toIso(?string $date) : ?string
     {
         return $date
             ? Date::iso($date)

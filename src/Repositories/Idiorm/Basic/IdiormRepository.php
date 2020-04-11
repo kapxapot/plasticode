@@ -139,7 +139,9 @@ abstract class IdiormRepository
     }
     
     /**
-     * Shortcut for getting model by id.
+     * Returns entity by id.
+     * 
+     * If the entity is cached, returns it from cache by default.
      */
     protected function getEntity(?int $id, bool $ignoreCache = false) : ?DbModel
     {
@@ -155,6 +157,14 @@ abstract class IdiormRepository
         }
 
         return $entity ?? $this->baseQuery()->find($id);
+    }
+
+    /**
+     * Returns entity by id ignoring cache.
+     */
+    protected function reloadEntity(?int $id) : ?DbModel
+    {
+        return $this->getEntity($id, true);
     }
 
     private function entityCacheKey(int $id) : string
