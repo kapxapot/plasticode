@@ -88,6 +88,13 @@ body {
 .break-all,
 .wrap-all {
     word-break: break-all;
+    white-space: normal;
+}
+
+.no-overflow-x,
+.panel,
+.modal-content {
+    overflow-x: auto;
 }
 
 .button-create {
@@ -1303,7 +1310,12 @@ div.dataTables_wrapper div.dataTables_paginate {
     font-weight: bolder;
 }
 
-.lh-12 {
+.lh-1 {
+    line-height: 1em;
+}
+
+.lh-12,
+.lh-1-2 {
     line-height: 1.2em;
 }
 

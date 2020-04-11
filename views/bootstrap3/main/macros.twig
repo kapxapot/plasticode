@@ -16,7 +16,7 @@
 
 {% macro breadcrumbs(context, items, title) %}
     <div class="panel-body breadcrumbs">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb break-all">
             <li><a href="{{ path_for('main.index') }}">{{ context.site_name }}</a></li>
             {% if items %}
                 {% for i in items %}
