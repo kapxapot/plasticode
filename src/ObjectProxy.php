@@ -19,14 +19,10 @@ class ObjectProxy
             return;
         }
 
-        $initializer = $this->initializer;
-        $this->object = $initializer();
+        $this->object = ($this->initializer)();
         $this->initialized = true;
     }
 
-    /**
-     * @return mixed
-     */
     public function __call(string $name, array $args)
     {
         $this->initialize();
@@ -36,5 +32,12 @@ class ObjectProxy
         }
 
         return $this->object->{$name}(...$args);
+    }
+
+    public function __invoke()
+    {
+        $this->initialize();
+
+        return $this->object;
     }
 }

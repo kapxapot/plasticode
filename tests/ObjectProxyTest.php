@@ -25,6 +25,7 @@ final class ObjectProxyTest extends TestCase
         );
 
         $this->assertEquals('model', $proxy->getName());
+        $this->assertInstanceOf(DummyModel::class, $proxy());
     }
 
     public function testHydratorProxy() : void
