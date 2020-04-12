@@ -5,6 +5,7 @@ namespace Plasticode\Models;
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\ObjectProxy;
+use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
 abstract class DbModel extends Model implements SerializableInterface
@@ -16,6 +17,13 @@ abstract class DbModel extends Model implements SerializableInterface
     protected static string $idField = 'id';
 
     protected int $hydratedState = self::NOT_HYDRATED;
+
+    /**
+     * Container for hydrated properties
+     * 
+     * E.g., withUser(), user()
+     */
+    private array $with = [];
 
     public static function idField() : string
     {
@@ -87,6 +95,29 @@ abstract class DbModel extends Model implements SerializableInterface
         Assert::true(
             $this->isPersisted(),
             'Object must be persisted.'
+        );
+    }
+
+    public function __call(string $name, array $args)
+    {
+        if (Strings::startsWith($name, 'with')) {
+            Assert::count($args, 1);
+
+            $propName = lcfirst(Strings::trimStart($name, 'with'));
+
+            $this->with[$propName] = $args[0];
+
+            return $this;
+        }
+
+        if (array_key_exists($name, $this->with)) {
+            return is_callable($this->with[$name])
+                ? ($this->with[$name])()
+                : $this->with[$name];
+        }
+
+        throw new \InvalidArgumentException(
+            'Method is not initialized: ' . $name . '.'
         );
     }
 
