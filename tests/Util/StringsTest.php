@@ -125,13 +125,14 @@ final class StringsTest extends TestCase
     /**
      * @dataProvider appendQueryParamProvider
      *
-     * @param string $request
-     * @param string $name
      * @param mixed $value
-     * @param string $expected
-     * @return void
      */
-    public function testAppendQueryParam(string $request, string $name, $value, string $expected) : void
+    public function testAppendQueryParam(
+        string $request,
+        string $name,
+        $value,
+        string $expected
+    ) : void
     {
         $this->assertEquals(
             $expected,
@@ -159,10 +160,6 @@ final class StringsTest extends TestCase
 
     /**
      * @dataProvider toSlugProvider
-     *
-     * @param string $original
-     * @param string $expected
-     * @return void
      */
     public function testToSlug(string $original, string $expected) : void
     {
@@ -183,14 +180,44 @@ final class StringsTest extends TestCase
     }
 
     /**
-     * @dataProvider trimEndProvider
-     *
-     * @param string $original
-     * @param string $suffix
-     * @param string $expected
-     * @return void
+     * @dataProvider trimStartProvider
      */
-    public function testTrimEnd(string $original, string $suffix, string $expected) : void
+    public function testTrimStart(
+        string $original,
+        string $prefix,
+        string $expected
+    ) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Strings::trimStart($original, $prefix)
+        );
+    }
+
+    public function trimStartProvider() : array
+    {
+        return [
+            [
+                'withUser',
+                'with',
+                'User'
+            ],
+            [
+                'User',
+                'with',
+                'User'
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider trimEndProvider
+     */
+    public function testTrimEnd(
+        string $original,
+        string $suffix,
+        string $expected
+    ) : void
     {
         $this->assertEquals(
             $expected,
@@ -216,11 +243,6 @@ final class StringsTest extends TestCase
 
     /**
      * @dataProvider containsProvider
-     *
-     * @param string|null $original
-     * @param string $mask
-     * @param boolean $expected
-     * @return void
      */
     public function testContains(?string $original, string $mask, bool $expected) : void
     {

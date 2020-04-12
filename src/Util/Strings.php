@@ -4,9 +4,8 @@ namespace Plasticode\Util;
 
 class Strings
 {
-    /** @var string */
     const SPACE_CHAR = '_';
-    
+
     private const TAG_PARTS_DELIMITER = '|';
 
     /**
@@ -17,9 +16,11 @@ class Strings
      * 
      * @param string $str String to process
      * @param string $space Custom character to replace, '_' by default
-     * @return string
      */
-    public static function toSpaces(string $str = null, string $space = self::SPACE_CHAR) : string
+    public static function toSpaces(
+        string $str = null,
+        string $space = self::SPACE_CHAR
+    ) : string
     {
         $str = stripslashes($str);
         return preg_replace('/' . $space . '/', ' ', $str);
@@ -32,40 +33,33 @@ class Strings
      * 
      * @param string $str String to process
      * @param string $space Custom replacement character, '_' by default
-     * @return string
      */
-    public static function fromSpaces(string $str = null, string $space = self::SPACE_CHAR) : string
+    public static function fromSpaces(
+        string $str = null,
+        string $space = self::SPACE_CHAR
+    ) : string
     {
         return preg_replace('/\s+/u', $space, $str);
     }
-    
+
     /**
      * Converts 'snake_case' to 'SnakeCase'.
-     *
-     * @param string $str
-     * @return string
      */
     public static function toPascalCase(string $str) : string
     {
         return str_replace('_', '', ucwords($str, '_'));
     }
-    
+
     /**
      * Converts 'snake_case' to 'snakeCase'.
-     *
-     * @param string $str
-     * @return string
      */
     public static function toCamelCase(string $str) : string
     {
         return lcfirst(self::toPascalCase($str));
     }
-    
+
     /**
      * Converts 'PascalCase'/'camelCase' to 'pascal_case'/'camel_case'.
-     *
-     * @param [type] $str
-     * @return void
      */
     public static function toSnakeCase(string $str) : string
     {
@@ -76,15 +70,16 @@ class Strings
             '_'
         );
     }
-    
+
     /**
      * Trims, converts to lower case and squishes spaces.
      *
-     * @param null|string $str
      * @param string|null $space Character to squish spaces to
-     * @return null|string
      */
-    public static function normalize(?string $str, ?string $space = null) : ?string
+    public static function normalize(
+        ?string $str,
+        ?string $space = null
+    ) : ?string
     {
         if (strlen($str) == 0) {
             return $str;
@@ -99,14 +94,13 @@ class Strings
         
         return $str;
     }
-    
+
     /**
      * Converts '   Tag,    AnotherTag ' to ['tag', 'anothertag'].
      * 
      * String is exploded by ',' and every chunk is normalized.
      * This is done before saving tags to database.
      *
-     * @param string $str
      * @return string[]
      */
     public static function toTags(string $str) : array
@@ -120,36 +114,29 @@ class Strings
         
         return array_unique($tags);
     }
-    
+
     /**
      * Explodes string (by ',' by default) and "trims" it.
      * 
-     * @param string $str
-     * @param string $delimiter
      * @return string[]
      */
     public static function explode(string $str, string $delimiter = ',') : array
     {
         return Arrays::trim(explode($delimiter, $str));
     }
-    
+
     /**
      * Breaks string by spaces and trims the resulting array.
      *
-     * @param string $str
      * @return string[]
      */
     public static function toWords(string $str) : array
     {
         return Arrays::trim(preg_split("/\s/", $str));
     }
-    
+
     /**
      * Explodes string by $delimiter and returns last chunk.
-     *
-     * @param string $str
-     * @param string $delimiter
-     * @return string
      */
     public static function lastChunk(string $str, string $delimiter) : string
     {
@@ -157,7 +144,7 @@ class Strings
         
         return Arrays::last($chunks);
     }
-    
+
     /**
      * Truncates string to (limit) Unicode characters.
      * 
@@ -169,7 +156,7 @@ class Strings
     {
         return mb_substr($str, 0, $limit);
     }
-    
+
     /**
      * Truncates string to (limit) Unicode characters and strips html tags.
      * 
@@ -182,7 +169,7 @@ class Strings
         $str = strip_tags($str);
         return self::trunc($str, $limit);
     }
-    
+
     /**
      * Returns first char.
      */
@@ -190,7 +177,7 @@ class Strings
     {
         return mb_substr($str, 0, 1);
     }
-    
+
     /**
      * Returns last char.
      */
@@ -198,7 +185,7 @@ class Strings
     {
         return mb_substr($str, -1);
     }
-    
+
     /**
      * Builds hash tags string based on tags array.
      * 
@@ -222,9 +209,6 @@ class Strings
 
     /**
      * Checks if string starts with 'http'.
-     *
-     * @param string|null $str
-     * @return boolean
      */
     public static function isUrl(?string $str) : bool
     {
@@ -233,15 +217,12 @@ class Strings
 
     /**
      * Checks if string starts with 'http' or '/'.
-     *
-     * @param string|null $str
-     * @return boolean
      */
     public static function isUrlOrRelative(?string $str) : bool
     {
         return self::isUrl($str) || self::startsWith($str, '/');
     }
-    
+
     /**
      * Checks if a string starts with any mask from the list.
      * 
@@ -266,7 +247,7 @@ class Strings
         
         return $matches;
     }
-    
+
     /**
      * Checks if a string starts with a given mask.
      * 
@@ -282,7 +263,7 @@ class Strings
 
         return strpos($str, $mask) === 0;
     }
-    
+
     /**
      * Checks if a string ends with a given mask.
      * 
@@ -298,12 +279,10 @@ class Strings
 
         return mb_substr($str, -strlen($mask)) == $mask;
     }
-    
+
     /**
      * Compares two strings case-insensitive.
      *
-     * @param string $str1
-     * @param string $str2
      * @return integer > 0, if str1 is bigger, < 0 if str2, 0 if equal
      */
     public static function compare(string $str1, string $str2) : int
@@ -313,9 +292,6 @@ class Strings
 
     /**
      * Removes all symbols from a string except letters, digits and '_'.
-     *
-     * @param null|string $str
-     * @return null|string
      */
     public static function toAlphaNum(?string $str) : ?string
     {
@@ -324,24 +300,22 @@ class Strings
 
     /**
      * Builds tag in format [[prefix:part1|part2]].
-     *
-     * @param string|null $prefix
-     * @param string ...$parts
-     * @return string
      */
-    public static function doubleBracketsTag(?string $prefix, string ...$parts) : string
+    public static function doubleBracketsTag(
+        ?string $prefix,
+        string ...$parts
+    ) : string
     {
         $prefixPart = $prefix ? $prefix . ':' : '';
         $codePart = self::joinTagParts($parts);
         
         return '[[' . $prefixPart . $codePart . ']]';
     }
-    
+
     /**
      * Joins strings with '|'.
      *
-     * @param array $parts
-     * @return string
+     * @param string[] $parts
      */
     public static function joinTagParts(array $parts) : string
     {
@@ -351,9 +325,7 @@ class Strings
     /**
      * Cleans string and removes non-UTF-8 characters & control characters.
      *
-     * @param string|null $string
      * @param boolean $control Remove control characters? True by default.
-     * @return string|null
      */
     public static function toUtf8(?string $string, bool $control = true) : ?string
     {
@@ -369,22 +341,21 @@ class Strings
     /**
      * Appends query param to http request string.
      *
-     * @param string $request
-     * @param string $name
      * @param mixed $value
-     * @return string
      */
-    public static function appendQueryParam(string $request, string $name, $value) : string
+    public static function appendQueryParam(
+        string $request,
+        string $name,
+        $value
+    ) : string
     {
         $delim = strpos($request, '?') !== false ? '&' : '?';
         return $request . $delim . $name . '=' . $value;
     }
 
     /**
-     * Converts string to slug, that allows only [a-z0-9\-] and must start from alphanumeric character.
-     *
-     * @param string $rawSlug
-     * @return string
+     * Converts string to slug, that allows only [a-z0-9\-]
+     * and must start from alphanumeric character.
      */
     public static function toSlug(string $rawSlug) : ?string
     {
@@ -398,11 +369,17 @@ class Strings
     }
 
     /**
+     * Removes start from the string.
+     */
+    public static function trimStart(string $str, string $start) : string
+    {
+        return self::startsWith($str, $start)
+            ? mb_substr($str, strlen($start))
+            : $str;
+    }
+
+    /**
      * Removes end from the string.
-     *
-     * @param string $str
-     * @param string $end
-     * @return string
      */
     public static function trimEnd(string $str, string $end) : string
     {
@@ -413,10 +390,6 @@ class Strings
 
     /**
      * Checks if the string contains the mask.
-     *
-     * @param string|null $str
-     * @param string $mask
-     * @return boolean
      */
     public static function contains(?string $str, string $mask) : bool
     {
