@@ -7,8 +7,8 @@ use Plasticode\Util\SortStep;
 /**
  * @property integer $position
  * @property string $text
- * @method string|null url()
- * @method self withUrl(string|callable|null $url)
+ * @method string url()
+ * @method self withUrl(string|callable $url)
  */
 class MenuItem extends DbModel
 {

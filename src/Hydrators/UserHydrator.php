@@ -37,11 +37,13 @@ class UserHydrator extends Hydrator
             )
             ->withGravatarUrl(
                 fn () =>
-                $this->linker->gravatarUrl(
-                    $this->gravatar->hash(
-                        $entity->email
+                $this
+                    ->linker
+                    ->gravatarUrl(
+                        $this->gravatar->hash(
+                            $entity->email
+                        )
                     )
-                )
             );
     }
 }

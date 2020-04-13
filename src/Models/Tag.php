@@ -9,8 +9,8 @@ use Plasticode\Util\Strings;
  * @property string $tag
  * @property integer $entityId
  * @property string $entityType
- * @method string|null url()
- * @method self withUrl(string|callable|null $url)
+ * @method string url()
+ * @method self withUrl(string|callable $url)
  */
 class Tag extends DbModel implements SerializableInterface
 {

@@ -11,9 +11,9 @@ use Plasticode\Models\Traits\UpdatedAt;
  * @property string $text
  * @property integer $position
  * @method Collection items()
- * @method string|null url()
+ * @method string url()
  * @method self withItems(Collection|callable $items)
- * @method self withUrl(string|callable|null $url)
+ * @method self withUrl(string|callable $url)
  */
 class Menu extends DbModel
 {
