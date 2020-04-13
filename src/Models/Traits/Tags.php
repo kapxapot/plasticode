@@ -2,21 +2,11 @@
 
 namespace Plasticode\Models\Traits;
 
-use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
-use Plasticode\TagLink;
-use Plasticode\Util\Strings;
-use Psr\Container\ContainerInterface;
+use Plasticode\Collections\TagLinkCollection;
+Use Plasticode\Util\Strings;
 
-/**
- * @property string $tagsField
- * @property ContainerInterface $container
- * @property TagRepositoryInterface $tagRepository
- */
 trait Tags
 {
-    /** @var TagLink[]|null */
-    protected ?array $tagLinks = null;
-
     protected function getTagsField() : string
     {
         return 'tags';
@@ -31,29 +21,23 @@ trait Tags
     {
         $tagsField = $this->getTagsField();
         $tags = $this->{$tagsField};
-        
+
         return Strings::explode($tags);
     }
 
     /**
-     * Adds tag links.
-     *
-     * @param TagLink[] $tagLinks
-     * @return self
+     * Returns tag links.
      */
-    public function withTagLinks(array $tagLinks) : self
+    public function tagLinks() : TagLinkCollection
     {
-        $this->tagLinks = $tagLinks;
-        return $this;
+        return $this->getWithProperty('tagLinks');
     }
 
     /**
-     * Returns tag links.
-     *
-     * @return TagLink[]|null
+     * Adds tag links.
      */
-    public function tagLinks() : ?array
+    public function withTagLinks(TagLinkCollection $tagLinks) : self
     {
-        return $this->tagLinks;
+        return $this->setWithProperty('tagLinks', $tagLinks);
     }
 }

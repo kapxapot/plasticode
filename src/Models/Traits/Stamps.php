@@ -7,13 +7,11 @@ use Plasticode\Util\Date;
 
 trait Stamps
 {
-    use Created, Updated;
+    use Created;
+    use Updated;
 
     /**
      * Updates createdBy/updatedBy/updatedAt.
-     *
-     * @param User|null $user
-     * @return void
      */
     public function stamp(?User $user = null) : void
     {

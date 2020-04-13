@@ -3,6 +3,7 @@
 namespace Plasticode\Hydrators;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
+use Plasticode\External\Gravatar;
 use Plasticode\Hydrators\Basic\Hydrator;
 use Plasticode\Models\DbModel;
 use Plasticode\Models\User;
@@ -12,14 +13,17 @@ class UserHydrator extends Hydrator
 {
     private RoleRepositoryInterface $roleRepository;
     private LinkerInterface $linker;
+    private Gravatar $gravatar;
 
     public function __construct(
         RoleRepositoryInterface $roleRepository,
-        LinkerInterface $linker
+        LinkerInterface $linker,
+        Gravatar $gravatar
     )
     {
         $this->roleRepository = $roleRepository;
         $this->linker = $linker;
+        $this->gravatar = $gravatar;
     }
 
     /**
@@ -34,7 +38,9 @@ class UserHydrator extends Hydrator
             ->withGravatarUrl(
                 fn () =>
                 $this->linker->gravatarUrl(
-                    $entity->gravatarHash()
+                    $this->gravatar->hash(
+                        $entity->email
+                    )
                 )
             );
     }

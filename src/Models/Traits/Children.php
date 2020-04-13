@@ -4,30 +4,12 @@ namespace Plasticode\Models\Traits;
 
 use Plasticode\Collection;
 
+/**
+ * @method Collection children()
+ * @method self|null parent()
+ * @method self withChildren(Collection|callable $children)
+ * @method self withParent(self|null $parent)
+ */
 trait Children
 {
-    protected ?self $parent = null;
-    protected ?Collection $children = null;
-
-    public function parent() : ?self
-    {
-        return $this->parent;
-    }
-
-    public function withParent(?self $parent) : self
-    {
-        $this->parent = $parent;
-        return $this;
-    }
-    
-    public function children() : Collection
-    {
-        return $this->children;
-    }
-
-    public function withChildren(Collection $children) : self
-    {
-        $this->children = $children;
-        return $this;
-    }
 }

@@ -22,6 +22,7 @@ use Plasticode\Core\Translator;
 use Plasticode\Data\Api;
 use Plasticode\Data\Db;
 use Plasticode\Events\EventDispatcher;
+use Plasticode\External\Gravatar;
 use Plasticode\External\Telegram;
 use Plasticode\External\Twitch;
 use Plasticode\External\Twitter;
@@ -280,7 +281,8 @@ class Bootstrap
                     fn () =>
                     new UserHydrator(
                         $c->roleRepository,
-                        $c->linker
+                        $c->linker,
+                        $c->gravatar
                     )
                 )
             );
@@ -554,6 +556,9 @@ class Bootstrap
 
         // external
 
+        $map['gravatar'] = fn (CI $c) =>
+            new Gravatar();
+        
         $map['twitch'] = fn (CI $c) =>
             new Twitch(
                 $this->settings['twitch']

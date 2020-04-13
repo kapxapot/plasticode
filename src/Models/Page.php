@@ -16,4 +16,9 @@ class Page extends DbModel implements TagsInterface
 {
     use FullPublished;
     use Tags;
+
+    protected function requiredWiths(): array
+    {
+        return ['tagLinks'];
+    }
 }

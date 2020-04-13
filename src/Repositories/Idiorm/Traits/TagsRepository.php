@@ -2,6 +2,7 @@
 
 namespace Plasticode\Repositories\Idiorm\Traits;
 
+use Plasticode\Collections\TagLinkCollection;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Models\Interfaces\TagsInterface;
 use Plasticode\Query;
@@ -34,13 +35,13 @@ trait TagsRepository
         if ($ids->isEmpty()) {
             return Query::empty();
         }
-        
+
         $query = $baseQuery->whereIn('id', $ids);
 
         if (method_exists(static::class, 'tagsWhereQuery')) {
             $query = $this->tagsWhereQuery($query);
         }
-        
+
         return $query;
     }
 
@@ -56,6 +57,8 @@ trait TagsRepository
             $tags
         );
 
-        return $entity->withTagLinks($tagLinks);
+        return $entity->withTagLinks(
+            TagLinkCollection::make($tagLinks)
+        );
     }
 }

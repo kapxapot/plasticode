@@ -8,5 +8,11 @@ use Plasticode\Models\Traits\Updated;
 
 class StampsDummy extends DbModel
 {
-    use Created, Updated;
+    use Created;
+    use Updated;
+
+    protected function requiredWiths() : array
+    {
+        return ['creator', 'updater'];
+    }
 }

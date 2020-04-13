@@ -2,6 +2,8 @@
 
 namespace Plasticode\Models\Interfaces;
 
+use Plasticode\Collections\TagLinkCollection;
+
 interface TagsInterface
 {
     /**
@@ -13,16 +15,11 @@ interface TagsInterface
 
     /**
      * Adds tag links.
-     *
-     * @param TagLink[] $tagLinks
-     * @return self
      */
-    function withTagLinks(array $tagLinks) : self;
+    function withTagLinks(TagLinkCollection $tagLinks) : self;
 
     /**
      * Returns tag links.
-     *
-     * @return TagLink[]|null
      */
-    public function tagLinks() : ?array;
+    public function tagLinks() : TagLinkCollection;
 }

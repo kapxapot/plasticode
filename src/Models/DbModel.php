@@ -111,25 +111,46 @@ abstract class DbModel extends Model implements SerializableInterface
 
     public function __call(string $name, array $args)
     {
-        if (Strings::startsWith($name, 'with')) {
+        if (preg_match('/^with[A-Z]/', $name)) {
             Assert::count($args, 1);
 
             $propName = lcfirst(Strings::trimStart($name, 'with'));
 
-            $this->with[$propName] = $args[0];
-
-            return $this;
+            return $this->setWithProperty($propName, $args[0]);
         }
 
+        return $this->getWithProperty($name);
+    }
+
+    /**
+     * Sets value for property 'x()' (use it in 'withX($x)' methods).
+     *
+     * @param mixed $value
+     */
+    protected function setWithProperty(string $name, $value) : self
+    {
+        $this->with[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Returns property 'x()' set up as 'withX($x)'.
+     *
+     * @return mixed
+     */
+    protected function getWithProperty(string $name, bool $required = false)
+    {
         if (array_key_exists($name, $this->with)) {
             return is_callable($this->with[$name])
                 ? ($this->with[$name])()
                 : $this->with[$name];
         }
 
-        $required = $this->requiredWiths();
+        $required = $required
+            || in_array($name, $this->requiredWiths());
 
-        if (in_array($name, $required)) {
+        if ($required) {
             throw new \BadMethodCallException(
                 'Method is not initialized: ' . $name . '.'
             );
