@@ -10,4 +10,8 @@ use Plasticode\Models\DbModel;
  */
 class DummyDbModel extends DbModel
 {
+    protected function requiredWiths(): array
+    {
+        return ['dummy'];
+    }
 }

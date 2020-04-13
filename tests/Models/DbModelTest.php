@@ -44,7 +44,7 @@ final class DbModelTest extends TestCase
 
     public function testWithout() : void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\BadMethodCallException::class);
 
         $dummy = new DummyDbModel();
         $dummy->dummy();

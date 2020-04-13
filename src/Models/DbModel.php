@@ -98,6 +98,17 @@ abstract class DbModel extends Model implements SerializableInterface
         );
     }
 
+    /**
+     * Add required x() as 'x' method names that must be initialized
+     * with withX() before calling.
+     *
+     * @return string[]
+     */
+    protected function requiredWiths() : array
+    {
+        return [];
+    }
+
     public function __call(string $name, array $args)
     {
         if (Strings::startsWith($name, 'with')) {
@@ -116,9 +127,13 @@ abstract class DbModel extends Model implements SerializableInterface
                 : $this->with[$name];
         }
 
-        throw new \InvalidArgumentException(
-            'Method is not initialized: ' . $name . '.'
-        );
+        $required = $this->requiredWiths();
+
+        if (in_array($name, $required)) {
+            throw new \BadMethodCallException(
+                'Method is not initialized: ' . $name . '.'
+            );
+        }
     }
 
     public function serialize() : array
