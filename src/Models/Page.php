@@ -14,5 +14,6 @@ use Plasticode\Models\Traits\Tags;
  */
 class Page extends DbModel implements TagsInterface
 {
-    use FullPublished, Tags;
+    use FullPublished;
+    use Tags;
 }

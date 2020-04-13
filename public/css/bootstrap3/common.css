@@ -91,10 +91,29 @@ body {
     white-space: normal;
 }
 
+.br-word {
+    word-break: break-word;
+}
+
+.br-all {
+    word-break: break-all;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
 .no-overflow-x,
 .panel,
 .modal-content {
     overflow-x: auto;
+}
+
+.ellipsis {
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .button-create {
@@ -1073,6 +1092,14 @@ div.dataTables_wrapper div.dataTables_paginate {
     align-items: center;
 }
 
+.w-100 {
+    width: 100px;
+}
+
+.w-200 {
+    width: 200px;
+}
+
 .p-0 {
     padding: var(--space-0);
 }
@@ -1325,18 +1352,6 @@ div.dataTables_wrapper div.dataTables_paginate {
 
 .font-150 {
     font-size: 150%;
-}
-
-.br-word {
-    word-break: break-word;
-}
-
-.br-all {
-    word-break: break-all;
-}
-
-.inline-block {
-    display: inline-block;
 }
 
 .font-xs {

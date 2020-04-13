@@ -2,19 +2,22 @@
 
 namespace Plasticode\Models;
 
-use Plasticode\Models\Interfaces\LinkableInterface;
-use Plasticode\Models\Traits\WithUrl;
 use Plasticode\Util\SortStep;
 
 /**
  * @property integer $position
  * @property string $text
+ * @method string|null url()
+ * @method self withUrl(string|callable|null $url)
  */
-class MenuItem extends DbModel implements LinkableInterface
+class MenuItem extends DbModel
 {
-    use WithUrl;
-
     protected string $parentIdField = 'menu_id';
+
+    protected function requiredWiths(): array
+    {
+        return ['url'];
+    }
 
     /**
      * @return SortStep[]

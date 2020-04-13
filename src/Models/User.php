@@ -4,7 +4,6 @@ namespace Plasticode\Models;
 
 use Plasticode\Models\Traits\CreatedAt;
 use Plasticode\Models\Traits\UpdatedAt;
-use Webmozart\Assert\Assert;
 
 /**
  * @property string $name
@@ -12,31 +11,19 @@ use Webmozart\Assert\Assert;
  * @property string $password
  * @property string $email
  * @property integer $roleId
+ * @method string gravatarUrl()
+ * @method Role role()
+ * @method self withGravatarUrl(string|callable $url)
+ * @method self withRole(Role|callable $role)
  */
 class User extends DbModel
 {
-    use CreatedAt, UpdatedAt;
+    use CreatedAt;
+    use UpdatedAt;
 
-    protected ?Role $role = null;
-    protected ?string $gravatarUrl = null;
-
-    private bool $roleInitialized = false;
-    private bool $gravatarUrlInitialized = false;
-
-    public function withRole(Role $role) : self
+    protected function requiredWiths(): array
     {
-        $this->role = $role;
-        $this->roleInitialized = true;
-
-        return $this;
-    }
-
-    public function withGravatarUrl(string $url) : self
-    {
-        $this->gravatarUrl = $url;
-        $this->gravatarUrlInitialized = true;
-
-        return $this;
+        return ['gravatarUrl', 'role'];
     }
 
     public function displayName() : string
@@ -44,13 +31,6 @@ class User extends DbModel
         return $this->name ?? $this->login;
     }
 
-    public function role() : ?Role
-    {
-        Assert::true($this->roleInitialized);
-
-        return $this->role;
-    }
-    
     public function toString() : string
     {
         return '[' . $this->getId() . '] ' . $this->displayName();
@@ -68,12 +48,5 @@ class User extends DbModel
         $hash = md5($email);
 
         return $hash;
-    }
-
-    public function gravatarUrl() : ?string
-    {
-        Assert::true($this->gravatarUrlInitialized);
-
-        return $this->gravatarUrl;
     }
 }

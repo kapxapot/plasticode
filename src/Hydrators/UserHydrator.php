@@ -3,12 +3,12 @@
 namespace Plasticode\Hydrators;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Hydrators\Interfaces\HydratorInterface;
+use Plasticode\Hydrators\Basic\Hydrator;
 use Plasticode\Models\DbModel;
 use Plasticode\Models\User;
 use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
 
-class UserHydrator implements HydratorInterface
+class UserHydrator extends Hydrator
 {
     private RoleRepositoryInterface $roleRepository;
     private LinkerInterface $linker;
@@ -29,9 +29,10 @@ class UserHydrator implements HydratorInterface
     {
         return $entity
             ->withRole(
-                $this->roleRepository->get($entity->roleId)
+                fn () => $this->roleRepository->get($entity->roleId)
             )
             ->withGravatarUrl(
+                fn () =>
                 $this->linker->gravatarUrl(
                     $entity->gravatarHash()
                 )

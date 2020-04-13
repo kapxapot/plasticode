@@ -4,15 +4,23 @@ namespace Plasticode\Models;
 
 use Plasticode\Models\Traits\CreatedAt;
 use Plasticode\Models\Traits\UpdatedAt;
-use Plasticode\Models\Traits\WithUser;
 
 /**
  * @property string $token
  * @property string|null $expiresAt
- */
+ * @property integer $userId
+ * @method User user()
+ * @method self withUser(User|callable $user)
+*/
 class AuthToken extends DbModel
 {
-    use CreatedAt, UpdatedAt, WithUser;
+    use CreatedAt;
+    use UpdatedAt;
+
+    protected function requiredWiths(): array
+    {
+        return ['user'];
+    }
 
     public function isExpired() : bool
     {

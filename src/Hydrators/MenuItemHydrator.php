@@ -3,15 +3,17 @@
 namespace Plasticode\Hydrators;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Hydrators\Interfaces\HydratorInterface;
+use Plasticode\Hydrators\Basic\Hydrator;
 use Plasticode\Models\DbModel;
 use Plasticode\Models\MenuItem;
 
-class MenuItemHydrator implements HydratorInterface
+class MenuItemHydrator extends Hydrator
 {
     private LinkerInterface $linker;
 
-    public function __construct(LinkerInterface $linker)
+    public function __construct(
+        LinkerInterface $linker
+    )
     {
         $this->linker = $linker;
     }
@@ -23,7 +25,7 @@ class MenuItemHydrator implements HydratorInterface
     {
         return $entity
             ->withUrl(
-                $this->linker->rel($entity->link)
+                fn () => $this->linker->rel($entity->link)
             );
     }
 }

@@ -2,19 +2,22 @@
 
 namespace Plasticode\Models;
 
-use Plasticode\Models\Interfaces\LinkableInterface;
 use Plasticode\Models\Interfaces\SerializableInterface;
-use Plasticode\Models\Traits\WithUrl;
 use Plasticode\Util\Strings;
 
 /**
  * @property string $tag
  * @property integer $entityId
  * @property string $entityType
+ * @method string|null url()
+ * @method self withUrl(string|callable|null $url)
  */
-class Tag extends DbModel implements LinkableInterface, SerializableInterface
+class Tag extends DbModel implements SerializableInterface
 {
-    use WithUrl;
+    protected function requiredWiths(): array
+    {
+        return ['url'];
+    }
 
     public function serialize() : array
     {

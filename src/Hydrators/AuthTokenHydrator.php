@@ -2,16 +2,18 @@
 
 namespace Plasticode\Hydrators;
 
-use Plasticode\Hydrators\Interfaces\HydratorInterface;
+use Plasticode\Hydrators\Basic\Hydrator;
 use Plasticode\Models\AuthToken;
 use Plasticode\Models\DbModel;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 
-class AuthTokenHydrator implements HydratorInterface
+class AuthTokenHydrator extends Hydrator
 {
     private UserRepositoryInterface $userRepository;
 
-    public function __construct(UserRepositoryInterface $userRepository)
+    public function __construct(
+        UserRepositoryInterface $userRepository
+    )
     {
         $this->userRepository = $userRepository;
     }
@@ -23,7 +25,7 @@ class AuthTokenHydrator implements HydratorInterface
     {
         return $entity
             ->withUser(
-                $this->userRepository->get($entity->userId)
+                fn () => $this->userRepository->get($entity->userId)
             );
     }
 }

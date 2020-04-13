@@ -3,15 +3,17 @@
 namespace Plasticode\Hydrators;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Hydrators\Interfaces\HydratorInterface;
+use Plasticode\Hydrators\Basic\Hydrator;
 use Plasticode\Models\DbModel;
 use Plasticode\Models\Tag;
 
-class TagHydrator implements HydratorInterface
+class TagHydrator extends Hydrator
 {
     private LinkerInterface $linker;
 
-    public function __construct(LinkerInterface $linker)
+    public function __construct(
+        LinkerInterface $linker
+    )
     {
         $this->linker = $linker;
     }
@@ -23,7 +25,7 @@ class TagHydrator implements HydratorInterface
     {
         return $entity
             ->withUrl(
-                $this->linker->tag($entity->tag)
+                fn () => $this->linker->tag($entity->tag)
             );
     }
 }
