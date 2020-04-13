@@ -6,8 +6,8 @@ use Plasticode\Models\User;
 
 /**
  * @property integer|null $createdBy
- * @method User creator()
- * @method self withCreator(User|callable $creator)
+ * @method User|null creator()
+ * @method self withCreator(User|callable|null $creator)
  */
 trait Created
 {
