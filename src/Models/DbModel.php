@@ -111,6 +111,8 @@ abstract class DbModel extends Model implements SerializableInterface
 
     public function __call(string $name, array $args)
     {
+        $name = Strings::toCamelCase($name);
+
         if (preg_match('/^with[A-Z]/', $name)) {
             Assert::count($args, 1);
 
