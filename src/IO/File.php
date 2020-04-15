@@ -17,15 +17,11 @@ class File
 
         return $content;
     }
-    
+
     /**
-     * Save file
-     *
-     * @param string $file
-     * @param string $data
-     * @return void
+     * Saves file.
      */
-    public static function save(string $file, string $data)
+    public static function save(string $file, string $data) : void
     {
         $dir = dirname($file);
 
@@ -35,28 +31,21 @@ class File
         
         file_put_contents($file, $data);
     }
-    
+
     /**
-     * Delete file
-     *
-     * @param string $file
-     * @return void
+     * Deletes file.
      */
-    public static function delete(string $file)
+    public static function delete(string $file) : void
     {
         if (file_exists($file)) {
             unlink($file);
         }
     }
-    
+
     /**
-     * Delete all files matching the mask
-     *
-     * @param string $mask
-     * @param string $except
-     * @return void
+     * Deletes all files matching the mask.
      */
-    public static function cleanUp(string $mask, string $except = null)
+    public static function cleanUp(string $mask, string $except = null) : void
     {
         foreach (glob($mask) as $toDel) {
             if (!is_dir($toDel) && $toDel != $except) {
@@ -64,18 +53,18 @@ class File
             }
         }
     }
-    
+
     /**
-     * Get file's extension. If there's none, return null
+     * Returns file's extension. If there's none, returns null.
      */
     public static function getExtension(string $path) : ?string
     {
         $chunk = strrchr($path, ".");
         return $chunk ? substr($chunk, 1) : null;
     }
-    
+
     /**
-     * Return file name without extension
+     * Returns file name without extension.
      */
     public static function getName(string $path) : string
     {
@@ -85,15 +74,15 @@ class File
             ? substr($path, 0, $pos)
             : $path;
     }
-    
+
     /**
-     * Combines file/directory path parts
+     * Combines file/directory path parts.
      */
-    public static function combine(...$parts) : ?string
+    public static function combine(string ...$parts) : ?string
     {
         $sep = DIRECTORY_SEPARATOR;
         $path = null;
-        
+
         foreach ($parts as $part) {
             if (is_null($path)) {
                 $path = $part;
@@ -104,7 +93,7 @@ class File
 
         return $path;
     }
-    
+
     public static function exists(string $path) : bool
     {
         return file_exists($path);
@@ -113,10 +102,6 @@ class File
     /**
      * Checks if path is relative (starting from '..') and appends
      * base dir to it, otherwise doesn't change it.
-     *
-     * @param string $dir
-     * @param string $path
-     * @return string
      */
     public static function absolutePath(string $dir, string $path) : string
     {
