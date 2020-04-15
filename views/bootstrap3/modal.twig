@@ -13,7 +13,7 @@
                   </div>
                   <div class="modal-body{% if modal_body_style %} {{ modal_body_style }}{% endif %}">
                       {% block modal_body %}{% endblock %}
-                    <div class="alert alert-danger alert-dismissable fade in mb-1">
+                    <div class="alert alert-danger alert-dismissable fade in">
                         <a href="javascript:void()" class="close" data-hide="alert" aria-label="close">&times;</a>
                         <div ng-bind-html="{{ var_alert_error }}|rawHtml"></div>
                     </div>
