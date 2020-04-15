@@ -514,4 +514,20 @@ class Query implements \IteratorAggregate, ArrayableInterface
     {
         return $this->all()->toArray();
     }
+
+    // __toString
+
+    public function toString() : string
+    {
+        if ($this->isEmpty()) {
+            return null;
+        }
+
+        return self::queryToString($this->getSortedQuery());
+    }
+
+    public function __toString()
+    {
+        return $this->toString();
+    }
 }
