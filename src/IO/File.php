@@ -7,6 +7,11 @@ use Plasticode\Util\Strings;
 
 class File
 {
+    /**
+     * Directory separator
+     */
+    private const SEPARATOR = '/';
+
     public static function load(string $file) : string
     {
         $content = @file_get_contents($file);
@@ -28,7 +33,7 @@ class File
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
-        
+
         file_put_contents($file, $data);
     }
 
@@ -75,43 +80,51 @@ class File
             : $path;
     }
 
-    /**
-     * Combines file/directory path parts.
-     */
-    public static function combine(string ...$parts) : ?string
-    {
-        $sep = DIRECTORY_SEPARATOR;
-        $path = null;
-
-        foreach ($parts as $part) {
-            if (is_null($path)) {
-                $path = $part;
-            } else {
-                $path = rtrim($path, $sep) . $sep . ltrim($part, $sep);
-            }
-        }
-
-        return $path;
-    }
-
     public static function exists(string $path) : bool
     {
         return file_exists($path);
     }
 
     /**
-     * Checks if path is relative (starting from '..') and appends
-     * base dir to it, otherwise doesn't change it.
+     * Combines file/directory path parts.
      */
-    public static function absolutePath(string $dir, string $path) : string
+    public static function combine(string ...$parts) : ?string
     {
-        $sep = DIRECTORY_SEPARATOR;
-        $path = ltrim($path, $sep);
+        $sep = self::SEPARATOR;
+        $path = null;
 
-        if (Strings::startsWith($path, '..')) {
-            $path = self::combine($dir, $path);
+        foreach ($parts as $part) {
+            $part = self::normalizePath($part);
+
+            $path = is_null($path)
+                ? $part
+                : rtrim($path, $sep) . $sep . ltrim($part, $sep);
         }
 
         return $path;
+    }
+
+    /**
+     * Checks if path is relative (starting from '..') and appends
+     * base dir to it, otherwise doesn't change it.
+     */
+    public static function absolutePath(
+        string $baseDir,
+        string $relativePath
+    ) : string
+    {
+        if (!preg_match('/^(\\\\|\/)?\.\./', $relativePath)) {
+            return $relativePath;
+        }
+
+        return self::combine($baseDir, $relativePath);
+    }
+
+    /**
+     * Normalizes all slashes to '/'.
+     */
+    public static function normalizePath(string $path) : string
+    {
+        return str_replace('\\', self::SEPARATOR, $path);
     }
 }
