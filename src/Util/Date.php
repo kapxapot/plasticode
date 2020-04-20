@@ -37,7 +37,7 @@ class Date
         11 => 'Ноябрь',
         12 => 'Декабрь',
     ];
-    
+
     const MONTHS_GENITIVE = [
         1 => 'января',
         2 => 'февраля',
@@ -58,8 +58,6 @@ class Date
      * null = now()
      *
      * @param string|\DateTime|null $date
-     * @param string|null $timeZone
-     * @return \DateTime
      */
     public static function dt($date = null, ?string $timeZone = null) : \DateTime
     {
@@ -79,7 +77,6 @@ class Date
      *
      * @param string|\DateTime $date
      * @param string|\DateTimeZone $timeZone
-     * @return \DateTime
      */
     public static function toTimeZone($date, $timeZone) : \DateTime
     {
@@ -107,7 +104,6 @@ class Date
      * Formats date as ISO.
      *
      * @param string|\DateTime|null $date
-     * @return string
      */
     public static function iso($date = null) : string
     {
@@ -127,7 +123,7 @@ class Date
     {
         return self::formatDb(self::dt());
     }
-    
+
     // null = now()
     public static function diff($start, $end = null) : \DateInterval
     {
@@ -136,35 +132,35 @@ class Date
 
         return $startDate->diff($endDate);
     }
-    
+
     public static function age($date) : \DateInterval
     {
         return self::diff($date);
     }
-    
+
     public static function exceedsInterval($start, $end, string $interval) : bool
     {
         $startDate = self::dt($start);
         $endDate = self::dt($end);
-        
+
         $first = mb_strtolower(Strings::first($interval));
-        
+
         if ($first != 'p') {
             $interval = date_interval_create_from_date_string($interval);
         }
-        
+
         $interval = self::interval($interval);
 
         $startWithInterval = $startDate->add($interval);
 
         return $endDate >= $startWithInterval;
     }
-    
+
     public static function expired($start, string $interval) : bool
     {
         return self::exceedsInterval($start, null, $interval);
     }
-    
+
     public static function happened($date) : bool
     {
         if (!$date) {
@@ -176,7 +172,7 @@ class Date
         
         return $now >= $dt;
     }
-    
+
     public static function to($date) : string
     {
         if ($date) {
@@ -186,7 +182,7 @@ class Date
             $dayAfterTomorrow->modify('1 day');
 
             $dt = self::dt($date);
-    
+
             if ($dt < $tomorrow) {
                 $str = 'сегодня';
             } elseif ($dt < $dayAfterTomorrow) {
@@ -194,15 +190,15 @@ class Date
             } else {
                 $diff = self::diff($now, $dt);
                 $days = $diff->days;
-                
+
                 $cases = new Cases;
                 $str = 'через ' . $days . ' ' . $cases->caseForNumber('день', $days);
             }
         }
-        
+
         return $str ?? 'неизвестно когда';
     }
-    
+
     public static function toAgo($date, $lang = null) : string
     {
         if ($date) {
@@ -242,7 +238,7 @@ class Date
         
         return $str ?? (($lang == 'en') ? 'never' : 'неизвестно когда');
     }
-    
+
     public static function startOfHour($date) : \DateTime
     {
         $copy = clone self::dt($date);
@@ -251,7 +247,7 @@ class Date
         
         return $copy;
     }
-    
+
     public static function stripTime($date) : \DateTime
     {
         $copy = clone self::dt($date);
@@ -259,7 +255,7 @@ class Date
         
         return $copy;
     }
-    
+
     public static function startOfDay($date) : \DateTime
     {
         return self::stripTime($date);
@@ -272,12 +268,12 @@ class Date
         
         return $copy;
     }
-    
+
     public static function format($date, $format = null) : string
     {
         return self::dt($date)->format($format ?? self::DATE_FORMAT);
     }
-    
+
     public static function formatDb($date) : string
     {
         return self::dt($date)->format(self::DATE_FORMAT);
@@ -287,7 +283,6 @@ class Date
      * Formats date in ISO format.
      *
      * @param string|\DateTime $date
-     * @return string
      */
     public static function formatIso($date) : string
     {
@@ -324,7 +319,12 @@ class Date
     ) : string
     {
         if (!$start || !$end) {
-            return self::formatUi($start ?? $end, $timeMode, $monthMode, $yearMode);
+            return self::formatUi(
+                $start ?? $end,
+                $timeMode,
+                $monthMode,
+                $yearMode
+            );
         }
 
         // 30 декабря 2018 — 10 января 2019
@@ -338,15 +338,15 @@ class Date
         $sameDay = (self::day($start) === self::day($end));
         $sameMonth = (self::month($start) === self::month($end));
         $sameYear = (self::year($start) === self::year($end));
-        
+
         $firstMonthMode = ($sameMonth && $sameYear)
             ? self::MONTH_OFF
             : $monthMode;
-        
+
         $firstYearMode = ($yearMode !== self::YEAR_OFF && !$sameYear)
             ? $yearMode
             : self::YEAR_OFF;
-        
+
         $result = self::formatUi($end, $timeMode, $monthMode, $yearMode);
 
         if ($firstMonthMode === self::MONTH_OFF) {
@@ -356,7 +356,7 @@ class Date
         } else {
             $result = self::formatUi($start, $timeMode, $firstMonthMode, $firstYearMode) . ' — ' . $result;
         }
-        
+
         return $result;
     }
 
@@ -373,37 +373,40 @@ class Date
     ) : string
     {
         $dt = self::dt($date);
-        
+
         $parts = [self::day($dt)];
-        
+
         if ($monthMode !== self::MONTH_OFF) {
             $month = self::month($dt);
-            
+
             if ($monthMode === self::MONTH_ON) {
                 $month = self::MONTHS_GENITIVE[$month];
             }
-            
+
             $parts[] = $month;
         }
 
         if ($yearMode !== self::YEAR_OFF) {
             $year = self::year($dt);
-            
+
             if ($yearMode === self::YEAR_EXTRA) {
                 $year .= ' г.';
             }
-            
+
             $parts[] = $year;
         }
-        
+
         $delimiter = ($monthMode === self::MONTH_NUM) ? '.' : '&nbsp;';
         $result = implode($delimiter, $parts);
 
-        if ($timeMode === self::TIME_HARD || $timeMode === self::TIME_SOFT && self::hasTime($dt)) {
+        if (
+            $timeMode === self::TIME_HARD
+            || $timeMode === self::TIME_SOFT && self::hasTime($dt)
+        ) {
             if ($monthMode === self::MONTH_ON) {
                 $result .= ',';
             }
-            
+
             $result .= '&nbsp;' . self::formatTime($dt);
         }
 
