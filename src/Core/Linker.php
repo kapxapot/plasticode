@@ -58,9 +58,9 @@ class Linker implements LinkerInterface
         return Image::getExtension($type ?? 'jpeg');
     }
 
-    public function getImageExtension(?string $type) : ?string
+    public function getImageExtension(?string $type) : string
     {
-        return Image::getExtension($type ?? 'jpeg');
+        return Image::getExtension($type) ?? 'jpg';
     }
 
     public function page(string $slug = null) : string

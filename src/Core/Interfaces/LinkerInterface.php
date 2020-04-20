@@ -12,7 +12,7 @@ interface LinkerInterface
      */
     public function getExtension(?string $type) : ?string;
 
-    public function getImageExtension(?string $type) : ?string;
+    public function getImageExtension(?string $type) : string;
 
     public function page(string $slug = null) : string;
     public function news(int $id = null) : string;
