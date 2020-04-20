@@ -7,7 +7,12 @@ interface LinkerInterface
     public function abs(string $url = null) : string;
     public function rel(string $url = null) : string;
 
+    /**
+     * @deprecated 0.6.1
+     */
     public function getExtension(?string $type) : ?string;
+
+    public function getImageExtension(?string $type) : ?string;
 
     public function page(string $slug = null) : string;
     public function news(int $id = null) : string;

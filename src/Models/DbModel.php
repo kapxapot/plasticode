@@ -90,6 +90,9 @@ abstract class DbModel extends Model implements SerializableInterface
         return $this;
     }
 
+    /**
+     * @deprecated 0.6.1
+     */
     public function failIfNotPersisted() : void
     {
         Assert::true(

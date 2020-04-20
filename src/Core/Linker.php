@@ -25,21 +25,18 @@ class Linker implements LinkerInterface
 
     /**
      * Makes url absolute. If no url provided, returns site url with trailing '/'.
-     *
-     * @param string $url
-     * @return string
      */
     public function abs(string $url = null) : string
     {
         $siteUrl = $this->settingsProvider
             ->get('view_globals.site_url');
-        
+
         $baseUrl = rtrim($siteUrl, '/');
-        
+
         if (strpos($url, $baseUrl) !== 0) {
             $url = $baseUrl . '/' . ltrim($url, '/');
         }
-        
+
         return $url;
     }
 
@@ -53,7 +50,15 @@ class Linker implements LinkerInterface
         return $this->settingsProvider->get('root');
     }
 
+    /**
+     * @deprecated 0.6.1
+     */
     public function getExtension(?string $type) : ?string
+    {
+        return Image::getExtension($type ?? 'jpeg');
+    }
+
+    public function getImageExtension(?string $type) : ?string
     {
         return Image::getExtension($type ?? 'jpeg');
     }
