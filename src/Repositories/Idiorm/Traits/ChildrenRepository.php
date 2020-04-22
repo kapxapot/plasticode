@@ -23,14 +23,18 @@ trait ChildrenRepository
             ->all();
     }
 
-    protected function withParent(ChildrenInterface $entity) : ChildrenInterface
+    protected function withParent(
+        ChildrenInterface $entity
+    ) : ChildrenInterface
     {
         return $entity->withParent(
             $this->get($entity->parentId())
         );
     }
 
-    protected function withChildren(ChildrenInterface $entity) : ChildrenInterface
+    protected function withChildren(
+        ChildrenInterface $entity
+    ) : ChildrenInterface
     {
         return $entity->withChildren(
             $this->getByParent($entity->getId())
@@ -39,13 +43,16 @@ trait ChildrenRepository
 
     /**
      * Get entities without parent.
-     *
-     * @return Collection
      */
     public function getOrphans() : Collection
     {
-        return $this->query()
-            ->whereNull($this->parentIdField)
-            ->all();
+        return $this->orphansQuery()->all();
+    }
+
+    protected function orphansQuery(?Query $query = null) : Query
+    {
+        $query ??= $this->query();
+
+        return $query->whereNull($this->parentIdField);
     }
 }
