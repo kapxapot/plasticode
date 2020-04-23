@@ -12,7 +12,7 @@ abstract class TypedCollection extends Collection
     {
         Assert::notEmpty($this->class);
         Assert::allIsInstanceOf($data, $this->class);
-        
+
         parent::__construct($data);
     }
 }

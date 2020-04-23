@@ -21,6 +21,8 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
 
     /**
      * Creates collection from array.
+     * 
+     * @return static
      */
     public static function make(?array $data = null) : self
     {
@@ -29,10 +31,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
 
     /**
      * Creates collection from arrayable (including other Colection).
+     * 
+     * @return static
      */
     public static function from(ArrayableInterface $arrayable) : self
     {
-        return self::make($arrayable->toArray());
+        return static::make($arrayable->toArray());
     }
 
     public static function empty() : Collection
@@ -44,19 +48,25 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         return self::$empty;
     }
 
+    /**
+     * @return static
+     */
     public function add($item) : self
     {
-        $col = self::make([$item]);
+        $col = static::make([$item]);
         return $this->concat($col);
     }
 
     /**
      * Concats the collection of the same type.
+     * 
+     * @param static $other
+     * @return static
      */
     public function concat(self $other) : self
     {
         $data = array_merge($this->data, $other->toArray());
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
@@ -77,11 +87,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Returns distinct values grouped by selector ('id' by default).
      * 
      * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
+     * @return static
      */
     public function distinct($by = null) : self
     {
         $data = Arrays::distinctBy($this->data, $by ?? 'id');
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
@@ -109,7 +120,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         $groups = Arrays::groupBy($this->data, $by ?? 'id');
 
         foreach ($groups as $key => $group) {
-            $result[$key] = self::make($group);
+            $result[$key] = static::make($group);
         }
 
         return $result;
@@ -139,39 +150,47 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
 
     /**
      * Skips $offset elements from the start and returns the remaining collection.
+     * 
+     * @return static
      */
     public function skip(int $offset) : self
     {
         $data = Arrays::skip($this->data, $offset);
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
      * Returns first $limit elements.
+     * 
+     * @return static
      */
     public function take(int $limit) : self
     {
         $data = Arrays::take($this->data, $limit);
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
      * Skips $offset elements and takes $limit elements.
      * Negative $offset is counted from the end backwards.
+     * 
+     * @return static
      */
     public function slice(int $offset, int $limit = null) : self
     {
         $data = Arrays::slice($this->data, $offset, $limit);
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
      * Removes $limit elements from the end of collection (backward skip).
+     * 
+     * @return static
      */
     public function trimEnd(int $limit = null) : self
     {
         $data = Arrays::trimEnd($this->data, $limit);
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
@@ -183,7 +202,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     {
         $count = $this->count();
 
-        if ($count === 0) {
+        if ($count == 0) {
             return null;
         }
 
@@ -215,7 +234,6 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      *
      * @param string|\Closure|null $by
      * @param mixed $value
-     * @return boolean
      */
     public function any($by = null, $value = null) : bool
     {
@@ -257,6 +275,8 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * then returns last item or null.
      * 
      * @param string|\Closure|null $by
+     * @param mixed $value
+     * @return mixed
      */
     public function last($by = null, $value = null)
     {
@@ -269,31 +289,41 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Filters collection by property value or closure.
      * 
      * @param string|\Closure $by
+     * @param mixed $value
+     * @return static
      */
     public function where($by, $value = null) : self
     {
         $data = Arrays::filter($this->data, $by, $value);
-        return self::make($data);
+        return static::make($data);
     }
 
-    public function whereIn($column, $values) : self
+    /**
+     * @param array|ArrayableInterface $values
+     * @return static
+     */
+    public function whereIn(string $column, $values) : self
     {
-        if ($values instanceof Collection) {
+        if ($values instanceof ArrayableInterface) {
             $values = $values->toArray();
         }
-        
+
         $data = Arrays::filterIn($this->data, $column, $values);
-        return self::make($data);
+        return static::make($data);
     }
 
-    public function whereNotIn($column, $values) : self
+    /**
+     * @param array|ArrayableInterface $values
+     * @return static
+     */
+    public function whereNotIn(string $column, $values) : self
     {
-        if ($values instanceof Collection) {
+        if ($values instanceof ArrayableInterface) {
             $values = $values->toArray();
         }
-        
+
         $data = Arrays::filterNotIn($this->data, $column, $values);
-        return self::make($data);
+        return static::make($data);
     }
 
     public function map(\Closure $func) : Collection
@@ -314,6 +344,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Sorts collection ascending using property or closure.
      *
      * @param string|\Closure $by
+     * @return static
      */
     public function asc($by, ?string $type = null) : self
     {
@@ -324,11 +355,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Sorts collection descending using property or closure.
      *
      * @param string|\Closure $by
+     * @return static
      */
     public function desc($by, ?string $type = null) : self
     {
         $data = Arrays::orderByDesc($this->data, $by, $type);
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
@@ -336,17 +368,19 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Ascending by default.
      *
      * @param string|\Closure $by
+     * @return static
      */
     public function orderBy($by, ?string $dir = null, ?string $type = null) : self
     {
         $data = Arrays::orderBy($this->data, $by, $dir, $type);
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
      * Sorts collection ascending by column or closure as strings.
      *
      * @param string|\Closure $by
+     * @return static
      */
     public function ascStr($by) : self
     {
@@ -357,11 +391,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Sorts collection descending by column or closure as strings.
      *
      * @param string|\Closure $by
+     * @return static
      */
     public function descStr($by) : self
     {
         $data = Arrays::orderByStrDesc($this->data, $by);
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
@@ -369,52 +404,60 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Ascending by default.
      *
      * @param string|\Closure $by
+     * @return static
      */
     public function orderByStr($by, ?string $dir = null) : self
     {
         $data = Arrays::orderByStr($this->data, $by, $dir);
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
      * Sorts collection using sort steps.
      *
      * @param SortStep[] $steps
+     * @return static
      */
     public function multiSort(array $steps) : self
     {
         $data = Arrays::multiSort($this->data, $steps);
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
      * Sorts collection using comparer function
      * which receives two items to compare.
+     *
+     * @return static
      */
     public function orderByComparer(\Closure $comparer) : self
     {
         $data = $this->data; // cloning
         usort($data, $comparer);
 
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
      * Reorders collection's items in reverse.
+     *
+     * @return static
      */
     public function reverse() : self
     {
         $data = array_reverse($this->data);
-        return self::make($data);
+        return static::make($data);
     }
 
     /**
      * Removes nulls, empty strings and 0s.
+     *
+     * @return static
      */
     public function clean() : self
     {
         $data = Arrays::clean($this->data);
-        return self::make($data);
+        return static::make($data);
     }
 
     // ArrayAccess
@@ -423,9 +466,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     {
         if (is_null($offset)) {
             throw new \InvalidArgumentException('$offset cannot be null.');
-        } else {
-            $this->data[$offset] = $value;
         }
+
+        $this->data[$offset] = $value;
     }
 
     public function offsetExists($offset)
