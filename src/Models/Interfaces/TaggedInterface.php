@@ -4,7 +4,7 @@ namespace Plasticode\Models\Interfaces;
 
 use Plasticode\Collections\TagLinkCollection;
 
-interface TagsInterface
+interface TaggedInterface
 {
     /**
      * Returns tags as an array of TRIMMED strings.

@@ -16,6 +16,14 @@ class TagRepositoryMock implements TagRepositoryInterface
         $this->tags = Collection::make($seeder->seed());
     }
 
+    public function store(array $data) : Tag
+    {
+        $tag = new Tag($data);
+        $this->tags = $this->tags->add($tag);
+
+        return $tag;
+    }
+
     public function getIdsByTag(string $entityType, string $tag) : Collection
     {
         return $this->tags
@@ -24,7 +32,7 @@ class TagRepositoryMock implements TagRepositoryInterface
             ->extract('entity_id');
     }
 
-    public function getByTag(string $tag) : Collection
+    public function getAllByTag(string $tag) : Collection
     {
         return $this->tags
             ->where('tag', $tag);
@@ -32,21 +40,7 @@ class TagRepositoryMock implements TagRepositoryInterface
 
     public function exists(string $tag) : bool
     {
-        return $this->getByTag($tag)->any();
-    }
-
-    public function search(string $searchQuery) : Collection
-    {
-        return $this->tags
-            ->where('tag', $searchQuery);
-    }
-
-    public function store(array $data) : Tag
-    {
-        $tag = new Tag($data);
-        $this->tags = $this->tags->add($tag);
-
-        return $tag;
+        return $this->getAllByTag($tag)->any();
     }
 
     public function deleteByEntity(string $entityType, int $entityId) : bool
@@ -59,5 +53,11 @@ class TagRepositoryMock implements TagRepositoryInterface
             );
 
         return true;
+    }
+
+    public function search(string $searchQuery) : Collection
+    {
+        return $this->tags
+            ->where('tag', $searchQuery);
     }
 }

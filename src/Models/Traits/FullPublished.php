@@ -6,6 +6,8 @@ use Plasticode\Util\Date;
 
 /**
  * Full publish support: published + published_at.
+ * 
+ * @property string|null $publishedAt
  */
 trait FullPublished
 {

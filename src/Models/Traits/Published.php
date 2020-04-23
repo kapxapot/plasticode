@@ -4,6 +4,8 @@ namespace Plasticode\Models\Traits;
 
 /**
  * Limited publish support: only published (no published_at).
+ * 
+ * @property integer $published
  */
 trait Published
 {

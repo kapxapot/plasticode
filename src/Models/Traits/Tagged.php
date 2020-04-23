@@ -5,7 +5,7 @@ namespace Plasticode\Models\Traits;
 use Plasticode\Collections\TagLinkCollection;
 Use Plasticode\Util\Strings;
 
-trait Tags
+trait Tagged
 {
     protected function getTagsField() : string
     {

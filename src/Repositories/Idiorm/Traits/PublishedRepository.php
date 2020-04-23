@@ -11,26 +11,17 @@ trait PublishedRepository
 {
     protected string $publishedField = 'published';
 
-    protected abstract function query() : Query;
-
-    /**
-     * For Tags trait.
-     */
-    protected function tagsWhereQuery(Query $query) : Query
-    {
-        return $this->wherePublishedQuery($query);
-    }
-
     protected function publishedQuery(Query $query = null) : Query
     {
-        $query = $query ?? $this->query();
-        
-        return $this->wherePublishedQuery($query);
+        $query ??= $this->query();
+
+        return $this->filterPublished($query);
     }
 
-    protected function wherePublishedQuery(Query $query) : Query
+    abstract protected function query() : Query;
+
+    protected function filterPublished(Query $query) : Query
     {
-        return $query
-            ->where($this->publishedField, 1);
+        return $query->where($this->publishedField, 1);
     }
 }

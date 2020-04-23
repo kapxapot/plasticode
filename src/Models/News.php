@@ -2,14 +2,14 @@
 
 namespace Plasticode\Models;
 
-use Plasticode\Models\Interfaces\TagsInterface;
+use Plasticode\Models\Interfaces\TaggedInterface;
 use Plasticode\Models\Traits\FullPublished;
-use Plasticode\Models\Traits\Tags;
+use Plasticode\Models\Traits\Tagged;
 
-class News extends DbModel implements TagsInterface
+class News extends DbModel implements TaggedInterface
 {
     use FullPublished;
-    use Tags;
+    use Tagged;
 
     protected function requiredWiths(): array
     {

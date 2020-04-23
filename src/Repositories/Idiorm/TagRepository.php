@@ -6,17 +6,16 @@ use Plasticode\Collection;
 use Plasticode\Models\Tag;
 use Plasticode\Query;
 use Plasticode\Repositories\Idiorm\Basic\IdiormRepository;
+use Plasticode\Repositories\Interfaces\SearchableRepositoryInterface;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 
-class TagRepository extends IdiormRepository implements TagRepositoryInterface
+class TagRepository extends IdiormRepository implements TagRepositoryInterface, SearchableRepositoryInterface
 {
     protected string $entityClass = Tag::class;
 
-    protected function getByEntityQuery(string $entityType, int $entityId) : Query
+    public function store(array $data) : Tag
     {
-        return $this
-            ->entityQuery($entityType)
-            ->where('entity_id', $entityId);
+        return $this->storeEntity($data);
     }
 
     public function getIdsByTag(string $entityType, string $tag) : Collection
@@ -28,15 +27,7 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface
             ->extract('entity_id');
     }
 
-    public function deleteByEntity(string $entityType, int $entityId) : bool
-    {
-        return $this
-            ->entityQuery($entityType)
-            ->where('entity_id', $entityId)
-            ->delete();
-    }
-    
-    public function getByTag(string $tag) : Collection
+    public function getAllByTag(string $tag) : Collection
     {
         return $this->byTagQuery($tag)->all();
     }
@@ -46,14 +37,22 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface
         return $this->byTagQuery($tag)->any();
     }
 
-    private function entityQuery(string $entityType) : Query
+    public function deleteByEntity(string $entityType, int $entityId) : bool
+    {
+        return $this
+            ->entityQuery($entityType)
+            ->where('entity_id', $entityId)
+            ->delete();
+    }
+
+    protected function entityQuery(string $entityType) : Query
     {
         return $this
             ->query()
             ->where('entity_type', $entityType);
     }
 
-    private function byTagQuery(string $tag) : Query
+    protected function byTagQuery(string $tag) : Query
     {
         return $this
             ->query()
@@ -69,8 +68,10 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface
             ->all();
     }
 
-    public function store(array $data) : Tag
+    protected function byEntityQuery(string $entityType, int $entityId) : Query
     {
-        return $this->storeEntity($data);
+        return $this
+            ->entityQuery($entityType)
+            ->where('entity_id', $entityId);
     }
 }

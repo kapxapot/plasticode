@@ -15,7 +15,7 @@ trait FullPublishedRepository
 
     use PublishedRepository
     {
-        PublishedRepository::wherePublishedQuery as protected parentWherePublishedQuery;
+        PublishedRepository::filterPublished as protected parentFilterPublished;
     }
 
     protected string $publishedAtField = 'published_at';
@@ -29,7 +29,7 @@ trait FullPublishedRepository
     public function protectQuery(Query $query, ?User $user) : Query
     {
         $editor = $this->can(Rights::EDIT);
-        
+
         if ($editor) {
             return $query;
         }
@@ -45,16 +45,16 @@ trait FullPublishedRepository
                 [$user->getId()]
             );
         }
-        
+
         return $query->whereRaw($publishedCondition);
     }
 
     public abstract function can(string $rights) : bool;
 
-    protected function wherePublishedQuery(Query $query) : Query
+    protected function filterPublished(Query $query) : Query
     {
         return $this
-            ->parentWherePublishedQuery($query)
+            ->parentFilterPublished($query)
             ->whereRaw('(' . $this->publishedAtField . ' < now())');
     }
 }

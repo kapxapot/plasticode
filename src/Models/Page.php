@@ -2,20 +2,19 @@
 
 namespace Plasticode\Models;
 
-use Plasticode\Models\Interfaces\TagsInterface;
+use Plasticode\Models\Interfaces\TaggedInterface;
 use Plasticode\Models\Traits\FullPublished;
-use Plasticode\Models\Traits\Tags;
+use Plasticode\Models\Traits\Tagged;
 
 /**
- * @property integer $id
  * @property string $slug
  * @property string $title
  * @property string|null $text
  */
-class Page extends DbModel implements TagsInterface
+class Page extends DbModel implements TaggedInterface
 {
     use FullPublished;
-    use Tags;
+    use Tagged;
 
     protected function requiredWiths(): array
     {
