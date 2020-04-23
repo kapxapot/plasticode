@@ -2,57 +2,25 @@
 
 namespace Plasticode\Repositories\Idiorm\Traits;
 
-use Plasticode\Collection;
-use Plasticode\Models\Interfaces\ChildrenInterface;
 use Plasticode\Query;
 
 trait ChildrenRepository
 {
     protected string $parentIdField = 'parent_id';
 
-    protected abstract function query() : Query;
-    protected abstract function get(?int $id) : ?ChildrenInterface;
-
     /**
-     * Get entities by parent.
+     * Get children by parent query.
      */
-    public function getByParent(?int $parentId) : Collection
+    protected function filterByParent(Query $query, ?int $parentId) : Query
     {
-        return $this->query()
-            ->where($this->parentIdField, $parentId)
-            ->all();
-    }
-
-    protected function withParent(
-        ChildrenInterface $entity
-    ) : ChildrenInterface
-    {
-        return $entity->withParent(
-            $this->get($entity->parentId())
-        );
-    }
-
-    protected function withChildren(
-        ChildrenInterface $entity
-    ) : ChildrenInterface
-    {
-        return $entity->withChildren(
-            $this->getByParent($entity->getId())
-        );
+        return $query->where($this->parentIdField, $parentId);
     }
 
     /**
-     * Get entities without parent.
+     * Get entities without parent query.
      */
-    public function getOrphans() : Collection
+    protected function filterOrphans(Query $query) : Query
     {
-        return $this->orphansQuery()->all();
-    }
-
-    protected function orphansQuery(?Query $query = null) : Query
-    {
-        $query ??= $this->query();
-
         return $query->whereNull($this->parentIdField);
     }
 }
