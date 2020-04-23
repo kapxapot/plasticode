@@ -3,8 +3,8 @@
 namespace Plasticode\Models\Traits;
 
 /**
- * @method self|null parent()
- * @method self withParent(self|null $parent)
+ * @method static|null parent()
+ * @method static withParent(static|callable|null $parent)
  */
 trait Parented
 {

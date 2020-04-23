@@ -7,7 +7,7 @@ use Plasticode\Models\User;
 /**
  * @property integer|null $updatedBy
  * @method User updater()
- * @method self withUpdater(User|callable $updater)
+ * @method static withUpdater(User|callable $updater)
  */
 trait Updated
 {

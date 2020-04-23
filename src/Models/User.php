@@ -13,8 +13,8 @@ use Plasticode\Models\Traits\UpdatedAt;
  * @property integer $roleId
  * @method string gravatarUrl()
  * @method Role role()
- * @method self withGravatarUrl(string|callable $url)
- * @method self withRole(Role|callable $role)
+ * @method static withGravatarUrl(string|callable $url)
+ * @method static withRole(Role|callable $role)
  */
 class User extends DbModel
 {
