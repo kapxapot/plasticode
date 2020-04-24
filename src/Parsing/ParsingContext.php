@@ -8,23 +8,18 @@ use Plasticode\Util\Text;
 
 class ParsingContext
 {
-    /** @var string|null */
-    public $text;
-
-    /** @var Collection */
-    public $contents;
+    public ?string $text;
+    public Collection $contents;
+    public ?string $updatedAt;
 
     /** @var string[] */
-    public $largeImages = [];
+    public array $largeImages = [];
 
     /** @var string[] */
-    public $images = [];
+    public array $images = [];
 
     /** @var string[] */
-    public $videos = [];
-
-    /** @var string|null */
-    public $updatedAt;
+    public array $videos = [];
 
     private function __construct()
     {
@@ -63,9 +58,7 @@ class ParsingContext
 
         $context->contents = Collection::make(
             array_map(
-                function ($item) {
-                    return new ContentsItem(...array_values($item));
-                },
+                fn ($item) => new ContentsItem(...array_values($item)),
                 $array['contents'] ?? []
             )
         );
@@ -128,7 +121,6 @@ class ParsingContext
      * Sets text from lines (strings) array.
      *
      * @param string[] $lines
-     * @return self
      */
     public function setLines(array $lines) : self
     {
