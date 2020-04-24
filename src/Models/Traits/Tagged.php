@@ -11,10 +11,7 @@ Use Plasticode\Util\Strings;
  */
 trait Tagged
 {
-    protected function getTagsField() : string
-    {
-        return 'tags';
-    }
+    protected string $tagsField = 'tags';
 
     /**
      * Returns tags as an array of TRIMMED strings.
@@ -23,7 +20,7 @@ trait Tagged
      */
     public function getTags() : array
     {
-        $tagsField = $this->getTagsField();
+        $tagsField = $this->tagsField;
         $tags = $this->{$tagsField};
 
         return Strings::explode($tags);
