@@ -6,6 +6,9 @@ use Plasticode\Parsing\Interfaces\ParserInterface;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Util\Date;
 
+/**
+ * @deprecated 0.6.1
+ */
 trait CachedDescription
 {
     protected static function getDescriptionField() : string

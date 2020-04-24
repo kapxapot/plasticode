@@ -5,6 +5,9 @@ namespace Plasticode\Models\Traits;
 use Plasticode\Parsing\Interfaces\ParserInterface;
 use Plasticode\Parsing\ParsingContext;
 
+/**
+ * @deprecated 0.6.1
+ */
 trait Description
 {
     protected static function getDescriptionField() : string
