@@ -10,9 +10,4 @@ interface TaggedInterface
      * @return string[]
      */
     function getTags() : array;
-
-    /**
-     * Tab name for TagLink & UI.
-     */
-    function tabName() : string;
 }

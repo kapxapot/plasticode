@@ -5,10 +5,12 @@ namespace Plasticode\Models\Traits;
 use Plasticode\Collections\TagLinkCollection;
 Use Plasticode\Util\Strings;
 
+/**
+ * @method TagLinkCollection tagLinks()
+ * @method static withTagLinks(TagLinkCollection|callable $tagLinks)
+ */
 trait Tagged
 {
-    protected string $tagLinksPropertyName = 'tagLinks';
-
     protected function getTagsField() : string
     {
         return 'tags';
@@ -25,28 +27,5 @@ trait Tagged
         $tags = $this->{$tagsField};
 
         return Strings::explode($tags);
-    }
-
-    /**
-     * Returns tag links.
-     */
-    public function tagLinks() : TagLinkCollection
-    {
-        return $this->getWithProperty(
-            $this->tagLinksPropertyName
-        );
-    }
-
-    /**
-     * Adds tag links.
-     * 
-     * @return static
-     */
-    public function withTagLinks(TagLinkCollection $tagLinks) : self
-    {
-        return $this->setWithProperty(
-            $this->tagLinksPropertyName,
-            $tagLinks
-        );
     }
 }

@@ -2,8 +2,11 @@
 
 namespace Plasticode\Testing\Mocks;
 
+use Plasticode\Collections\TagLinkCollection;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\IO\Image;
+use Plasticode\Models\Interfaces\TaggedInterface;
+use Plasticode\TagLink;
 
 class LinkerMock implements LinkerInterface
 {
@@ -60,5 +63,20 @@ class LinkerMock implements LinkerInterface
         $hash = $hash ?? '0';
 
         return 'https://www.gravatar.com/avatar/' . $hash . '?s=100&d=mp';
+    }
+
+    public function tagLinks(
+        TaggedInterface $entity,
+        ?string $tab = null
+    ) : TagLinkCollection
+    {
+        $tags = $entity->getTags();
+
+        $tagLinks = array_map(
+            fn (string $t) => new TagLink($t, $this->tag($t, $tab)),
+            $tags
+        );
+
+        return TagLinkCollection::make($tagLinks);
     }
 }
