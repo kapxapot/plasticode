@@ -13,6 +13,8 @@ trait Updated
 {
     use UpdatedAt;
 
+    protected string $updaterPropertyName = 'updater';
+
     public function isUpdatedBy(User $user) : bool
     {
         return $this->updater()

@@ -12,6 +12,7 @@ Use Plasticode\Util\Strings;
 trait Tagged
 {
     protected string $tagsField = 'tags';
+    protected string $tagLinksPropertyName = 'tagLinks';
 
     /**
      * Returns tags as an array of TRIMMED strings.

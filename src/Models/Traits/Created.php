@@ -13,6 +13,8 @@ trait Created
 {
     use CreatedAt;
 
+    protected string $creatorPropertyName = 'creator';
+
     public function isCreatedBy(User $user) : bool
     {
         return $this->creator()
