@@ -7,6 +7,8 @@ Use Plasticode\Util\Strings;
 
 trait Tagged
 {
+    protected string $tagLinksPropertyName = 'tagLinks';
+
     protected function getTagsField() : string
     {
         return 'tags';
@@ -30,14 +32,21 @@ trait Tagged
      */
     public function tagLinks() : TagLinkCollection
     {
-        return $this->getWithProperty('tagLinks');
+        return $this->getWithProperty(
+            $this->tagLinksPropertyName
+        );
     }
 
     /**
      * Adds tag links.
+     * 
+     * @return static
      */
     public function withTagLinks(TagLinkCollection $tagLinks) : self
     {
-        return $this->setWithProperty('tagLinks', $tagLinks);
+        return $this->setWithProperty(
+            $this->tagLinksPropertyName,
+            $tagLinks
+        );
     }
 }

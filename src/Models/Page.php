@@ -18,6 +18,8 @@ class Page extends DbModel implements TaggedInterface
 
     protected function requiredWiths(): array
     {
-        return ['tagLinks'];
+        return [
+            $this->tagLinksPropertyName
+        ];
     }
 }

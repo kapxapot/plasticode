@@ -2,24 +2,32 @@
 
 namespace Plasticode\Core\Interfaces;
 
+use Plasticode\Collections\TagLinkCollection;
+use Plasticode\Models\Interfaces\TaggedInterface;
+
 interface LinkerInterface
 {
-    public function abs(string $url = null) : string;
-    public function rel(string $url = null) : string;
+    function abs(string $url = null) : string;
+    function rel(string $url = null) : string;
 
     /**
      * @deprecated 0.6.1
      */
-    public function getExtension(?string $type) : ?string;
+    function getExtension(?string $type) : ?string;
 
-    public function getImageExtension(?string $type) : string;
+    function getImageExtension(?string $type) : string;
 
-    public function page(string $slug = null) : string;
-    public function news(int $id = null) : string;
-    public function tag(string $tag = null, string $tab = null) : string;
+    function page(string $slug = null) : string;
+    function news(int $id = null) : string;
+    function tag(string $tag = null, string $tab = null) : string;
 
-    public function twitch(string $id) : string;
-    public function youtube(string $code) : string;
+    function twitch(string $id) : string;
+    function youtube(string $code) : string;
 
-    public function gravatarUrl(string $hash = null) : string;
+    function gravatarUrl(string $hash = null) : string;
+
+    function tagLinks(
+        TaggedInterface $entity,
+        ?string $tab = null
+    ) : TagLinkCollection;
 }

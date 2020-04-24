@@ -2,9 +2,12 @@
 
 namespace Plasticode\Core;
 
+use Plasticode\Collections\TagLinkCollection;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\IO\Image;
+use Plasticode\Models\Interfaces\TaggedInterface;
+use Plasticode\TagLink;
 use Plasticode\Util\Numbers;
 use Plasticode\Util\Strings;
 use Slim\Interfaces\RouterInterface;
@@ -77,11 +80,11 @@ class Linker implements LinkerInterface
     {
         $tag = Strings::fromSpaces($tag, '+');
         $url = $this->router->pathFor('main.tag', ['tag' => $tag]);
-        
+
         if ($tab) {
             $url .= '#/' . $tab;
         }
-        
+
         return $url;
     }
     
@@ -120,5 +123,20 @@ class Linker implements LinkerInterface
     public function randPic(int $width, int $height) : string
     {
         return 'https://picsum.photos/' . $width . '/' . $height . '?' . Numbers::generate(6);
+    }
+
+    public function tagLinks(
+        TaggedInterface $entity,
+        ?string $tab = null
+    ) : TagLinkCollection
+    {
+        $tags = $entity->getTags();
+
+        $tagLinks = array_map(
+            fn (string $t) => new TagLink($t, $this->tag($t, $tab)),
+            $tags
+        );
+
+        return TagLinkCollection::make($tagLinks);
     }
 }

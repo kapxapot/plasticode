@@ -2,8 +2,6 @@
 
 namespace Plasticode\Models\Interfaces;
 
-use Plasticode\Collections\TagLinkCollection;
-
 interface TaggedInterface
 {
     /**
@@ -14,12 +12,7 @@ interface TaggedInterface
     function getTags() : array;
 
     /**
-     * Adds tag links.
+     * Tab name for TagLink & UI.
      */
-    function withTagLinks(TagLinkCollection $tagLinks) : self;
-
-    /**
-     * Returns tag links.
-     */
-    public function tagLinks() : TagLinkCollection;
+    function tabName() : string;
 }

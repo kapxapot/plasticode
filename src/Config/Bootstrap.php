@@ -254,15 +254,13 @@ class Bootstrap
         $map['newsRepository'] = fn (CI $c) =>
             new NewsRepository(
                 $c->repositoryContext,
-                $c->tagRepository,
-                $c->linker
+                $c->tagRepository
             );
 
         $map['pageRepository'] = fn (CI $c) =>
             new PageRepository(
                 $c->repositoryContext,
-                $c->tagRepository,
-                $c->linker
+                $c->tagRepository
             );
 
         $map['roleRepository'] = fn (CI $c) =>
