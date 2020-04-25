@@ -8,9 +8,9 @@ use Plasticode\Util\Text;
 
 class ParsingContext
 {
-    public ?string $text;
+    public ?string $text = null;
     public Collection $contents;
-    public ?string $updatedAt;
+    public ?string $updatedAt = null;
 
     /** @var string[] */
     public array $largeImages = [];

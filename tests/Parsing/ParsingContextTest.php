@@ -10,7 +10,7 @@ use Plasticode\Util\Date;
 
 final class ParsingContextTest extends TestCase
 {
-    private $json = '{"text":"some text","contents":[{"level":1,"label":"1","text":"Hey"},{"level":1,"label":"2","text":"Yay"}],"largeImages":["largeImage1","largeImage2"],"images":["image1","image2"],"videos":["video1","video2"],"updatedAt":"imma date"}';
+    private $json = '{"text":"some text","contents":[{"level":1,"label":"1","text":"Hey"},{"level":1,"label":"2","text":"Yay"}],"updatedAt":"imma date","largeImages":["largeImage1","largeImage2"],"images":["image1","image2"],"videos":["video1","video2"]}';
 
     public function testJsonEncode() : void
     {
@@ -33,7 +33,7 @@ final class ParsingContextTest extends TestCase
 
         $actual = json_encode($context);
 
-        $expected = '{"text":"some text","contents":[{"level":1,"label":"1","text":"Hey"},{"level":1,"label":"2","text":"Yay"}],"largeImages":["largeImage1","largeImage2"],"images":["image1","image2"],"videos":["video1","video2"],"updatedAt":"' . $date . '"}';
+        $expected = '{"text":"some text","contents":[{"level":1,"label":"1","text":"Hey"},{"level":1,"label":"2","text":"Yay"}],"updatedAt":"' . $date . '","largeImages":["largeImage1","largeImage2"],"images":["image1","image2"],"videos":["video1","video2"]}';
 
         $this->assertEquals($expected, $actual);
     }
