@@ -514,7 +514,17 @@ class Query implements \IteratorAggregate, ArrayableInterface
     }
 
     /**
-     * Applies query filter.
+     * Applies query filters if the condition is true.
+     */
+    public function applyIf(bool $condition, callable ...$filters) : self
+    {
+        return $condition
+            ? $this->apply(...$filters)
+            : $this;
+    }
+
+    /**
+     * Applies query filters.
      * 
      * Filter must accept Query and return Query.
      */
