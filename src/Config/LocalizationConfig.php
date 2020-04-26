@@ -11,19 +11,18 @@ class LocalizationConfig
      * 
      * Default language - English (en)
      *
-     * @param string $lang
-     * @return array
+     * @return array<string, string>
      */
-    public function get(string $lang) : array
+    public function get(?string $lang) : array
     {
         if (!$lang || $lang == 'en') {
             return null;
         }
-        
-        if (is_callable(array($this, $lang))) {
+
+        if (method_exists($this, $lang)) {
             return $this->{$lang}();
         }
-        
+
         throw new InvalidConfigurationException(
             'Dictionary for language \'' . $lang . '\' not found. ' .
             'Define it in App\\Config\\Localization class.'
@@ -31,9 +30,9 @@ class LocalizationConfig
     }
     
     /**
-     * Localization config for Russian (ru)
+     * Localization config for Russian (ru).
      *
-     * @return array
+     * @return array<string, string>
      */
     protected function ru() : array
     {

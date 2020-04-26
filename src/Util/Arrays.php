@@ -2,6 +2,7 @@
 
 namespace Plasticode\Util;
 
+use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Traits\PropertyAccess;
 use Webmozart\Assert\Assert;
 
@@ -9,8 +10,8 @@ class Arrays
 {
     use PropertyAccess;
 
-    const ID_FIELD = 'id';
-    const DOT = '.';
+    private const ID_FIELD = 'id';
+    private const DOT = '.';
 
     /**
      * Checks if $array is an array or implements \ArrayAccess.
@@ -84,9 +85,10 @@ class Arrays
         while (count($keys) > 1) {
             $key = array_shift($keys);
 
-            // If the key doesn't exist at this depth, we will just create an empty array
-            // to hold the next value, allowing us to create the arrays to hold final
-            // values at the correct depth. Then we'll keep digging into the array.
+            // If the key doesn't exist at this depth, we will just create
+            // an empty array to hold the next value, allowing us to create
+            // the arrays to hold final values at the correct depth.
+            // Then we'll keep digging into the array.
             if (!isset($array[$key]) || !is_array($array[$key])) {
                 $array[$key] = [];
             }
@@ -110,11 +112,13 @@ class Arrays
     /**
      * Returns distinct values from array grouped by selector.
      * 
-     * @param string|\Closure $by Column/property name or Closure, returning generated column/property name.
+     * @param string|callable $by Column/property name or callable, returning generated column/property name.
      */
     public static function distinctBy(array $array, $by) : array
     {
-        return array_values(self::toAssocBy($array, $by));
+        return array_values(
+            self::toAssocBy($array, $by)
+        );
     }
 
     /**
@@ -130,24 +134,22 @@ class Arrays
     }
 
     /**
-     * Converts array to associative array by column/property or Closure.
+     * Converts array to associative array by column/property or callable.
      * Selector must be unique, otherwise only first element is taken,
      * others are discarded.
      * 
-     * @param string|\Closure $by Column/property name or Closure, returning generated column/property name.
+     * @param string|callable $by Column/property name or callable, returning generated column/property name.
      * @return array<string, mixed>
      */
     public static function toAssocBy(array $array, $by) : array
     {
         $groups = self::groupBy($array, $by);
-        
+
         array_walk(
             $groups,
-            function (&$item, $key) {
-                $item = $item[0];
-            }
+            fn (&$item, $key) => $item = $item[0]
         );
-        
+
         return $groups;
     }
 
@@ -162,9 +164,9 @@ class Arrays
     }
 
     /**
-     * Groups array by column/property or \Closure.
+     * Groups array by column/property or callable.
      * 
-     * @param string|\Closure $by Column/property name or \Closure, returning generated column/property name.
+     * @param string|callable $by Column/property name or callable, returning generated column/property name.
      * @return array<string, mixed>
      */
     public static function groupBy(array $array, $by) : array
@@ -176,13 +178,13 @@ class Arrays
         $result = [];
 
         foreach ($array as $element) {
-            $key = $by instanceof \Closure
-                ? $by($element)
+            $key = is_callable($by)
+                ? ($by)($element)
                 : self::getProperty($element, $by);
             
             $result[$key][] = $element;
         }
-        
+
         return $result;
     }
 
@@ -202,29 +204,25 @@ class Arrays
         if (empty($array)) {
             return [];
         }
-        
+
         $values = array_map(
-            function ($item) use ($column) {
-                return self::getProperty($item, $column);
-            },
+            fn ($item) => self::getProperty($item, $column),
             $array
         );
 
         $values = array_filter(
             array_unique($values),
-            function ($item) {
-                return !is_null($item);
-            }
+            fn ($item) => !is_null($item)
         );
 
         return array_values($values);
     }
 
     /**
-     * Filters array by column/property value or Closure,
+     * Filters array by column/property value or callable,
      * then returns first item or null.
      * 
-     * @param string|\Closure
+     * @param string|callable
      * @param mixed $value
      * @return mixed
      */
@@ -235,10 +233,10 @@ class Arrays
     }
 
     /**
-     * Filters array by column/property value or Closure,
+     * Filters array by column/property value or callable,
      * then returns last item or null.
      * 
-     * @param string|\Closure
+     * @param string|callable
      * @param mixed $value
      * @return mixed
      */
@@ -249,27 +247,25 @@ class Arrays
     }
 
     /**
-     * Filters array by column/property value or Closure.
+     * Filters array by column/property value or callable.
      * 
-     * @param string|\Closure $by
+     * @param string|callable $by
      * @param mixed $value
      */
     public static function filter(array $array, $by, $value = null) : array
     {
         Assert::true(
-            $by instanceof \Closure && is_null($value)
-            ||
-            is_string($by) && !is_null($value),
-            '$by must be a property/column with provided $value, or it must be a Closure without $value.'
+            is_callable($by) && is_null($value)
+            || is_string($by) && !is_null($value),
+            '$by must be a property/column with provided $value, or it must be a callable without $value.'
         );
 
         $values = array_filter(
             $array,
-            function ($item) use ($by, $value) {
-                return $by instanceof \Closure
-                    ? $by($item)
-                    : self::getProperty($item, $by) == $value;
-            }
+            fn ($item) => 
+            is_callable($by)
+                ? ($by)($item)
+                : self::getProperty($item, $by) == $value
         );
 
         return array_values($values);
@@ -286,9 +282,11 @@ class Arrays
     {
         return self::filter(
             $array,
-            function ($item) use ($column, $values) {
-                return in_array(self::getProperty($item, $column), $values);
-            }
+            fn ($item) =>
+            in_array(
+                self::getProperty($item, $column),
+                $values
+            )
         );
     }
 
@@ -303,9 +301,11 @@ class Arrays
     {
         return self::filter(
             $array,
-            function ($item) use ($column, $values) {
-                return !in_array(self::getProperty($item, $column), $values);
-            }
+            fn ($item) =>
+            !in_array(
+                self::getProperty($item, $column),
+                $values
+            )
         );
     }
 
@@ -318,13 +318,11 @@ class Arrays
     public static function trim(array $strArray) : array
     {
         $array = array_map(
-            function($chunk) {
-                return trim($chunk);
-            },
+            fn ($s) => trim($s),
             $strArray
         );
-        
-        return Arrays::clean($array);
+
+        return self::clean($array);
     }
 
     /**
@@ -362,13 +360,13 @@ class Arrays
     public static function filterKeys(array $array, array $keys) : array
     {
         $result = [];
-        
+
         foreach ($keys as $key) {
             if (isset($array[$key])) {
                 $result[$key] = $array[$key];
             }
         }
-        
+
         return $result;
     }
 
@@ -411,7 +409,7 @@ class Arrays
      * Orders array items, ascending / numeric by default.
      * Shortcut for Sort::by().
      * 
-     * @param string|\Closure $by
+     * @param string|callable $by
      */
     public static function orderBy(
         array $array,
@@ -427,7 +425,7 @@ class Arrays
      * Orders array items descending, numeric by default.
      * Shortcut for Sort::desc().
      * 
-     * @param string|\Closure $by
+     * @param string|callable $by
      */
     public static function orderByDesc(
         array $array,
@@ -442,7 +440,7 @@ class Arrays
      * Orders array items as strings, ascending by default.
      * Shortcut for Sort::byStr().
      * 
-     * @param string|\Closure $by
+     * @param string|callable $by
      */
     public static function orderByStr(
         array $array,
@@ -457,7 +455,7 @@ class Arrays
      * Orders array items descending as strings.
      * Shortcut for Sort::descStr().
      * 
-     * @param string|\Closure $by
+     * @param string|callable $by
      */
     public static function orderByStrDesc(array $array, $by) : array
     {
@@ -473,5 +471,29 @@ class Arrays
     public static function multiSort(array $array, array $steps) : array
     {
         return Sort::multi($array, $steps);
+    }
+
+    /**
+     * Adopts array or ArrayableInterface and converts them to array.
+     *
+     * @param array|ArrayableInterface|null $array
+     * @return array|null
+     */
+    public static function adopt($array) : ?array
+    {
+        if (is_null($array)) {
+            return null;
+        }
+
+        if ($array instanceof ArrayableInterface) {
+            $array = $array->toArray();
+        }
+
+        Assert::isArray(
+            $array,
+            'Error adopting array: it must be a ArrayableInterface or an array.'
+        );
+
+        return $array;
     }
 }

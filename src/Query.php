@@ -5,6 +5,7 @@ namespace Plasticode;
 use Plasticode\Exceptions\SqlException;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\DbModel;
+use Plasticode\Util\Arrays;
 use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
@@ -338,22 +339,18 @@ class Query implements \IteratorAggregate, ArrayableInterface
      * Wrapper method for the underlying whereIn().
      * 
      * Allows passing an array or a ArrayableInterface.
+     * In case of empty array returns empty query!
      *
      * @param array|ArrayableInterface $values
      */
     public function whereIn(string $field, $values) : self
     {
-        if ($values instanceof ArrayableInterface) {
-            $values = $values->toArray();
-        }
-        
-        Assert::isArray(
-            $values,
-            'WhereIn error: values must be a ArrayableInterface or an array.'
-        );
+        $values = Arrays::adopt($values);
 
-        Assert::notEmpty($values);
-        
+        if (empty($values)) {
+            return self::empty();
+        }
+
         return $this->branch(
             fn ($q) => $q->whereIn($field, $values)
         );
@@ -368,17 +365,12 @@ class Query implements \IteratorAggregate, ArrayableInterface
      */
     public function whereNotIn(string $field, $values) : self
     {
-        if ($values instanceof ArrayableInterface) {
-            $values = $values->toArray();
-        }
-        
-        Assert::isArray(
-            $values,
-            'WhereNotIn error: values must be a ArrayableInterface or an array.'
-        );
+        $values = Arrays::adopt($values);
 
-        Assert::notEmpty($values);
-        
+        if (empty($values)) {
+            return $this;
+        }
+
         return $this->branch(
             fn ($q) => $q->whereNotIn($field, $values)
         );
@@ -521,6 +513,21 @@ class Query implements \IteratorAggregate, ArrayableInterface
         return $condition
             ? $this->apply(...$filters)
             : $this;
+    }
+
+    /**
+     * Applies first query filter if the condition is true
+     * and second query filter if it's false.
+     */
+    public function applyIfElse(
+        bool $condition,
+        callable $ifTrue,
+        callable $ifFalse
+    ) : self
+    {
+        return $condition
+            ? $this->apply($ifTrue)
+            : $this->apply($ifFalse);
     }
 
     /**

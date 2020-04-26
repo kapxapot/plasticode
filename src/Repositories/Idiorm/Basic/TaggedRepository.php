@@ -27,7 +27,7 @@ abstract class TaggedRepository extends IdiormRepository
         $this->tagRepository = $tagRepository;
     }
 
-    protected function byTagQuery(
+    protected function filterByTag(
         Query $query,
         string $tag,
         int $limit = 0
@@ -39,10 +39,6 @@ abstract class TaggedRepository extends IdiormRepository
             $this->getTable(),
             $tag
         );
-
-        if ($ids->isEmpty()) {
-            return Query::empty();
-        }
 
         return $query
             ->whereIn($this->idField(), $ids)

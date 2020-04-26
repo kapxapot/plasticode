@@ -5,6 +5,7 @@ namespace Plasticode\Core;
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Interfaces\ArrayableInterface;
+use Plasticode\Util\Arrays;
 use Plasticode\ViewModels\UrlViewModel;
 
 class Renderer implements RendererInterface
@@ -77,15 +78,11 @@ class Renderer implements RendererInterface
 
     public function component(string $name, $data = null) : string
     {
-        if ($data instanceof ArrayableInterface) {
-            $data = $data->toArray();
-        }
-
         return $this->view->fetch(
             'components/spaceless.twig',
             [
                 'name' => $name,
-                'data' => $data ?? [],
+                'data' => Arrays::adopt($data) ?? [],
             ]
         );
     }

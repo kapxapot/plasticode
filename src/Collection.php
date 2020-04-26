@@ -4,6 +4,7 @@ namespace Plasticode;
 
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Util\Arrays;
+use Webmozart\Assert\Assert;
 
 class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializable, ArrayableInterface
 {
@@ -36,7 +37,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      */
     public static function from(ArrayableInterface $arrayable) : self
     {
-        return static::make($arrayable->toArray());
+        return static::make(
+            $arrayable->toArray()
+        );
     }
 
     public static function empty() : Collection
@@ -86,7 +89,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     /**
      * Returns distinct values grouped by selector ('id' by default).
      * 
-     * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
+     * @param string|callable|null $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      * @return static
      */
     public function distinct($by = null) : self
@@ -99,7 +102,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Converts collection to associative array by column/property or callable.
      * Selector must be unique, otherwise only first element is taken, others are discarded.
      * 
-     * @param mixed $by Column/property name or callable, returning generated column/property name. Default = 'id'.
+     * @param string|callable|null $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      * @return array<string, mixed>
      */
     public function toAssoc($by = null) : array
@@ -108,9 +111,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Groups collection by column/property or \Closure.
+     * Groups collection by column/property or callable.
      * 
-     * @param mixed $by Column/property name or \Closure, returning generated column/property name. Default = 'id'.
+     * @param string|callable|null $by Column/property name or callable, returning generated column/property name. Default = 'id'.
      * @return array<string, self>
      */
     public function group($by = null) : array
@@ -232,7 +235,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     /**
      * Is there any value in this collection?
      *
-     * @param string|\Closure|null $by
+     * @param string|callable|null $by
      * @param mixed $value
      */
     public function any($by = null, $value = null) : bool
@@ -257,9 +260,10 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Filters collection by column/property value or callable, then returns first item or null.
+     * Filters collection by column/property value or callable,
+     * then returns first item or null.
      * 
-     * @param string|\Closure|null $by
+     * @param string|callable|null $by
      * @param mixed $value
      * @return mixed
      */
@@ -274,7 +278,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Filters collection by column/property value or callable,
      * then returns last item or null.
      * 
-     * @param string|\Closure|null $by
+     * @param string|callable|null $by
      * @param mixed $value
      * @return mixed
      */
@@ -286,9 +290,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Filters collection by property value or closure.
+     * Filters collection by property value or callable.
      * 
-     * @param string|\Closure $by
+     * @param string|callable $by
      * @param mixed $value
      * @return static
      */
@@ -304,11 +308,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      */
     public function whereIn(string $column, $values) : self
     {
-        if ($values instanceof ArrayableInterface) {
-            $values = $values->toArray();
-        }
-
+        $values = Arrays::adopt($values);
         $data = Arrays::filterIn($this->data, $column, $values);
+
         return static::make($data);
     }
 
@@ -318,32 +320,30 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      */
     public function whereNotIn(string $column, $values) : self
     {
-        if ($values instanceof ArrayableInterface) {
-            $values = $values->toArray();
-        }
-
+        $values = Arrays::adopt($values);
         $data = Arrays::filterNotIn($this->data, $column, $values);
+
         return static::make($data);
     }
 
-    public function map(\Closure $func) : Collection
+    public function map(callable $func) : Collection
     {
         $data = array_map($func, $this->data);
         return Collection::make($data);
     }
 
     /**
-     * Applies closure to all collection's items.
+     * Applies callable to all collection's items.
      */
-    public function apply(\Closure $func) : void
+    public function apply(callable $func) : void
     {
         array_walk($this->data, $func);
     }
 
     /**
-     * Sorts collection ascending using property or closure.
+     * Sorts collection ascending using property or callable.
      *
-     * @param string|\Closure $by
+     * @param string|callable $by
      * @return static
      */
     public function asc($by, ?string $type = null) : self
@@ -352,9 +352,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Sorts collection descending using property or closure.
+     * Sorts collection descending using property or callable.
      *
-     * @param string|\Closure $by
+     * @param string|callable $by
      * @return static
      */
     public function desc($by, ?string $type = null) : self
@@ -364,10 +364,10 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Sorts collection by column or closure.
+     * Sorts collection by column or callable.
      * Ascending by default.
      *
-     * @param string|\Closure $by
+     * @param string|callable $by
      * @return static
      */
     public function orderBy($by, ?string $dir = null, ?string $type = null) : self
@@ -377,9 +377,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Sorts collection ascending by column or closure as strings.
+     * Sorts collection ascending by column or callable as strings.
      *
-     * @param string|\Closure $by
+     * @param string|callable $by
      * @return static
      */
     public function ascStr($by) : self
@@ -388,9 +388,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Sorts collection descending by column or closure as strings.
+     * Sorts collection descending by column or callable as strings.
      *
-     * @param string|\Closure $by
+     * @param string|callable $by
      * @return static
      */
     public function descStr($by) : self
@@ -400,10 +400,10 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Sorts collection by column or closure as strings.
+     * Sorts collection by column or callable as strings.
      * Ascending by default.
      *
-     * @param string|\Closure $by
+     * @param string|callable $by
      * @return static
      */
     public function orderByStr($by, ?string $dir = null) : self
@@ -430,7 +430,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      *
      * @return static
      */
-    public function orderByComparer(\Closure $comparer) : self
+    public function orderByComparer(callable $comparer) : self
     {
         $data = $this->data; // cloning
         usort($data, $comparer);
@@ -464,9 +464,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
 
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset)) {
-            throw new \InvalidArgumentException('$offset cannot be null.');
-        }
+        Assert::notNull($offset);
 
         $this->data[$offset] = $value;
     }
