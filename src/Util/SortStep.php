@@ -11,7 +11,8 @@ class SortStep
 
     private ?string $field = null;
 
-    private ?\Closure $by = null;
+    /** @var callable|null */
+    private $by = null;
 
     /**
      * Is sort step descending
@@ -25,20 +26,20 @@ class SortStep
 
     /**
      * @param string|null $field If sorting by field
-     * @param \Closure|null $by If sorting by closure
+     * @param callable|null $by If sorting by callable
      * @param boolean $desc Set true if descending
      * @param string|null $type Sort::STRING, Sort::NULL, Sort::BOOL, Sort::DATE. null = Sort::NUMBER (default)
      */
     public function __construct(
         ?string $field,
-        ?\Closure $by = null,
+        ?callable $by = null,
         bool $desc = false,
         ?string $type = null
     )
     {
         Assert::true(
-            strlen($field) > 0 || $by instanceof \Closure,
-            'Either $field (string) or $by (\Closure) must be provided.'
+            strlen($field) > 0 || !is_null($by),
+            'Either $field (string) or $by (callable) must be provided.'
         );
 
         $this->field = $field;
@@ -73,12 +74,12 @@ class SortStep
         return self::createByFieldDesc($field);
     }
 
-    public static function createByClosure(\Closure $by) : self
+    public static function createByClosure(callable $by) : self
     {
         return new static(null, $by);
     }
 
-    public static function createByClosureDesc(\Closure $by) : self
+    public static function createByClosureDesc(callable $by) : self
     {
         return new static(null, $by, true);
     }
@@ -99,7 +100,7 @@ class SortStep
         return strlen($this->field) > 0;
     }
 
-    public function getBy() : ?\Closure
+    public function getBy() : ?callable
     {
         return $this->by;
     }
@@ -110,7 +111,7 @@ class SortStep
     }
 
     /**
-     * Returns object value by field or closure (depends on step settings).
+     * Returns object value by field or callable (depends on step settings).
      *
      * @param mixed $obj
      * @return mixed
