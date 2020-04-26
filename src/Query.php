@@ -513,6 +513,16 @@ class Query implements \IteratorAggregate, ArrayableInterface
         );
     }
 
+    /**
+     * Applies query filter.
+     * 
+     * Filter must accept Query and return Query.
+     */
+    public function apply(callable $filter) : self
+    {
+        return ($filter)($this);
+    }
+
     // IteratorAggregate
 
     public function getIterator() : Collection
