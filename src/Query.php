@@ -518,9 +518,15 @@ class Query implements \IteratorAggregate, ArrayableInterface
      * 
      * Filter must accept Query and return Query.
      */
-    public function apply(callable $filter) : self
+    public function apply(callable ...$filters) : self
     {
-        return ($filter)($this);
+        $q = $this;
+
+        foreach ($filters as $filter) {
+            $q = ($filter)($q);
+        }
+
+        return $q;
     }
 
     // IteratorAggregate
