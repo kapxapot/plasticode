@@ -220,22 +220,34 @@ class Query implements \IteratorAggregate, ArrayableInterface
      * Executes query and returns a random record.
      *
      * In case of empty query (or no records) returns null.
+     * 
+     * Note:
+     * 
+     * If the query results are changed during the execution
+     * of this function, the function tries to get the first record.
+     * 
+     * This can be the case when:
+     * 
+     * - There were records on the counting step, but they disappered
+     * before getting the random record.
+     * 
+     * - The count was 0 but before returning the empty record, some
+     * records have appeared.
      */
     public function random() : ?DbModel
     {
         $count = $this->count();
-        
+
         if ($count === 0) {
-            return null;
+            return $this->one();
         }
-        
+
         $offset = rand(0, $count - 1);
-        
-        return $this
-            ->slice($offset, 1)
-            ->one();
+
+        return $this->slice($offset, 1)->one()
+            ?? $this->one();
     }
-    
+
     /**
      * Executes query and returns record count.
      * 
