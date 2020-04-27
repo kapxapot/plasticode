@@ -10,7 +10,7 @@ final class SortStepTest extends TestCase
     public function testFieldImplicitAsc() : void
     {
         $field = 'field';
-        $step = SortStep::create($field);
+        $step = SortStep::asc($field);
 
         $this->assertEquals($field, $step->getField());
         $this->assertEquals(false, $step->isDesc());
@@ -19,7 +19,7 @@ final class SortStepTest extends TestCase
     public function testFieldImplicitDesc() : void
     {
         $field = 'field';
-        $step = SortStep::createDesc($field);
+        $step = SortStep::desc($field);
 
         $this->assertEquals($field, $step->getField());
         $this->assertEquals(true, $step->isDesc());

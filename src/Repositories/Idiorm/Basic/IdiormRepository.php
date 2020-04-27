@@ -120,8 +120,8 @@ abstract class IdiormRepository
 
         return [
             $this->sortReverse
-                ? SortStep::createDesc($this->sortField)
-                : SortStep::create($this->sortField)
+                ? SortStep::desc($this->sortField)
+                : SortStep::asc($this->sortField)
         ];
     }
 

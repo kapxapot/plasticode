@@ -25,8 +25,8 @@ class MenuItem extends DbModel
     protected function getSortOrder() : array
     {
         return [
-            SortStep::create('position'),
-            SortStep::create('text')
+            SortStep::asc('position'),
+            SortStep::asc('text')
         ];
     }
 }

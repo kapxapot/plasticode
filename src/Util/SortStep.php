@@ -48,46 +48,46 @@ class SortStep
         $this->type = $type ?? Sort::NUMBER;
     }
 
+    public static function asc(string $field, ?string $type = null) : self
+    {
+        return self::byField($field, $type);
+    }
+
+    public static function desc(string $field, ?string $type = null) : self
+    {
+        return self::byFieldDesc($field, $type);
+    }
+
     /**
      * Creates sort step by field with ASC ordering.
      */
-    public static function createByField(string $field) : self
+    public static function byField(string $field, ?string $type = null) : self
     {
-        return new static($field);
+        return new static($field, null, false, $type);
     }
 
     /**
      * Creates sort step by field with DESC ordering.
      */
-    public static function createByFieldDesc(string $field) : self
+    public static function byFieldDesc(string $field, ?string $type = null) : self
     {
-        return new static($field, null, true);
+        return new static($field, null, true, $type);
     }
 
-    public static function create(string $field) : self
+    public static function byFunc(
+        callable $by,
+        ?string $type = null
+    ) : self
     {
-        return self::createByField($field);
+        return new static(null, $by, false, $type);
     }
 
-    public static function createDesc(string $field) : self
+    public static function byFuncDesc(
+        callable $by,
+        ?string $type = null
+    ) : self
     {
-        return self::createByFieldDesc($field);
-    }
-
-    public static function createByClosure(callable $by) : self
-    {
-        return new static(null, $by);
-    }
-
-    public static function createByClosureDesc(callable $by) : self
-    {
-        return new static(null, $by, true);
-    }
-
-    public function withType(string $type) : self
-    {
-        $this->type = $type;
-        return $this;
+        return new static(null, $by, true, $type);
     }
 
     public function getField() : ?string

@@ -426,7 +426,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     public function orderByAsc(string $field) : self
     {
         $sortOrder = [
-            SortStep::create($field)
+            SortStep::asc($field)
         ];
 
         return $this->withSort($sortOrder);
@@ -438,7 +438,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     public function orderByDesc(string $field) : self
     {
         $sortOrder = [
-            SortStep::createDesc($field)
+            SortStep::desc($field)
         ];
 
         return $this->withSort($sortOrder);
@@ -450,7 +450,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     public function thenByAsc(string $field) : self
     {
         $sortOrder = $this->sortOrder;
-        $sortOrder[] = SortStep::create($field);
+        $sortOrder[] = SortStep::asc($field);
 
         return $this->withSort($sortOrder);
     }
@@ -461,7 +461,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     public function thenByDesc(string $field) : self
     {
         $sortOrder = $this->sortOrder;
-        $sortOrder[] = SortStep::createDesc($field);
+        $sortOrder[] = SortStep::desc($field);
 
         return $this->withSort($sortOrder);
     }
@@ -493,13 +493,13 @@ class Query implements \IteratorAggregate, ArrayableInterface
         return $this->branch(
             function ($q) use ($searchStr, $where, $paramCount) {
                 $words = Strings::toWords($searchStr);
-                
+
                 foreach ($words as $word) {
                     $wrapped = '%' . $word . '%';
                     $params = array_fill(0, $paramCount, $wrapped);
                     $q = $q->whereRaw($where, $params);
                 }
-        
+
                 return $q;
             }
         );

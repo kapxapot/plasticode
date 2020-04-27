@@ -90,8 +90,8 @@ final class SortTest extends TestCase
         ];
 
         $steps = [
-            SortStep::create('name')->withType(Sort::STRING),
-            SortStep::createDesc('id'),
+            SortStep::asc('name', Sort::STRING),
+            SortStep::desc('id'),
         ];
 
         $this->assertEquals(
