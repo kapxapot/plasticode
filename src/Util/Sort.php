@@ -121,10 +121,10 @@ class Sort
         $field = null;
 
         /** @var callable|null */
-        $closure = null;
+        $callable = null;
 
-        if (is_callable($by) && !is_string($by)) {
-            $closure = $by;
+        if (isCallable($by)) {
+            $callable = $by;
         } else {
             $field = $by;
         }
@@ -132,7 +132,7 @@ class Sort
         $steps = [
             new SortStep(
                 $field,
-                $closure,
+                $callable,
                 $dir === self::DESC,
                 $type
             )

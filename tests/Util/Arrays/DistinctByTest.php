@@ -9,41 +9,10 @@ use Plasticode\Util\Arrays;
 final class DistinctByTest extends TestCase
 {
     /**
-     * @dataProvider distinctByIdProvider
-     */
-    public function testDistinctById(array $array, array $result) : void
-    {
-        $this->assertEquals($result, Arrays::distinctById($array));
-    }
-
-    public function distinctByIdProvider() : array
-    {
-        $item1 = ['id' => 1, 'name' => 'one'];
-        $item11 = ['id' => 1, 'name' => 'one one'];
-        $item2 = ['id' => 2, 'name' => 'two'];
-
-        $dummy1 = new DummyModel(1, 'one');
-        $dummy11 = new DummyModel(1, 'one one');
-        $dummy2 = new DummyModel(2, 'two');
-
-        return [
-            [[], []],
-            [
-                [$item1, $item11, $item2],
-                [$item1, $item2]
-            ],
-            [
-                [$dummy1, $dummy11, $dummy2],
-                [$dummy1, $dummy2]
-            ]
-        ];
-    }
-
-    /**
      * @dataProvider distinctByProvider
      *
      * @param array $array
-     * @param string|\Closure $by
+     * @param string|callable|null $by
      * @param array $result
      * @return void
      */
@@ -67,30 +36,36 @@ final class DistinctByTest extends TestCase
         $testObjArray = [$dummy1, $dummy11, $dummy2];
 
         return [
-            [[], 'a', []],
-            [
+            'empty' => [[], 'a', []],
+            'array_property' => [
                 $testArray,
                 'name',
                 [$item1, $item11]
             ],
-            [
+            'obj_property' => [
                 $testObjArray,
                 'name',
                 [$dummy1, $dummy11]
             ],
-            [
+            'array_callable' => [
                 $testArray,
-                function (array $item) {
-                    return $item['id'] . $item['name'];
-                },
+                fn (array $item) => $item['id'] . $item['name'],
                 $testArray
             ],
-            [
+            'obj_callable' => [
                 $testObjArray,
-                function (DummyModel $item) {
-                    return $item->id . $item->name;
-                },
+                fn (DummyModel $item) => $item->id . $item->name,
                 $testObjArray
+            ],
+            'mixed_property' => [
+                [...$testArray, 1, 'one', 'two', null],
+                'name',
+                [$item1, $item11, 1, 'two']
+            ],
+            'scalar_null' => [
+                [1, 2, 3, 2, 1, 'one', 'two', null, 'two'],
+                null,
+                [1, 2, 3, 'one', 'two']
             ],
         ];
     }

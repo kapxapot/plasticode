@@ -147,7 +147,7 @@ abstract class DbModel extends Model implements SerializableInterface
     protected function getWithProperty(string $name, bool $required = false)
     {
         if (array_key_exists($name, $this->with)) {
-            return is_callable($this->with[$name])
+            return isCallable($this->with[$name])
                 ? ($this->with[$name])()
                 : $this->with[$name];
         }

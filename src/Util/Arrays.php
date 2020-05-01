@@ -10,7 +10,6 @@ class Arrays
 {
     use PropertyAccess;
 
-    private const ID_FIELD = 'id';
     private const DOT = '.';
 
     /**
@@ -102,17 +101,9 @@ class Arrays
     }
 
     /**
-     * Returns distinct values from array grouped by 'id'.
-     */
-    public static function distinctById(array $array) : array
-    {
-        return self::distinctBy($array, self::ID_FIELD);
-    }
-
-    /**
      * Returns distinct values from array grouped by selector.
      * 
-     * @param string|callable $by Column/property name or callable, returning generated column/property name.
+     * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
      */
     public static function distinctBy(array $array, $by) : array
     {
@@ -122,24 +113,12 @@ class Arrays
     }
 
     /**
-     * Converts array to associative array by 'id'.
-     * Selector must be unique, otherwise only first element is taken,
-     * others are discarded.
-     * 
-     * @return array<string, mixed>
-     */
-    public static function toAssocById(array $array) : array
-    {
-        return self::toAssocBy($array, self::ID_FIELD);
-    }
-
-    /**
      * Converts array to associative array by column/property or callable.
      * Selector must be unique, otherwise only first element is taken,
      * others are discarded.
      * 
-     * @param string|callable $by Column/property name or callable, returning generated column/property name.
-     * @return array<string, mixed>
+     * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
+     * @return array<mixed, mixed>
      */
     public static function toAssocBy(array $array, $by) : array
     {
@@ -154,20 +133,14 @@ class Arrays
     }
 
     /**
-     * Groups array by 'id'.
-     * 
-     * @return array<string, mixed>
-     */
-    public static function groupById(array $array) : array
-    {
-        return self::groupBy($array, self::ID_FIELD);
-    }
-
-    /**
      * Groups array by column/property or callable.
      * 
-     * @param string|callable $by Column/property name or callable, returning generated column/property name.
-     * @return array<string, mixed>
+     * Note:
+     * If filter is not callable, scalar values will go as
+     * key and value both, nulls are ignored.
+     * 
+     * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
+     * @return array<mixed, mixed>
      */
     public static function groupBy(array $array, $by) : array
     {
@@ -178,22 +151,22 @@ class Arrays
         $result = [];
 
         foreach ($array as $element) {
-            $key = is_callable($by)
-                ? ($by)($element)
-                : self::getProperty($element, $by);
-            
+            if (isCallable($by)) {
+                $key = ($by)($element);
+            } elseif (is_scalar($element)) {
+                $key = $element;
+            } elseif (is_null($element)) {
+                continue;
+            } else {
+                Assert::notNull($by);
+
+                $key = self::getProperty($element, $by);
+            }
+
             $result[$key][] = $element;
         }
 
         return $result;
-    }
-
-    /**
-     * Extracts non-null 'id' column/property values.
-     */
-    public static function extractIds(array $array) : array
-    {
-        return self::extract($array, self::ID_FIELD);
     }
 
     /**
@@ -261,6 +234,10 @@ class Arrays
     /**
      * Filters array by column/property value or callable.
      * 
+     * Warning:
+     * If the array contains any scalar values or nulls, only callable can
+     * be used.
+     * 
      * @param string|callable $by
      * @param mixed $value
      */
@@ -286,13 +263,20 @@ class Arrays
      */
     private static function satisfies($item, $by, $value = null) : bool
     {
+        $callable = isCallable($by);
+
         Assert::true(
-            is_callable($by) && is_null($value)
+            $callable && is_null($value)
             || is_string($by) && !is_null($value),
             '$by must be a property/column with provided $value, or it must be a callable without $value.'
         );
 
-        return is_callable($by)
+        Assert::true(
+            $callable || !isScalar($item),
+            '$by can be only callable if the $item is scalar or null.'
+        );
+
+        return $callable
             ? ($by)($item)
             : self::getProperty($item, $by) == $value;
     }

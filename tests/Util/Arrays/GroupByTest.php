@@ -9,43 +9,6 @@ use Plasticode\Util\Arrays;
 final class GroupByTest extends TestCase
 {
     /**
-     * @dataProvider groupByIdProvider
-     */
-    public function testGroupById(array $array, array $result) : void
-    {
-        $this->assertEquals($result, Arrays::groupById($array));
-    }
-
-    public function groupByIdProvider() : array
-    {
-        $item1 = ['id' => 1, 'name' => 'one'];
-        $item11 = ['id' => 1, 'name' => 'one one'];
-        $item2 = ['id' => 2, 'name' => 'two'];
-
-        $dummy1 = new DummyModel(1, 'one');
-        $dummy11 = new DummyModel(1, 'one one');
-        $dummy2 = new DummyModel(2, 'two');
-
-        return [
-            [[], []],
-            [
-                [$item1, $item11, $item2],
-                [
-                    1 => [$item1, $item11],
-                    2 => [$item2],
-                ]
-            ],
-            [
-                [$dummy1, $dummy11, $dummy2],
-                [
-                    1 => [$dummy1, $dummy11],
-                    2 => [$dummy2],
-                ]
-            ]
-        ];
-    }
-
-    /**
      * @dataProvider groupByProvider
      *
      * @param array $array
@@ -73,8 +36,8 @@ final class GroupByTest extends TestCase
         $testObjArray = [$dummy1, $dummy11, $dummy2];
 
         return [
-            [[], 'a', []],
-            [
+            'empty' => [[], 'a', []],
+            'array_property' => [
                 $testArray,
                 'name',
                 [
@@ -82,7 +45,7 @@ final class GroupByTest extends TestCase
                     'one one' => [$item11],
                 ]
             ],
-            [
+            'obj_property' => [
                 $testObjArray,
                 'name',
                 [
@@ -90,26 +53,32 @@ final class GroupByTest extends TestCase
                     'one one' => [$dummy11],
                 ]
             ],
-            [
+            'array_callable' => [
                 $testArray,
-                function (array $item) {
-                    return $item['id'] . $item['name'];
-                },
+                fn (array $item) => $item['id'] . $item['name'],
                 [
                     '1one' => [$item1],
                     '1one one' => [$item11],
                     '2one' => [$item2],
                 ]
             ],
-            [
+            'obj_callable' => [
                 $testObjArray,
-                function (DummyModel $item) {
-                    return $item->id . $item->name;
-                },
+                fn (DummyModel $item) => $item->id . $item->name,
                 [
                     '1one' => [$dummy1],
                     '1one one' => [$dummy11],
                     '2one' => [$dummy2],
+                ]
+            ],
+            'mixed_property' => [
+                [...$testArray, 1, 'one', 'two', null],
+                'name',
+                [
+                    'one' => [$item1, $item2, 'one'],
+                    'one one' => [$item11],
+                    1 => [1],
+                    'two' => ['two'],
                 ]
             ],
         ];

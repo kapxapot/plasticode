@@ -90,14 +90,14 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Returns distinct values grouped by selector ('id' by default).
+     * Returns distinct values grouped by selector.
      * 
-     * @param string|callable|null $by Column/property name or callable, returning generated column/property name. Default = 'id'.
+     * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
      * @return static
      */
     public function distinct($by = null) : self
     {
-        $data = Arrays::distinctBy($this->data, $by ?? 'id');
+        $data = Arrays::distinctBy($this->data, $by);
         return static::make($data);
     }
 
@@ -105,25 +105,25 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Converts collection to associative array by column/property or callable.
      * Selector must be unique, otherwise only first element is taken, others are discarded.
      * 
-     * @param string|callable|null $by Column/property name or callable, returning generated column/property name. Default = 'id'.
+     * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
      * @return array<string, mixed>
      */
     public function toAssoc($by = null) : array
     {
-        return Arrays::toAssocBy($this->data, $by ?? 'id');
+        return Arrays::toAssocBy($this->data, $by);
     }
 
     /**
      * Groups collection by column/property or callable.
      * 
-     * @param string|callable|null $by Column/property name or callable, returning generated column/property name. Default = 'id'.
+     * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
      * @return array<string, self>
      */
     public function group($by = null) : array
     {
         $result = [];
 
-        $groups = Arrays::groupBy($this->data, $by ?? 'id');
+        $groups = Arrays::groupBy($this->data, $by);
 
         foreach ($groups as $key => $group) {
             $result[$key] = static::make($group);
@@ -218,12 +218,11 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Extracts non-null 'id' column/property values.
+     * Shortcut for extract('id').
      */
     public function ids() : Collection
     {
-        $data = Arrays::extractIds($this->data);
-        return Collection::make($data);
+        return self::extract('id');
     }
 
     /**
