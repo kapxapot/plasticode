@@ -18,6 +18,7 @@ use Webmozart\Assert\Assert;
  * @method self whereLt(string $field, $value)
  * @method self whereGt(string $field, $value)
  * @method self whereNotNull(string $field)
+ * @method self whereNotEqual(string $field, $value)
  * @method self whereRaw(string $condition, array $params = null)
  */
 class Query implements \IteratorAggregate, ArrayableInterface
