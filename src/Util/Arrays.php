@@ -228,8 +228,13 @@ class Arrays
      */
     public static function firstBy(array $array, $by, $value = null)
     {
-        $filtered = self::filter($array, $by, $value);
-        return self::first($filtered);
+        foreach ($array as $item) {
+            if (self::satisfies($item, $by, $value)) {
+                return $item;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -242,8 +247,15 @@ class Arrays
      */
     public static function lastBy(array $array, $by, $value = null)
     {
-        $filtered = self::filter($array, $by, $value);
-        return self::last($filtered);
+        for ($i = count($array) - 1; $i >= 0; $i--) {
+            $item = $array[$i];
+
+            if (self::satisfies($item, $by, $value)) {
+                return $item;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -254,21 +266,35 @@ class Arrays
      */
     public static function filter(array $array, $by, $value = null) : array
     {
+        $values = array_filter(
+            $array,
+            fn ($i) => self::satisfies($i, $by, $value)
+        );
+
+        return array_values($values);
+    }
+
+    /**
+     * Checks whether the item satisfies:
+     * 
+     * - Either ($item[$by] == $value) for property
+     * - Or (($by)($item) == true) for callable.
+     *
+     * @param mixed $item
+     * @param string|callable $by
+     * @param mixed $value
+     */
+    private static function satisfies($item, $by, $value = null) : bool
+    {
         Assert::true(
             is_callable($by) && is_null($value)
             || is_string($by) && !is_null($value),
             '$by must be a property/column with provided $value, or it must be a callable without $value.'
         );
 
-        $values = array_filter(
-            $array,
-            fn ($item) => 
-            is_callable($by)
-                ? ($by)($item)
-                : self::getProperty($item, $by) == $value
-        );
-
-        return array_values($values);
+        return is_callable($by)
+            ? ($by)($item)
+            : self::getProperty($item, $by) == $value;
     }
 
     /**

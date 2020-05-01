@@ -98,7 +98,7 @@ final class FilterTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         Arrays::filter(
-            [],
+            [1],
             function ($item) {
                 return true;
             },
@@ -151,7 +151,7 @@ final class FilterTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        Arrays::filter([], 'name');
+        Arrays::filter([1], 'name');
     }
 
     /**

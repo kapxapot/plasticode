@@ -123,7 +123,7 @@ final class LastTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         Arrays::lastBy(
-            [],
+            [1],
             function ($item) {
                 return true;
             },
@@ -176,6 +176,6 @@ final class LastTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        Arrays::lastBy([], 'name');
+        Arrays::lastBy([1], 'name');
     }
 }
