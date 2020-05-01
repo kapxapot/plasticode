@@ -11,7 +11,10 @@ abstract class TypedCollection extends Collection
     protected function __construct(?array $data)
     {
         Assert::notEmpty($this->class);
-        Assert::allIsInstanceOf($data, $this->class);
+
+        if ($data) {
+            Assert::allIsInstanceOf($data, $this->class);
+        }
 
         parent::__construct($data);
     }

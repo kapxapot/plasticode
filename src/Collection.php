@@ -74,10 +74,13 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
 
     /**
      * Merges several heterogenous collections.
+     * 
+     * @param static[] $collections
+     * @return static
      */
-    public static function merge(Collection ...$collections) : Collection
+    public static function merge(self ...$collections) : self
     {
-        $merged = Collection::empty();
+        $merged = static::make();
 
         foreach ($collections as $collection) {
             $merged = $merged->concat($collection);

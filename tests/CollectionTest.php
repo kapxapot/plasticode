@@ -182,7 +182,7 @@ final class CollectionTest extends TestCase
         $col->add(1);
     }
 
-    public function testMergeReturnsBaseCollection() : void
+    public function testMergeReturnsRightCollection() : void
     {
         $col1 = DummyCollection::make(
             [
@@ -199,7 +199,7 @@ final class CollectionTest extends TestCase
 
         $col = DummyCollection::merge($col1, $col2);
 
-        $this->assertEquals(Collection::class, get_class($col));
+        $this->assertEquals(DummyCollection::class, get_class($col));
         $this->assertCount(3, $col);
     }
 
