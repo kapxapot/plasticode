@@ -31,7 +31,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     /**
      * ORM query
      */
-    private \ORM $query;
+    private ?\ORM $query = null;
 
     /**
      * Id field name
