@@ -231,6 +231,14 @@ class Bootstrap
                 )
             );
 
+        $map['menuItemRepository'] = fn (CI $c) =>
+            new MenuItemRepository(
+                $c->repositoryContext,
+                new MenuItemHydrator(
+                    $c->linker
+                )
+            );
+
         $map['menuRepository'] = fn (CI $c) =>
             new MenuRepository(
                 $c->repositoryContext,
@@ -240,14 +248,6 @@ class Bootstrap
                         $c->menuItemRepository,
                         $c->linker
                     )
-                )
-            );
-
-        $map['menuItemRepository'] = fn (CI $c) =>
-            new MenuItemRepository(
-                $c->repositoryContext,
-                new MenuItemHydrator(
-                    $c->linker
                 )
             );
 

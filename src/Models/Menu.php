@@ -2,7 +2,7 @@
 
 namespace Plasticode\Models;
 
-use Plasticode\Collection;
+use Plasticode\Collections\MenuItemCollection;
 use Plasticode\Models\Traits\CreatedAt;
 use Plasticode\Models\Traits\UpdatedAt;
 
@@ -10,10 +10,10 @@ use Plasticode\Models\Traits\UpdatedAt;
  * @property string $link
  * @property string $text
  * @property integer $position
- * @method Collection items()
+ * @method MenuItemCollection items()
  * @method string url()
- * @method self withItems(Collection|callable $items)
- * @method self withUrl(string|callable $url)
+ * @method static withItems(MenuItemCollection|callable $items)
+ * @method static withUrl(string|callable $url)
  */
 class Menu extends DbModel
 {

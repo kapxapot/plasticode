@@ -10,7 +10,7 @@ use Plasticode\Models\Traits\UpdatedAt;
  * @property string|null $expiresAt
  * @property integer $userId
  * @method User user()
- * @method self withUser(User|callable $user)
+ * @method static withUser(User|callable $user)
 */
 class AuthToken extends DbModel
 {

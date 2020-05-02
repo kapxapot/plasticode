@@ -10,8 +10,8 @@ use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 
 class MenuHydrator extends Hydrator
 {
-    private MenuItemRepositoryInterface $menuItemRepository;
-    private LinkerInterface $linker;
+    protected MenuItemRepositoryInterface $menuItemRepository;
+    protected LinkerInterface $linker;
 
     public function __construct(
         MenuItemRepositoryInterface $menuItemRepository,
@@ -29,7 +29,7 @@ class MenuHydrator extends Hydrator
     {
         return $entity
             ->withItems(
-                fn () => $this->menuItemRepository->getByMenu($entity->getId())
+                fn () => $this->menuItemRepository->getAllByMenuId($entity->getId())
             )
             ->withUrl(
                 fn () => $this->linker->rel($entity->link)

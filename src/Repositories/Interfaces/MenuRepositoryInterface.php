@@ -2,11 +2,11 @@
 
 namespace Plasticode\Repositories\Interfaces;
 
-use Plasticode\Collection;
+use Plasticode\Collections\MenuCollection;
 use Plasticode\Models\Menu;
 
 interface MenuRepositoryInterface
 {
     function get(?int $id) : ?Menu;
-    function getAll() : Collection;
+    function getAll() : MenuCollection;
 }

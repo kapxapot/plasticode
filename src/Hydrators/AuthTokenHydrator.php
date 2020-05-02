@@ -9,7 +9,7 @@ use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 
 class AuthTokenHydrator extends Hydrator
 {
-    private UserRepositoryInterface $userRepository;
+    protected UserRepositoryInterface $userRepository;
 
     public function __construct(
         UserRepositoryInterface $userRepository

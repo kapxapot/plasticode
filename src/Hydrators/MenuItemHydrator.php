@@ -9,7 +9,7 @@ use Plasticode\Models\MenuItem;
 
 class MenuItemHydrator extends Hydrator
 {
-    private LinkerInterface $linker;
+    protected LinkerInterface $linker;
 
     public function __construct(
         LinkerInterface $linker

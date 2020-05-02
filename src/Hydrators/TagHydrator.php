@@ -9,7 +9,7 @@ use Plasticode\Models\Tag;
 
 class TagHydrator extends Hydrator
 {
-    private LinkerInterface $linker;
+    protected LinkerInterface $linker;
 
     public function __construct(
         LinkerInterface $linker

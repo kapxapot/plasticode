@@ -11,9 +11,9 @@ use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
 
 class UserHydrator extends Hydrator
 {
-    private RoleRepositoryInterface $roleRepository;
-    private LinkerInterface $linker;
-    private Gravatar $gravatar;
+    protected RoleRepositoryInterface $roleRepository;
+    protected LinkerInterface $linker;
+    protected Gravatar $gravatar;
 
     public function __construct(
         RoleRepositoryInterface $roleRepository,
