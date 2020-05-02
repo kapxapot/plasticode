@@ -42,6 +42,11 @@ abstract class Controller
         $this->logger = $appContext->logger();
     }
 
+    protected function appContext() : AppContext
+    {
+        return $this->appContext;
+    }
+
     /**
      * Get settings.
      *
