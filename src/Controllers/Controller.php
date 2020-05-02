@@ -2,12 +2,11 @@
 
 namespace Plasticode\Controllers;
 
-use Plasticode\Collection;
+use Plasticode\Collections\MenuCollection;
 use Plasticode\Core\AppContext;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Core\Interfaces\ViewInterface;
-use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Util\Arrays;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -26,9 +25,9 @@ abstract class Controller
     private ViewInterface $view;
 
     protected LoggerInterface $logger;
-    protected MenuRepositoryInterface $menuRepository;
 
-    protected AppContext $appContext;
+    /** @var AppContext */
+    protected $appContext;
 
     protected bool $autoOneColumn = true;
 
@@ -41,7 +40,6 @@ abstract class Controller
         $this->validator = $appContext->validator();
         $this->view = $appContext->view();
         $this->logger = $appContext->logger();
-        $this->menuRepository = $appContext->menuRepository();
     }
 
     /**
@@ -62,38 +60,38 @@ abstract class Controller
         ];
 
         $sidebar = $this->buildSidebar($settings);
-        
+
         if (count($sidebar) > 0) {
             $params['sidebar'] = $sidebar;
         } elseif ($this->autoOneColumn === true) {
             $params['one_column'] = 1;
         }
-        
+
         $params['rel_prev'] = Arrays::get($settings, 'params.paging.prev.url');
         $params['rel_next'] = Arrays::get($settings, 'params.paging.next.url');
-        
+
         if (isset($settings['image'])) {
             $params['twitter_card_image'] = $settings['image'];
         }
-        
+
         if (isset($settings['large_image'])) {
             $params['custom_card_image'] = $settings['large_image'];
         }
 
         $description = $settings['description'] ?? null;
-        
+
         if (strlen($description) > 0) {
             $params['page_description'] = strip_tags($description);
         }
-        
+
         $params['debug'] = $this->getSettings('debug');
 
         return array_merge($params, $settings['params']);
     }
 
-    protected function buildMenu(array $settings) : Collection
+    protected function buildMenu(array $settings) : MenuCollection
     {
-        return $this->menuRepository->getAll();
+        return $this->appContext->getMenus();
     }
 
     protected function buildSidebar(array $settings) : array

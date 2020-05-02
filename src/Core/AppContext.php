@@ -2,6 +2,7 @@
 
 namespace Plasticode\Core;
 
+use Plasticode\Collections\MenuCollection;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Core\Interfaces\ViewInterface;
@@ -11,12 +12,14 @@ use Psr\Log\LoggerInterface;
 
 class AppContext
 {
-    private SettingsProviderInterface $settingsProvider;
-    private TranslatorInterface $translator;
-    private ValidatorInterface $validator;
-    private ViewInterface $view;
-    private LoggerInterface $logger;
-    private MenuRepositoryInterface $menuRepository;
+    protected SettingsProviderInterface $settingsProvider;
+    protected TranslatorInterface $translator;
+    protected ValidatorInterface $validator;
+    protected ViewInterface $view;
+    protected LoggerInterface $logger;
+
+    /** @var MenuRepositoryInterface */
+    protected $menuRepository;
 
     public function __construct(
         SettingsProviderInterface $settingsProvider,
@@ -60,8 +63,8 @@ class AppContext
         return $this->logger;
     }
 
-    public function menuRepository() : MenuRepositoryInterface
+    public function getMenus() : MenuCollection
     {
-        return $this->menuRepository;
+        return $this->menuRepository->getAll();
     }
 }
