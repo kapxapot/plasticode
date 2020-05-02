@@ -96,7 +96,7 @@ abstract class Controller
 
     protected function buildMenu(array $settings) : MenuCollection
     {
-        return $this->appContext->getMenus();
+        return $this->appContext()->getMenus();
     }
 
     protected function buildSidebar(array $settings) : array
