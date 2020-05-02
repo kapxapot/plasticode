@@ -87,7 +87,7 @@ class Linker implements LinkerInterface
 
         return $url;
     }
-    
+
     public function twitchImg(string $id) : string
     {
         return 'https://static-cdn.jtvnw.net/previews-ttv/live_user_' . $id . '-320x180.jpg';

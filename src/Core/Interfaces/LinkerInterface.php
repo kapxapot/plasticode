@@ -22,6 +22,9 @@ interface LinkerInterface
     function tag(string $tag = null, string $tab = null) : string;
 
     function twitch(string $id) : string;
+    function twitchImg(string $id) : string;
+    function twitchLargeImg(string $id) : string;
+
     function youtube(string $code) : string;
 
     function gravatarUrl(string $hash = null) : string;
