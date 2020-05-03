@@ -104,7 +104,6 @@ body {
 }
 
 .no-overflow-x,
-.panel,
 .modal-content {
     overflow-x: auto;
 }
