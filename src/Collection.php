@@ -221,9 +221,11 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     /**
      * Shortcut for extract('id').
      */
-    public function ids() : Collection
+    public function ids() : ScalarCollection
     {
-        return self::extract('id');
+        return ScalarCollection::from(
+            self::extract('id')
+        );
     }
 
     /**
@@ -237,6 +239,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
 
     /**
      * Is there any value in this collection?
+     * 
+     * Uses 'where' filtering internally.
+     * Suitable for looking for 'null' as well.
      *
      * @param string|callable|null $by
      * @param mixed $value
@@ -252,14 +257,23 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         return !$this->isEmpty();
     }
 
+    /**
+     * Looks for any first non-null value in collection.
+     * 
+     * Uses 'first' internally, iterating the collection.
+     * Not suitable for looking for 'null'.
+     *
+     * @param string|callable|null $by
+     * @param mixed $value
+     */
+    public function anyFirst($by = null, $value = null) : bool
+    {
+        return $this->first($by, $value) !== null;
+    }
+
     public function isEmpty() : bool
     {
         return $this->count() == 0;
-    }
-
-    public function contains($value) : bool
-    {
-        return in_array($value, $this->data);
     }
 
     /**
