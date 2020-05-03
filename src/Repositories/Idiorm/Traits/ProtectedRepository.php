@@ -11,7 +11,15 @@ trait ProtectedRepository
 {
     use FullPublishedRepository;
 
+    abstract protected function query() : Query;
     abstract protected function auth() : AuthInterface;
+
+    protected function getProtectedEntity(?int $id) : ?DbModel
+    {
+        return $this
+            ->protectedQuery()
+            ->find($id);
+    }
 
     protected function protectedQuery() : Query
     {
@@ -19,13 +27,5 @@ trait ProtectedRepository
             $this->query(),
             $this->auth()->getUser()
         );
-    }
-
-    protected function getProtectedEntity(?int $id) : ?DbModel
-    {
-        return $this
-            ->protectedQuery()
-            ->filterById($id)
-            ->one();
     }
 }

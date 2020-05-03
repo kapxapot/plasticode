@@ -11,14 +11,14 @@ trait PublishedRepository
 {
     protected string $publishedField = 'published';
 
-    protected function publishedQuery(Query $query = null) : Query
-    {
-        $query ??= $this->query();
-
-        return $this->filterPublished($query);
-    }
-
     abstract protected function query() : Query;
+
+    protected function publishedQuery() : Query
+    {
+        return $this->filterPublished(
+            $this->query()
+        );
+    }
 
     protected function filterPublished(Query $query) : Query
     {
