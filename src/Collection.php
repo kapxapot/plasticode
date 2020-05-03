@@ -343,6 +343,16 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         return static::make($data);
     }
 
+    /**
+     * Shortcut for map()->flatten().
+     */
+    public function flatMap(callable $func) : Collection
+    {
+        return $this
+            ->map($func)
+            ->flatten();
+    }
+
     public function map(callable $func) : Collection
     {
         $data = array_map($func, $this->data);
