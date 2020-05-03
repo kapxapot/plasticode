@@ -475,19 +475,16 @@ class Arrays
     /**
      * Orders array items based on array of sort conditions.
      * Shortcut for Sort::multi().
-     *
-     * @param SortStep[] $steps
      */
-    public static function multiSort(array $array, array $steps) : array
+    public static function sortBy(array $array, SortStep ...$steps) : array
     {
-        return Sort::multi($array, $steps);
+        return Sort::byMany($array, ...$steps);
     }
 
     /**
      * Adopts array or ArrayableInterface and converts them to array.
      *
      * @param array|ArrayableInterface|null $array
-     * @return array|null
      */
     public static function adopt($array) : ?array
     {

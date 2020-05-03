@@ -10,11 +10,6 @@ interface LinkerInterface
     function abs(string $url = null) : string;
     function rel(string $url = null) : string;
 
-    /**
-     * @deprecated 0.6.1
-     */
-    function getExtension(?string $type) : ?string;
-
     function getImageExtension(?string $type) : string;
 
     function page(string $slug = null) : string;

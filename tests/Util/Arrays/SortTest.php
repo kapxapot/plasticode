@@ -81,17 +81,12 @@ final class SortTest extends TestCase
         );
     }
 
-    public function testMultiSort() : void
+    public function testSort() : void
     {
         $array = [
             ['id' => 1, 'name' => 'Alex'],
             ['id' => 2, 'name' => 'Peter'],
             ['id' => 3, 'name' => 'Alex'],
-        ];
-
-        $steps = [
-            SortStep::asc('name', Sort::STRING),
-            SortStep::desc('id'),
         ];
 
         $this->assertEquals(
@@ -100,7 +95,11 @@ final class SortTest extends TestCase
                 ['id' => 1, 'name' => 'Alex'],
                 ['id' => 2, 'name' => 'Peter'],
             ],
-            Arrays::multiSort($array, $steps)
+            Arrays::sortBy(
+                $array,
+                SortStep::asc('name', Sort::STRING),
+                SortStep::desc('id')
+            )
         );
     }
 }

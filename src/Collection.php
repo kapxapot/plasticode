@@ -4,6 +4,7 @@ namespace Plasticode;
 
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Util\Arrays;
+use Plasticode\Util\SortStep;
 use Webmozart\Assert\Assert;
 
 class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializable, ArrayableInterface
@@ -417,12 +418,11 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     /**
      * Sorts collection using sort steps.
      *
-     * @param SortStep[] $steps
      * @return static
      */
-    public function multiSort(array $steps) : self
+    public function sortBy(SortStep ...$steps) : self
     {
-        $data = Arrays::multiSort($this->data, $steps);
+        $data = Arrays::sortBy($this->data, ...$steps);
         return static::make($data);
     }
 

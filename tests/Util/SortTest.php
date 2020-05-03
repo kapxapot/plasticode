@@ -34,18 +34,18 @@ final class SortTest extends TestCase
     ];
 
     /**
-     * @dataProvider multiProvider
+     * @dataProvider byManyProvider
      * 
      * @param SortStep[] $steps
      */
-    public function testMulti(array $array, array $steps, array $expected) : void
+    public function testByMany(array $array, array $steps, array $expected) : void
     {
-        $actual = Sort::multi($array, $steps);
+        $actual = Sort::byMany($array, ...$steps);
 
         $this->assertEquals($expected, $actual);
     }
 
-    public function multiProvider() : array
+    public function byManyProvider() : array
     {
         $array = [$this->first, $this->second, $this->third];
 

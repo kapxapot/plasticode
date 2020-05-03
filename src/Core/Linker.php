@@ -53,14 +53,6 @@ class Linker implements LinkerInterface
         return $this->settingsProvider->get('root');
     }
 
-    /**
-     * @deprecated 0.6.1
-     */
-    public function getExtension(?string $type) : ?string
-    {
-        return Image::getExtension($type ?? 'jpeg');
-    }
-
     public function getImageExtension(?string $type) : string
     {
         return Image::getExtension($type) ?? 'jpg';

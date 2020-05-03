@@ -20,10 +20,8 @@ class Sort
 
     /**
      * Sorts array by multiple fields.
-     * 
-     * @param SortStep[] $steps
      */
-    public static function multi(array $array, array $steps) : array
+    public static function byMany(array $array, SortStep ...$steps) : array
     {
         if (empty($array)) {
             return [];
@@ -129,16 +127,15 @@ class Sort
             $field = $by;
         }
 
-        $steps = [
+        return self::byMany(
+            $array,
             new SortStep(
                 $field,
                 $callable,
                 $dir === self::DESC,
                 $type
             )
-        ];
-        
-        return self::multi($array, $steps);
+        );
     }
 
     /**

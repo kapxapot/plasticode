@@ -91,17 +91,6 @@ abstract class DbModel extends Model implements SerializableInterface
     }
 
     /**
-     * @deprecated 0.6.1
-     */
-    public function failIfNotPersisted() : void
-    {
-        Assert::true(
-            $this->isPersisted(),
-            'Object must be persisted.'
-        );
-    }
-
-    /**
      * Add required x() as 'x' method names that must be initialized
      * with withX() before calling.
      *

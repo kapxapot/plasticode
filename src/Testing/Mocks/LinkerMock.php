@@ -20,14 +20,6 @@ class LinkerMock implements LinkerInterface
         return '/' . rtrim($url, '/');
     }
 
-    /**
-     * @deprecated 0.6.1
-     */
-    public function getExtension(?string $type) : ?string
-    {
-        throw new \Exception('Do not you this method.');
-    }
-
     public function getImageExtension(?string $type) : string
     {
         return Image::getExtension($type) ?? 'jpg';
