@@ -65,6 +65,11 @@ abstract class IdiormRepository
         $this->hydrator = $hydrator;
     }
 
+    protected function auth() : AuthInterface
+    {
+        return $this->auth;
+    }
+
     protected function idField() : string
     {
         $entityClass = $this->getEntityClass();
