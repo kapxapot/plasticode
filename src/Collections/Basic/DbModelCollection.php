@@ -7,6 +7,8 @@ use Webmozart\Assert\Assert;
 
 class DbModelCollection extends TypedCollection
 {
+    protected string $class = DbModelInterface::class;
+
     protected function __construct(?array $data)
     {
         Assert::subclassOf($this->class, DbModelInterface::class);
