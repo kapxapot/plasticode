@@ -5,7 +5,7 @@ namespace Plasticode\Collections\Basic;
 use Plasticode\Models\Interfaces\DbModelInterface;
 use Webmozart\Assert\Assert;
 
-abstract class DbModelCollection extends TypedCollection
+class DbModelCollection extends TypedCollection
 {
     protected function __construct(?array $data)
     {
