@@ -2,8 +2,8 @@
 
 namespace Plasticode\Collections;
 
+use Plasticode\Collections\Basic\TypedCollection;
 use Plasticode\TagLink;
-use Plasticode\TypedCollection;
 
 class TagLinkCollection extends TypedCollection
 {
