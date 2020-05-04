@@ -2,10 +2,10 @@
 
 namespace Plasticode\Collections;
 
+use Plasticode\Collections\Basic\DbModelCollection;
 use Plasticode\Models\MenuItem;
-use Plasticode\TypedCollection;
 
-class MenuItemCollection extends TypedCollection
+class MenuItemCollection extends DbModelCollection
 {
     protected string $class = MenuItem::class;
 }

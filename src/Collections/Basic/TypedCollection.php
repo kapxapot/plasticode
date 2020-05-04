@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode;
+namespace Plasticode\Collections\Basic;
 
 use Webmozart\Assert\Assert;
 

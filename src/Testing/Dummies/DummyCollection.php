@@ -2,7 +2,7 @@
 
 namespace Plasticode\Testing\Dummies;
 
-use Plasticode\TypedCollection;
+use Plasticode\Collections\Basic\TypedCollection;
 
 class DummyCollection extends TypedCollection
 {

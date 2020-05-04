@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode;
+namespace Plasticode\Collections\Basic;
 
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Util\Arrays;
@@ -93,10 +93,11 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     /**
      * Returns distinct values grouped by selector.
      * 
-     * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
+     * @param string|callable $by Column/property name or callable,
+     * returning generated column/property name.
      * @return static
      */
-    public function distinct($by = null) : self
+    public function distinctBy($by) : self
     {
         $data = Arrays::distinctBy($this->data, $by);
         return static::make($data);

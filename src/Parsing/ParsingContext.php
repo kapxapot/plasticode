@@ -2,7 +2,7 @@
 
 namespace Plasticode\Parsing;
 
-use Plasticode\Collection;
+use Plasticode\Collections\Basic\Collection;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\Text;
 

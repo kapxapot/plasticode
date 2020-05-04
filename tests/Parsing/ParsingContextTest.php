@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Parsing;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Collection;
+use Plasticode\Collections\Basic\Collection;
 use Plasticode\Parsing\ContentsItem;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Util\Date;

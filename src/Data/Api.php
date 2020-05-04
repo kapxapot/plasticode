@@ -4,7 +4,7 @@ namespace Plasticode\Data;
 
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Interfaces\AuthInterface;
-use Plasticode\Collection;
+use Plasticode\Collections\Basic\Collection;
 use Plasticode\Core\Response;
 use Plasticode\Exceptions\Http\NotFoundException;
 use Plasticode\Exceptions\Http\AuthorizationException;

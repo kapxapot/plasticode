@@ -3,7 +3,7 @@
 namespace Plasticode\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Collection;
+use Plasticode\Collections\Basic\Collection;
 use Plasticode\Testing\Dummies\DummyCollection;
 use Plasticode\Testing\Dummies\DummyModel;
 use Plasticode\Testing\Dummies\InvalidTypedCollection;

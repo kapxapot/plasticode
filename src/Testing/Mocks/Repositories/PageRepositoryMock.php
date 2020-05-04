@@ -2,7 +2,7 @@
 
 namespace Plasticode\Testing\Mocks\Repositories;
 
-use Plasticode\Collection;
+use Plasticode\Collections\Basic\Collection;
 use Plasticode\Models\Page;
 use Plasticode\Repositories\Interfaces\PageRepositoryInterface;
 use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;

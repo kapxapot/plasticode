@@ -2,7 +2,7 @@
 
 namespace Plasticode\Parsing;
 
-use Plasticode\Collection;
+use Plasticode\Collections\Basic\Collection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -10,17 +10,12 @@ use Webmozart\Assert\Assert;
  */
 class TitlesContext
 {
-    /** @var integer */
-    private $minLevel;
-
-    /** @var integer */
-    private $maxLevel;
-
-    /** @var \Plasticode\Collection */
-    private $contents;
+    private int $minLevel;
+    private int $maxLevel;
+    private Collection $contents;
 
     /** @var integer[] */
-    private $count = [];
+    private array $count = [];
 
     public function __construct(int $minLevel, int $maxLevel)
     {

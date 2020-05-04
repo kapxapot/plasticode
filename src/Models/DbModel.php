@@ -3,12 +3,13 @@
 namespace Plasticode\Models;
 
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
+use Plasticode\Models\Interfaces\DbModelInterface;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\ObjectProxy;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
-abstract class DbModel extends Model implements SerializableInterface
+abstract class DbModel extends Model implements DbModelInterface, SerializableInterface
 {
     private const NOT_HYDRATED = 1;
     private const BEING_HYDRATED = 2;

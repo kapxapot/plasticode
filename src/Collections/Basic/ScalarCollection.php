@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode;
+namespace Plasticode\Collections\Basic;
 
 use Webmozart\Assert\Assert;
 
@@ -18,5 +18,17 @@ class ScalarCollection extends Collection
     public function contains($value) : bool
     {
         return in_array($value, $this->data);
+    }
+
+    /**
+     * Returns distinct values.
+     * 
+     * @return static
+     */
+    public function distinct() : self
+    {
+        return parent::distinctBy(
+            fn ($v) => $v
+        );
     }
 }

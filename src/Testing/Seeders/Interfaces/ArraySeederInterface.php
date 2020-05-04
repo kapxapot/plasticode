@@ -4,5 +4,5 @@ namespace Plasticode\Testing\Seeders\Interfaces;
 
 interface ArraySeederInterface
 {
-    public function seed() : array;
+    function seed() : array;
 }

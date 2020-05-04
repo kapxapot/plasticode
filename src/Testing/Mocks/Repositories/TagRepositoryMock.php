@@ -2,18 +2,19 @@
 
 namespace Plasticode\Testing\Mocks\Repositories;
 
-use Plasticode\Collection;
+use Plasticode\Collections\Basic\ScalarCollection;
+use Plasticode\Collections\TagCollection;
 use Plasticode\Models\Tag;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 
 class TagRepositoryMock implements TagRepositoryInterface
 {
-    private Collection $tags;
+    private TagCollection $tags;
 
     public function __construct(ArraySeederInterface $seeder)
     {
-        $this->tags = Collection::make($seeder->seed());
+        $this->tags = TagCollection::make($seeder->seed());
     }
 
     public function store(array $data) : Tag
@@ -24,17 +25,21 @@ class TagRepositoryMock implements TagRepositoryInterface
         return $tag;
     }
 
-    public function getIdsByTag(string $entityType, string $tag) : Collection
+    public function getIdsByTag(string $entityType, string $tag) : ScalarCollection
     {
-        return $this->tags
-            ->where('entity_type', $entityType)
-            ->where('tag', $tag)
-            ->extract('entity_id');
+        return ScalarCollection::from(
+            $this
+                ->tags
+                ->where('entity_type', $entityType)
+                ->where('tag', $tag)
+                ->extract('entity_id')
+        );
     }
 
-    public function getAllByTag(string $tag) : Collection
+    public function getAllByTag(string $tag) : TagCollection
     {
-        return $this->tags
+        return $this
+            ->tags
             ->where('tag', $tag);
     }
 
@@ -55,9 +60,11 @@ class TagRepositoryMock implements TagRepositoryInterface
         return true;
     }
 
-    public function search(string $searchQuery) : Collection
+    public function search(string $searchQuery) : TagCollection
     {
-        return $this->tags
+        // placeholder
+        return $this
+            ->tags
             ->where('tag', $searchQuery);
     }
 }

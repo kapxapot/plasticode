@@ -2,6 +2,7 @@
 
 namespace Plasticode;
 
+use Plasticode\Collections\Basic\Collection;
 use Plasticode\Exceptions\SqlException;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\DbModel;
@@ -545,6 +546,21 @@ class Query implements \IteratorAggregate, ArrayableInterface
         }
 
         return $q;
+    }
+
+    /**
+     * Returns page by number and size.
+     */
+    public function page(int $page, int $pageSize) : self
+    {
+        if ($page <= 0) {
+            $page = 1;
+        }
+
+        $limit = ($pageSize > 0) ? $pageSize : 0;
+        $offset = ($page - 1) * $limit;
+
+        return $this->slice($offset, $limit);
     }
 
     // IteratorAggregate

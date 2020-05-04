@@ -1,8 +1,8 @@
 <?php
 
-namespace Plasticode\Repositories\Interfaces;
+namespace Plasticode\Repositories\Interfaces\Basic;
 
-use Plasticode\Collection;
+use Plasticode\Collections\Basic\Collection;
 
 interface SearchableRepositoryInterface
 {

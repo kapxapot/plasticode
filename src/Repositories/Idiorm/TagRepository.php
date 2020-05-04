@@ -2,14 +2,14 @@
 
 namespace Plasticode\Repositories\Idiorm;
 
-use Plasticode\Collection;
+use Plasticode\Collections\Basic\ScalarCollection;
+use Plasticode\Collections\TagCollection;
 use Plasticode\Models\Tag;
 use Plasticode\Query;
 use Plasticode\Repositories\Idiorm\Basic\IdiormRepository;
-use Plasticode\Repositories\Interfaces\SearchableRepositoryInterface;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 
-class TagRepository extends IdiormRepository implements TagRepositoryInterface, SearchableRepositoryInterface
+class TagRepository extends IdiormRepository implements TagRepositoryInterface
 {
     protected string $entityClass = Tag::class;
 
@@ -18,18 +18,22 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface, 
         return $this->storeEntity($data);
     }
 
-    public function getIdsByTag(string $entityType, string $tag) : Collection
+    public function getIdsByTag(string $entityType, string $tag) : ScalarCollection
     {
-        return $this
-            ->entityQuery($entityType)
-            ->where('tag', $tag)
-            ->all()
-            ->extract('entity_id');
+        return ScalarCollection::from(
+            $this
+                ->entityQuery($entityType)
+                ->where('tag', $tag)
+                ->all()
+                ->extract('entity_id')
+        );
     }
 
-    public function getAllByTag(string $tag) : Collection
+    public function getAllByTag(string $tag) : TagCollection
     {
-        return $this->byTagQuery($tag)->all();
+        return TagCollection::from(
+            $this->byTagQuery($tag)
+        );
     }
 
     public function exists(string $tag) : bool
@@ -45,6 +49,18 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface, 
             ->delete();
     }
 
+    public function search(string $searchQuery) : TagCollection
+    {
+        return TagCollection::from(
+            $this
+                ->query()
+                ->search($searchQuery, '(tag like ?)')
+                ->orderByAsc('tag')
+        );
+    }
+
+    // queries
+
     protected function entityQuery(string $entityType) : Query
     {
         return $this
@@ -57,15 +73,6 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface, 
         return $this
             ->query()
             ->where('tag', $tag);
-    }
-
-    public function search(string $searchQuery) : Collection
-    {
-        return $this
-            ->query()
-            ->search($searchQuery, '(tag like ?)')
-            ->orderByAsc('tag')
-            ->all();
     }
 
     protected function byEntityQuery(string $entityType, int $entityId) : Query

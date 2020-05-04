@@ -158,7 +158,10 @@ class Arrays
             } elseif (is_null($element)) {
                 continue;
             } else {
-                Assert::notNull($by);
+                Assert::notNull(
+                    $by,
+                    'Arrays::groupBy: $by can\'t be null for non-scalar.'
+                );
 
                 $key = self::getProperty($element, $by);
             }

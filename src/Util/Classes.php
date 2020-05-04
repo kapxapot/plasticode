@@ -2,8 +2,6 @@
 
 namespace Plasticode\Util;
 
-use Plasticode\Collection;
-
 class Classes
 {
     public static function shortName(string $class)
@@ -14,9 +12,7 @@ class Classes
     /**
      * Returns public methods list of a class.
      *
-     * @param string $class
      * @param string[]|null $exclude
-     * @return array
      */
     public static function getPublicMethods(string $class, array $exclude = null) : array
     {

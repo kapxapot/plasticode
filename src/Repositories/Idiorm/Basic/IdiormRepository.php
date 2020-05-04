@@ -4,7 +4,7 @@ namespace Plasticode\Repositories\Idiorm\Basic;
 
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Interfaces\AuthInterface;
-use Plasticode\Collection;
+use Plasticode\Collections\Basic\DbModelCollection;
 use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Data\Db;
 use Plasticode\Data\Rights;
@@ -133,9 +133,11 @@ abstract class IdiormRepository
     /**
      * Shortcut for getting all models.
      */
-    public function getAll() : Collection
+    public function getAll() : DbModelCollection
     {
-        return $this->query()->all();
+        return DbModelCollection::from(
+            $this->query()
+        );
     }
 
     public function getCount() : int

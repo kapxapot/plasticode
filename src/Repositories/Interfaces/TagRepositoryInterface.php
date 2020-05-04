@@ -2,15 +2,16 @@
 
 namespace Plasticode\Repositories\Interfaces;
 
-use Plasticode\Collection;
+use Plasticode\Collections\Basic\ScalarCollection;
+use Plasticode\Collections\TagCollection;
 use Plasticode\Models\Tag;
+use Plasticode\Repositories\Interfaces\Basic\SearchableRepositoryInterface;
 
-interface TagRepositoryInterface
+interface TagRepositoryInterface extends SearchableRepositoryInterface
 {
     function store(array $data) : Tag;
-    function getIdsByTag(string $entityType, string $tag) : Collection;
-    function getAllByTag(string $tag) : Collection;
+    function getIdsByTag(string $entityType, string $tag) : ScalarCollection;
+    function getAllByTag(string $tag) : TagCollection;
     function exists(string $tag) : bool;
     function deleteByEntity(string $entityType, int $entityId) : bool;
-    function search(string $searchQuery) : Collection;
 }
