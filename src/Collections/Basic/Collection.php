@@ -224,15 +224,25 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      */
     public function ids() : ScalarCollection
     {
+        return self::extractScalar('id');
+    }
+
+    /**
+     * Extracts scalar values from collection.
+     * 
+     * In case of non-scalar values will throw an \InvalidArgumentException.
+     */
+    public function extractScalar(string $column) : ScalarCollection
+    {
         return ScalarCollection::from(
-            self::extract('id')
+            self::extract($column)
         );
     }
 
     /**
      * Extracts non-null column/property values from collection.
      */
-    public function extract($column) : Collection
+    public function extract(string $column) : Collection
     {
         $data = Arrays::extract($this->data, $column);
         return Collection::make($data);

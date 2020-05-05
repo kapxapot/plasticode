@@ -20,13 +20,11 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface
 
     public function getIdsByTag(string $entityType, string $tag) : ScalarCollection
     {
-        return ScalarCollection::from(
-            $this
-                ->entityQuery($entityType)
-                ->where('tag', $tag)
-                ->all()
-                ->extract('entity_id')
-        );
+        return $this
+            ->entityQuery($entityType)
+            ->where('tag', $tag)
+            ->all()
+            ->extractScalar('entity_id');
     }
 
     public function getAllByTag(string $tag) : TagCollection
