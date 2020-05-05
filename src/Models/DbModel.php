@@ -121,6 +121,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      * Sets value for property 'x()' (use it in 'withX($x)' methods).
      *
      * @param mixed $value
+     * @return static
      */
     protected function setWithProperty(string $name, $value) : self
     {
@@ -137,9 +138,11 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     protected function getWithProperty(string $name, bool $required = false)
     {
         if (array_key_exists($name, $this->with)) {
-            return isCallable($this->with[$name])
-                ? ($this->with[$name])()
-                : $this->with[$name];
+            $withName = $this->with[$name];
+
+            return isCallable($withName)
+                ? $withName()
+                : $withName;
         }
 
         $required = $required

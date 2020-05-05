@@ -119,7 +119,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * Groups collection by column/property or callable.
      * 
      * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
-     * @return array<string, self>
+     * @return array<string, static>
      */
     public function group($by = null) : array
     {
@@ -560,5 +560,12 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     public function toArray() : array
     {
         return $this->data;
+    }
+
+    // __toString()
+
+    public function __toString()
+    {
+        return get_class($this) . ' (' . $this->count() . ')';
     }
 }
