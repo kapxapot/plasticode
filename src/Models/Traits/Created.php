@@ -17,22 +17,6 @@ trait Created
 
     public function isCreatedBy(User $user) : bool
     {
-        return $this->creator()
-            ? $this->creator()->equals($user)
-            : false;
-    }
-
-    /**
-     * Sets or updates createdBy and creator.
-     */
-    protected function stampCreator(User $user) : self
-    {
-        if ($this->createdBy > 0) {
-            return $this;
-        }
-
-        $this->createdBy = $user->getId();
-
-        return $this->withCreator($user);
+        return $this->createdBy == $user->getId();
     }
 }

@@ -6,8 +6,8 @@ use Plasticode\Models\User;
 
 /**
  * @property integer|null $updatedBy
- * @method User updater()
- * @method static withUpdater(User|callable $updater)
+ * @method User|null updater()
+ * @method static withUpdater(User|callable|null $updater)
  */
 trait Updated
 {
@@ -17,18 +17,6 @@ trait Updated
 
     public function isUpdatedBy(User $user) : bool
     {
-        return $this->updater()
-            ? $this->updater()->equals($user)
-            : false;
-    }
-
-    /**
-     * Sets or updates updatedBy and updater.
-     */
-    protected function stampUpdater(User $user) : self
-    {
-        $this->updatedBy = $user->getId();
-
-        return $this->withUpdater($user);
+        return $this->updatedBy == $user->getId();
     }
 }

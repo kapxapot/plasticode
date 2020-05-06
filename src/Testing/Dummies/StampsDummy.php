@@ -3,16 +3,17 @@
 namespace Plasticode\Testing\Dummies;
 
 use Plasticode\Models\DbModel;
-use Plasticode\Models\Traits\Created;
-use Plasticode\Models\Traits\Updated;
+use Plasticode\Models\Traits\Stamps;
 
 class StampsDummy extends DbModel
 {
-    use Created;
-    use Updated;
+    use Stamps;
 
     protected function requiredWiths() : array
     {
-        return ['creator', 'updater'];
+        return [
+            'creator',
+            'updater',
+        ];
     }
 }

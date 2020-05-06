@@ -13,11 +13,11 @@ trait Stamps
     /**
      * Updates createdBy/updatedBy/updatedAt.
      */
-    public function stamp(?User $user = null) : void
+    public function stamp(?User $user) : void
     {
         if ($user) {
-            $this->stampCreator($user);
-            $this->stampUpdater($user);
+            $this->createdBy ??= $user->getId();
+            $this->updatedBy = $user->getId();
         }
 
         if ($this->isPersisted()) {
