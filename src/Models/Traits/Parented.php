@@ -22,4 +22,17 @@ trait Parented
             ? $this->parent()->root()
             : $this;
     }
+
+    /**
+     * :(
+     */
+    public function isOrphan() : bool
+    {
+        return $this->hasParent();
+    }
+
+    public function hasParent() : bool
+    {
+        return $this->parent() !== null;
+    }
 }

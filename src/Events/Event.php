@@ -8,15 +8,13 @@ use Plasticode\Traits\GetClass;
 abstract class Event
 {
     use GetClass;
-    
+
     /**
      * Parent event
-     *
-     * @var Event
      */
-    private $parent;
+    private ?self $parent;
 
-    public function __construct(self $parent = null)
+    public function __construct(?self $parent = null)
     {
         $this->setParent($parent);
     }
@@ -39,7 +37,7 @@ abstract class Event
 
     public function hasParent() : bool
     {
-        return !is_null($this->parent);
+        return $this->parent !== null;
     }
 
     public abstract function getEntity() : DbModel;
@@ -53,9 +51,9 @@ abstract class Event
     {
         $entity = $this->getEntity();
 
-        return is_null($entity)
-            ? null
-            : $entity->getId();
+        return $entity !== null
+            ? $entity->getId()
+            : null;
     }
 
     public function __toString() : string
@@ -63,10 +61,10 @@ abstract class Event
         $str = $this->getClass();
         $entity = $this->getEntity();
 
-        if (!is_null($entity)) {
+        if ($entity) {
             $str .= ' (' . $entity . ')';
         }
 
-        return  $str;
+        return $str;
     }
 }

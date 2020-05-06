@@ -7,29 +7,22 @@ use Psr\Log\LoggerInterface;
 
 class EventDispatcher
 {
-    /** @var LoggerInterface */
-    private $eventLog;
+    private LoggerInterface $eventLog;
 
     /**
      * Event processors
-     *
-     * @var array
      */
-    private $processors = [];
+    private array $processors;
 
     /**
      * Event -> processors mappings
-     *
-     * @var array
      */
-    private $map = [];
+    private array $map = [];
 
     /**
      * Event queue
-     *
-     * @var array
      */
-    private $queue = [];
+    private array $queue = [];
 
     public function __construct(
         LoggerInterface $eventLog,
@@ -47,9 +40,6 @@ class EventDispatcher
 
     /**
      * Adds event to event queue.
-     *
-     * @param Event $event
-     * @return void
      */
     private function enqueue(Event $event) : void
     {
@@ -66,8 +56,6 @@ class EventDispatcher
 
     /**
      * Tries to take event from event queue.
-     *
-     * @return Event|null
      */
     private function dequeue() : ?Event
     {
@@ -76,9 +64,6 @@ class EventDispatcher
 
     /**
      * Entry point for new event processing.
-     *
-     * @param Event $event
-     * @return void
      */
     public function dispatch(Event $event) : void
     {
@@ -125,8 +110,6 @@ class EventDispatcher
 
     /**
      * Process next event in event queue.
-     *
-     * @return void
      */
     private function processNext() : void
     {
@@ -183,9 +166,6 @@ class EventDispatcher
      * Looks for loops in the event chain.
      * 
      * Looks for the same event class with the same entity id.
-     * 
-     * @param Event $event
-     * @return boolean
      */
     private function isLoop(Event $event) : bool
     {
