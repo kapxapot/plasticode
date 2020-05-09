@@ -3,6 +3,7 @@
 namespace Plasticode\Core;
 
 use Plasticode\Collections\TagLinkCollection;
+use Plasticode\Config\Interfaces\TagsConfigInterface;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\IO\Image;
@@ -17,13 +18,18 @@ class Linker implements LinkerInterface
     protected SettingsProviderInterface $settingsProvider;
     protected RouterInterface $router;
 
+    protected TagsConfigInterface $tagsConfig;
+
     public function __construct(
         SettingsProviderInterface $settingsProvider,
-        RouterInterface $router
+        RouterInterface $router,
+        TagsConfigInterface $tagsConfig
     )
     {
         $this->settingsProvider = $settingsProvider;
         $this->router = $router;
+
+        $this->tagsConfig = $tagsConfig;
     }
 
     /**
@@ -117,12 +123,13 @@ class Linker implements LinkerInterface
         return 'https://picsum.photos/' . $width . '/' . $height . '?' . Numbers::generate(6);
     }
 
-    public function tagLinks(
-        TaggedInterface $entity,
-        ?string $tab = null
-    ) : TagLinkCollection
+    public function tagLinks(TaggedInterface $entity) : TagLinkCollection
     {
         $tags = $entity->getTags();
+
+        $tab = $this->tagsConfig->getTab(
+            get_class($entity)
+        );
 
         $tagLinks = array_map(
             fn (string $t) => new TagLink($t, $this->tag($t, $tab)),

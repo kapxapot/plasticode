@@ -2,6 +2,7 @@
 
 namespace Plasticode\Config;
 
+use App\Config\TagsConfig;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -426,10 +427,14 @@ class Bootstrap
                 $c->renderer
             );
 
+        $map['tagsConfig'] = fn (CI $c) =>
+            new TagsConfig();
+
         $map['linker'] = fn (CI $c) =>
             new Linker(
                 $c->settingsProvider,
-                $c->router
+                $c->router,
+                $c->tagsConfig
             );
 
         $map['replacesConfig'] = fn (CI $c) =>

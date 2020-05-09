@@ -24,8 +24,5 @@ interface LinkerInterface
 
     function gravatarUrl(string $hash = null) : string;
 
-    function tagLinks(
-        TaggedInterface $entity,
-        ?string $tab = null
-    ) : TagLinkCollection;
+    function tagLinks(TaggedInterface $entity) : TagLinkCollection;
 }

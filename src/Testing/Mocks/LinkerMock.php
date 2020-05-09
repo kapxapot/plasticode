@@ -66,15 +66,12 @@ class LinkerMock implements LinkerInterface
         return 'https://www.gravatar.com/avatar/' . $hash . '?s=100&d=mp';
     }
 
-    public function tagLinks(
-        TaggedInterface $entity,
-        ?string $tab = null
-    ) : TagLinkCollection
+    public function tagLinks(TaggedInterface $entity) : TagLinkCollection
     {
         $tags = $entity->getTags();
 
         $tagLinks = array_map(
-            fn (string $t) => new TagLink($t, $this->tag($t, $tab)),
+            fn (string $t) => new TagLink($t, $this->tag($t)),
             $tags
         );
 
