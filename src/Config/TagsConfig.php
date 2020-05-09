@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Config;
+namespace Plasticode\Config;
 
 use Plasticode\Config\Interfaces\TagsConfigInterface;
 
