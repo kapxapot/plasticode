@@ -2,7 +2,6 @@
 
 namespace Plasticode\Config;
 
-use App\Config\TagsConfig;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
