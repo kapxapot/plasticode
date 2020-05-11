@@ -4,7 +4,6 @@ namespace Plasticode\Repositories\Idiorm\Basic;
 
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Interfaces\AuthInterface;
-use Plasticode\Collections\Basic\DbModelCollection;
 use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Data\Db;
 use Plasticode\Data\Rights;
@@ -128,16 +127,6 @@ abstract class IdiormRepository
                 ? SortStep::desc($this->sortField)
                 : SortStep::asc($this->sortField)
         ];
-    }
-
-    /**
-     * Shortcut for getting all models.
-     */
-    public function getAll() : DbModelCollection
-    {
-        return DbModelCollection::from(
-            $this->query()
-        );
     }
 
     public function getCount() : int

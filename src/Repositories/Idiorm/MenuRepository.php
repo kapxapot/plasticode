@@ -21,7 +21,7 @@ class MenuRepository extends IdiormRepository implements MenuRepositoryInterface
     public function getAll() : MenuCollection
     {
         return MenuCollection::from(
-            parent::getAll()
+            $this->query()
         );
     }
 }
