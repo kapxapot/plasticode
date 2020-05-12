@@ -15,7 +15,7 @@ class AccessMiddleware
     private AuthInterface $auth;
     private RouterInterface $router;
 
-    private string $entity;
+    private string $table;
     private string $action;
     private ?string $redirect = null;
     
@@ -23,7 +23,7 @@ class AccessMiddleware
         Access $access,
         AuthInterface $auth,
         RouterInterface $router,
-        string $entity,
+        string $table,
         string $action,
         ?string $redirect = null
     )
@@ -32,7 +32,7 @@ class AccessMiddleware
         $this->auth = $auth;
         $this->router = $router;
 
-        $this->entity = $entity;
+        $this->table = $table;
         $this->action = $action;
         $this->redirect = $redirect;
     }
@@ -45,8 +45,8 @@ class AccessMiddleware
     {
         $user = $this->auth->getUser();
 
-        $hasRights = $this->access->checkRights(
-            $this->entity,
+        $hasRights = $this->access->checkActionRights(
+            $this->table,
             $this->action,
             $user
         );

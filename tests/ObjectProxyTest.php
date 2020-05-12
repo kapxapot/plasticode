@@ -33,11 +33,11 @@ final class ObjectProxyTest extends TestCase
         $session = new Session('test');
         $auth = new Auth($session);
         $cache = new Cache();
-        $settingsProvider = new SettingsProvider([]);
+        $settingsProvider = new SettingsProvider();
 
         $tagRepository = new TagRepository(
             new RepositoryContext(
-                new Access($cache, []),
+                new Access(),
                 $auth,
                 $cache,
                 new Db($cache, $settingsProvider)

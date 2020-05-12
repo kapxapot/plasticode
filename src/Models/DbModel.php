@@ -6,6 +6,8 @@ use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Models\Interfaces\DbModelInterface;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\ObjectProxy;
+use Plasticode\Util\Classes;
+use Plasticode\Util\Pluralizer;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
@@ -153,6 +155,26 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
                 'Method is not initialized: ' . $name . '.'
             );
         }
+    }
+
+    /**
+     * Returns plural entity type (in snake case) based on the class name.
+     * 
+     * ArticleCategory -> article_categories.
+     */
+    public static function pluralAlias() : string
+    {
+        // \App\Models\ArticleCategory
+        // -> ArticleCategory
+        $class = Classes::shortName(static::class);
+
+        // ArticleCategory -> ArticleCategories
+        $entityPlural = Pluralizer::plural($class);
+
+        // ArticleCategories -> article_categories
+        $alias = Strings::toSnakeCase($entityPlural);
+
+        return $alias;
     }
 
     public function serialize() : array

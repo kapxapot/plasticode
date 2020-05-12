@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Tests;
+namespace Plasticode\Tests\Collections;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Collections\Basic\Collection;

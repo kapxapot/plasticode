@@ -2,7 +2,6 @@
 
 namespace Plasticode\Auth;
 
-use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Data\Rights;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Models\User;
@@ -10,39 +9,43 @@ use Webmozart\Assert\Assert;
 
 class Access
 {
-    private CacheInterface $cache;
+    /**
+     * All known actions data (flattened)
+     * 
+     * key = action name
+     * value = array of parent actions from root (path)
+     * 
+     * @var array<string, string[]>
+     */
+    private array $actionData;
 
     /**
-     * Flattened actions
+     * Rights templates settings
+     * 
+     * @var array<string, array<string, string[]>>
      */
-    private array $actions;
+    private array $rightsTemplates;
 
     /**
-     * Templates settings
+     * Table rights settings
+     * 
+     * @var array<string, array<string, string|string[]>>
      */
-    private array $templates;
+    private array $rightsSettings;
 
-    /**
-     * Rights settings
-     */
-    private array $rights;
-    
     public function __construct(
-        CacheInterface $cache,
-        array $accessSettings
+        array $accessSettings = []
     )
     {
-        $this->cache = $cache;
-
-        $this->actions = $this->flattenActions($accessSettings['actions'] ?? []);
-        $this->templates = $accessSettings['templates'] ?? [];
-        $this->rights = $accessSettings['rights'] ?? [];
+        $this->actionData = $this->flattenActionData($accessSettings['actions'] ?? []);
+        $this->rightsTemplates = $accessSettings['templates'] ?? [];
+        $this->rightsSettings = $accessSettings['rights'] ?? [];
     }
-    
+
     /**
      * Flattens action tree.
      */
-    private function flattenActions(
+    private function flattenActionData(
         array $tree,
         array $path = [],
         array $flat = []
@@ -51,127 +54,178 @@ class Access
         $add = function ($node) use ($path, &$flat) {
             $path[] = $node;
             $flat[$node] = $path;
-            
+
             return $path;
         };
-        
+
         foreach ($tree as $node) {
             if (is_array($node)) {
                 foreach ($node as $nodeTitle => $nodeTree) {
                     $pathCopy = $add($nodeTitle);
-        
-                    $flat = $this->flattenActions($nodeTree, $pathCopy, $flat);
+
+                    $flat = $this->flattenActionData($nodeTree, $pathCopy, $flat);
                 }
             } else {
                 $add($node);
             }
         }
-        
+
         return $flat;
     }
 
     /**
-     * Check entity rights for action (also inherited)
+     * Returns all table rights for user.
+     * 
+     * @param string $table Plural entity name by default like 'articles'
+     */
+    public function getTableRights(string $table, ?User $user) : Rights
+    {
+        /** @var array<string, boolean> */
+        $can = [];
+
+        $actions = $this->actionNames();
+
+        foreach ($actions as $action) {
+            $can[$action] = $this->checkActionRights($table, $action, $user);
+        }
+
+        return new Rights($user, $can);
+    }
+
+    /**
+     * Checks table rights for action (also inherited)
      * for current user and role.
      */
-    public function checkRights(
-        string $entity,
+    public function checkActionRights(
+        string $table,
         string $action,
         ?User $user
     ) : bool
     {
-        $actionData = $this->actions[$action] ?? null;
-
-        Assert::notNull(
-            $actionData,
-            'Unknown action: ' . $action
-        );
-        
-        $grantAccess = false;
-
         $role = $user ? $user->role() : null;
 
         if (is_null($role)) {
             return false;
         }
 
-        $roleTag = $role->tag;
-        
-        $rights = $this->rights[$entity] ?? null;
+        $actionPath = $this->actionPath($action);
 
-        if (is_null($rights)) {
-            throw new InvalidConfigurationException(
-                'Access rights for entity "' . $entity . '" are not configured.'
+        foreach ($actionPath as $ancestorAction) {
+            $grant = $this->checkRightsForExactAction(
+                $table,
+                $ancestorAction,
+                $role->tag
             );
-        }
 
-        foreach ($actionData as $actionBit) {
-            $grantAccess = $this->checkRightsForExactAction(
-                $rights, $actionBit, $roleTag
-            );
-            
-            if ($grantAccess) {
-                break;
+            if ($grant) {
+                return true;
             }
         }
 
-        return $grantAccess;
+        return false;
     }
-    
+
     /**
      * Checks entity rights for exact action based on roleTag.
+     * 
+     * @var array<string, string|string[]> $tableRightsSettings
      */
     private function checkRightsForExactAction(
-        array $rights,
+        string $table,
         string $action,
         string $roleTag
     ) : bool
     {
-        $grantAccess = false;
+        $grant = false;
 
-        if (isset($rights['template'])) {
-            $tname = $rights['template'];
+        $tableRights = $this->tableRights($table);
 
-            if (!isset($this->templates[$tname])) {
-                throw new InvalidConfigurationException(
-                    'Unknown access rights template: ' . $tname
-                );
-            }
-            
-            $template = $this->templates[$tname];
-            
-            $grantAccess = in_array($action, $template[$roleTag] ?? []);
-        }
-        
-        if (!$grantAccess) {
-            $grantAccess = in_array($action, $rights[$roleTag] ?? []);
+        $tName = $tableRights['template'] ?? null;
+
+        if ($tName) {
+            $template = $this->rightsTemplate($tName);
+
+            $grant = $this->checkRoleRights(
+                $template[$roleTag] ?? [],
+                $action
+            );
         }
 
-        return $grantAccess;
+        return $grant
+            || $this->checkRoleRights(
+                $tableRights[$roleTag] ?? [],
+                $action
+            );
     }
-    
+
     /**
-     * Get all entity rights for user.
+     * @param string[] $roleRights
      */
-    public function getEntityRights(
-        string $entity,
-        ?User $user
-    ) : Rights
+    private function checkRoleRights(array $roleRights, string $action) : bool
     {
-        $path = 'access.' . $entity;
+        return in_array($action, $roleRights);
+    }
 
-        return $this->cache->getCached(
-            $path,
-            function () use ($entity, $user) {
-                $can = [];
-                $rights = array_keys($this->actions);
-                
-                foreach ($rights as $r) {
-                    $can[$r] = $this->checkRights($entity, $r, $user);
-                }
+    /**
+     * Returns the list of known action names.
+     *
+     * @return string[]
+     */
+    private function actionNames() : array
+    {
+        return array_keys($this->actionData);
+    }
 
-                return new Rights($user, $can);
-            }
+    /**
+     * Returns action path.
+     *
+     * @return string[]
+     */
+    private function actionPath(string $action) : array
+    {
+        $actionPath = $this->actionData[$action] ?? null;
+
+        Assert::notNull(
+            $actionPath,
+            'Unknown action: ' . $action
         );
+
+        return $actionPath;
+    }
+
+    /**
+     * Returns rights template by name.
+     *
+     * @return array<string, string[]>
+     */
+    private function rightsTemplate(string $name) : array
+    {
+        $template = $this->rightsTemplates[$name] ?? null;
+
+        if (is_null($template)) {
+            throw new InvalidConfigurationException(
+                'Undefined access rights template: ' . $name
+            );
+        }
+
+        return $template;
+    }
+
+    /**
+     * Returns table rights settings.
+     * 
+     * @return array<string, string|string[]>
+     */
+    private function tableRights(string $table) : array
+    {
+        $tableRights = $this->rightsSettings[$table] ?? null;
+
+        if (is_null($tableRights)) {
+            throw new InvalidConfigurationException(
+                'Access rights for table "' . $table . '" are not configured.'
+            );
+        }
+
+        return $tableRights;
     }
 }

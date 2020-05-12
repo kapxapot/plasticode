@@ -2,7 +2,9 @@
 
 namespace Plasticode\Models\Interfaces;
 
-interface DbModelInterface
+use Plasticode\Interfaces\ArrayableInterface;
+
+interface DbModelInterface extends ArrayableInterface
 {
     /**
      * Returns the id of the model.
@@ -11,4 +13,6 @@ interface DbModelInterface
      * It is recommended to use getId() always for safer code.
      */
     function getId() : ?int;
+
+    static function pluralAlias() : string;
 }

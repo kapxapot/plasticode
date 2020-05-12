@@ -111,7 +111,6 @@ class Bootstrap
 
         $map['access'] = fn (CI $c) =>
             new Access(
-                $c->cache,
                 $this->settings['access']
             );
 

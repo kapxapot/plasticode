@@ -83,4 +83,12 @@ final class DbModelTest extends TestCase
         $this->assertEquals(1, $dummy->dummy()->id);
         $this->assertEquals(2, $dummy->dummy()->id);
     }
+
+    public function testAlias() : void
+    {
+        $dummy = new DummyDbModel();
+
+        $this->assertEquals('dummy_db_models', $dummy::pluralAlias());
+        $this->assertEquals('dummy_db_models', DummyDbModel::pluralAlias());
+    }
 }

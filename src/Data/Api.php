@@ -42,7 +42,7 @@ class Api
      */
     private function getRights(string $table) : Rights
     {
-        return $this->access->getEntityRights(
+        return $this->access->getTableRights(
             $table,
             $this->auth->getUser()
         );

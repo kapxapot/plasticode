@@ -28,9 +28,14 @@ class Rights
 
     /**
      * Table access rights
+     * 
+     * @var array<string, boolean>
      */
     private array $rights;
 
+    /**
+     * @param array<string, boolean> $rights
+     */
     public function __construct(?User $user, array $rights)
     {
         $this->user = $user;
@@ -39,6 +44,8 @@ class Rights
 
     /**
      * Get access rights for table.
+     * 
+     * @return array<string, boolean>
      */
     public function forTable() : array
     {
@@ -47,6 +54,8 @@ class Rights
 
     /**
      * Get access rights for entity.
+     * 
+     * @return array<string, boolean>
      */
     public function forEntity(array $entity) : array
     {
@@ -62,10 +71,10 @@ class Rights
         $can[self::READ] = $noOwner
             || $can[self::READ]
             || ($own && $can[self::READ_OWN]);
-        
+
         $can[self::EDIT] = $can[self::EDIT]
             || ($own && $can[self::EDIT_OWN]);
-        
+
         $can[self::DELETE] = $can[self::DELETE]
             || ($own && $can[self::DELETE_OWN]);
 

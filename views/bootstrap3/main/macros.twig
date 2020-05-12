@@ -1,16 +1,12 @@
-{% macro create_button(entity_type, label, path_args = {}) %}
-    {% set target_url = path_for('admin.entities.' ~ entity_type, path_args) ~ '?action=create' %}
-    {#% if can(entity_type, 'create') %#}
-        <a class="btn btn-lg btn-default btn-block" href="{{ target_url }}" role="button">{{ label }} &raquo;&raquo;</a>
-    {#% else %}
-        <button type="button" class="btn btn-lg btn-default btn-block" ng-click="signIn('{{ target_url }}')">{{ label }} &raquo;&raquo;</button>
-    {% endif %#}
+{% macro create_button(plural_entity_type, label, path_args = {}) %}
+    {% set target_url = path_for('admin.entities.' ~ plural_entity_type, path_args) ~ '?action=create' %}
+    <a class="btn btn-lg btn-default btn-block" href="{{ target_url }}" role="button">{{ label }} &raquo;&raquo;</a>
 {% endmacro %}
 
-{% macro edit_button(entity_type, entity, path_args = {}) %}
+{% macro edit_button(entity, path_args = {}) %}
     {% import 'macros.twig' as m %}
-    {% if entity.access.edit %}
-        <a class="btn btn-default btn-pad pull-right" href="{{ path_for('admin.entities.' ~ entity_type, path_args) ~ '?action=edit&id=' ~ entity.id }}" role="button" title="Редактировать">{{ m.gi('pencil') }}</a>
+    {% if can_entity(entity, 'edit') %}
+        <a class="btn btn-default btn-pad pull-right" href="{{ path_for('admin.entities.' ~ entity.plural_alias, path_args) ~ '?action=edit&id=' ~ entity.get_id }}" role="button" title="Редактировать">{{ m.gi('pencil') }}</a>
     {% endif %}
 {% endmacro %}
 

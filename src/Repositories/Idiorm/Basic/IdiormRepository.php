@@ -12,31 +12,28 @@ use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\DbModel;
 use Plasticode\Query;
-use Plasticode\Util\Classes;
-use Plasticode\Util\Pluralizer;
 use Plasticode\Util\SortStep;
-use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
 abstract class IdiormRepository
 {
     /**
-     * Overriden table name
+     * Overriden table name.
      */
     protected string $table = '';
 
     /**
-     * Full entity class name
+     * Full entity class name, must be a subclass of {@see DbModel}.
      */
     protected string $entityClass = '';
 
     /**
-     * Default sort field name
+     * Default sort field name.
      */
     protected string $sortField = '';
 
     /**
-     * Default sort direction
+     * Default sort direction.
      */
     protected bool $sortReverse = false;
 
@@ -322,17 +319,16 @@ abstract class IdiormRepository
 
     private function tableRights() : Rights
     {
-        return $this->access->getEntityRights(
+        return $this->access->getTableRights(
             $this->getTable(),
             $this->auth->getUser()
         );
     }
 
     /**
-     * Repository MUST be named as '{entity_class}Repository'.
-     * The table name is generated as a plural form of 'entity_class'.
+     * The table name is generated as a plural form of $entityClass var.
      * 
-     * Alternatively, the table name can be specified explicitly in static $table var.
+     * Alternatively, the table name can be specified explicitly in $table var.
      */
     public function getTable() : string
     {
@@ -340,23 +336,8 @@ abstract class IdiormRepository
             return $this->table;
         }
 
-        // \Plasticode\..\ArticleCategoryRepository
-        // -> ArticleCategoryRepository
-        $class = Classes::shortName(static::class);
+        $entityClass = $this->getEntityClass();
 
-        $suffix = 'Repository';
-
-        Assert::true(Strings::endsWith($class, $suffix));
-
-        // ArticleCategoryRepository -> ArticleCategory
-        $entityClass = Strings::trimEnd($class, $suffix);
-
-        // ArticleCategory -> ArticleCategories
-        $entityPlural = Pluralizer::plural($entityClass);
-
-        // ArticleCategories -> article_categories
-        $table = Strings::toSnakeCase($entityPlural);
-
-        return $table;
+        return $entityClass::pluralAlias();
     }
 }

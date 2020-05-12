@@ -13,7 +13,7 @@ class SettingsProvider implements SettingsProviderInterface
     /**
      * @param array|\ArrayAccess $settings
      */
-    public function __construct($settings)
+    public function __construct($settings = [])
     {
         $this->settings = $settings;
     }
