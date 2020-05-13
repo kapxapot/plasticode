@@ -83,27 +83,6 @@ final class Db
         return $items->where($field, $args['id']);
     }
 
-    public function getEntityById(string $table, $id) : array
-    {
-        $path = 'data.' . $table . '.' . $id;
-        $value = $this->cache->get($path);
-
-        if (is_null($value)) {
-            $entities = $this
-                ->forTable($table)
-                ->findArray();
-            
-            foreach ($entities as $entity) {
-                $this->cache->set(
-                    'data.' . $table . '.' . $entity['id'],
-                    $entity
-                );
-            }
-        }
-
-        return $this->cache->get($path);
-    }
-
     /**
      * Returns new updated_at value for the table,
      * if it has the corresponding field.

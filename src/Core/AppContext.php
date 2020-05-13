@@ -18,8 +18,7 @@ class AppContext
     protected ViewInterface $view;
     protected LoggerInterface $logger;
 
-    /** @var MenuRepositoryInterface */
-    protected $menuRepository;
+    private MenuRepositoryInterface $menuRepository;
 
     public function __construct(
         SettingsProviderInterface $settingsProvider,

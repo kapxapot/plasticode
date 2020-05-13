@@ -6,14 +6,12 @@ use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\Util\Strings;
 use Psr\Container\ContainerInterface;
 use Respect\Validation\Validator;
-use Webmozart\Assert\Assert;
 
 abstract class TaggableEntityGenerator extends EntityGenerator
 {
-    /** @var TagRepositoryInterface */
-    protected $tagRepository;
+    protected TagRepositoryInterface $tagRepository;
 
-    protected $tagsField = 'tags';
+    protected string $tagsField = 'tags';
 
     public function __construct(ContainerInterface $container, string $entity)
     {
@@ -37,32 +35,28 @@ abstract class TaggableEntityGenerator extends EntityGenerator
 
         $tags = Strings::toTags($item[$this->tagsField]);
 
-        $id = $item[$this->idField] ?? null;
-
-        Assert::notNull(
-            $id,
-            'Entity id ("' . $this->idField . '" field) must be set.'
-        );
+        $id = $item[$this->idField];
 
         $this->tagRepository->deleteByEntity($this->entity, $id);
 
         foreach ($tags as $tag) {
-            if (strlen($tag) > 0) {
-                $this->tagRepository->store(
-                    [
-                        'entity_type' => $this->entity,
-                        'entity_id' => $id,
-                        'tag' => $tag,
-                    ]
-                );
-            }
+            $this->tagRepository->store(
+                [
+                    'entity_type' => $this->entity,
+                    'entity_id' => $id,
+                    'tag' => $tag,
+                ]
+            );
         }
     }
 
     public function afterDelete(array $item) : void
     {
         parent::afterDelete($item);
-        
-        $this->tagRepository->deleteByEntity($this->entity, $item[$this->idField]);
+
+        $this->tagRepository->deleteByEntity(
+            $this->entity,
+            $item[$this->idField]
+        );
     }
 }

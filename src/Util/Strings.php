@@ -106,13 +106,11 @@ class Strings
     public static function toTags(string $str) : array
     {
         $tags = array_map(
-            function($t) {
-                return self::normalize($t);
-            },
+            fn (string $t) => self::normalize($t),
             self::explode($str)
         );
-        
-        return array_unique($tags);
+
+        return Arrays::clean(array_unique($tags));
     }
 
     /**

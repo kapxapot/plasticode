@@ -2,45 +2,41 @@
 
 namespace Plasticode\Generators;
 
+use Plasticode\Models\DbModel;
 use Plasticode\Util\Pluralizer;
 use Psr\Container\ContainerInterface;
 
+/**
+ * Currenly not used.
+ * 
+ * @deprecated 0.6.2
+ */
 abstract class ChildEntityGenerator extends EntityGenerator
 {
     /**
-     * Parent entity name
-     *
-     * @var string
+     * Parent entity name.
      */
-    protected $parentName;
+    protected string $parentName;
 
     /**
-     * Child entity name
-     *
-     * @var string
+     * Child entity name.
      */
-    protected $name;
+    protected string $name;
 
     /**
      * Parents label
-     *
-     * @var string
      */
-    protected $parentsLabel;
+    protected string $parentsLabel;
 
     /**
-     * Children label
-     *
-     * @var string
+     * Children label.
      */
-    protected $namesLabel;
+    protected string $namesLabel;
 
     /**
-     * Parent name field
-     *
-     * @var string
+     * Parent name field.
      */
-    protected $parentNameField;
+    protected string $parentNameField;
 
     public function __construct(
         ContainerInterface $container,
@@ -52,7 +48,7 @@ abstract class ChildEntityGenerator extends EntityGenerator
             $container,
             $entity
         );
-        
+
         $this->parentName = $options['parent']['name'] ?? 'parent';
         $this->name = $options['child']['name'] ?? 'child';
         $this->parentsLabel = $options['parent']['label'] ?? 'Parents';
@@ -61,52 +57,45 @@ abstract class ChildEntityGenerator extends EntityGenerator
     }
 
     /**
-     * Return plural form of the word
-     *
-     * @param string $word
-     * @return string
+     * Returns plural form of the word.
      */
     protected function plural(string $word) : string
     {
         return Pluralizer::plural($word);
     }
-    
+
     /**
-     * Plural parents name
-     *
-     * @return string
+     * Returns plural form of parent entity name.
      */
     protected function parents() : string
     {
         return $this->plural($this->parentName);
     }
-    
+
     /**
-     * Plural children name
-     *
-     * @return string
+     * Returns plural form of child entity name.
      */
     protected function names() : string
     {
         return $this->plural($this->name);
     }
-    
+
     public function getOptions() : array
     {
         $options = parent::getOptions();
-        
+
         $options['uri'] = $this->parents() . '/{id:\d+}/' . $this->names();
         $options['filter'] = $this->parentName . '_id';
-        
+
         return $options;
     }
-    
+
     public function getAdminParams(array $args) : array
     {
         $params = parent::getAdminParams($args);
 
         $parentId = $args['id'];
-        $parent = $this->db->getEntityById($this->parents(), $parentId);
+        $parent = $this->getParentById($parentId);
 
         $params['source'] = $this->parents() . '/' . $parentId . '/' . $this->names();
         $params['breadcrumbs'] = [
@@ -119,11 +108,13 @@ abstract class ChildEntityGenerator extends EntityGenerator
             ['text' => $parent[$this->parentNameField]],
             ['text' => $this->namesLabel],
         ];
-        
+
         $params['hidden'] = [
             $this->parentName . '_id' => $parentId,
         ];
-        
+
         return $params;
     }
+
+    abstract protected function getParentById(?int $id) : DbModel;
 }

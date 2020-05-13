@@ -8,11 +8,8 @@ use Psr\Container\ContainerInterface;
 
 class MenuItemsGenerator extends EntityGenerator
 {
-    /** @var MenuRepositoryInterface */
-    protected $menuRepository;
-
-    /** @var MenuItemRepositoryInterface */
-    protected $menuItemRepository;
+    private MenuRepositoryInterface $menuRepository;
+    private MenuItemRepositoryInterface $menuItemRepository;
 
     public function __construct(ContainerInterface $container, string $entity)
     {
@@ -25,21 +22,21 @@ class MenuItemsGenerator extends EntityGenerator
     public function getRules(array $data, $id = null) : array
     {
         $rules = parent::getRules($data, $id);
-        
+
         $rules['link'] = $this->rule('url');
         $rules['text'] = $this->rule('text');
         $rules['position'] = $this->rule('posInt');
-        
+
         return $rules;
     }
-    
+
     public function getOptions() : array
     {
         $options = parent::getOptions();
-        
+
         $options['uri'] = 'menus/{id:\d+}/menu_items';
         $options['filter'] = 'menu_id';
-        
+
         return $options;
     }
 
@@ -47,19 +44,21 @@ class MenuItemsGenerator extends EntityGenerator
     {
         $item = parent::afterLoad($item);
 
-        $menuItem = $this->menuItemRepository->get($item[$this->idField]);
+        $id = $item[$this->idField];
+
+        $menuItem = $this->menuItemRepository->get($id);
 
         $item['url'] = $menuItem->url();
 
         return $item;
     }
-    
+
     public function getAdminParams(array $args) : array
     {
         $params = parent::getAdminParams($args);
 
         $menuId = $args['id'];
-        
+
         $menu = $this->menuRepository->get($menuId);
 
         $params['source'] = 'menus/' . $menuId . '/menu_items';
@@ -72,11 +71,11 @@ class MenuItemsGenerator extends EntityGenerator
             ['text' => $menu->text],
             ['text' => 'Menu Items'],
         ];
-        
+
         $params['hidden'] = [
             'menu_id' => $menuId,
         ];
-        
+
         return $params;
     }
 }

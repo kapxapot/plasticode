@@ -8,8 +8,7 @@ use Psr\Container\ContainerInterface;
 
 class UsersGenerator extends EntityGenerator
 {
-    /** @var ValidationInterface */
-    protected $userValidation;
+    protected ValidationInterface $userValidation;
 
     public function __construct(ContainerInterface $container, string $entity)
     {
@@ -22,7 +21,7 @@ class UsersGenerator extends EntityGenerator
     {
         return $this->userValidation->getRules($data, $id);
     }
-    
+
     public function beforeSave(array $data, $id = null) : array
     {
         $data = parent::beforeSave($data, $id);
