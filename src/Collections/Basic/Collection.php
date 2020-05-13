@@ -62,7 +62,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Concats the collection of the same type.
+     * Concats the collection.
      * 
      * @param static $other
      * @return static
@@ -74,7 +74,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Merges several heterogenous collections.
+     * Merges several collections.
      * 
      * @param static[] $collections
      * @return static
