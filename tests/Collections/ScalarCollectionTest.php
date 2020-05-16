@@ -14,6 +14,13 @@ final class ScalarCollectionTest extends TestCase
         $this->assertEquals(7, $col->max());
     }
 
+    public function testMaxStr() : void
+    {
+        $col = ScalarCollection::make(['abc', 'bde', 'xyz']);
+
+        $this->assertEquals('xyz', $col->max());
+    }
+
     public function testDistinctInt() : void
     {
         $col = ScalarCollection::make([1, 2, 3, 5, 7, 2]);
