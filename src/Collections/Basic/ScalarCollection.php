@@ -15,6 +15,11 @@ class ScalarCollection extends Collection
         parent::__construct($data);
     }
 
+    /**
+     * Checks if the collection contains the provided value.
+     *
+     * @param mixed $value
+     */
     public function contains($value) : bool
     {
         return in_array($value, $this->data);
@@ -30,5 +35,15 @@ class ScalarCollection extends Collection
         return parent::distinctBy(
             fn ($v) => $v
         );
+    }
+
+    /**
+     * Returns max value.
+     *
+     * @return mixed
+     */
+    public function max()
+    {
+        return max($this->data);
     }
 }
