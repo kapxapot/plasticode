@@ -288,7 +288,7 @@ final class StringsTest extends TestCase
     {
         return [
             [
-                'Hello<b>World</b>!',
+                '<p>Hello<b>World</b>!</p>',
                 'Hello World !'
             ],
             [

@@ -155,7 +155,7 @@ class Strings
     }
 
     /**
-     * Strips HTML tags inserting spaces instead of them.
+     * Strips HTML tags inserting spaces instead of them and trims the string.
      */
     public static function stripTags(string $str) : string
     {
@@ -163,7 +163,7 @@ class Strings
         $str = strip_tags($str);
         $str = preg_replace('/\s+/', ' ', $str);
 
-        return $str;
+        return trim($str);
     }
 
     /**
