@@ -27,4 +27,11 @@ final class ScalarCollectionTest extends TestCase
 
         $this->assertEquals([1, 2, 3, 5, 7], $col->distinct()->toArray());
     }
+
+    public function testEmptyArrayProducesNull() : void
+    {
+        $col = ScalarCollection::empty();
+
+        $this->assertNull($col->max());
+    }
 }

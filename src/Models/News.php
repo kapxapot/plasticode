@@ -6,6 +6,9 @@ use Plasticode\Models\Interfaces\TaggedInterface;
 use Plasticode\Models\Traits\FullPublished;
 use Plasticode\Models\Traits\Tagged;
 
+/**
+ * @property integer $id
+ */
 class News extends DbModel implements TaggedInterface
 {
     use FullPublished;

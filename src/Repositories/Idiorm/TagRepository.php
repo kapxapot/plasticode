@@ -24,7 +24,7 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface
             ->entityQuery($entityType)
             ->where('tag', $tag)
             ->all()
-            ->extractScalar('entity_id');
+            ->scalarize('entity_id');
     }
 
     public function getAllByTag(string $tag) : TagCollection

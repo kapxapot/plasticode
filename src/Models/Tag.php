@@ -6,9 +6,10 @@ use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\Util\Strings;
 
 /**
- * @property string $tag
  * @property integer $entityId
  * @property string $entityType
+ * @property integer $id
+ * @property string $tag
  * @method string url()
  * @method static withUrl(string|callable $url)
  */

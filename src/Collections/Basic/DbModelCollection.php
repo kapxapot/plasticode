@@ -21,14 +21,24 @@ class DbModelCollection extends TypedCollection
     }
 
     /**
+     * Returns next id (max id + 1) based on current items.
+     * 
+     * Useful for repository mocks.
+     */
+    public function nextId() : int
+    {
+        $maxId = $this->ids()->max() ?? 0;
+
+        return $maxId + 1;
+    }
+
+    /**
      * Extracts ids of models.
      */
     public function ids() : ScalarCollection
     {
-        return $this
-            ->map(
-                fn (DbModelInterface $m) => $m->getId()
-            )
-            ->toScalarCollection();
+        return $this->scalarize(
+            fn (DbModelInterface $m) => $m->getId()
+        );
     }
 }

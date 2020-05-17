@@ -20,6 +20,11 @@ class TagRepositoryMock implements TagRepositoryInterface
     public function store(array $data) : Tag
     {
         $tag = new Tag($data);
+
+        if (!$tag->isPersisted()) {
+            $tag->id = $this->tags->nextId();
+        }
+
         $this->tags = $this->tags->add($tag);
 
         return $tag;
@@ -28,11 +33,9 @@ class TagRepositoryMock implements TagRepositoryInterface
     public function getIdsByTag(string $entityType, string $tag) : ScalarCollection
     {
         return $this
-            ->tags
+            ->getAllByTag($tag)
             ->where('entity_type', $entityType)
-            ->where('tag', $tag)
-            ->extract('entity_id')
-            ->toScalarCollection();
+            ->scalarize('entity_id');
     }
 
     public function getAllByTag(string $tag) : TagCollection
@@ -62,8 +65,6 @@ class TagRepositoryMock implements TagRepositoryInterface
     public function search(string $searchQuery) : TagCollection
     {
         // placeholder
-        return $this
-            ->tags
-            ->where('tag', $searchQuery);
+        return $this->getAllByTag($searchQuery);
     }
 }

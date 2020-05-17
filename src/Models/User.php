@@ -6,10 +6,11 @@ use Plasticode\Models\Traits\CreatedAt;
 use Plasticode\Models\Traits\UpdatedAt;
 
 /**
- * @property string $name
- * @property string $login
- * @property string $password
  * @property string $email
+ * @property integer $id
+ * @property string $login
+ * @property string $name
+ * @property string $password
  * @property integer $roleId
  * @method string gravatarUrl()
  * @method Role role()

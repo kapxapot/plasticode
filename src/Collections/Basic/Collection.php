@@ -216,19 +216,25 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Extracts scalar values from collection.
+     * Converts collection to ScalarCollection, optionally
+     * mapping (reducing) its values to scalars.
      * 
      * In case of non-scalar values will throw an \InvalidArgumentException.
+     * 
+     * @param string|callable|null $by Column/property name or callable, that
+     * produces scalar value.
      */
-    public function extractScalar(string $column) : ScalarCollection
+    public function scalarize($by = null) : ScalarCollection
     {
-        return self::extract($column)
-            ->toScalarCollection();
-    }
+        $col = $this;
 
-    public function toScalarCollection() : ScalarCollection
-    {
-        return ScalarCollection::from($this);
+        if (is_string($by)) {
+            $col = $col->extract($by);
+        } elseif (is_callable($by)) {
+            $col = $col->map($by);
+        }
+
+        return ScalarCollection::from($col);
     }
 
     /**
@@ -251,13 +257,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      */
     public function any($by = null, $value = null) : bool
     {
-        if ($by !== null) {
-            return $this
-                ->where($by, $value)
-                ->any();
-        }
-
-        return !$this->isEmpty();
+        return $by
+            ? $this->where($by, $value)->any()
+            : !$this->isEmpty();
     }
 
     /**

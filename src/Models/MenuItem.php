@@ -3,6 +3,7 @@
 namespace Plasticode\Models;
 
 /**
+ * @property integer $id
  * @property integer $menuId
  * @property integer $position
  * @property string $text

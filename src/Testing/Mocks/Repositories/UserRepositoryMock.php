@@ -28,6 +28,10 @@ class UserRepositoryMock implements UserRepositoryInterface
 
     public function save(User $user) : User
     {
+        if (!$user->isPersisted()) {
+            $user->id = $this->users->nextId();
+        }
+
         $this->users = $this->users->add($user);
         return $user;
     }

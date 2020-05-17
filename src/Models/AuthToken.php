@@ -6,8 +6,9 @@ use Plasticode\Models\Traits\CreatedAt;
 use Plasticode\Models\Traits\UpdatedAt;
 
 /**
- * @property string $token
  * @property string|null $expiresAt
+ * @property integer $id
+ * @property string $token
  * @property integer $userId
  * @method User user()
  * @method static withUser(User|callable $user)

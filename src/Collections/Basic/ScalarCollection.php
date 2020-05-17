@@ -39,11 +39,15 @@ class ScalarCollection extends Collection
 
     /**
      * Returns max value.
+     * 
+     * In case of empty collection returns null.
      *
      * @return mixed
      */
     public function max()
     {
-        return max($this->data);
+        return $this->isEmpty()
+            ? null
+            : max($this->data);
     }
 }

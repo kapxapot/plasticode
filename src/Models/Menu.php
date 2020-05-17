@@ -7,9 +7,10 @@ use Plasticode\Models\Traits\CreatedAt;
 use Plasticode\Models\Traits\UpdatedAt;
 
 /**
+ * @property integer $id
  * @property string $link
- * @property string $text
  * @property integer $position
+ * @property string $text
  * @method MenuItemCollection items()
  * @method string url()
  * @method static withItems(MenuItemCollection|callable $items)

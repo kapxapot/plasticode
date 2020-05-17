@@ -7,6 +7,7 @@ use Plasticode\Models\Traits\FullPublished;
 use Plasticode\Models\Traits\Tagged;
 
 /**
+ * @property integer $id
  * @property string $slug
  * @property string $title
  * @property string|null $text
