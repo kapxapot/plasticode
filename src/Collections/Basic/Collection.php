@@ -27,7 +27,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Creates collection from arrayable (including other Colection).
+     * Creates collection from arrayable (including other collection).
      * 
      * @return static
      */
