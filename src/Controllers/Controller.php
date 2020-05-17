@@ -19,15 +19,14 @@ use Webmozart\Assert\Assert;
  */
 abstract class Controller
 {
+    private AppContext $appContext;
+
     private SettingsProviderInterface $settingsProvider;
     private TranslatorInterface $translator;
     private ValidatorInterface $validator;
     private ViewInterface $view;
 
     protected LoggerInterface $logger;
-
-    /** @var AppContext */
-    protected $appContext;
 
     protected bool $autoOneColumn = true;
 
@@ -40,11 +39,6 @@ abstract class Controller
         $this->validator = $appContext->validator();
         $this->view = $appContext->view();
         $this->logger = $appContext->logger();
-    }
-
-    protected function appContext() : AppContext
-    {
-        return $this->appContext;
     }
 
     /**
@@ -96,7 +90,7 @@ abstract class Controller
 
     protected function buildMenu(array $settings) : MenuCollection
     {
-        return $this->appContext()->getMenus();
+        return $this->appContext->getMenus();
     }
 
     protected function buildSidebar(array $settings) : array
