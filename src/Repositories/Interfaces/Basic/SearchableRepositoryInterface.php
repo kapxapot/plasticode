@@ -2,9 +2,9 @@
 
 namespace Plasticode\Repositories\Interfaces\Basic;
 
-use Plasticode\Collections\Basic\Collection;
+use Plasticode\Collections\Basic\DbModelCollection;
 
 interface SearchableRepositoryInterface
 {
-    function search(string $searchQuery) : Collection;
+    function search(string $searchQuery) : DbModelCollection;
 }

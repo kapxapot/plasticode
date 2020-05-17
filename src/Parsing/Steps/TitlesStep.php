@@ -13,16 +13,16 @@ class TitlesStep extends BaseStep
     private const MIN_LEVEL = 2;
     private const MAX_LEVEL = 6;
 
-    /** @var RendererInterface */
-    private $renderer;
-
-    /** @var ParsingStepInterface */
-    private $lineParser;
+    private RendererInterface $renderer;
+    private ParsingStepInterface $lineParser;
 
     /**
      * @param ParsingStepInterface $lineParser Parser of [] and [[]] brackets
      */
-    public function __construct(RendererInterface $renderer, ParsingStepInterface $lineParser)
+    public function __construct(
+        RendererInterface $renderer,
+        ParsingStepInterface $lineParser
+    )
     {
         $this->renderer = $renderer;
         $this->lineParser = $lineParser;
@@ -38,10 +38,10 @@ class TitlesStep extends BaseStep
             $context->getLines(),
             $titlesContext
         );
-        
+
         $context->setLines($parsedLines);
         $context->contents = $titlesContext->getContents();
-        
+
         return $context;
     }
 
@@ -51,7 +51,7 @@ class TitlesStep extends BaseStep
 
         foreach ($lines as $line) {
             $line = trim($line);
-            
+
             if (strlen($line) > 0) {
                 $line = preg_replace_callback(
                     $this->getPattern(),
@@ -78,14 +78,14 @@ class TitlesStep extends BaseStep
     {
         $sticks = trim($matches[1]);
         $content = trim($matches[2], ' |');
-        
+
         $withContents = true;
 
         if (substr($content, -1) == '#') {
             $withContents = false;
             $content = rtrim($content, ' #');
         }
-        
+
         $level = strlen($sticks);
         $label = null;
 
@@ -97,7 +97,7 @@ class TitlesStep extends BaseStep
                 $context->getCountSlice($level)
             );
         }
-        
+
         // parse brackets (!)
         $parsedContent = $this->lineParser->parse($content);
 

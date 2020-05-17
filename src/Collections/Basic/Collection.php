@@ -9,11 +9,6 @@ use Webmozart\Assert\Assert;
 
 class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializable, ArrayableInterface
 {
-    /**
-     * Empty collection
-     */
-    private static ?Collection $empty = null;
-
     protected array $data;
 
     protected function __construct(?array $data)
@@ -43,13 +38,14 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         );
     }
 
-    public static function empty() : Collection
+    /**
+     * Creates empty collection, shortcut to make().
+     *
+     * @return static
+     */
+    public static function empty() : self
     {
-        if (is_null(self::$empty)) {
-            self::$empty = Collection::make();
-        }
-
-        return self::$empty;
+        return static::make();
     }
 
     /**
@@ -81,7 +77,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      */
     public static function merge(self ...$collections) : self
     {
-        $merged = static::make();
+        $merged = static::empty();
 
         foreach ($collections as $collection) {
             $merged = $merged->concat($collection);
@@ -220,23 +216,19 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Shortcut for extract('id').
-     */
-    public function ids() : ScalarCollection
-    {
-        return self::extractScalar('id');
-    }
-
-    /**
      * Extracts scalar values from collection.
      * 
      * In case of non-scalar values will throw an \InvalidArgumentException.
      */
     public function extractScalar(string $column) : ScalarCollection
     {
-        return ScalarCollection::from(
-            self::extract($column)
-        );
+        return self::extract($column)
+            ->toScalarCollection();
+    }
+
+    public function toScalarCollection() : ScalarCollection
+    {
+        return ScalarCollection::from($this);
     }
 
     /**

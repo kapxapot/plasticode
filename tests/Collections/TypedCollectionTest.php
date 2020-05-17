@@ -62,6 +62,6 @@ final class TypedCollectionTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $dc = InvalidTypedCollection::make();
+        $dc = InvalidTypedCollection::empty();
     }
 }

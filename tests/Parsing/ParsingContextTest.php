@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Parsing;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Collections\Basic\Collection;
+use Plasticode\Collections\ContentsItemCollection;
 use Plasticode\Parsing\ContentsItem;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Util\Date;
@@ -16,10 +16,10 @@ final class ParsingContextTest extends TestCase
     {
         $context = ParsingContext::fromText('some text');
 
-        $context->contents = Collection::make(
+        $context->contents = ContentsItemCollection::make(
             [
                 new ContentsItem(1, '1', 'Hey'),
-                new ContentsItem(1, '2', 'Yay')
+                new ContentsItem(1, '2', 'Yay'),
             ]
         );
 

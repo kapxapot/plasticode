@@ -27,13 +27,12 @@ class TagRepositoryMock implements TagRepositoryInterface
 
     public function getIdsByTag(string $entityType, string $tag) : ScalarCollection
     {
-        return ScalarCollection::from(
-            $this
-                ->tags
-                ->where('entity_type', $entityType)
-                ->where('tag', $tag)
-                ->extract('entity_id')
-        );
+        return $this
+            ->tags
+            ->where('entity_type', $entityType)
+            ->where('tag', $tag)
+            ->extract('entity_id')
+            ->toScalarCollection();
     }
 
     public function getAllByTag(string $tag) : TagCollection

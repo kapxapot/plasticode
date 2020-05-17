@@ -2,7 +2,7 @@
 
 namespace Plasticode;
 
-use Plasticode\Collections\Basic\Collection;
+use Plasticode\Collections\Basic\DbModelCollection;
 use Plasticode\Exceptions\SqlException;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\DbModel;
@@ -25,27 +25,27 @@ use Webmozart\Assert\Assert;
 class Query implements \IteratorAggregate, ArrayableInterface
 {
     /**
-     * Empty query
+     * Empty query.
      */
     private static ?self $empty = null;
 
     /**
-     * ORM query
+     * ORM query.
      */
     private ?\ORM $query = null;
 
     /**
-     * Id field name
+     * Id field name.
      */
     private string $idField;
     
     /**
-     * Method for conversion of dbObj to model
+     * Method for conversion of dbObj to model.
      */
     private \Closure $toModel;
 
     /**
-     * Array of sort settings
+     * Array of sort steps.
      *
      * @var SortStep[]
      */
@@ -54,9 +54,9 @@ class Query implements \IteratorAggregate, ArrayableInterface
     /**
      * Constructor.
      *
-     * @param \ORM $query The base query. Can be null for an empty query
-     * @param string $idField Must be provided for non-empty query
-     * @param \Closure $toModel Must be provided for non-empty query
+     * @param \ORM $query The base query. Can be null for an empty query.
+     * @param string $idField Must be provided for non-empty query.
+     * @param \Closure $toModel Must be provided for non-empty query.
      * @param SortStep[] $sortOrder
      */
     public function __construct(
@@ -76,12 +76,12 @@ class Query implements \IteratorAggregate, ArrayableInterface
             $idField,
             'Non-empty query requires $idField!'
         );
-        
+
         Assert::notNull(
             $toModel,
             'Non-empty query requires toModel() function!'
         );
-    
+
         $this->idField = $idField;
         $this->toModel = $toModel;
         $this->sortOrder = $sortOrder ?? [];
@@ -121,10 +121,10 @@ class Query implements \IteratorAggregate, ArrayableInterface
      * "Select all".
      * In case of empty Query returns empty collection.
      */
-    public function all() : Collection
+    public function all() : DbModelCollection
     {
         if ($this->isEmpty()) {
-            return Collection::empty();
+            return DbModelCollection::empty();
         }
 
         $query = $this->getSortedQuery();
@@ -137,7 +137,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
                 $objs ?? []
             );
 
-            return Collection::make($all);
+            return DbModelCollection::make($all);
         } catch (\PDOException $pdoEx) {
             throw new SqlException(
                 'Failed to execute query: ' . self::queryToString($query)
@@ -565,7 +565,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
 
     // IteratorAggregate
 
-    public function getIterator() : Collection
+    public function getIterator() : DbModelCollection
     {
         return $this->all();
     }

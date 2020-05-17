@@ -2,7 +2,7 @@
 
 namespace Plasticode\Parsing;
 
-use Plasticode\Collections\Basic\Collection;
+use Plasticode\Collections\ContentsItemCollection;
 use Webmozart\Assert\Assert;
 
 /**
@@ -12,7 +12,7 @@ class TitlesContext
 {
     private int $minLevel;
     private int $maxLevel;
-    private Collection $contents;
+    private ContentsItemCollection $contents;
 
     /** @var integer[] */
     private array $count = [];
@@ -25,16 +25,13 @@ class TitlesContext
         $this->minLevel = $minLevel;
         $this->maxLevel = $maxLevel;
 
-        $this->contents = Collection::empty();
+        $this->contents = ContentsItemCollection::make();
 
         $this->zeroCount($this->minLevel);
     }
 
     /**
      * Increments count for $level and zeroes all next counts.
-     *
-     * @param integer $level
-     * @return void
      */
     public function incCount(int $level) : void
     {
@@ -46,9 +43,6 @@ class TitlesContext
 
     /**
      * Fills count array with zeroes starting from $startLevel.
-     *
-     * @param integer $startLevel
-     * @return void
      */
     private function zeroCount(int $startLevel) : void
     {
@@ -60,8 +54,7 @@ class TitlesContext
     /**
      * Returns count slice from start to $level.
      *
-     * @param integer $level
-     * @return array
+     * @return integer[]
      */
     public function getCountSlice(int $level) : array
     {
@@ -72,9 +65,6 @@ class TitlesContext
 
     /**
      * Checks that $level is in [$this->minLevel, $this->maxLevel] range.
-     *
-     * @param integer $level
-     * @return void
      */
     private function checkLevel(int $level) : void
     {
@@ -84,16 +74,13 @@ class TitlesContext
 
     /**
      * Adds item to contents.
-     *
-     * @param ContentsItem $item
-     * @return void
      */
     public function addContents(ContentsItem $item) : void
     {
         $this->contents = $this->contents->add($item);
     }
 
-    public function getContents() : Collection
+    public function getContents() : ContentsItemCollection
     {
         return $this->contents;
     }

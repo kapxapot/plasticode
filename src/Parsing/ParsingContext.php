@@ -2,14 +2,14 @@
 
 namespace Plasticode\Parsing;
 
-use Plasticode\Collections\Basic\Collection;
+use Plasticode\Collections\ContentsItemCollection;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\Text;
 
 class ParsingContext
 {
     public ?string $text = null;
-    public Collection $contents;
+    public ContentsItemCollection $contents;
     public ?string $updatedAt = null;
 
     /** @var string[] */
@@ -23,7 +23,7 @@ class ParsingContext
 
     private function __construct()
     {
-        $this->contents = Collection::empty();
+        $this->contents = ContentsItemCollection::empty();
     }
 
     /**
@@ -56,7 +56,7 @@ class ParsingContext
 
         $context = self::fromText($array['text']);
 
-        $context->contents = Collection::make(
+        $context->contents = ContentsItemCollection::make(
             array_map(
                 fn ($item) => new ContentsItem(...array_values($item)),
                 $array['contents'] ?? []

@@ -19,4 +19,16 @@ abstract class DbModelCollection extends TypedCollection
             fn (DbModelInterface $m) => get_class($m) . $m->getId()
         );
     }
+
+    /**
+     * Extracts ids of models.
+     */
+    public function ids() : ScalarCollection
+    {
+        return $this
+            ->map(
+                fn (DbModelInterface $m) => $m->getId()
+            )
+            ->toScalarCollection();
+    }
 }
