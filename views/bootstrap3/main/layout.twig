@@ -6,19 +6,19 @@
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
+
         <meta name="theme-color" content="#222" />
-        
+
         {# init #}
         {% set year = 'now'|date('Y') %}
         {% set year_from = copyright_from ?? year %}
         {% set years_str %}{% if year > year_from %}{{ year_from }}—{% endif %}{{ year }}{% endset %}
-        
+
         {# set to false to exclude auth blocks #}
         {% set with_auth = with_auth ?? true %}
 
         <title>{% if title %}{{ title|raw }} - {% endif %}{{ site_name }}{% if not title %} - {{ short_site_description }}{% endif %}</title>
-        
+
         <!-- created by Sergey "kapxapot" Atroshchenko &copy; {{ years_str }} -->
 
         <meta name="copyright" content="(c) {{ years_str }} Copyright by {{ site_name }}" />
@@ -26,29 +26,29 @@
             <meta name="keywords" content="{{ site_keywords }}" />
         {% endif %}
         <meta name="description" content="{% if page_description %}{{ page_description }}{% else %}{% if title %}{{ title }} - {% endif %}{{ site_name }} - {{ site_description }}{% endif %}" />
-        
+
         {% include 'main/includes/meta_card.twig' %}
-        
+
         <link rel="shortcut icon" href="{{ fav_icon ?? '/favicon.ico' }}" />
-        
+
         {% if touch_icon %}
             <link rel="apple-touch-icon" href="{{ touch_icon }}">
         {% endif %}
 
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
-        
+
         {% if with_colorbox %}
             <link href="{{ folders.global }}colorbox/colorbox.css" rel="stylesheet" />
         {% endif %}
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-        
+
         {% if with_datatables %}
             <script src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
             <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
             <script src="//cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
-            
+
             <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css">
             <script src="//cdn.datatables.net/responsive/2.1.1/js/dataTables.responsive.min.js"></script>
             <script src="//cdn.datatables.net/responsive/2.1.1/js/responsive.bootstrap.min.js"></script>
@@ -56,41 +56,43 @@
 
         <!-- Moment.js -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"></script>
-        
+
         {% if with_charts %}
             <!-- Chart.js -->
             <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
             <script src="//cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.5/chartjs-plugin-annotation.js"></script>
         {% endif %}
-                
+
         {# Font Awesome #}
         {% if font_awesome_css %}
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
         {% endif %}
-        
+
         <!-- Lozad.js -->
         <script type="text/javascript" src="//cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
-        
+
         <!-- Hammer.js -->
         <script src="https://hammerjs.github.io/dist/hammer.js"></script>
 
         {% block head_appendix %}{% endblock %}
-        
+
         {# global Plasticode css #}
         <link href="{{ folders.global }}css/bootstrap3/common.css" rel="stylesheet" />
         <link href="{{ folders.global }}css/bootstrap3/main.css" rel="stylesheet" />
-        
+
         {# local Plasticode css #}
         {% include 'main/includes/css.twig' %}
 
         {% if rss_feed %}
             <link rel="alternate" type="application/rss+xml" title="{{ site_name }} RSS" href="{{ rss_feed }}" />
         {% endif %}
-        
+
         {#<link rel="search" href="/search.xml" type="application/opensearchdescription+xml" title="{{ site_name }}"/>#}
-        
+
         {% if rel_prev %}<link rel="prev" href="{{ rel_prev }}" />{% endif %}
         {% if rel_next %}<link rel="next" href="{{ rel_next }}" />{% endif %}
+
+        {% if canonical_url %}<link rel="canonical" href="{{ canonical_url }}" />{% endif %}
 
         {% if google_analytics_id and not debug %}
             <!-- Global site tag (gtag.js) - Google Analytics -->
