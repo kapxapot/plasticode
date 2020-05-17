@@ -272,4 +272,29 @@ final class StringsTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider stripTagsProvider
+     */
+    public function testStripTags(string $str, string $expected) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Strings::stripTags($str)
+        );
+    }
+
+    public function stripTagsProvider() : array
+    {
+        return [
+            [
+                'Hello<b>World</b>!',
+                'Hello World !'
+            ],
+            [
+                'Hello ' . PHP_EOL . '<b>World</b> !',
+                'Hello World !'
+            ],
+        ];
+    }
 }

@@ -144,28 +144,34 @@ class Strings
     }
 
     /**
-     * Truncates string to (limit) Unicode characters.
-     * 
-     * @param string $str String to truncate
-     * @param int $limit Desired string length
-     * @return string Truncated string
+     * Strips HTML tags using static::stripTags(),
+     * then truncates string to (limit) Unicode characters.
      */
-    public static function trunc($str, $limit) : string
+    public static function stripTrunc(string $str, int $limit) : string
     {
-        return mb_substr($str, 0, $limit);
+        $str = self::stripTags($str);
+
+        return self::trunc($str, $limit);
     }
 
     /**
-     * Truncates string to (limit) Unicode characters and strips html tags.
-     * 
-     * @param string $str String to truncate
-     * @param int $limit Desired string length
-     * @return string Truncated string
+     * Strips HTML tags inserting spaces instead of them.
      */
-    public static function stripTrunc($str, $limit)
+    public static function stripTags(string $str) : string
     {
+        $str = str_replace('<', ' <', $str);
         $str = strip_tags($str);
-        return self::trunc($str, $limit);
+        $str = preg_replace('/\s+/', ' ', $str);
+
+        return $str;
+    }
+
+    /**
+     * Truncates string to (limit) Unicode characters.
+     */
+    public static function trunc(string $str, int $limit) : string
+    {
+        return mb_substr($str, 0, $limit);
     }
 
     /**
