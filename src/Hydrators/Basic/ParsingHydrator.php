@@ -18,10 +18,6 @@ abstract class ParsingHydrator extends Hydrator
 
     protected function parse(?string $text) : ParsingContext
     {
-        if (strlen($text) == 0) {
-            return null;
-        }
-
         $context = $this->parser->parse($text);
         $context = $this->parser->renderLinks($context);
 
