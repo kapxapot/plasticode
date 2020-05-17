@@ -4,7 +4,7 @@ namespace Plasticode\Collections\Basic;
 
 use Plasticode\Models\Interfaces\DbModelInterface;
 
-abstract class DbModelCollection extends TypedCollection
+class DbModelCollection extends TypedCollection
 {
     protected string $class = DbModelInterface::class;
 
