@@ -517,7 +517,7 @@ class Bootstrap
         $map['cutParser'] = fn (CI $c) =>
             new CutParser($c->cleanupParser);
 
-        $map['dispatcher'] = fn (CI $c) =>
+        $map['eventDispatcher'] = fn (CI $c) =>
             new EventDispatcher(
                 $c->eventLog,
                 $c->eventProcessors
