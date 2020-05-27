@@ -14,12 +14,17 @@ use Webmozart\Assert\Assert;
 /**
  * Idiorm wrapper integrated with DbModel.
  * 
+ * @method self join(string $table, string|array $constraint, ?string $tableAlias = null)
+ * @method self leftOuterJoin(string $table, string|array $constraint, ?string $tableAlias = null)
+ * @method self rightOuterJoin(string $table, string|array $constraint, ?string $tableAlias = null)
+ * @method self select(string $fields, ?string $alias = null)
  * @method self where(string $field, $value)
  * @method self whereAnyIs(array $conditions)
  * @method self whereLt(string $field, $value)
  * @method self whereGt(string $field, $value)
  * @method self whereNotNull(string $field)
  * @method self whereNotEqual(string $field, $value)
+ * @method self whereNull(string $field)
  * @method self whereRaw(string $condition, array $params = null)
  */
 class Query implements \IteratorAggregate, ArrayableInterface
