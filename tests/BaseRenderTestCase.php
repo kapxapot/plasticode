@@ -8,13 +8,12 @@ use Plasticode\Testing\Factories\RendererFactory;
 
 abstract class BaseRenderTestCase extends TestCase
 {
-    /** @var RendererInterface */
-    protected $renderer;
+    protected RendererInterface $renderer;
 
     protected function setUp() : void
     {
         parent::setUp();
-        
+
         $this->renderer = RendererFactory::make();
     }
 

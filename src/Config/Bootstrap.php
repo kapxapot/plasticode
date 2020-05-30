@@ -519,8 +519,8 @@ class Bootstrap
 
         $map['eventDispatcher'] = fn (CI $c) =>
             new EventDispatcher(
-                $c->eventLog,
-                $c->eventHandlers
+                $c->eventHandlers,
+                fn (string $msg) => $c->eventLog->info($msg)
             );
 
         $map['eventHandlers'] = fn (CI $c) => [];

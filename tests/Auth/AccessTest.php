@@ -5,8 +5,6 @@ namespace Plasticode\Tests\Auth;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Auth\Access;
 use Plasticode\IO\File;
-use Plasticode\Models\Role;
-use Plasticode\Models\User;
 use Plasticode\Testing\Mocks\Repositories\RoleRepositoryMock;
 use Plasticode\Testing\Mocks\Repositories\UserRepositoryMock;
 use Plasticode\Testing\Seeders\RoleSeeder;

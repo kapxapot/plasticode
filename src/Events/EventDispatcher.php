@@ -6,7 +6,7 @@ use Psr\Log\LoggerInterface;
 
 class EventDispatcher
 {
-    private LoggerInterface $log;
+    private ?\Closure $logger = null;
 
     /**
      * @var callable[] Event handlers.
@@ -28,18 +28,20 @@ class EventDispatcher
      */
     private bool $processing = false;
 
-    public function __construct(
-        LoggerInterface $log,
-        array $handlers
-    )
+    /**
+     * @param callable[] $handlers
+     */
+    public function __construct(array $handlers, ?\Closure $logger = null)
     {
-        $this->log = $log;
         $this->handlers = $handlers;
+        $this->logger = $logger;
     }
 
     private function log(string $msg) : void
     {
-        $this->log->info($msg);
+        if ($this->logger) {
+            ($this->logger)($msg);
+        }
     }
 
     /**
@@ -47,7 +49,6 @@ class EventDispatcher
      */
     private function enqueue(Event $event) : void
     {
-        // checking for loop
         if ($this->isLoop($event)) {
             $this->log('[!] Loop found, enqueue aborted for ' . $event);
             return;
@@ -101,8 +102,8 @@ class EventDispatcher
         $eventClass = $event->getClass();
 
         $this->log('Processing...');
-        $this->log('   event: ' . $eventClass);
-        $this->log('   entity: ' . $event->getEntity()->toString());
+        $this->log('   event class: ' . $eventClass);
+        $this->log('   entity: ' . $event);
 
         $handlers = $this->getHandlers($eventClass);
 
@@ -171,10 +172,12 @@ class EventDispatcher
         $this->map[$eventClass] = $map;
     }
 
+    /**
+     * Checks params of the callable.
+     * If the 1st param's class = $eventClass, returns true.
+     */
     private function isHandlerFor(callable $handler, string $eventClass) : bool
     {
-        // check params of the callable
-        // if the 1st param's class = $eventClass, return true
         $closure = \Closure::fromCallable($handler);
 
         $rf = new \ReflectionFunction($closure);

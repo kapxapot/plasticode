@@ -6,7 +6,7 @@ use Plasticode\Models\DbModel;
 
 /**
  * @method DummyModel dummy()
- * @method self withDummy(DummyModel|callable $dummy)
+ * @method static withDummy(DummyModel|callable $dummy)
  */
 class DummyDbModel extends DbModel
 {
