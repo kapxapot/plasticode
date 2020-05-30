@@ -520,11 +520,10 @@ class Bootstrap
         $map['eventDispatcher'] = fn (CI $c) =>
             new EventDispatcher(
                 $c->eventLog,
-                $c->eventProcessors
+                $c->eventHandlers
             );
 
-        $map['eventProcessors'] = fn (CI $c) =>
-            [];
+        $map['eventHandlers'] = fn (CI $c) => [];
 
         $map['eventLog'] = function (CI $c) {
             $logger = new Logger(

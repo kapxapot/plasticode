@@ -2,44 +2,48 @@
 
 namespace Plasticode\Events;
 
-use Plasticode\Util\Classes;
 use Psr\Log\LoggerInterface;
 
 class EventDispatcher
 {
-    private LoggerInterface $eventLog;
+    private LoggerInterface $log;
 
     /**
-     * Event processors
+     * @var callable[] Event handlers.
      */
-    private array $processors;
+    private array $handlers;
 
     /**
-     * Event -> processors mappings
+     * @var array<string, callable> Event class -> handlers mapping.
      */
     private array $map = [];
 
     /**
-     * Event queue
+     * @var Event[] Event queue.
      */
     private array $queue = [];
 
+    /**
+     * Is the event dispatcher processing an event currently.
+     */
+    private bool $processing = false;
+
     public function __construct(
-        LoggerInterface $eventLog,
-        array $processors
+        LoggerInterface $log,
+        array $handlers
     )
     {
-        $this->eventLog = $eventLog;
-        $this->processors = $processors;
+        $this->log = $log;
+        $this->handlers = $handlers;
     }
 
     private function log(string $msg) : void
     {
-        $this->eventLog->info($msg);
+        $this->log->info($msg);
     }
 
     /**
-     * Adds event to event queue.
+     * Adds event to queue.
      */
     private function enqueue(Event $event) : void
     {
@@ -63,49 +67,15 @@ class EventDispatcher
     }
 
     /**
-     * Entry point for new event processing.
+     * Registers event and starts its handling.
      */
     public function dispatch(Event $event) : void
     {
-        $this->processEvent($event);
-    }
+        $this->enqueue($event);
 
-    private function processEvent(Event $event) : void
-    {
-        $eventClass = $event->getClass();
-
-        $this->log('Processing...');
-        $this->log('   event: ' . $eventClass);
-        $this->log('   entity: ' . $event->getEntity()->toString());
-
-        $processors = $this->getProcessors($eventClass);
-        $method = $this->getProcessMethod($eventClass);
-
-        foreach ($processors as $processor) {
-            $this->log('Invoking...');
-            $this->log('   processor: ' . $processor->getClass());
-            $this->log('   method: ' . $method);
-
-            try {
-                $nextEventsIterator = $processor->{$method}($event);
-    
-                foreach ($nextEventsIterator as $nextEvent) {
-                    $eventWithParent = $nextEvent->withParent($event);
-
-                    $this->enqueue($eventWithParent);
-                }
-            }
-            catch (\Exception $ex) {
-                $this->log('[!] Event processing error...');
-                $this->log('   message: ' . $ex->getMessage());
-            }
+        if (!$this->processing) {
+            $this->processNext();
         }
-
-        $this->log('Finished processing ' . $eventClass);
-        $this->log('Queue size = ' . count($this->queue));
-        $this->log('');
-
-        $this->processNext();
     }
 
     /**
@@ -115,21 +85,65 @@ class EventDispatcher
     {
         $event = $this->dequeue();
 
-        if (!is_null($event)) {
+        if ($event) {
             $this->processEvent($event);
         }
     }
 
-    private function getProcessors(string $eventClass) : array
+    private function processEvent(Event $event) : void
     {
-        $this->log('Getting processors for ' . $eventClass);
+        if ($this->processing) {
+            throw new \Exception('Already processing an event!');
+        }
+
+        $this->processing = true;
+
+        $eventClass = $event->getClass();
+
+        $this->log('Processing...');
+        $this->log('   event: ' . $eventClass);
+        $this->log('   entity: ' . $event->getEntity()->toString());
+
+        $handlers = $this->getHandlers($eventClass);
+
+        /** @var callable */
+        foreach ($handlers as $handler) {
+            $this->log('Invoking handler: ' . get_class($handler));
+
+            try {
+                $handler($event);
+            }
+            catch (\Exception $ex) {
+                $this->log('[!] Handler invocation error: ' . $ex->getMessage());
+            }
+        }
+
+        $this->log('Finished processing ' . $eventClass);
+        $this->log('Queue size = ' . count($this->queue));
+        $this->log('');
+
+        $this->processing = false;
+
+        $this->processNext();
+    }
+
+    /**
+     * @return callable[]
+     */
+    private function getHandlers(string $eventClass) : array
+    {
+        $this->log('Getting handlers for ' . $eventClass);
 
         if (!array_key_exists($eventClass, $this->map)) {
-            $this->log('   no processor map found');
+            $this->log('   no handler map found');
 
             $this->mapEventClass($eventClass);
         } else {
-            $this->log('   processor map found (' . count($this->map[$eventClass]) . ' processors)');
+            $this->log(
+                '   handler map found ('
+                . count($this->map[$eventClass])
+                . ' handlers)'
+            );
         }
 
         return $this->map[$eventClass];
@@ -137,29 +151,43 @@ class EventDispatcher
 
     private function mapEventClass(string $eventClass) : void
     {
-        $this->log('   building processor map');
+        $this->log('   building handler map');
 
         $map = [];
-        $methodName = $this->getProcessMethod($eventClass);
 
-        foreach ($this->processors as $processor) {
-            if (method_exists($processor, $methodName)) {
-                $this->log('   method ' . $methodName . ' found in processor ' . $processor->getClass());
+        /** @var callable */
+        foreach ($this->handlers as $handler) {
+            if ($this->isHandlerFor($handler, $eventClass)) {
+                $this->log('   found handler: ' . get_class($handler));
 
-                $map[] = $processor;
+                $map[] = $handler;
             }
         }
 
         if (count($map) == 0) {
-            $this->log('   no processors found');
+            $this->log('   no handlers found');
         }
 
         $this->map[$eventClass] = $map;
     }
 
-    private function getProcessMethod(string $eventClass)
+    private function isHandlerFor(callable $handler, string $eventClass) : bool
     {
-        return 'process' . Classes::shortName($eventClass);
+        // check params of the callable
+        // if the 1st param's class = $eventClass, return true
+        $closure = \Closure::fromCallable($handler);
+
+        $rf = new \ReflectionFunction($closure);
+
+        $params = $rf->getParameters();
+
+        if (empty($params)) {
+            return false;
+        }
+
+        $rp = $params[0];
+
+        return $rp->getClass()->name === $eventClass;
     }
 
     /**
@@ -173,7 +201,7 @@ class EventDispatcher
 
         $cur = $event->getParent();
 
-        while (!is_null($cur)) {
+        while ($cur) {
             $curClass = $cur->getClass();
 
             if ($curClass === $eventClass && $cur->getEntityId() === $event->getEntityId()) {
@@ -182,7 +210,7 @@ class EventDispatcher
 
             $cur = $cur->getParent();
         }
-        
+
         return false;
     }
 }
