@@ -163,4 +163,70 @@ final class EventDispatcherTest extends TestCase
 
         $this->assertCount(11, $log);
     }
+
+    public function testUnhandledEvent() : void
+    {
+        $log = [];
+
+        $logger = function (string $msg) use (&$log) {
+            $log[] = $msg;
+        };
+
+        $dispatcher = new EventDispatcher([], $logger);
+
+        $dispatcher->dispatch(
+            new DataEvent('original')
+        );
+
+        $this->assertCount(5, $log);
+    }
+
+    public function testLoop() : void
+    {
+        $output = [];
+        $log = [];
+
+        $logger = function (string $msg) use (&$log) {
+            $log[] = $msg;
+        };
+
+        $dispatcher = new EventDispatcher([], $logger);
+
+        $dispatcher->addHandler(
+            function (DataEvent $event) use (&$output, $dispatcher) {
+                $data = $event->getData();
+
+                $output[] = 'Got data in closure: ' . $data . '.';
+
+                if ($data == 'original') {
+                    $dispatcher->dispatch(
+                        new DataEvent('chained', $event)
+                    );
+                }
+
+                if ($data == 'chained') {
+                    // this is THE LOOP
+                    $dispatcher->dispatch(
+                        new DataEvent('original', $event)
+                    );
+                }
+            },
+        );
+
+        $dispatcher->dispatch(
+            new DataEvent('original')
+        );
+
+        $this->assertCount(2, $output);
+
+        $this->assertEquals(
+            [
+                'Got data in closure: original.',
+                'Got data in closure: chained.',
+            ],
+            $output
+        );
+
+        $this->assertCount(12, $log);
+    }
 }

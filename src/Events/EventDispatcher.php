@@ -111,11 +111,15 @@ class EventDispatcher
 
         $this->processing = true;
 
-        $eventClass = $event->getClass();
-
         $this->log('Processing ' . $event);
 
+        $eventClass = $event->getClass();
+
         $handlers = $this->map[$eventClass] ?? [];
+
+        if (empty($handlers)) {
+            $this->log('   no handlers found');
+        }
 
         /** @var callable */
         foreach ($handlers as $handler) {
