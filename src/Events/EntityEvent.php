@@ -20,6 +20,14 @@ abstract class EntityEvent extends Event
             : null;
     }
 
+    public function equals(?Event $event) : bool
+    {
+        return $event
+            && $this->getClass() == $event->getClass()
+            && $event instanceof self
+            && $this->getEntityId() === $event->getEntityId();
+    }
+
     public function __toString() : string
     {
         $str = parent::__toString();

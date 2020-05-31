@@ -19,4 +19,17 @@ class DataEvent extends Event
     {
         return $this->data;
     }
+
+    public function equals(?Event $event) : bool
+    {
+        return $event
+            && $this->getClass() == $event->getClass()
+            && $event instanceof self
+            && $this->data === $event->getData();
+    }
+
+    public function __toString(): string
+    {
+        return parent::__toString() . ' (' . ($this->data ?? 'null') . ')';
+    }
 }

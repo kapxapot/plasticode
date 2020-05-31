@@ -23,6 +23,8 @@ abstract class Event
         return $this->parent;
     }
 
+    abstract public function equals(?self $event) : bool;
+
     public function __toString() : string
     {
         return $this->getClass();

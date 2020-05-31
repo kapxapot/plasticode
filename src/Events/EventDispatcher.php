@@ -164,17 +164,10 @@ class EventDispatcher
      */
     private function isLoop(Event $event) : bool
     {
-        $eventClass = $event->getClass();
-
         $cur = $event->getParent();
 
         while ($cur) {
-            $curClass = $cur->getClass();
-
-            if (
-                $curClass === $eventClass
-                && $cur->getEntityId() === $event->getEntityId()
-            ) {
+            if ($event->equals($cur)) {
                 return true;
             }
 

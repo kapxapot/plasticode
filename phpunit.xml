@@ -10,6 +10,7 @@
             <directory>src</directory>
             <exclude>
                 <directory suffix="Interface.php">.</directory>
+                <directory>src/Testing</directory>
             </exclude>
         </whitelist>
     </filter>
