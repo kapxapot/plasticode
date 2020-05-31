@@ -2,8 +2,6 @@
 
 namespace Plasticode\Events;
 
-use Psr\Log\LoggerInterface;
-
 class EventDispatcher
 {
     private ?\Closure $logger = null;
@@ -101,15 +99,13 @@ class EventDispatcher
 
         $eventClass = $event->getClass();
 
-        $this->log('Processing...');
-        $this->log('   event class: ' . $eventClass);
-        $this->log('   entity: ' . $event);
+        $this->log('Processing ' . $event);
 
         $handlers = $this->getHandlers($eventClass);
 
         /** @var callable */
         foreach ($handlers as $handler) {
-            $this->log('Invoking handler: ' . get_class($handler));
+            $this->log('   invoking ' . get_class($handler));
 
             try {
                 $handler($event);
@@ -119,8 +115,10 @@ class EventDispatcher
             }
         }
 
-        $this->log('Finished processing ' . $eventClass);
-        $this->log('Queue size = ' . count($this->queue));
+        $this->log(
+            '   finished, queue size = ' . count($this->queue)
+        );
+
         $this->log('');
 
         $this->processing = false;
@@ -133,11 +131,7 @@ class EventDispatcher
      */
     private function getHandlers(string $eventClass) : array
     {
-        $this->log('Getting handlers for ' . $eventClass);
-
         if (!array_key_exists($eventClass, $this->map)) {
-            $this->log('   no handler map found');
-
             $this->mapEventClass($eventClass);
         } else {
             $this->log(
@@ -152,21 +146,19 @@ class EventDispatcher
 
     private function mapEventClass(string $eventClass) : void
     {
-        $this->log('   building handler map');
-
         $map = [];
 
         /** @var callable */
         foreach ($this->handlers as $handler) {
             if ($this->isHandlerFor($handler, $eventClass)) {
-                $this->log('   found handler: ' . get_class($handler));
+                $this->log('   mapped ' . get_class($handler));
 
                 $map[] = $handler;
             }
         }
 
         if (count($map) == 0) {
-            $this->log('   no handlers found');
+            $this->log('   no mapped handlers');
         }
 
         $this->map[$eventClass] = $map;
