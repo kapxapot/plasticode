@@ -7,12 +7,7 @@ class EventDispatcher
     private ?\Closure $logger = null;
 
     /**
-     * @var callable[] Event handlers.
-     */
-    private array $handlers;
-
-    /**
-     * @var array<string, callable> Event class -> handlers mapping.
+     * @var array<string, callable[]> Event class -> handlers mapping.
      */
     private array $map = [];
 
@@ -29,10 +24,29 @@ class EventDispatcher
     /**
      * @param callable[] $handlers
      */
-    public function __construct(array $handlers, ?\Closure $logger = null)
+    public function __construct(array $handlers = [], ?\Closure $logger = null)
     {
-        $this->handlers = $handlers;
         $this->logger = $logger;
+
+        foreach ($handlers as $handler) {
+            $this->addHandler($handler);
+        }
+    }
+
+    /**
+     * Examines the handler and maps it to event class.
+     */
+    public function addHandler(callable $handler) : void
+    {
+        $paramClass = $this->getHandlerParamClass($handler);
+
+        if (!array_key_exists($paramClass, $this->map)) {
+            $this->map[$paramClass] = [];
+        }
+
+        $this->map[$paramClass][] = $handler;
+
+        $this->log(get_class($handler) . ' mapped to ' . $paramClass);
     }
 
     private function log(string $msg) : void
@@ -101,7 +115,7 @@ class EventDispatcher
 
         $this->log('Processing ' . $event);
 
-        $handlers = $this->getHandlers($eventClass);
+        $handlers = $this->map[$eventClass] ?? [];
 
         /** @var callable */
         foreach ($handlers as $handler) {
@@ -126,49 +140,7 @@ class EventDispatcher
         $this->processNext();
     }
 
-    /**
-     * @return callable[]
-     */
-    private function getHandlers(string $eventClass) : array
-    {
-        if (!array_key_exists($eventClass, $this->map)) {
-            $this->mapEventClass($eventClass);
-        } else {
-            $this->log(
-                '   handler map found ('
-                . count($this->map[$eventClass])
-                . ' handlers)'
-            );
-        }
-
-        return $this->map[$eventClass];
-    }
-
-    private function mapEventClass(string $eventClass) : void
-    {
-        $map = [];
-
-        /** @var callable */
-        foreach ($this->handlers as $handler) {
-            if ($this->isHandlerFor($handler, $eventClass)) {
-                $this->log('   mapped ' . get_class($handler));
-
-                $map[] = $handler;
-            }
-        }
-
-        if (count($map) == 0) {
-            $this->log('   no mapped handlers');
-        }
-
-        $this->map[$eventClass] = $map;
-    }
-
-    /**
-     * Checks params of the callable.
-     * If the 1st param's class = $eventClass, returns true.
-     */
-    private function isHandlerFor(callable $handler, string $eventClass) : bool
+    private function getHandlerParamClass(callable $handler) : ?string
     {
         $closure = \Closure::fromCallable($handler);
 
@@ -177,12 +149,12 @@ class EventDispatcher
         $params = $rf->getParameters();
 
         if (empty($params)) {
-            return false;
+            return null;
         }
 
         $rp = $params[0];
 
-        return $rp->getClass()->name === $eventClass;
+        return $rp->getClass()->name;
     }
 
     /**
@@ -199,7 +171,10 @@ class EventDispatcher
         while ($cur) {
             $curClass = $cur->getClass();
 
-            if ($curClass === $eventClass && $cur->getEntityId() === $event->getEntityId()) {
+            if (
+                $curClass === $eventClass
+                && $cur->getEntityId() === $event->getEntityId()
+            ) {
                 return true;
             }
 
