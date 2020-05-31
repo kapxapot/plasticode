@@ -60,5 +60,65 @@ final class EventDispatcherTest extends TestCase
             ],
             $output
         );
+
+        $this->assertCount(18, $log);
+    }
+
+    public function testClosures() : void
+    {
+        $output = [];
+        $log = [];
+
+        $logger = function (string $msg) use (&$log) {
+            $log[] = $msg;
+        };
+
+        $dispatcher = new EventDispatcher(
+            [
+                function (EmptyEvent $event) use (&$output) {
+                    $output[] = 'Got an empty event in closure.';
+                },
+                function (DataEvent $event) use (&$output) {
+                    $output[] =
+                        'Got data in closure: '
+                        . $event->getData()
+                        . '.';
+                },
+                function (DummyDbModelEvent $event) use (&$output) {
+                    $output[] =
+                        'Got dummy model in closure: '
+                        . $event->getDummyModel()
+                        . '.';
+                }
+            ],
+            $logger
+        );
+
+        $dispatcher->dispatch(
+            new EmptyEvent()
+        );
+
+        $dispatcher->dispatch(
+            new DataEvent('red')
+        );
+
+        $dummyModel = new DummyDbModel(['id' => 456]);
+
+        $dispatcher->dispatch(
+            new DummyDbModelEvent($dummyModel)
+        );
+
+        $this->assertCount(3, $output);
+
+        $this->assertEquals(
+            [
+                'Got an empty event in closure.',
+                'Got data in closure: red.',
+                'Got dummy model in closure: ' . $dummyModel . '.',
+            ],
+            $output
+        );
+
+        $this->assertCount(18, $log);
     }
 }
