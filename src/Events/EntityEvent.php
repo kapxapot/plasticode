@@ -2,11 +2,11 @@
 
 namespace Plasticode\Events;
 
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Interfaces\DbModelInterface;
 
 abstract class EntityEvent extends Event
 {
-    public abstract function getEntity() : DbModel;
+    public abstract function getEntity() : DbModelInterface;
 
     /**
      * Get associated entity id.
