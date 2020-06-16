@@ -15,4 +15,13 @@ interface DbModelInterface extends ArrayableInterface
     function getId() : ?int;
 
     static function pluralAlias() : string;
+
+    /**
+     * Checks if two objects are equal.
+     * 
+     * Equal means:
+     *  - Same class.
+     *  - Same id.
+     */
+    function equals(?self $model) : bool;
 }

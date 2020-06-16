@@ -190,7 +190,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      *  - Same class.
      *  - Same id.
      */
-    public function equals(?self $model) : bool
+    public function equals(?DbModelInterface $model) : bool
     {
         return !is_null($model)
             && ($model->getId() === $this->getId())
