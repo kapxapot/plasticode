@@ -23,5 +23,5 @@ interface DbModelInterface extends ArrayableInterface
      *  - Same class.
      *  - Same id.
      */
-    function equals(?self $model) : bool;
+    function equals(?DbModelInterface $model) : bool;
 }
