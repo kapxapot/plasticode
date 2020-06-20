@@ -198,7 +198,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
-     * Return random item.
+     * Returns random item or null if there are none.
      * 
      * @return mixed
      */

@@ -7,7 +7,6 @@ use Plasticode\Exceptions\Interfaces\HttpExceptionInterface;
 use Plasticode\Exceptions\Interfaces\PropagatedExceptionInterface;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Util\Text;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response as SlimResponse;
@@ -20,10 +19,7 @@ class Response
     /**
      * Writes data to response object and returns it.
      *
-     * @param SlimResponse $response
      * @param ArrayableInterface|\ORM|array $data
-     * @param array $options
-     * @return ResponseInterface
      */
     public static function json(
         SlimResponse $response,
@@ -59,10 +55,6 @@ class Response
 
     /**
      * Writes text to response object and returns it.
-     *
-     * @param ResponseInterface $response
-     * @param string $text
-     * @return ResponseInterface
      */
     public static function text(
         ResponseInterface $response,
@@ -75,12 +67,6 @@ class Response
 
     /**
      * Writes error into response and returns it.
-     * 
-     * @param AppContext $appContext DI container
-     * @param ServerRequestInterface $request HTTP request object
-     * @param ResponseInterface $response HTTP response object
-     * @param \Exception $ex
-     * @return ResponseInterface
      */
     public static function error(
         AppContext $appContext,
@@ -105,7 +91,7 @@ class Response
         $status = ($ex instanceof HttpExceptionInterface)
             ? $ex->GetErrorCode()
             : self::DefaultErrorStatus;
-        
+
         $msg = null;
         $errors = [];
 
@@ -113,7 +99,7 @@ class Response
         if ($ex instanceof ValidationException) {
             foreach ($ex->errors as $field => $error) {
                 $errors[$field] = $error;
-                
+
                 if (!$msg) {
                     $msg = $error[0];
                 }
@@ -127,10 +113,10 @@ class Response
         if ($settingsProvider->get('log_errors')
             && !($ex instanceof PropagatedExceptionInterface)) {
             $logger->error("Error: {$msg}");
-            
+
             if (!($ex instanceof ValidationException)) {
                 $lines = [];
-                
+
                 foreach ($ex->getTrace() as $trace) {
                     $lines[] = "{$trace['file']} ({$trace['line']}), {$trace['class']}{$trace['type']}{$trace['function']}";
                 }
@@ -145,18 +131,12 @@ class Response
             $errors = null;
         }
 
-        if (!$jsonRequest) {
-            // todo: add $errors to the output
-            return self::text($response, $msg)
-                ->withStatus($status);
-        }
-
         $error = ['error' => true, 'message' => $msg];
-        
+
         if ($errors) {
             $error['errors'] = $errors;
         }
-        
+
         return self::json($response, $error)
             ->withStatus($status);
     }
