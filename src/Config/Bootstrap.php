@@ -40,9 +40,6 @@ use Plasticode\IO\Image;
 use Plasticode\Models\Validation\PasswordValidation;
 use Plasticode\Models\Validation\UserValidation;
 use Plasticode\ObjectProxy;
-use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
-use Plasticode\Parsing\LinkMappers\PageLinkMapper;
-use Plasticode\Parsing\LinkMappers\TagLinkMapper;
 use Plasticode\Parsing\LinkMapperSource;
 use Plasticode\Parsing\Parsers\BB\BBParser;
 use Plasticode\Parsing\Parsers\BB\Container\BBContainerParser;
@@ -438,27 +435,6 @@ class Bootstrap
             new BBParser(
                 $c->bbParserConfig,
                 $c->renderer
-            );
-
-        $map['tagLinkMapper'] = fn (CI $c) =>
-            new TagLinkMapper(
-                $c->renderer,
-                $c->linker
-            );
-
-        $map['pageLinkMapper'] = fn (CI $c) =>
-            new PageLinkMapper(
-                $c->pageRepository,
-                $c->tagRepository,
-                $c->renderer,
-                $c->linker,
-                $c->tagLinkMapper
-            );
-
-        $map['newsLinkMapper'] = fn (CI $c) =>
-            new NewsLinkMapper(
-                $c->renderer,
-                $c->linker
             );
 
         // no double brackets link mappers by default

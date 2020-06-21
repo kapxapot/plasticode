@@ -8,24 +8,11 @@ use Plasticode\Parsing\Interfaces\TaggedLinkMapperInterface;
 
 class LinkMapperSource implements LinkMapperSourceInterface
 {
-    /** @var LinkMapperInterface|null */
-    private $defaultMapper;
-
     /** @var TaggedLinkMapperInterface[] */
-    private $taggedMappers = [];
+    private array $taggedMappers = [];
 
-    /** @var LinkMapperInterface|null */
-    private $genericMapper;
-
-    public function getDefaultMapper() : ?LinkMapperInterface
-    {
-        return $this->defaultMapper;
-    }
-
-    public function setDefaultMapper(LinkMapperInterface $mapper) : void
-    {
-        $this->defaultMapper = $mapper;
-    }
+    private ?LinkMapperInterface $defaultMapper = null;
+    private ?LinkMapperInterface $genericMapper = null;
 
     public function registerTaggedMapper(TaggedLinkMapperInterface $mapper) : void
     {
@@ -43,6 +30,16 @@ class LinkMapperSource implements LinkMapperSourceInterface
     public function getTaggedMapper(string $tag) : ?TaggedLinkMapperInterface
     {
         return $this->taggedMappers[$tag] ?? null;
+    }
+
+    public function getDefaultMapper() : ?LinkMapperInterface
+    {
+        return $this->defaultMapper;
+    }
+
+    public function setDefaultMapper(LinkMapperInterface $mapper) : void
+    {
+        $this->defaultMapper = $mapper;
     }
 
     public function getGenericMapper() : ?LinkMapperInterface
@@ -63,10 +60,11 @@ class LinkMapperSource implements LinkMapperSourceInterface
     public function getAllMappers() : array
     {
         return array_filter(
-            array_merge(
-                array_values($this->taggedMappers),
-                [$this->defaultMapper, $this->genericMapper]
-            )
+            [
+                ...array_values($this->taggedMappers),
+                $this->defaultMapper,
+                $this->genericMapper
+            ]
         );
     }
 }
