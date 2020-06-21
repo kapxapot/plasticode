@@ -61,8 +61,6 @@ use Plasticode\Repositories\Idiorm\AuthTokenRepository;
 use Plasticode\Repositories\Idiorm\Basic\RepositoryContext;
 use Plasticode\Repositories\Idiorm\MenuItemRepository;
 use Plasticode\Repositories\Idiorm\MenuRepository;
-use Plasticode\Repositories\Idiorm\NewsRepository;
-use Plasticode\Repositories\Idiorm\PageRepository;
 use Plasticode\Repositories\Idiorm\RoleRepository;
 use Plasticode\Repositories\Idiorm\TagRepository;
 use Plasticode\Repositories\Idiorm\UserRepository;
@@ -248,18 +246,6 @@ class Bootstrap
                         $c->linker
                     )
                 )
-            );
-
-        $map['newsRepository'] = fn (CI $c) =>
-            new NewsRepository(
-                $c->repositoryContext,
-                $c->tagRepository
-            );
-
-        $map['pageRepository'] = fn (CI $c) =>
-            new PageRepository(
-                $c->repositoryContext,
-                $c->tagRepository
             );
 
         $map['roleRepository'] = fn (CI $c) =>

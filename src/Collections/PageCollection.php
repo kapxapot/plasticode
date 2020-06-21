@@ -3,9 +3,9 @@
 namespace Plasticode\Collections;
 
 use Plasticode\Collections\Basic\DbModelCollection;
-use Plasticode\Models\Page;
+use Plasticode\Models\Interfaces\PageInterface;
 
 class PageCollection extends DbModelCollection
 {
-    protected string $class = Page::class;
+    protected string $class = PageInterface::class;
 }

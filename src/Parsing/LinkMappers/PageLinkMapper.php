@@ -16,14 +16,9 @@ use Plasticode\Util\Strings;
  */
 class PageLinkMapper extends EntityLinkMapper
 {
-    /** @var PageRepositoryInterface */
-    private $pageRepository;
-
-    /** @var TagRepositoryInterface */
-    private $tagRepository;
-
-    /** @var TagLinkMapper */
-    private $tagLinkMapper;
+    private PageRepositoryInterface $pageRepository;
+    private TagRepositoryInterface $tagRepository;
+    private TagLinkMapper $tagLinkMapper;
 
     public function __construct(
         PageRepositoryInterface $pageRepository,
@@ -53,9 +48,7 @@ class PageLinkMapper extends EntityLinkMapper
     /**
      * Maps page chunks to a page link.
      *
-     * @param SlugChunk $slugChunk
      * @param string[] $otherChunks
-     * @return string|null
      */
     public function mapSlug(SlugChunk $slugChunk, array $otherChunks) : ?string
     {
@@ -68,7 +61,7 @@ class PageLinkMapper extends EntityLinkMapper
             $page = $this->pageRepository->getBySlug($slug);
 
             if ($page && $page->isPublished()) {
-                return $this->renderPlaceholder($page->slug, $content);
+                return $this->renderPlaceholder($page->getSlug(), $content);
             }
         }
 

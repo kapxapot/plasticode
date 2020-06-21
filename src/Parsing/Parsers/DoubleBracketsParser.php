@@ -10,7 +10,8 @@ use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Util\Arrays;
 
 /**
- * Parses double brackets tags such as [[about|About]] page or [[news:123|Some cool news]] news links.
+ * Parses double brackets tags such as [[about|About]] page
+ * or [[news:123|Some cool news]] news links.
  * 
  * - Default mapper parses [[slug|Content]] links.
  * - Tag mappers parse [[tag:id|Content]] links.
@@ -74,7 +75,6 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
      * Render no-tag link.
      *
      * @param string[] $chunks
-     * @return string|null
      */
     private function renderDefault(array $chunks) : ?string
     {
@@ -88,9 +88,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
     /**
      * Renders tag link.
      *
-     * @param string $tag
      * @param string[] $chunks
-     * @return string|null
      */
     private function renderTag(string $tag, array $chunks) : ?string
     {
@@ -106,9 +104,6 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
 
     /**
      * Renders %template% links using registered link renderers.
-     * 
-     * @param ParsingContext $context
-     * @return ParsingContext
      */
     public function renderLinks(ParsingContext $context) : ParsingContext
     {

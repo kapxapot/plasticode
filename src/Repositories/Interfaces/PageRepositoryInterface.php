@@ -2,9 +2,9 @@
 
 namespace Plasticode\Repositories\Interfaces;
 
-use Plasticode\Models\Page;
+use Plasticode\Models\Interfaces\PageInterface;
 
 interface PageRepositoryInterface
 {
-    function getBySlug(?string $slug) : ?Page;
+    function getBySlug(?string $slug) : ?PageInterface;
 }

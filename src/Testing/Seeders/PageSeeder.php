@@ -2,19 +2,19 @@
 
 namespace Plasticode\Testing\Seeders;
 
-use Plasticode\Models\Page;
+use Plasticode\Testing\Dummies\PageDummy;
 use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 use Plasticode\Util\Date;
 
 class PageSeeder implements ArraySeederInterface
 {
     /**
-     * @return Page[]
+     * @return PageDummy[]
      */
     public function seed() : array
     {
         return [
-            new Page(
+            new PageDummy(
                 [
                     'id' => 1,
                     'slug' => 'about-us',
@@ -24,7 +24,7 @@ class PageSeeder implements ArraySeederInterface
                     'published_at' => Date::dbNow(),
                 ]
             ),
-            new Page(
+            new PageDummy(
                 [
                     'id' => 2,
                     'slug' => 'illidan-stormrage',
