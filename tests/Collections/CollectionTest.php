@@ -4,8 +4,8 @@ namespace Plasticode\Tests\Collections;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Collections\Basic\Collection;
-use Plasticode\Testing\Dummies\DummyCollection;
-use Plasticode\Testing\Dummies\DummyModel;
+use Plasticode\Testing\Dummies\CollectionDummy;
+use Plasticode\Testing\Dummies\ModelDummy;
 
 final class CollectionTest extends TestCase
 {
@@ -66,10 +66,10 @@ final class CollectionTest extends TestCase
 
     public function testFlattenCreatesBaseCollection() : void
     {
-        $col = DummyCollection::make(
+        $col = CollectionDummy::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
             ]
         );
 
@@ -80,22 +80,22 @@ final class CollectionTest extends TestCase
 
     public function testConcatPreservesCollectionType() : void
     {
-        $col = DummyCollection::make(
+        $col = CollectionDummy::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
             ]
         );
 
         $concat = $col->concat(
-            DummyCollection::make(
+            CollectionDummy::make(
                 [
-                    new DummyModel(3, 'three'),
+                    new ModelDummy(3, 'three'),
                 ]
             )
         );
 
-        $this->assertEquals(DummyCollection::class, get_class($concat));
+        $this->assertEquals(CollectionDummy::class, get_class($concat));
         $this->assertCount(3, $concat);
     }
 
@@ -103,8 +103,8 @@ final class CollectionTest extends TestCase
     {
         $col = Collection::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
             ]
         );
 
@@ -122,10 +122,10 @@ final class CollectionTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $col = DummyCollection::make(
+        $col = CollectionDummy::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
             ]
         );
 
@@ -138,18 +138,18 @@ final class CollectionTest extends TestCase
 
     public function testAddPreservesCollectionType() : void
     {
-        $col = DummyCollection::make(
+        $col = CollectionDummy::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
             ]
         );
 
         $concat = $col->add(
-            new DummyModel(3, 'three'),
+            new ModelDummy(3, 'three'),
         );
 
-        $this->assertEquals(DummyCollection::class, get_class($concat));
+        $this->assertEquals(CollectionDummy::class, get_class($concat));
         $this->assertCount(3, $concat);
     }
 
@@ -157,8 +157,8 @@ final class CollectionTest extends TestCase
     {
         $col = Collection::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
             ]
         );
 
@@ -172,10 +172,10 @@ final class CollectionTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $col = DummyCollection::make(
+        $col = CollectionDummy::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
             ]
         );
 
@@ -184,31 +184,31 @@ final class CollectionTest extends TestCase
 
     public function testMergeReturnsRightCollection() : void
     {
-        $col1 = DummyCollection::make(
+        $col1 = CollectionDummy::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
             ]
         );
 
-        $col2 = DummyCollection::make(
+        $col2 = CollectionDummy::make(
             [
-                new DummyModel(3, 'three'),
+                new ModelDummy(3, 'three'),
             ]
         );
 
-        $col = DummyCollection::merge($col1, $col2);
+        $col = CollectionDummy::merge($col1, $col2);
 
-        $this->assertEquals(DummyCollection::class, get_class($col));
+        $this->assertEquals(CollectionDummy::class, get_class($col));
         $this->assertCount(3, $col);
     }
 
     public function testMergeAllowsHeteroTypes() : void
     {
-        $col1 = DummyCollection::make(
+        $col1 = CollectionDummy::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
             ]
         );
 
@@ -284,13 +284,13 @@ final class CollectionTest extends TestCase
     {
         $col = Collection::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
-                new DummyModel(3, 'three'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
+                new ModelDummy(3, 'three'),
             ]
         );
 
-        /** @var DummyModel */
+        /** @var ModelDummy */
         $last = $col->last();
 
         $last->name = 'four';

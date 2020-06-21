@@ -4,25 +4,25 @@ namespace Plasticode\Testing\Events;
 
 use Plasticode\Events\EntityEvent;
 use Plasticode\Events\Event;
-use Plasticode\Testing\Dummies\DummyDbModel;
+use Plasticode\Testing\Dummies\DbModelDummy;
 
-class DummyDbModelEvent extends EntityEvent
+class DbModelDummyEvent extends EntityEvent
 {
-    private DummyDbModel $dummyModel;
+    private DbModelDummy $dummyModel;
 
-    public function __construct(DummyDbModel $dummyModel, ?Event $parent = null)
+    public function __construct(DbModelDummy $dummyModel, ?Event $parent = null)
     {
         parent::__construct($parent);
 
         $this->dummyModel = $dummyModel;
     }
 
-    public function getEntity() : DummyDbModel
+    public function getEntity() : DbModelDummy
     {
         return $this->getDummyModel();
     }
 
-    public function getDummyModel() : DummyDbModel
+    public function getDummyModel() : DbModelDummy
     {
         return $this->dummyModel;
     }

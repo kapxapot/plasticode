@@ -5,10 +5,10 @@ namespace Plasticode\Testing\Dummies;
 use Plasticode\Models\DbModel;
 
 /**
- * @method DummyModel dummy()
- * @method static withDummy(DummyModel|callable $dummy)
+ * @method ModelDummy dummy()
+ * @method static withDummy(ModelDummy|callable $dummy)
  */
-class DummyDbModel extends DbModel
+class DbModelDummy extends DbModel
 {
     protected function requiredWiths(): array
     {

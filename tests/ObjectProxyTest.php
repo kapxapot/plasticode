@@ -13,7 +13,7 @@ use Plasticode\Hydrators\TagHydrator;
 use Plasticode\ObjectProxy;
 use Plasticode\Repositories\Idiorm\Basic\RepositoryContext;
 use Plasticode\Repositories\Idiorm\TagRepository;
-use Plasticode\Testing\Dummies\DummyModel;
+use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Testing\Mocks\LinkerMock;
 
 final class ObjectProxyTest extends TestCase
@@ -21,11 +21,11 @@ final class ObjectProxyTest extends TestCase
     public function testDummyProxy() : void
     {
         $proxy = new ObjectProxy(
-            fn () => new DummyModel(1, 'model')
+            fn () => new ModelDummy(1, 'model')
         );
 
         $this->assertEquals('model', $proxy->getName());
-        $this->assertInstanceOf(DummyModel::class, $proxy());
+        $this->assertInstanceOf(ModelDummy::class, $proxy());
     }
 
     public function testHydratorProxy() : void

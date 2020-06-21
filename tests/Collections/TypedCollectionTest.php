@@ -4,29 +4,29 @@ namespace Plasticode\Tests\Collections;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Collections\Basic\Collection;
-use Plasticode\Testing\Dummies\DummyCollection;
-use Plasticode\Testing\Dummies\DummyModel;
+use Plasticode\Testing\Dummies\CollectionDummy;
+use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Testing\Dummies\InvalidTypedCollection;
 
 final class TypedCollectionTest extends TestCase
 {
     public function testCreateAndFilter() : void
     {
-        $typed = DummyCollection::make(
+        $typed = CollectionDummy::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
             ]
         );
 
-        $this->assertInstanceOf(DummyCollection::class, $typed);
+        $this->assertInstanceOf(CollectionDummy::class, $typed);
         $this->assertCount(2, $typed);
 
         $filtered = $typed->where(
-            fn (DummyModel $dm) => $dm->id == 2
+            fn (ModelDummy $dm) => $dm->id == 2
         );
 
-        $this->assertInstanceOf(DummyCollection::class, $filtered);
+        $this->assertInstanceOf(CollectionDummy::class, $filtered);
         $this->assertCount(1, $filtered);
     }
 
@@ -34,14 +34,14 @@ final class TypedCollectionTest extends TestCase
     {
         $col = Collection::make(
             [
-                new DummyModel(1, 'one'),
-                new DummyModel(2, 'two'),
+                new ModelDummy(1, 'one'),
+                new ModelDummy(2, 'two'),
             ]
         );
 
-        $typed = DummyCollection::from($col);
+        $typed = CollectionDummy::from($col);
 
-        $this->assertInstanceOf(DummyCollection::class, $typed);
+        $this->assertInstanceOf(CollectionDummy::class, $typed);
         $this->assertCount(2, $typed);
     }
 
@@ -49,9 +49,9 @@ final class TypedCollectionTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $dc = DummyCollection::make(
+        $dc = CollectionDummy::make(
             [
-                new DummyModel(1, 'one'),
+                new ModelDummy(1, 'one'),
                 'two',
                 2,
             ]

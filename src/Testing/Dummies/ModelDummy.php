@@ -2,7 +2,7 @@
 
 namespace Plasticode\Testing\Dummies;
 
-class DummyModel
+class ModelDummy
 {
     public int $id;
     public string $name;

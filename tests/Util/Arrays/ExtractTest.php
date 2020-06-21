@@ -4,7 +4,7 @@ namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Models\Model;
-use Plasticode\Testing\Dummies\DummyModel;
+use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Util\Arrays;
 
 final class ExtractTest extends TestCase
@@ -23,9 +23,9 @@ final class ExtractTest extends TestCase
         $item11 = ['id' => 1, 'name' => 'one one'];
         $item2 = ['id' => 2, 'name' => 'one'];
 
-        $dummy1 = new DummyModel(1, 'one');
-        $dummy11 = new DummyModel(1, 'one one');
-        $dummy2 = new DummyModel(2, 'one');
+        $dummy1 = new ModelDummy(1, 'one');
+        $dummy11 = new ModelDummy(1, 'one one');
+        $dummy2 = new ModelDummy(2, 'one');
 
         $model1 = new Model($item1);
         $model11 = new Model($item11);

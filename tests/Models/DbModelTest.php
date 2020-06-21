@@ -3,8 +3,8 @@
 namespace Plasticode\Tests\Models;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Testing\Dummies\DummyDbModel;
-use Plasticode\Testing\Dummies\DummyModel;
+use Plasticode\Testing\Dummies\DbModelDummy;
+use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Traits\Frozen;
 
 final class DbModelTest extends TestCase
@@ -20,12 +20,12 @@ final class DbModelTest extends TestCase
 
     public function testWithObj() : void
     {
-        $dummy = (new DummyDbModel())
+        $dummy = (new DbModelDummy())
             ->withDummy(
-                new DummyModel(1, 'one')
+                new ModelDummy(1, 'one')
             );
 
-        $this->assertInstanceOf(DummyModel::class, $dummy->dummy());
+        $this->assertInstanceOf(ModelDummy::class, $dummy->dummy());
         $this->assertEquals(
             [1, 'one'],
             [
@@ -37,12 +37,12 @@ final class DbModelTest extends TestCase
 
     public function testWithCallable() : void
     {
-        $dummy = (new DummyDbModel())
+        $dummy = (new DbModelDummy())
             ->withDummy(
-                fn () => new DummyModel(1, 'one')
+                fn () => new ModelDummy(1, 'one')
             );
 
-        $this->assertInstanceOf(DummyModel::class, $dummy->dummy());
+        $this->assertInstanceOf(ModelDummy::class, $dummy->dummy());
         $this->assertEquals(
             [1, 'one'],
             [
@@ -56,16 +56,16 @@ final class DbModelTest extends TestCase
     {
         $this->expectException(\BadMethodCallException::class);
 
-        $dummy = new DummyDbModel();
+        $dummy = new DbModelDummy();
         $dummy->dummy();
     }
 
     public function testOnce() : void
     {
-        $dummy = (new DummyDbModel())
+        $dummy = (new DbModelDummy())
             ->withDummy(
                 $this->frozen(
-                    fn () => new DummyModel(++self::$id, 'some dummy')
+                    fn () => new ModelDummy(++self::$id, 'some dummy')
                 )
             );
 
@@ -75,9 +75,9 @@ final class DbModelTest extends TestCase
 
     public function testTwice() : void
     {
-        $dummy = (new DummyDbModel())
+        $dummy = (new DbModelDummy())
             ->withDummy(
-                fn () => new DummyModel(++self::$id, 'some dummy')
+                fn () => new ModelDummy(++self::$id, 'some dummy')
             );
 
         $this->assertEquals(1, $dummy->dummy()->id);
@@ -86,9 +86,9 @@ final class DbModelTest extends TestCase
 
     public function testAlias() : void
     {
-        $dummy = new DummyDbModel();
+        $dummy = new DbModelDummy();
 
-        $this->assertEquals('dummy_db_models', $dummy::pluralAlias());
-        $this->assertEquals('dummy_db_models', DummyDbModel::pluralAlias());
+        $this->assertEquals('db_model_dummies', $dummy::pluralAlias());
+        $this->assertEquals('db_model_dummies', DbModelDummy::pluralAlias());
     }
 }

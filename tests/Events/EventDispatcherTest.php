@@ -4,12 +4,12 @@ namespace Plasticode\Tests\Events;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Events\EventDispatcher;
-use Plasticode\Testing\Dummies\DummyDbModel;
+use Plasticode\Testing\Dummies\DbModelDummy;
 use Plasticode\Testing\EventHandlers\DataEventHandler;
-use Plasticode\Testing\EventHandlers\DummyDbModelEventHandler;
+use Plasticode\Testing\EventHandlers\DbModelDummyEventHandler;
 use Plasticode\Testing\EventHandlers\EmptyEventHandler;
 use Plasticode\Testing\Events\DataEvent;
-use Plasticode\Testing\Events\DummyDbModelEvent;
+use Plasticode\Testing\Events\DbModelDummyEvent;
 use Plasticode\Testing\Events\EmptyEvent;
 
 final class EventDispatcherTest extends TestCase
@@ -31,7 +31,7 @@ final class EventDispatcherTest extends TestCase
             [
                 new EmptyEventHandler($writer),
                 new DataEventHandler($writer),
-                new DummyDbModelEventHandler($writer)
+                new DbModelDummyEventHandler($writer)
             ],
             $logger
         );
@@ -44,10 +44,10 @@ final class EventDispatcherTest extends TestCase
             new DataEvent('blue')
         );
 
-        $dummyModel = new DummyDbModel(['id' => 123]);
+        $dummyModel = new DbModelDummy(['id' => 123]);
 
         $dispatcher->dispatch(
-            new DummyDbModelEvent($dummyModel)
+            new DbModelDummyEvent($dummyModel)
         );
 
         $this->assertCount(3, $output);
@@ -84,7 +84,7 @@ final class EventDispatcherTest extends TestCase
                         . $event->getData()
                         . '.';
                 },
-                function (DummyDbModelEvent $event) use (&$output) {
+                function (DbModelDummyEvent $event) use (&$output) {
                     $output[] =
                         'Got dummy model in closure: '
                         . $event->getDummyModel()
@@ -102,10 +102,10 @@ final class EventDispatcherTest extends TestCase
             new DataEvent('red')
         );
 
-        $dummyModel = new DummyDbModel(['id' => 456]);
+        $dummyModel = new DbModelDummy(['id' => 456]);
 
         $dispatcher->dispatch(
-            new DummyDbModelEvent($dummyModel)
+            new DbModelDummyEvent($dummyModel)
         );
 
         $this->assertCount(3, $output);

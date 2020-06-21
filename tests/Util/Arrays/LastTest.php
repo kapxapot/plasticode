@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Testing\Dummies\DummyModel;
+use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Util\Arrays;
 
 final class LastTest extends TestCase
@@ -52,9 +52,9 @@ final class LastTest extends TestCase
 
         $testArray = [$item1, $item2, $item3];
 
-        $dummy1 = new DummyModel(1, 'one');
-        $dummy2 = new DummyModel(2, 'two');
-        $dummy3 = new DummyModel(3, 'three');
+        $dummy1 = new ModelDummy(1, 'one');
+        $dummy2 = new ModelDummy(2, 'two');
+        $dummy3 = new ModelDummy(3, 'three');
 
         $testObjArray = [$dummy1, $dummy2, $dummy3];
 
@@ -89,28 +89,28 @@ final class LastTest extends TestCase
             ],
             [
                 $testObjArray,
-                function (DummyModel $obj) {
+                function (ModelDummy $obj) {
                     return strlen($obj->name) == 3;
                 },
                 $dummy2
             ],
             [
                 $testObjArray,
-                function (DummyModel $obj) {
+                function (ModelDummy $obj) {
                     return strlen($obj->name) == 5;
                 },
                 $dummy3
             ],
             [
                 $testObjArray,
-                function (DummyModel $obj) {
+                function (ModelDummy $obj) {
                     return $obj->name == 'one';
                 },
                 $dummy1
             ],
             [
                 $testObjArray,
-                function (DummyModel $obj) {
+                function (ModelDummy $obj) {
                     return $obj->name == 'four';
                 },
                 null
@@ -156,9 +156,9 @@ final class LastTest extends TestCase
 
         $testArray = [$item1, $item2, $item3];
 
-        $dummy1 = new DummyModel(1, 'one');
-        $dummy2 = new DummyModel(2, 'two');
-        $dummy3 = new DummyModel(3, 'three');
+        $dummy1 = new ModelDummy(1, 'one');
+        $dummy2 = new ModelDummy(2, 'two');
+        $dummy3 = new ModelDummy(3, 'three');
 
         $testObjArray = [$dummy1, $dummy2, $dummy3];
 

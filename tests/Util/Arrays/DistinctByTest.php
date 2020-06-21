@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Testing\Dummies\DummyModel;
+use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Util\Arrays;
 
 final class DistinctByTest extends TestCase
@@ -29,9 +29,9 @@ final class DistinctByTest extends TestCase
         
         $testArray = [$item1, $item11, $item2];
 
-        $dummy1 = new DummyModel(1, 'one');
-        $dummy11 = new DummyModel(1, 'one one');
-        $dummy2 = new DummyModel(2, 'one');
+        $dummy1 = new ModelDummy(1, 'one');
+        $dummy11 = new ModelDummy(1, 'one one');
+        $dummy2 = new ModelDummy(2, 'one');
 
         $testObjArray = [$dummy1, $dummy11, $dummy2];
 
@@ -54,7 +54,7 @@ final class DistinctByTest extends TestCase
             ],
             'obj_callable' => [
                 $testObjArray,
-                fn (DummyModel $item) => $item->id . $item->name,
+                fn (ModelDummy $item) => $item->id . $item->name,
                 $testObjArray
             ],
             'mixed_property' => [

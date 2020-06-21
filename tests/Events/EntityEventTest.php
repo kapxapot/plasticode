@@ -3,20 +3,20 @@
 namespace Plasticode\Tests\Events;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Testing\Dummies\DummyDbModel;
+use Plasticode\Testing\Dummies\DbModelDummy;
 use Plasticode\Testing\Events\DataEvent;
-use Plasticode\Testing\Events\DummyDbModelEvent;
+use Plasticode\Testing\Events\DbModelDummyEvent;
 
 final class EntityEventTest extends TestCase
 {
     public function testEntityId() : void
     {
-        $e = new DummyDbModelEvent(
-            new DummyDbModel(['id' => 1])
+        $e = new DbModelDummyEvent(
+            new DbModelDummy(['id' => 1])
         );
 
-        $o = new DummyDbModelEvent(
-            new DummyDbModel()
+        $o = new DbModelDummyEvent(
+            new DbModelDummy()
         );
 
         $this->assertEquals(1, $e->getEntityId());
@@ -25,16 +25,16 @@ final class EntityEventTest extends TestCase
 
     public function testEquals() : void
     {
-        $e1 = new DummyDbModelEvent(
-            new DummyDbModel(['id' => 1, 'name' => 'one'])
+        $e1 = new DbModelDummyEvent(
+            new DbModelDummy(['id' => 1, 'name' => 'one'])
         );
 
-        $e2 = new DummyDbModelEvent(
-            new DummyDbModel(['id' => 1, 'name' => 'two'])
+        $e2 = new DbModelDummyEvent(
+            new DbModelDummy(['id' => 1, 'name' => 'two'])
         );
 
-        $e3 = new DummyDbModelEvent(
-            new DummyDbModel(['id' => 2, 'name' => 'one'])
+        $e3 = new DbModelDummyEvent(
+            new DbModelDummy(['id' => 2, 'name' => 'one'])
         );
 
         $o = new DataEvent('hello');

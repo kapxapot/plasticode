@@ -2,9 +2,9 @@
 
 namespace Plasticode\Testing\EventHandlers;
 
-use Plasticode\Testing\Events\DummyDbModelEvent;
+use Plasticode\Testing\Events\DbModelDummyEvent;
 
-class DummyDbModelEventHandler
+class DbModelDummyEventHandler
 {
     private \Closure $writer;
 
@@ -13,7 +13,7 @@ class DummyDbModelEventHandler
         $this->writer = $writer;
     }
 
-    public function __invoke(DummyDbModelEvent $event) : void
+    public function __invoke(DbModelDummyEvent $event) : void
     {
         ($this->writer)('Got dummy model: ' . $event->getDummyModel() . '.');
     }
