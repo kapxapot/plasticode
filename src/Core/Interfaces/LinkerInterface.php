@@ -16,6 +16,8 @@ interface LinkerInterface
     function news(int $id = null) : string;
     function tag(string $tag = null, string $tab = null) : string;
 
+    function newsYear(int $year) : string;
+
     function twitch(string $id) : string;
     function twitchImg(string $id) : string;
     function twitchLargeImg(string $id) : string;

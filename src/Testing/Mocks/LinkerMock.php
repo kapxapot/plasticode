@@ -40,6 +40,11 @@ class LinkerMock implements LinkerInterface
         return $this->abs('/tags/') . $tag;
     }
 
+    public function newsYear(int $year) : string
+    {
+        return $this->abs('/news/archive/') . $year;
+    }
+
     public function twitch(string $id) : string
     {
         return 'https://twitch.tv/' . $id;

@@ -86,6 +86,14 @@ class Linker implements LinkerInterface
         return $url;
     }
 
+    public function newsYear(int $year) : string
+    {
+        return $this->router->pathFor(
+            'main.news.archive.year',
+            ['year' => $year]
+        );
+    }
+
     public function twitchImg(string $id) : string
     {
         return 'https://static-cdn.jtvnw.net/previews-ttv/live_user_' . $id . '-320x180.jpg';
