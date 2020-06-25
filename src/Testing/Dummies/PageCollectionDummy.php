@@ -1,11 +1,11 @@
 <?php
 
-namespace Plasticode\Collections;
+namespace Plasticode\Testing\Dummies;
 
 use Plasticode\Collections\Basic\DbModelCollection;
 use Plasticode\Models\Interfaces\PageInterface;
 
-class PageCollection extends DbModelCollection
+class PageCollectionDummy extends DbModelCollection
 {
     protected string $class = PageInterface::class;
 }
