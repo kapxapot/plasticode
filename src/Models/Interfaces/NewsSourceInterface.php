@@ -7,7 +7,7 @@ use Plasticode\Collections\TagLinkCollection;
 use Plasticode\Models\Interfaces\LinkableInterface;
 use Plasticode\Models\Interfaces\TaggedInterface;
 
-interface NewsSourceInterface extends LinkableInterface, TaggedInterface
+interface NewsSourceInterface extends DbModelInterface, LinkableInterface, TaggedInterface
 {
     function largeImage() : ?string;
     function image() : ?string;

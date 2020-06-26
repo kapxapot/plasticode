@@ -2,6 +2,9 @@
 
 namespace Plasticode\Validation\Rules;
 
+/**
+ * Todo: refactor this, remove container dependency.
+ */
 class NonRecursiveParent extends ContainerRule
 {
     private $table;

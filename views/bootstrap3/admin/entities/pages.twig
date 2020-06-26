@@ -1,0 +1,17 @@
+{% extends 'admin/entity.twig' %}
+
+{% block modal_shown %}
+    if ($scope.itemId == 0) {
+        init();
+    }
+    else {
+        $scope.loading = true;
+
+        $http.get('{{ api }}pages/' + $scope.itemId).success(function(data) {
+            $scope.item.text = data['text'];
+            $scope.loading = false;
+
+            init();
+        });
+    }
+{% endblock %}

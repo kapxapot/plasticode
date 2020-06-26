@@ -2,18 +2,18 @@
 
 namespace Plasticode\Testing\Mocks\Repositories;
 
+use Plasticode\Collections\PageCollection;
 use Plasticode\Models\Interfaces\PageInterface;
 use Plasticode\Repositories\Interfaces\PageRepositoryInterface;
-use Plasticode\Testing\Dummies\PageCollectionDummy;
 use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 
 class PageRepositoryMock implements PageRepositoryInterface
 {
-    private PageCollectionDummy $pages;
+    private PageCollection $pages;
 
     public function __construct(ArraySeederInterface $pageSeeder)
     {
-        $this->pages = PageCollectionDummy::make($pageSeeder->seed());
+        $this->pages = PageCollection::make($pageSeeder->seed());
     }
 
     public function getBySlug(?string $slug) : ?PageInterface
@@ -22,6 +22,18 @@ class PageRepositoryMock implements PageRepositoryInterface
             ->pages
             ->first(
                 fn (PageInterface $p) => $p->getSlug() == $slug
+            );
+    }
+
+    /**
+     * Checks duplicates (for validation).
+     */
+    public function lookup(string $slug, int $exceptId = 0) : PageCollection
+    {
+        return $this
+            ->pages
+            ->where(
+                fn (PageInterface $p) => $p->getSlug() == $slug && $p->getId() !== $exceptId
             );
     }
 }

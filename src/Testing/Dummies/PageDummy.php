@@ -2,9 +2,9 @@
 
 namespace Plasticode\Testing\Dummies;
 
-use Plasticode\Models\DbModel;
 use Plasticode\Models\Interfaces\PageInterface;
-use Plasticode\Models\Traits\FullPublished;
+use Plasticode\Models\NewsSource;
+use Plasticode\Util\Strings;
 
 /**
  * @property integer $id
@@ -12,12 +12,31 @@ use Plasticode\Models\Traits\FullPublished;
  * @property string $title
  * @property string|null $text
  */
-class PageDummy extends DbModel implements PageInterface
+class PageDummy extends NewsSource implements PageInterface
 {
-    use FullPublished;
-
     public function getSlug() : string
     {
         return $this->slug;
+    }
+
+    public function displayTitle() : string
+    {
+        return $this->title;
+    }
+
+    public function rawText() : ?string
+    {
+        return $this->text;
+    }
+
+    public function code() : string
+    {
+        $parts[] = $this->slug;
+
+        if ($this->title !== $this->slug) {
+            $parts[] = $this->title;
+        }
+
+        return Strings::doubleBracketsTag(null, ...$parts);
     }
 }

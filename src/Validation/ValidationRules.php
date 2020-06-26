@@ -9,19 +9,16 @@ use Respect\Validation\Validator;
 
 class ValidationRules
 {
-    /** @var SettingsProviderInterface */
-    private $settingsProvider;
+    private SettingsProviderInterface $settingsProvider;
+    private array $rules;
 
-    /** @var array */
-    private $rules;
-    
     public function __construct(SettingsProviderInterface $settingsProvider)
     {
         $this->settingsProvider = $settingsProvider;
 
         $this->rules = $this->buildRules();
     }
-    
+
     private function buildRules() : array
     {
         $notEmpty = function () {
