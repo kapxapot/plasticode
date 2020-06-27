@@ -3,6 +3,7 @@
 namespace Plasticode\Core\Interfaces;
 
 use Plasticode\Collections\TagLinkCollection;
+use Plasticode\Models\Interfaces\PageInterface;
 use Plasticode\Models\Interfaces\TaggedInterface;
 
 interface LinkerInterface
@@ -12,11 +13,14 @@ interface LinkerInterface
 
     function getImageExtension(?string $type) : string;
 
-    function page(string $slug = null) : string;
+    function page(PageInterface $page) : string;
     function news(int $id = null) : string;
     function tag(string $tag = null, string $tab = null) : string;
 
     function newsYear(int $year) : string;
+
+    function disqusPage(PageInterface $page) : string;
+    function disqusNews(int $id) : string;
 
     function twitch(string $id) : string;
     function twitchImg(string $id) : string;

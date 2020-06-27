@@ -5,6 +5,7 @@ namespace Plasticode\Testing\Mocks;
 use Plasticode\Collections\TagLinkCollection;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\IO\Image;
+use Plasticode\Models\Interfaces\PageInterface;
 use Plasticode\Models\Interfaces\TaggedInterface;
 use Plasticode\TagLink;
 
@@ -25,9 +26,9 @@ class LinkerMock implements LinkerInterface
         return Image::getExtension($type) ?? 'jpg';
     }
 
-    public function page(string $slug = null) : string
+    public function page(PageInterface $page) : string
     {
-        return $this->abs('/') . $slug;
+        return $this->abs('/') . $page->getSlug();
     }
 
     public function news(int $id = null) : string
@@ -43,6 +44,16 @@ class LinkerMock implements LinkerInterface
     public function newsYear(int $year) : string
     {
         return $this->abs('/news/archive/') . $year;
+    }
+
+    public function disqusPage(PageInterface $page) : string
+    {
+        return $this->abs($this->page($page));
+    }
+
+    public function disqusNews(int $id) : string
+    {
+        return $this->abs($this->news($id));
     }
 
     public function twitch(string $id) : string

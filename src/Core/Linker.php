@@ -7,6 +7,7 @@ use Plasticode\Config\Interfaces\TagsConfigInterface;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\IO\Image;
+use Plasticode\Models\Interfaces\PageInterface;
 use Plasticode\Models\Interfaces\TaggedInterface;
 use Plasticode\TagLink;
 use Plasticode\Util\Numbers;
@@ -64,9 +65,12 @@ class Linker implements LinkerInterface
         return Image::getExtension($type) ?? 'jpg';
     }
 
-    public function page(string $slug = null) : string
+    public function page(PageInterface $page) : string
     {
-        return $this->router->pathFor('main.page', ['slug' => $slug]);
+        return $this->router->pathFor(
+            'main.page',
+            ['slug' => $page->getSlug()]
+        );
     }
 
     public function news(int $id = null) : string
@@ -92,6 +96,16 @@ class Linker implements LinkerInterface
             'main.news.archive.year',
             ['year' => $year]
         );
+    }
+
+    public function disqusPage(PageInterface $page) : string
+    {
+        return $this->abs($this->page($page));
+    }
+
+    public function disqusNews(int $id) : string
+    {
+        return $this->abs($this->news($id));
     }
 
     public function twitchImg(string $id) : string

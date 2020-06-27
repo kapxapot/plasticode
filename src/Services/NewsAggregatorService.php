@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace Plasticode\Services;
 
 use Plasticode\Collections\NewsSourceCollection;
 use Plasticode\Collections\NewsYearCollection;
