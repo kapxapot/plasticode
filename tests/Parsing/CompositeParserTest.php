@@ -5,6 +5,7 @@ namespace Plasticode\Tests\Parsing;
 use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Parsing\Parsers\DoubleBracketsParser;
 use Plasticode\Parsing\ParsingContext;
+use Plasticode\Testing\Dummies\PageDummy;
 use Plasticode\Testing\Factories\LinkMapperSourceFactory;
 use Plasticode\Testing\Mocks\LinkerMock;
 use Plasticode\Tests\BaseRenderTestCase;
@@ -31,12 +32,14 @@ final class CompositeParserTest extends BaseRenderTestCase
 
         $parsedContext = $parser->renderLinks($context);
 
+        $page = new PageDummy(['slug' => 'about-us']);
+
         $this->assertEquals(
             Text::fromLines(
                 [
-                    '<a href="' . $linker->page() . 'about-us" class="entity-url">about us</a>',
-                    '<a href="' . $linker->tag() . 'warcraft" class="entity-url">warcraft</a>',
-                    '<a href="' . $linker->news() . '5" class="entity-url">Some great news!</a>',
+                    '<a href="' . $linker->page($page) . '" class="entity-url">about us</a>',
+                    '<a href="' . $linker->tag('warcraft') . '" class="entity-url">warcraft</a>',
+                    '<a href="' . $linker->news(5) . '" class="entity-url">Some great news!</a>',
                 ]
             ),
             $parsedContext->text

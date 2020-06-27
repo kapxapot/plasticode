@@ -4,6 +4,7 @@ namespace Plasticode\Tests\Parsing;
 
 use Plasticode\Parsing\Parsers\DoubleBracketsParser;
 use Plasticode\Parsing\ParsingContext;
+use Plasticode\Testing\Dummies\PageDummy;
 use Plasticode\Testing\Factories\LinkMapperSourceFactory;
 use Plasticode\Testing\Mocks\LinkerMock;
 use Plasticode\Tests\BaseRenderTestCase;
@@ -124,12 +125,14 @@ final class DoubleBracketsParserTest extends BaseRenderTestCase
 
         $parsedContext = $this->parser->renderLinks($context);
 
+        $page = new PageDummy(['slug' => 'about-us']);
+
         $this->assertEquals(
             Text::fromLines(
                 [
-                    '<a href="' . $this->linker->page() . 'about-us" class="entity-url">about us</a>',
-                    '<a href="' . $this->linker->tag() . 'warcraft" class="entity-url">warcraft</a>',
-                    '<a href="' . $this->linker->news() . '5" class="entity-url">Some great news!</a>',
+                    '<a href="' . $this->linker->page($page) . '" class="entity-url">about us</a>',
+                    '<a href="' . $this->linker->tag('warcraft') . '" class="entity-url">warcraft</a>',
+                    '<a href="' . $this->linker->news(5) . '" class="entity-url">Some great news!</a>',
                 ]
             ),
             $parsedContext->text

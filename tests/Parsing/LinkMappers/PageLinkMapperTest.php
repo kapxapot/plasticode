@@ -5,6 +5,7 @@ namespace Plasticode\Tests\Parsing\LinkMappers;
 use Plasticode\Parsing\LinkMappers\PageLinkMapper;
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
 use Plasticode\Parsing\ParsingContext;
+use Plasticode\Testing\Dummies\PageDummy;
 use Plasticode\Testing\Factories\PageLinkMapperFactory;
 use Plasticode\Testing\Mocks\LinkerMock;
 use Plasticode\Tests\BaseRenderTestCase;
@@ -90,14 +91,16 @@ final class PageLinkMapperTest extends BaseRenderTestCase
     {
         $linker = new LinkerMock();
 
+        $page = new PageDummy(['slug' => 'about-us']);
+
         return [
             [
                 '<a href="%page%/about-us" class="entity-url">about us</a>',
-                '<a href="' . $linker->page() . 'about-us" class="entity-url">about us</a>'
+                '<a href="' . $linker->page($page) . '" class="entity-url">about us</a>'
             ],
             [
                 '<a href="%tag%/warcraft" class="entity-url">warcraft</a>',
-                '<a href="' . $linker->tag() . 'warcraft" class="entity-url">warcraft</a>'
+                '<a href="' . $linker->tag('warcraft') . '" class="entity-url">warcraft</a>'
             ]
         ];
     }

@@ -8,7 +8,7 @@ trait PageDescription
 {
     protected int $pageDescriptionLimit = 1000;
 
-    protected function makePageDescription(string $text, ?string $limitVar = null) : string
+    protected function makePageDescription(string $text, string $limitVar = null) : string
     {
         $limit = $limitVar
             ? $this->getSettings(

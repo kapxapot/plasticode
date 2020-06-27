@@ -13,7 +13,7 @@ interface LinkerInterface
 
     function getImageExtension(?string $type) : string;
 
-    function page(PageInterface $page) : string;
+    function page(PageInterface $page = null) : string;
     function news(int $id = null) : string;
     function tag(string $tag = null, string $tab = null) : string;
 

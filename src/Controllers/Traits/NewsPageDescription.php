@@ -10,7 +10,7 @@ trait NewsPageDescription
 
     protected function makeNewsPageDescription(
         NewsSourceInterface $news,
-        ?string $limitVar = null
+        string $limitVar = null
     ) : string
     {
         return $this->makePageDescription($news->fullText(), $limitVar);

@@ -65,11 +65,11 @@ class Linker implements LinkerInterface
         return Image::getExtension($type) ?? 'jpg';
     }
 
-    public function page(PageInterface $page) : string
+    public function page(PageInterface $page = null) : string
     {
         return $this->router->pathFor(
             'main.page',
-            ['slug' => $page->getSlug()]
+            ['slug' => $page ? $page->getSlug() : null]
         );
     }
 

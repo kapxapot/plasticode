@@ -26,9 +26,9 @@ class LinkerMock implements LinkerInterface
         return Image::getExtension($type) ?? 'jpg';
     }
 
-    public function page(PageInterface $page) : string
+    public function page(PageInterface $page = null) : string
     {
-        return $this->abs('/') . $page->getSlug();
+        return $this->abs('/') . ($page ? $page->getSlug() : null);
     }
 
     public function news(int $id = null) : string
