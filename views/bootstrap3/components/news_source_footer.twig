@@ -1,0 +1,5 @@
+<div class="panel-footer">
+    {% include 'components/published_at.twig' with { 'entity': news_source } only %}
+    {% include 'components/creator.twig' with { 'entity': news_source } only %}
+    {% include 'components/tags.twig' with { 'tags': news_source.tag_links } only %}
+</div>
