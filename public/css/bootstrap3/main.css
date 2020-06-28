@@ -739,23 +739,11 @@ fieldset[disabled] .btn-primary.focus {
 }
 
 .linkblock > div {
-    padding: 5px 10px 5px 44px;
-    display: block;
-    background-size: 24px 24px;
-    background-position: left 10px center;
-    background-repeat: no-repeat;
+    padding: 5px 10px 5px 12px;
 }
 
 .linkblock-big > div {
-    padding: 8px 10px 8px 53px;
-    display: block;
-    background-size: 32px 32px;
-    background-position: left 10px center;
-    background-repeat: no-repeat;
-}
-
-.linkblock-big .noicon {
-    padding-left: 16px;
+    padding: 8px 10px 8px 14px;
 }
 
 .linkblock > div:nth-of-type(even),
@@ -765,6 +753,10 @@ fieldset[disabled] .btn-primary.focus {
 
 .tab-content .linkblock-big {
     padding: 0;
+}
+
+.tab-content .linkblock-big > div {
+    padding-left: 16px;
 }
 
 .linkblock-title {
