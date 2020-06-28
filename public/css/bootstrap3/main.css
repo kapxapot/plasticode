@@ -755,7 +755,7 @@ fieldset[disabled] .btn-primary.focus {
 }
 
 .linkblock-big .noicon {
-    padding-left: 12px;
+    padding-left: 16px;
 }
 
 .linkblock > div:nth-of-type(even),
