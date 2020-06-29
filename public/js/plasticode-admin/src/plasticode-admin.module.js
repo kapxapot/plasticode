@@ -8,8 +8,6 @@ import mdEditorService from './components/pl-md-editor/md-editor.service'
 import plEntityService from "./components/entity/pl-entity.service";
 import {plEntityAutosave} from "./components/entity/pl-entity-autosave.component";
 
-var API_ENDPOINT = '';
-
 const dependencies = [
     'plasticodeCore',
     'ngStorage'
