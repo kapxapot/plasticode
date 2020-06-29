@@ -89,7 +89,6 @@ function plMdEditorController($element, scope, mdEditorService, plDataService, $
 
             if(vm.onSearch && typeof vm.onSearch === 'function')
                 mde.codemirror.on('change', (editor) => {
-                    console.log('changeEvent');
                     throttle(editor);
                 });
 
