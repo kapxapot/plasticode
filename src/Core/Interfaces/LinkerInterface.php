@@ -19,9 +19,6 @@ interface LinkerInterface
 
     function newsYear(int $year) : string;
 
-    function disqusPage(PageInterface $page) : string;
-    function disqusNews(int $id) : string;
-
     function twitch(string $id) : string;
     function twitchImg(string $id) : string;
     function twitchLargeImg(string $id) : string;

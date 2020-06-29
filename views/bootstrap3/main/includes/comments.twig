@@ -2,6 +2,7 @@
 <div id="disqus_thread"></div>
 <script>
 var disqus_config = function () {
+    {% set disqus_url = disqus_url ?? canonical_url %}
     {% if disqus_url %}
         this.page.url = '{{ disqus_url }}';
     {% endif %}

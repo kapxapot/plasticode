@@ -98,16 +98,6 @@ class Linker implements LinkerInterface
         );
     }
 
-    public function disqusPage(PageInterface $page) : string
-    {
-        return $this->abs($this->page($page));
-    }
-
-    public function disqusNews(int $id) : string
-    {
-        return $this->abs($this->news($id));
-    }
-
     public function twitchImg(string $id) : string
     {
         return 'https://static-cdn.jtvnw.net/previews-ttv/live_user_' . $id . '-320x180.jpg';

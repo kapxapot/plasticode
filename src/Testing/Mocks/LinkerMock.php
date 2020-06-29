@@ -46,16 +46,6 @@ class LinkerMock implements LinkerInterface
         return $this->abs('/news/archive/') . $year;
     }
 
-    public function disqusPage(PageInterface $page) : string
-    {
-        return $this->abs($this->page($page));
-    }
-
-    public function disqusNews(int $id) : string
-    {
-        return $this->abs($this->news($id));
-    }
-
     public function twitch(string $id) : string
     {
         return 'https://twitch.tv/' . $id;
