@@ -133,6 +133,10 @@ textarea:disabled + .editor-toolbar + .CodeMirror-wrap {
     z-index: calc(var(--bs-modal-z-index) + 10); /* bootstrap modal is 1050 */
 }
 
+.CodeMirror-hint:before {
+    content: '?';
+}
+
 .page.CodeMirror-hint:before {
     content: 'P';
     background: #8bdaff;
