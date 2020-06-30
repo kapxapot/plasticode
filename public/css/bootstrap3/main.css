@@ -220,7 +220,7 @@ a:focus {
 
 .panel-title {
     font-size: 140%;
-    word-break: break-all;
+    word-break: break-word;
     display: flex;
     justify-content: space-between;
     align-items: center;

@@ -85,8 +85,7 @@ body {
     white-space: nowrap;
 }
 
-.break-all,
-.wrap-all {
+.break-all {
     word-break: break-all;
     white-space: normal;
 }
