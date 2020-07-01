@@ -103,8 +103,12 @@ class Strings
      *
      * @return string[]
      */
-    public static function toTags(string $str) : array
+    public static function toTags(?string $str) : array
     {
+        if (strlen($str) == 0) {
+            return [];
+        }
+
         $tags = array_map(
             fn (string $t) => self::normalize($t),
             self::explode($str)
