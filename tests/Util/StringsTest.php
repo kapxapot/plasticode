@@ -297,4 +297,46 @@ final class StringsTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider toTagsProvider
+     */
+    public function testToTags(?string $str, array $expected) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Strings::toTags($str)
+        );
+    }
+
+    public function toTagsProvider() : array
+    {
+        return [
+            [null, []],
+            ['', []],
+            ['tag', ['tag']],
+            ['one, two', ['one', 'two']],
+        ];
+    }
+
+    /**
+     * @dataProvider explodeProvider
+     */
+    public function testExplode(?string $str, ?string $delimiter, array $expected) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Strings::explode($str, $delimiter)
+        );
+    }
+
+    public function explodeProvider() : array
+    {
+        return [
+            [null, null, []],
+            ['', null, []],
+            ['abc', null, ['abc']],
+            ['abc', 'b', ['a', 'c']],
+        ];
+    }
 }

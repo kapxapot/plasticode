@@ -122,9 +122,19 @@ class Strings
      * 
      * @return string[]
      */
-    public static function explode(string $str, string $delimiter = ',') : array
+    public static function explode(?string $str, ?string $delimiter = null) : array
     {
-        return Arrays::trim(explode($delimiter, $str));
+        if (strlen($str) == 0) {
+            return [];
+        }
+
+        if (strlen($delimiter) == 0) {
+            $delimiter = ',';
+        }
+
+        return Arrays::trim(
+            explode($delimiter, $str)
+        );
     }
 
     /**
