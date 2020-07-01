@@ -159,7 +159,12 @@ class NewsAggregatorService
         bool $strict = true
     ) : ?NewsSourceInterface
     {
+        // todo: this is not a part of interface (!)
         $date = $news->publishedAt;
+
+        if (is_null($date)) {
+            return null;
+        }
 
         return $this
             ->collect(
@@ -175,7 +180,12 @@ class NewsAggregatorService
         bool $strict = true
     ) : ?NewsSourceInterface
     {
+        // todo: this is not a part of interface (!)
         $date = $news->publishedAt;
+
+        if (is_null($date)) {
+            return null;
+        }
 
         return $this
             ->collect(
