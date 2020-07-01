@@ -56,7 +56,7 @@
             $http.defaults.headers.common = getHeaders();
         }
 
-        $scope.ajax = function(config) {
+        $scope.ajax = function (config) {
             if (!config.method) {
                 config.method = 'post';
             }
@@ -90,7 +90,7 @@
                 }
                 else {
                     if (config.view && !config.persist) {
-                          $('#' + config.view +'View').modal('hide');
+                          $('#' + config.view + 'View').modal('hide');
                     }
 
                     if (!config.noSuccessMessage) {
@@ -121,10 +121,10 @@
                 else {
                     let msg = response.status + ' ' + response.statusText;
                     data = { error: true, message: msg };
-                    
+
                     setError(msg);
                 }
-                
+
                 showError();
 
                 setLoading(false);
@@ -141,9 +141,9 @@
                  updateUI();
              });
         };
-        
+
         focusOnModals();
-        
+
         {% if with_auth %}
             {% if not auth.user %}
                 $scope.refreshCaptcha = function() {
@@ -152,26 +152,26 @@
                         $('#signUpForm').find('#captcha').val(null);
                     });
                 };
-                
+
                 $scope.signUp = function() {
                     $scope.refreshCaptcha();
-    
+
                     showModal('signUp');
                 };
-                
+
                 $scope.signIn = function(targetUrl) {
                     $scope.targetUrl = targetUrl;
-    
+
                     showModal('signIn');
                 };
-                
+
                 $scope.signInSuccess = function(data) {
                     signedIn(data, $scope.targetUrl, $scope.rememberMe);
                 };
-                
+
                 $scope.switchFromTo = function(from, to) {
                     hideModal(from);
-                    
+
                     setTimeout(function() {
                         if (to == 'signIn') {
                             $scope.signIn();
@@ -181,10 +181,10 @@
                         }
                     }, 500);
                 };
-                
+
                 $('#signUpForm').submit(function(e) {
                     $scope.prePost(e);
-    
+
                     var obj = {
                         login: $('#signUpForm').find('#su_login').val(),
                         name: $('#signUpForm').find('#su_name').val(),
@@ -192,13 +192,13 @@
                         password: $('#signUpForm').find('#su_password').val(),
                         captcha: $('#signUpForm').find('#su_captcha').val(),
                     };
-                    
+
                     if ($scope.moreSignUpFields) {
                         obj = $scope.moreSignUpFields(obj);
                     }
-                    
+
                     $scope.rememberMe = $('#signUpForm').find('#su_remember').is(':checked');
-    
+
                     $scope.ajax({
                         url: '{{ path_for('auth.signup') }}',
                         data: obj,
@@ -208,7 +208,7 @@
                         onError: $scope.refreshCaptcha,
                     });
                 });
-    
+
                 $('#signInForm').submit(function(e) {
                     $scope.prePost(e);
                     
