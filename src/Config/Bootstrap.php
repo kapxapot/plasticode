@@ -63,6 +63,7 @@ use Plasticode\Repositories\Idiorm\TagRepository;
 use Plasticode\Repositories\Idiorm\UserRepository;
 use Plasticode\Services\AuthService;
 use Plasticode\Twig\Extensions\AccessRightsExtension;
+use Plasticode\Twig\Extensions\TranslatorExtension;
 use Plasticode\Twig\TwigView;
 use Plasticode\Util\Cases;
 use Plasticode\Validation\ValidationRules;
@@ -308,20 +309,27 @@ class Bootstrap
                 ]
             );
 
-            $twigExt = new TwigExtension(
-                $c->router,
-                $c->request->getUri()
+            $view->addExtension(
+                new TwigExtension(
+                    $c->router,
+                    $c->request->getUri()
+                )
             );
 
-            $view->addExtension($twigExt);
-
-            $accessExt = new AccessRightsExtension(
-                $c->access,
-                $c->auth
+            $view->addExtension(
+                new AccessRightsExtension(
+                    $c->access,
+                    $c->auth
+                )
             );
 
-            $view->addExtension($accessExt);
-            $view->addExtension(new DebugExtension);
+            $view->addExtension(
+                new TranslatorExtension(
+                    $c->translator
+                )
+            );
+
+            $view->addExtension(new DebugExtension());
 
             // set globals
             $globals = $this->settings['view_globals'];
