@@ -15,10 +15,10 @@ function updateUI() {
         //console.log('colorbox detected');
         $('.colorbox').colorbox({rel:'colorbox', maxWidth: '90%', scalePhotos: 'true'});
     }
-    
+
     $('[data-toggle="tooltip"]').tooltip();
     $('.carousel').carousel();
-    
+
     if (lozadObserver) {
         lozadObserver.observe();
     }
@@ -31,9 +31,18 @@ $(function() {
     $('[data-hide]').on('click', function() {
         $(this).closest('.' + $(this).attr('data-hide')).hide();
     });
-    
+
+    // smooth collapse opening
+    $('.collapse').on('shown.bs.collapse', function(e) {
+        console.log('hey');
+        const panel = $(this).closest('.panel');
+        $('html,body').animate({
+            scrollTop: panel.offset().top
+        }, 500);
+    });
+
     initSwipes();
-    
+
     updateUI();
 });
 
@@ -53,7 +62,7 @@ function initSwipes() {
 
     $('.swipable').each((index, swipable) => {
         const mc = new Hammer(swipable);
-    
+
         // listen to events...
         mc.on("swipeleft", ev => {
             const element = ev.target;
@@ -73,11 +82,11 @@ function initSwipes() {
         
         mc.on("swiperight", ev => {
             const element = ev.target;
-            
+
             // carousel?
             if (isCarouselImg(element)) {
                 const carousel = findCarousel(element);
-                
+
                 if (carousel) {
                     carousel.carousel('prev');
                 }
@@ -101,7 +110,7 @@ function focusOnModals() {
 
 function showAlert(selector, delay = null) {
     $(selector).show();
-    
+
     if (delay) {
         $(selector).fadeTo(delay, 0.8).slideUp(500, function() {
             $(this).slideUp(500);
@@ -191,9 +200,9 @@ function getAuthTokenKey() {
 
 function saveToken(token, cookie = false) {
     let key = getAuthTokenKey();
-    
+
     localStorage.setItem(key, token);
-    
+
     if (cookie) {
         saveCookie(key, token, authTokenCookieTtl);
     }
@@ -208,9 +217,9 @@ function loadToken() {
 
 function deleteToken() {
     let key = getAuthTokenKey();
-    
+
     localStorage.removeItem(key);
-    
+
     deleteCookie(key);
 }
 
@@ -220,7 +229,7 @@ function hasToken() {
 
 function saveCookie(name, value, days) {
     let expires = "";
-    
+
     if (days) {
         let date = new Date();
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -241,7 +250,7 @@ function loadCookie(name) {
             return decodeURIComponent(c.substring(nameEq.length, c.length));
         }
     }
-    
+
     return null;
 }
 
@@ -260,12 +269,12 @@ function getById(items, id) {
         let results = $.grep(items, function(e) {
             return e.id === id;
         });
-    
+
         if (results.length > 0) {
             return results[0];
         }
     }
-    
+
     return null;
 }
 
