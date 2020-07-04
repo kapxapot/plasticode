@@ -65,11 +65,11 @@ class MenuItemsGenerator extends EntityGenerator
 
         $params['breadcrumbs'] = [
             [
-                'text' => 'Menu',
+                'text' => 'Меню',
                 'link' => $this->router->pathFor('admin.entities.menus')
             ],
             ['text' => $menu->text],
-            ['text' => 'Menu Items'],
+            ['text' => 'Элементы меню'],
         ];
 
         $params['hidden'] = [
