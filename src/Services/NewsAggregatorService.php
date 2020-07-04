@@ -134,7 +134,7 @@ class NewsAggregatorService
                 fn (SrcRepoInterface $s) =>
                 $s->getLatestNews($loadLimit, $exceptId)
             )
-            ->sort()
+            ->sortReverse()
             ->slice($offset, $pageSize);
     }
 
