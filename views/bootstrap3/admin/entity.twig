@@ -454,7 +454,7 @@
     
     $scope.submitData = function(obj, persist) {
         //console.log(obj);
-        
+        var itemId = $scope.itemId;
         //delay(function() {
         $scope.ajax({
             method: ($scope.itemId == 0) ? 'post' : 'put',
@@ -463,7 +463,12 @@
             view: 'entity',
             onSuccess: $scope.refresh,
             persist: persist
-        });
+        }).then(() => {
+			//removing autosaves for newly created entity
+			if(itemId === 0 && $localStorage && $localStorage.entitiesSaves && $localStorage.entitiesSaves['{{alias}}']) {
+				$localStorage.entitiesSaves['{{alias}}'] = $localStorage.entitiesSaves['{{alias}}'].filter(e => e.id !== 0);
+			}
+		});
         //}, 100000);
     };
     
