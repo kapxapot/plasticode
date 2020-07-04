@@ -306,7 +306,7 @@ textarea.form-control {
 
 .no-url,
 .nd_noarticle {
-    color: var(--gray-8);
+    color: var(--gray-9);
     border-bottom: 1px dotted;
 }
 
