@@ -59,6 +59,7 @@
         $scope.mdes = [];
         var mdEditorService = $injector.get('mdEditorService'); //not good
         var plDataService = $injector.get('plDataService');
+        var $localStorage = $injector.get('$localStorage');
 
         $scope.parse = function(text) {
             return $scope.ajax({
@@ -464,11 +465,11 @@
             onSuccess: $scope.refresh,
             persist: persist
         }).then(() => {
-			//removing autosaves for newly created entity
-			if(itemId === 0 && $localStorage && $localStorage.entitiesSaves && $localStorage.entitiesSaves['{{alias}}']) {
-				$localStorage.entitiesSaves['{{alias}}'] = $localStorage.entitiesSaves['{{alias}}'].filter(e => e.id !== 0);
-			}
-		});
+            //removing autosaves for newly created entity
+            if(itemId === 0 && $localStorage && $localStorage.entitiesSaves && $localStorage.entitiesSaves['{{alias}}']) {
+                $localStorage.entitiesSaves['{{alias}}'] = $localStorage.entitiesSaves['{{alias}}'].filter(e => e.id !== 0);
+            }
+        });
         //}, 100000);
     };
     
