@@ -20,7 +20,7 @@ class NonRecursiveParent extends ContainerRule
         $this->id = $id;
         $this->parentField = $parentField;
     }
-    
+
     public function validate($input)
     {
         parent::validate($input);

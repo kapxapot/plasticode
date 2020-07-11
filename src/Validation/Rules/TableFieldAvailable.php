@@ -17,7 +17,7 @@ abstract class TableFieldAvailable extends ContainerRule
         $this->field = $field;
         $this->id = $id;
     }
-    
+
     public function validate($input)
     {
         parent::validate($input);
@@ -25,7 +25,7 @@ abstract class TableFieldAvailable extends ContainerRule
         $query = $this->container->db
             ->forTable($this->table)
             ->where($this->field, $input);
-        
+
         if ($this->id) {
             $query = $query->whereNotEqual('id', $this->id);
         }
