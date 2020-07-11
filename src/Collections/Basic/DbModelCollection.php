@@ -41,4 +41,11 @@ class DbModelCollection extends TypedCollection
             fn (DbModelInterface $m) => $m->getId()
         );
     }
+
+    public function contains(DbModelInterface $model) : bool
+    {
+        return $this->anyFirst(
+            fn (DbModelInterface $m) => $m->equals($model)
+        );
+    }
 }

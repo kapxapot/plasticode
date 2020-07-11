@@ -398,23 +398,23 @@ class Query implements \IteratorAggregate, ArrayableInterface
             fn ($q) => $q->offset($offset)
         );
     }
-    
+
     /**
      * Wrapper method for the underlying limit().
      * 
-     * Applies only if $limit > 0.
+     * Is applied only if $limit > 0.
      */
     public function limit(int $limit) : self
     {
         if ($limit <= 0) {
             return $this;
         }
-        
+
         return $this->branch(
             fn ($q) => $q->limit($limit)
         );
     }
-    
+
     /**
      * Gets chunk based on offset and limit.
      * 
