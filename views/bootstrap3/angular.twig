@@ -154,14 +154,14 @@
             });
         };
 
-        $scope.modalAjax = function (config) (
+        $scope.modalAjax = function(config) {
             config.setError = config.setError || (msg) => { $scope.modalAlertError = msg; };
             config.showError = config.showError || () => { showModalAlertError(); };
             config.setLoading = config.setLoading || (val) => { $scope.modalLoading = val; };
             config.setSaving = config.setSaving || (val) => { $scope.modalSaving = val; };
 
             $scope.ajax(config);
-        );
+        };
 
         $scope.updateUi = function() {
              $scope.$applyAsync(function() {
