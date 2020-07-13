@@ -8,8 +8,7 @@ use Respect\Validation\Validator;
 
 abstract class Validation implements ValidationInterface
 {
-    /** @var ValidationRules */
-    private $validationRules;
+    private ValidationRules $validationRules;
 
     public function __construct(ValidationRules $validationRules)
     {
