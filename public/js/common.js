@@ -9,7 +9,7 @@ var delay = (function() {
 const lozadObserver = lozad(); // lazy loads elements with default selector as '.lozad'
 lozadObserver.observe();
 
-function updateUI() {
+function updateUi() {
     // colorbox
     if (typeof colorbox !== 'undefined' && colorbox instanceof HTMLDivElement) {
         //console.log('colorbox detected');
@@ -43,7 +43,7 @@ $(function() {
 
     initSwipes();
 
-    updateUI();
+    updateUi();
 });
 
 function isCarouselImg(element) {
