@@ -4,7 +4,7 @@
 {% set full_check = (var_loading ? var_loading ~ ' || ' : '') ~ var_saving %}
 
 <div id="{{ modal_name }}View" name="views.{{ modal_name }}View" class="modal fade" role="dialog" data-backdrop="static">
-    <div class="modal-dialog{% if modal_narrow %} modal-dialog-narrow{% endif %}" ng-class="{'modal-dialog-fullscreen': isPreview}">
+    <div class="modal-dialog{% if modal_narrow %} modal-dialog-narrow{% endif %}" ng-class="{'modal-dialog-fullscreen': isPreview, 'modal-dialog-narrow': isNarrowModal}">
         <div class="modal-content">
             <form id="{{ modal_name }}Form" name="forms.{{ modal_name }}Form" method="post">
                 <div class="modal-header">
