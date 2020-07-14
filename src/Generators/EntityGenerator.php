@@ -132,14 +132,24 @@ class EntityGenerator
      */
     public function generateAPIRoutes(App $app, \Closure $access) : void
     {
-        $this->generateGetAllRoute($app, $access);
-
         $api = $this->settingsProvider
             ->get('tables.' . $this->entity . '.api');
 
-        if ($api == 'full') {
-            $this->generateCRUDRoutes($app, $access);
+        if (strlen($api) == 0) {
+            return;
         }
+
+        // supported modes:
+        //
+        // full: CRUD + get all
+        // read: get one + get all
+        // read_one: get one
+
+        if ($api == 'full' || $api == 'read') {
+            $this->generateGetAllRoute($app, $access);
+        }
+
+        $this->generateCRUDRoutes($app, $access, $api == 'full');
     }
 
     /**
@@ -197,7 +207,7 @@ class EntityGenerator
      *
      * @param \Closure $access Creates {@see \Plasticode\Middleware\AccessMiddleware}
      */
-    public function generateCRUDRoutes(App $app, \Closure $access) : void
+    public function generateCRUDRoutes(App $app, \Closure $access, bool $isFullApi) : void
     {
         $provider = $this;
 
@@ -212,6 +222,16 @@ class EntityGenerator
                 );
             }
         );
+
+        if ($access) {
+            $get->add(
+                $access($this->entity, Rights::API_READ)
+            );
+        }
+
+        if (!$isFullApi) {
+            return; // that's all, folks
+        }
 
         $post = $app->post(
             $shortPath,
@@ -241,10 +261,6 @@ class EntityGenerator
         );
 
         if ($access) {
-            $get->add(
-                $access($this->entity, Rights::API_READ)
-            );
-
             $post->add(
                 $access($this->entity, Rights::API_CREATE)
             );
