@@ -174,7 +174,9 @@
         {% if with_auth %}
             {% if not auth.user %}
                 $scope.refreshCaptcha = function() {
-                    $http.get('{{ api }}captcha').success(function(data) {
+                    $http.get('{{ api }}captcha').then(function(response) {
+                        const data = response.data;
+
                         $scope.captcha = data['captcha'];
                         $('#signUpForm').find('#captcha').val(null);
                     });

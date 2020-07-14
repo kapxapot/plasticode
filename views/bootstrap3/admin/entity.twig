@@ -110,9 +110,6 @@
     })
 
     $('#entityView').on('show.bs.modal', function() {
-        
-        //$('#entityView').find('textarea').scrollTop(0);
-
         var initMdes = function() {
             {% if mde %}
                     var buttons = angular.copy(mdEditorService.defaultButtons);
@@ -148,25 +145,23 @@
         var init = function() {
             initMdes();
         };
-        
+
         {% block modal_shown %}
             init();
         {% endblock %}
-        
+
         $(this).focus();
     });
 
-    {% if mde %}
-        //$('#entityView').on('hidden.bs.modal', $scope.killMdes);
-    {% endif %}
-
     {# loading dictionaries #}
     var promises = [];
-    
+
     {% for col, value in columns if value.entity %}
         promises.push(new Promise(function(resolve, reject) {
             $http.get('{{ api }}{{ value.entity }}')
-                .success(function(data) {
+                .then(function(response) {
+                    const data = response.data;
+
                     $scope.{{ value.entity }} = data;
                     resolve(data);
                 });

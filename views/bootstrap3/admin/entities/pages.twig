@@ -7,7 +7,9 @@
     else {
         $scope.loading = true;
 
-        $http.get('{{ api }}pages/' + $scope.itemId).success(function(data) {
+        $http.get('{{ api }}pages/' + $scope.itemId).then(function(response) {
+            const data = response.data;
+
             $scope.item.text = data['text'];
             $scope.loading = false;
 
