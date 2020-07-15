@@ -107,25 +107,40 @@
                     }
                 }
                 else {
-                    if (config.view && !config.persist) {
-                          $('#' + config.view + 'View').modal('hide');
-                    }
+                    let getView = () => $('#' + config.view + 'View');
 
-                    if (!config.noSuccessMessage) {
-                        var message = 'Данные успешно сохранены.';
-                        if (data.message) {
-                            message = data.message;
+                    const willClose = config.view && !config.persist;
+
+                    let onSuccess = () => {
+                        if (!config.noSuccessMessage) {
+                            let message = 'Данные успешно сохранены.';
+
+                            if (data.message) {
+                                message = data.message;
+                            }
+                            else if (config.message) {
+                                message = config.message;
+                            }
+
+                            $scope.alertSuccess = message;
+
+                            showAlertSuccess();
                         }
-                        else if (config.message) {
-                            message = config.message;
+
+                        if (config.onSuccess) {
+                            config.onSuccess(data, config.context);
                         }
 
-                        $scope.alertSuccess = message;
-                        showAlertSuccess();
-                    }
+                        if (willClose) {
+                            getView().off('hidden.bs.modal', onSuccess);
+                        }
+                    };
 
-                    if (config.onSuccess) {
-                        config.onSuccess(data, config.context);
+                    if (willClose) {
+                        getView().on('hidden.bs.modal', onSuccess);
+                        getView().modal('hide');
+                    } else {
+                        onSuccess();
                     }
                 }
 
