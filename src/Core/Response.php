@@ -14,7 +14,8 @@ use Webmozart\Assert\Assert;
 
 class Response
 {
-    private const DefaultErrorStatus = 500;
+    private const DEFAULT_ERROR_STATUS = 500;
+    private const BAD_REQUEST_STATUS = 400;
 
     /**
      * Writes data to response object and returns it.
@@ -90,7 +91,9 @@ class Response
 
         $status = ($ex instanceof HttpExceptionInterface)
             ? $ex->GetErrorCode()
-            : self::DefaultErrorStatus;
+            : (($ex instanceof ValidationException)
+                ? self::BAD_REQUEST_STATUS
+                : self::DEFAULT_ERROR_STATUS);
 
         $msg = null;
         $errors = [];
