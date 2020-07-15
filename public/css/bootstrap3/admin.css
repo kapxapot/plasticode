@@ -107,17 +107,6 @@ input[type="file"] {
     margin-top: 10px;
 }
 
-/* alert */
-
-.alert-corner {
-    position: fixed;
-    top: 0;
-    right: 0;
-    margin: 10px;
-    width: 300px;
-    z-index: calc(var(--bs-modal-z-index) + 50);
-}
-
 /* SimpleMDE / Codemirror disabled state */
 
 textarea:disabled + .editor-toolbar {

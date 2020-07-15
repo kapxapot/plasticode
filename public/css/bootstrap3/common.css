@@ -160,6 +160,15 @@ textarea.form-control {
     overflow-wrap: break-word;
 }
 
+.alert-corner {
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 10px;
+    width: 300px;
+    z-index: calc(var(--bs-modal-z-index) + 50);
+}
+
 .table-striped > tbody > tr:nth-of-type(odd) {
     background-color: var(--table-odd-bg-color);
 }
