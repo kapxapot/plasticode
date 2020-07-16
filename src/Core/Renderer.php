@@ -4,7 +4,6 @@ namespace Plasticode\Core;
 
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Core\Interfaces\ViewInterface;
-use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Util\Arrays;
 use Plasticode\ViewModels\UrlViewModel;
 

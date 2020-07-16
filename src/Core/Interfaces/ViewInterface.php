@@ -11,6 +11,6 @@ interface ViewInterface
         string $template,
         array $data = []
     ) : ResponseInterface;
-    
+
     function fetch(string $component, array $data = []) : string;
 }
