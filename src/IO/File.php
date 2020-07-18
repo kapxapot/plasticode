@@ -110,8 +110,8 @@ class File
      */
     public static function absolutePath(
         string $baseDir,
-        string $relativePath
-    ) : string
+        ?string $relativePath
+    ) : ?string
     {
         if (!preg_match('/^(\\\\|\/)?\.\./', $relativePath)) {
             return $relativePath;

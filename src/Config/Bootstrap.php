@@ -175,8 +175,8 @@ class Bootstrap
             $path = File::absolutePath($this->dir, $path);
 
             $handler = new StreamHandler(
-                $path,
-                Logger::DEBUG
+                $path ?? '',
+                $path ? Logger::DEBUG : 999
             );
 
             $formatter = new LineFormatter(
@@ -504,8 +504,8 @@ class Bootstrap
             $path = File::absolutePath($this->dir, $path);
 
             $handler = new StreamHandler(
-                $path,
-                Logger::DEBUG
+                $path ?? '',
+                $path ? Logger::DEBUG : 999
             );
 
             $formatter = new LineFormatter(
