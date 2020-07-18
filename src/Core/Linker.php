@@ -38,11 +38,13 @@ class Linker implements LinkerInterface
      */
     public function abs(string $url = null) : string
     {
-        $siteUrl = $this->settingsProvider
+        $siteUrl = $this
+            ->settingsProvider
             ->get('view_globals.site_url');
 
         $baseUrl = rtrim($siteUrl, '/');
 
+        // if url already incorporates base url, it's already absolute
         if (strpos($url, $baseUrl) !== 0) {
             $url = $baseUrl . '/' . ltrim($url, '/');
         }
@@ -52,7 +54,7 @@ class Linker implements LinkerInterface
 
     public function rel(string $url = null) : string
     {
-        return $this->root() . rtrim($url, '/');
+        return rtrim($this->root(), '/') . '/' . ltrim($url, '/');
     }
 
     public function root() : ?string
