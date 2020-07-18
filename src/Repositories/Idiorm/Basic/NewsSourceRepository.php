@@ -19,7 +19,13 @@ abstract class NewsSourceRepository extends TaggedRepository implements NewsSour
 
     public function getAllByTag(string $tag, int $limit = 0) : NewsSourceCollection
     {
-        return $this->getNewsByTag($tag, $limit);
+        return NewsSourceCollection::from(
+            $this->filterByTag(
+                $this->publishedQuery(),
+                $tag,
+                $limit
+            )
+        );
     }
 
     // NewsSourceRepositoryInterface
