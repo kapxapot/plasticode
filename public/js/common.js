@@ -34,7 +34,6 @@ $(function() {
 
     // smooth collapse opening
     $('.collapse').on('shown.bs.collapse', function(e) {
-        console.log('hey');
         const panel = $(this).closest('.panel');
         $('html,body').animate({
             scrollTop: panel.offset().top
