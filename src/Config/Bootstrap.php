@@ -499,7 +499,7 @@ class Bootstrap
             $logger = new Logger(
                 $this->settings['event_log']['name']
             );
-            
+
             $path = $this->settings['event_log']['path'];
             $path = File::absolutePath($this->dir, $path);
 
@@ -514,7 +514,7 @@ class Bootstrap
 
             $handler->setFormatter($formatter);
             $logger->pushHandler($handler);
-        
+
             return $logger;
         };
 
