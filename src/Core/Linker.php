@@ -55,7 +55,7 @@ class Linker implements LinkerInterface
         return $this->root() . rtrim($url, '/');
     }
 
-    public function root() : string
+    public function root() : ?string
     {
         return $this->settingsProvider->get('root');
     }
