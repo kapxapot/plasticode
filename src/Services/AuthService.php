@@ -148,11 +148,11 @@ class AuthService
 
         if (is_null($token) || $token->token != $tokenStr) {
             $token = $this->authTokenRepository->getByToken($tokenStr);
-            
+
             if (is_null($token)) {
                 throw new AuthenticationException('Incorrect security token.');
             }
-            
+
             if (!$ignoreExpiration && $token->isExpired()) {
                 throw new AuthenticationException('Security token expired.');
             }
