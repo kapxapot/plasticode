@@ -23,9 +23,9 @@ abstract class Controller
 
     private SettingsProviderInterface $settingsProvider;
     private TranslatorInterface $translator;
-    private ValidatorInterface $validator;
     private ViewInterface $view;
 
+    protected ValidatorInterface $validator;
     protected LoggerInterface $logger;
 
     protected bool $autoOneColumn = true;
@@ -36,8 +36,9 @@ abstract class Controller
 
         $this->settingsProvider = $appContext->settingsProvider();
         $this->translator = $appContext->translator();
-        $this->validator = $appContext->validator();
         $this->view = $appContext->view();
+
+        $this->validator = $appContext->validator();
         $this->logger = $appContext->logger();
     }
 
