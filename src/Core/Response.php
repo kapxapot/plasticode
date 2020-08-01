@@ -100,11 +100,11 @@ class Response
 
         // get main message and all errors
         if ($ex instanceof ValidationException) {
-            foreach ($ex->errors as $field => $error) {
-                $errors[$field] = $error;
+            foreach ($ex->errors() as $field => $errorList) {
+                $errors[$field] = $errorList;
 
                 if (!$msg) {
-                    $msg = $error[0];
+                    $msg = $errorList[0];
                 }
             }
         } else {
@@ -121,7 +121,7 @@ class Response
                 $lines = [];
 
                 foreach ($ex->getTrace() as $trace) {
-                    $lines[] = "{$trace['file']} ({$trace['line']}), {$trace['class']}{$trace['type']}{$trace['function']}";
+                    $lines[] = $trace['file'] . ' (' . $trace['line'] . '), ' . $trace['class'] . $trace['type'] . $trace['function'];
                 }
 
                 $logger->info(Text::fromLines($lines));

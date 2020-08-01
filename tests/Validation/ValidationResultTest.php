@@ -11,8 +11,8 @@ final class ValidationResultTest extends TestCase
     public function testFail() : void
     {
         $errors = [
-            'userId' => 'Cannot be empty',
-            'password' => 'Must be strong',
+            'userId' => ['Cannot be empty'],
+            'password' => ['Must be strong'],
         ];
 
         $result = new ValidationResult($errors);
@@ -56,8 +56,8 @@ final class ValidationResultTest extends TestCase
         $this->expectException(ValidationException::class);
 
         $errors = [
-            'userId' => 'Cannot be empty',
-            'password' => 'Must be strong',
+            'userId' => ['Cannot be empty'],
+            'password' => ['Must be strong'],
         ];
 
         $result = new ValidationResult($errors);

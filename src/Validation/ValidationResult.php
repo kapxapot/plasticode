@@ -6,13 +6,20 @@ use Plasticode\Exceptions\ValidationException;
 
 class ValidationResult
 {
+    /** @var array<string, string[]> */
     private array $errors;
 
+    /**
+     * @param array<string, string[]>|null $errors
+     */
     public function __construct(?array $errors = null)
     {
         $this->errors = $errors ?? [];
     }
 
+    /**
+     * @return array<string, string[]>
+     */
     public function errors() : array
     {
         return $this->errors;

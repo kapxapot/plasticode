@@ -26,7 +26,7 @@ class Validator implements ValidatorInterface
     private function validate(\Closure $getField, array $rules) : ValidationResult
     {
         $errors = [];
-        
+
         foreach ($rules as $field => $rule) {
             try {
                 foreach ($rule->getRules() as $subRule) {
@@ -34,13 +34,12 @@ class Validator implements ValidatorInterface
                         $subRule->setContainer($this->container);
                     }
                 }
-                
+
                 $name = $this->translator->translate($field);
                 $value = $getField($field);
 
                 $rule->setName($name)->assert($value);
-            }
-            catch (NestedValidationException $e) {
+            } catch (NestedValidationException $e) {
                 $e->setParam('translator', [$this->translator, 'translate']);
                 $errors[$field] = $e->getMessages();
             }
