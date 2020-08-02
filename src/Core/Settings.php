@@ -24,7 +24,7 @@ class Settings
                 $var = $matches[1];
                 $env = getenv($var);
 
-                return ($env !== false) ? $env : $var;
+                return ($env !== false) ? $env : '';
             },
             $data
         );
