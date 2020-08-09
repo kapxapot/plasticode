@@ -23,7 +23,7 @@ class Pluralizer
         if (Strings::last($word) == 'y') {
             $word = substr_replace($word, 'ie', -1, 1);
         } elseif (Strings::last($word) == 's') {
-            $word . 'e';
+            $word .= 'e';
         }
 
         return $word . 's';
