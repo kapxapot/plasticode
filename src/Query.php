@@ -250,7 +250,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
             return $this->one();
         }
 
-        $offset = rand(0, $count - 1);
+        $offset = mt_rand(0, $count - 1);
 
         return $this->slice($offset, 1)->one()
             ?? $this->one();
