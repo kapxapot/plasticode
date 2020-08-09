@@ -50,4 +50,16 @@ class ScalarCollection extends Collection
             ? null
             : max($this->data);
     }
+
+    /**
+     * Returns sum of the elements.
+     * 
+     * In case of empty collection returns 0.
+     *
+     * @return mixed
+     */
+    public function sum()
+    {
+        return array_sum($this->data);
+    }
 }
