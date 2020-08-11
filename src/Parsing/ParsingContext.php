@@ -125,7 +125,7 @@ class ParsingContext
     public function setLines(array $lines) : self
     {
         $lines = Text::trimEmptyLines($lines);
-        $this->text = Text::fromLines($lines);
+        $this->text = Text::join($lines);
 
         return $this;
     }

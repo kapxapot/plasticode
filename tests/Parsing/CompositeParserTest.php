@@ -35,7 +35,7 @@ final class CompositeParserTest extends BaseRenderTestCase
         $page = new PageDummy(['slug' => 'about-us']);
 
         $this->assertEquals(
-            Text::fromLines(
+            Text::join(
                 [
                     '<a href="' . $linker->page($page) . '" class="entity-url">about us</a>',
                     '<a href="' . $linker->tag('warcraft') . '" class="entity-url">warcraft</a>',

@@ -14,7 +14,7 @@ final class CarouselMapperTest extends TestCase
 {
     public function testMap() : void
     {
-        $text = Text::fromLines(
+        $text = Text::join(
             [
                 'http://img.ru/1616    Some image',
                 '//some/other/link',

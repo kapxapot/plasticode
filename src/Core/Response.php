@@ -124,7 +124,7 @@ class Response
                     $lines[] = $trace['file'] . ' (' . $trace['line'] . '), ' . $trace['class'] . $trace['type'] . $trace['function'];
                 }
 
-                $logger->info(Text::fromLines($lines));
+                $logger->info(Text::join($lines));
             }
         }
 

@@ -29,15 +29,25 @@ class Text
     }
 
     /**
-     * Joins array of lines into text.
+     * Joins array of lines into text using the provided delimiter (PHP_EOL by default).
      * 
      * @param string[] $lines
      */
-    public static function fromLines(array $lines) : string
+    public static function join(array $lines, ?string $delimiter = null) : string
     {
-        return implode(PHP_EOL, $lines);
+        return implode($delimiter ?? PHP_EOL, $lines);
     }
-    
+
+    /**
+     * Joins array of lines into text using double PHP_EOL as a delimiter.
+     * 
+     * @param string[] $lines
+     */
+    public static function sparseJoin(array $lines) : string
+    {
+        return implode(PHP_EOL . PHP_EOL, $lines);
+    }
+
     /**
      * Removes empty lines from start and end of array.
      * 
@@ -49,14 +59,14 @@ class Text
         while (count($lines) > 0 && strlen($lines[0]) == 0) {
             array_shift($lines);
         }
-        
+
         while (count($lines) > 0 && strlen($lines[count($lines) - 1]) == 0) {
             array_pop($lines);
         }
-        
+
         return $lines;
     }
-    
+
     /**
      * Trims <br/>s from start and end of text.
      */
@@ -148,7 +158,7 @@ class Text
 
         $text = str_replace('=/', '=' . $baseUrl, $text);
         $text = str_replace('="/', '="' . $baseUrl, $text);
-        
+
         return $text;
     }
 
@@ -162,7 +172,7 @@ class Text
         foreach ($replaces as $key => $value) {
             $text = preg_replace('/(' . $key . ')/', $value, $text);
         }
-        
+
         return $text;
     }
 }

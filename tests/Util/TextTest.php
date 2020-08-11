@@ -34,7 +34,7 @@ final class TextTest extends TestCase
         $this->assertEquals(
             'one<br/>two',
             Text::newLinesToBrs(
-                Text::fromLines(['one', 'two'])
+                Text::join(['one', 'two'])
             )
         );
     }
