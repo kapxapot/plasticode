@@ -96,11 +96,11 @@ class Image
     public static function buildTypesString() : string
     {
         $parts = [];
-        
+
         foreach (array_keys(self::$typesToExtensions) as $type) {
             $parts[] = 'image/' . $type;
         }
-        
+
         return implode(', ', $parts);
     }
 
@@ -114,7 +114,7 @@ class Image
                 return new static(base64_decode($data), $imgType);
             }
         }
-        
+
         return static::makeEmpty();
     }
     

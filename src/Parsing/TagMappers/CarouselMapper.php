@@ -23,34 +23,34 @@ class CarouselMapper implements TagMapperInterface
         $slides = [];
 
         $http = '(?:https?:)?\/\/';
-        
+
         $parts = preg_split(
             "/({$http}[^ <]+)/is",
             $tagNode->text(),
             -1,
             PREG_SPLIT_DELIM_CAPTURE
         );
-        
+
         $parts = array_map(
             function ($part) {
                 return trim(Text::trimNewLinesAndBrs($part));
             },
             $parts
         );
-        
+
         $parts = array_filter($parts);
-        
+
         /** @var CarouselSlide */
         $slide = null;
 
         while (!empty($parts)) {
             $part = array_shift($parts);
-            
-            if (preg_match("/^{$http}\S+$/", $part, $matches)) {
+
+            if (preg_match("/^{$http}\S+$/", $part)) {
                 if ($slide) {
                     $slides[] = $slide;
                 }
-                
+
                 $slide = new CarouselSlide($part);
 
                 if ($context) {
@@ -64,7 +64,7 @@ class CarouselMapper implements TagMapperInterface
                 $slide->setCaption($part);
             }
         }
-        
+
         if ($slide) {
             $slides[] = $slide;
         }
