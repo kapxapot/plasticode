@@ -8,12 +8,17 @@ use Webmozart\Assert\Assert;
 
 abstract class TagMapperSource implements TagMapperSourceInterface
 {
-    /** @var array */
-    private $map = [];
+    /** @var array<string, TagMapperInterface> */
+    private array $map = [];
 
-    private $componentMap = [];
+    /** @var array<string, string> */
+    private array $componentMap = [];
 
-    public function register(string $tag, TagMapperInterface $mapper, ?string $componentName = null) : void
+    public function register(
+        string $tag,
+        TagMapperInterface $mapper,
+        ?string $componentName = null
+    ) : void
     {
         Assert::notEmpty($tag);
         Assert::alnum($tag);
@@ -37,9 +42,6 @@ abstract class TagMapperSource implements TagMapperSourceInterface
 
     /**
      * Get mapper for the tag. Null if absent.
-     *
-     * @param string $tag
-     * @return TagMapperInterface|null
      */
     public function getMapper(string $tag) : ?TagMapperInterface
     {

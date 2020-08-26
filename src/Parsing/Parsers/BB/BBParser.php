@@ -16,11 +16,8 @@ class BBParser extends BaseStep
 {
     use BBAttributeParser;
 
-    /** @var TagMapperSourceInterface */
-    private $config;
-
-    /** @var RendererInterface */
-    private $renderer;
+    private TagMapperSourceInterface $config;
+    private RendererInterface $renderer;
 
     public function __construct(TagMapperSourceInterface $config, RendererInterface $renderer)
     {
@@ -64,7 +61,11 @@ class BBParser extends BaseStep
         return "/\[{$tag}([^\[]*)\](.*)\[\/{$tag}\]/Uis";
     }
 
-    private function parseTagMatches(string $tag, array $matches, ParsingContext &$context) : string
+    private function parseTagMatches(
+        string $tag,
+        array $matches,
+        ParsingContext &$context
+    ) : string
     {
         $viewContext = $this->mapToViewContext($tag, $matches, $context);
         $context = $viewContext->parsingContext();
@@ -81,7 +82,11 @@ class BBParser extends BaseStep
         );
     }
 
-    private function mapToViewContext(string $tag, array $matches, ParsingContext $context) : ViewContext
+    private function mapToViewContext(
+        string $tag,
+        array $matches,
+        ParsingContext $context
+    ) : ViewContext
     {
         $mapper = $this->config->getMapper($tag);
 
@@ -105,7 +110,7 @@ class BBParser extends BaseStep
         if (count($matches) > 2) {
             $content = Text::trimNewLinesAndBrs($matches[2]);
         }
-        
+
         return new TagNode($tag, $attrs, $content);
     }
 }
