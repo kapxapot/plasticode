@@ -197,4 +197,13 @@ final class MiscTest extends TestCase
             ],
         ];
     }
+
+    public function testShuffle() : void
+    {
+        $original = self::ABC;
+        $shuffled = Arrays::shuffle($original);
+
+        $this->assertSameSize($shuffled, $original);
+        $this->assertEqualsCanonicalizing($shuffled, $original);
+    }
 }

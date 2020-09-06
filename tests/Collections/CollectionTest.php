@@ -355,4 +355,14 @@ final class CollectionTest extends TestCase
             ],
         ];
     }
+
+    public function testShuffle() : void
+    {
+        $original = Collection::make([1, 2, 3]);
+        $shuffled = $original->shuffle();
+
+        $this->assertNotSame($shuffled, $original);
+        $this->assertSameSize($shuffled, $original);
+        $this->assertEqualsCanonicalizing($shuffled->toArray(), $original->toArray());
+    }
 }

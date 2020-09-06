@@ -506,4 +506,13 @@ class Arrays
 
         return $array;
     }
+
+    /**
+     * Shuffles the array's elements.
+     */
+    public static function shuffle(array $array) : array
+    {
+        shuffle($array);
+        return $array;
+    }
 }

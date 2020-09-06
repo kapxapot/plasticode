@@ -216,6 +216,17 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
+     * Shuffles the collection's elements.
+     *
+     * @return static
+     */
+    public function shuffle() : self
+    {
+        $data = Arrays::shuffle($this->data);
+        return static::make($data);
+    }
+
+    /**
      * Converts collection to ScalarCollection, optionally
      * mapping (reducing) its values to scalars.
      * 
