@@ -515,4 +515,36 @@ class Arrays
         shuffle($array);
         return $array;
     }
+
+    /**
+     * Removes one element satisfying the criteria.
+     * 
+     * @param string|callable $by
+     * @param mixed $value
+     */
+    public static function removeFirstBy(array $array, $by, $value = null) : array
+    {
+        if (empty($array)) {
+            return $array;
+        }
+
+        $skipped = 0;
+
+        foreach ($array as $item) {
+            if (self::satisfies($item, $by, $value)) {
+                break;
+            }
+
+            $skipped++;
+        }
+
+        if ($skipped == count($array)) {
+            return $array;
+        }
+
+        return array_merge(
+            self::take($array, $skipped),
+            self::skip($array, $skipped + 1)
+        );
+    }
 }

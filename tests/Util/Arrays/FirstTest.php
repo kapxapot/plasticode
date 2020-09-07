@@ -11,9 +11,7 @@ final class FirstTest extends TestCase
     /**
      * @dataProvider firstProvider
      *
-     * @param array $array
      * @param mixed $result
-     * @return void
      */
     public function testFirst(array $array, $result) : void
     {
@@ -31,10 +29,7 @@ final class FirstTest extends TestCase
     /**
      * @dataProvider firstByClosureProvider
      *
-     * @param array $array
-     * @param \Closure $by
      * @param mixed $result
-     * @return void
      */
     public function testFirstByClosure(array $array, \Closure $by, $result) : void
     {
@@ -134,11 +129,8 @@ final class FirstTest extends TestCase
     /**
      * @dataProvider firstByPropertyProvider
      *
-     * @param array $array
-     * @param string $by
      * @param mixed $value
      * @param mixed $result
-     * @return void
      */
     public function testFirstByProperty(array $array, string $by, $value, $result) : void
     {

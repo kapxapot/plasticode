@@ -3,21 +3,19 @@
 namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
+use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Util\Arrays;
 
 final class MiscTest extends TestCase
 {
-    /** @var array */
     const ABC = ['a', 'b', 'c'];
 
-    /** @var array */
     const AvBvCv = [
         'a' => 'av',
         'b' => 'bv',
         'c' => 'cv'
     ];
 
-    /** @var array */
     const A_Bc = [
         'a' => ['b' => 'c']
     ];
@@ -25,10 +23,7 @@ final class MiscTest extends TestCase
     /**
      * @dataProvider existsProvider
      * 
-     * @param array $array
      * @param string|integer|null $key
-     * @param boolean $result
-     * @return void
      */
     public function testExists(array $array, $key, bool $result) : void
     {
@@ -54,10 +49,8 @@ final class MiscTest extends TestCase
     /**
      * @dataProvider getProvider
      *
-     * @param array $array
      * @param string|integer|null $key
      * @param mixed $result
-     * @return void
      */
     public function testGet(array $array, $key, $result) : void
     {
@@ -83,10 +76,8 @@ final class MiscTest extends TestCase
     /**
      * @dataProvider setProvider
      *
-     * @param array $array
-     * @param string $key
+     * @param string|integer $key
      * @param mixed $value
-     * @return void
      */
     public function testSet(array $array, $key, $value) : void
     {
@@ -113,9 +104,7 @@ final class MiscTest extends TestCase
     /**
      * @dataProvider setNullKeyProvider
      *
-     * @param array $array
      * @param mixed $value
-     * @return void
      */
     public function testSetNullKey(array $array, $value) : void
     {
@@ -168,10 +157,6 @@ final class MiscTest extends TestCase
 
     /**
      * @dataProvider trimProvider
-     *
-     * @param array $array
-     * @param array $expected
-     * @return void
      */
     public function testTrim(array $array, array $expected) : void
     {
@@ -205,5 +190,48 @@ final class MiscTest extends TestCase
 
         $this->assertSameSize($shuffled, $original);
         $this->assertEqualsCanonicalizing($shuffled, $original);
+    }
+
+    /**
+     * @dataProvider removeFirstByProvider
+     */
+    public function testRemoveFirstBy(array $original, array $expected, callable $by) : void
+    {
+        $this->assertEquals(
+            $expected,
+            Arrays::removeFirstBy($original, $by)
+        );
+    }
+
+    public function removeFirstByProvider() : array
+    {
+        $dummy1 = new ModelDummy(1, 'one');
+        $dummy2 = new ModelDummy(2, 'two');
+        $dummy3 = new ModelDummy(3, 'three');
+
+        $array = [$dummy1, $dummy2, $dummy3, $dummy2, $dummy3];
+
+        return [
+            [
+                $array,
+                [$dummy2, $dummy3, $dummy2, $dummy3],
+                fn (ModelDummy $d) => $d->id == 1
+            ],
+            [
+                $array,
+                [$dummy1, $dummy3, $dummy2, $dummy3],
+                fn (ModelDummy $d) => $d->id == 2
+            ],
+            [
+                $array,
+                [$dummy1, $dummy2, $dummy2, $dummy3],
+                fn (ModelDummy $d) => $d->id == 3
+            ],
+            [
+                $array,
+                [$dummy1, $dummy2, $dummy3, $dummy2, $dummy3],
+                fn (ModelDummy $d) => $d->id == 4
+            ]
+        ];
     }
 }

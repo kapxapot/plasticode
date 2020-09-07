@@ -365,4 +365,52 @@ final class CollectionTest extends TestCase
         $this->assertSameSize($shuffled, $original);
         $this->assertEqualsCanonicalizing($shuffled->toArray(), $original->toArray());
     }
+
+
+    /**
+     * @dataProvider removeFirstProvider
+     */
+    public function testRemoveFirst(
+        Collection $original,
+        Collection $expected,
+        callable $by
+    ) : void
+    {
+        $this->assertEquals(
+            $expected->toArray(),
+            $original->removeFirst($by)->toArray()
+        );
+    }
+
+    public function removeFirstProvider() : array
+    {
+        $dummy1 = new ModelDummy(1, 'one');
+        $dummy2 = new ModelDummy(2, 'two');
+        $dummy3 = new ModelDummy(3, 'three');
+
+        $col = Collection::make([$dummy1, $dummy2, $dummy3, $dummy2, $dummy3]);
+
+        return [
+            [
+                $col,
+                Collection::make([$dummy2, $dummy3, $dummy2, $dummy3]),
+                fn (ModelDummy $d) => $d->id == 1
+            ],
+            [
+                $col,
+                Collection::make([$dummy1, $dummy3, $dummy2, $dummy3]),
+                fn (ModelDummy $d) => $d->id == 2
+            ],
+            [
+                $col,
+                Collection::make([$dummy1, $dummy2, $dummy2, $dummy3]),
+                fn (ModelDummy $d) => $d->id == 3
+            ],
+            [
+                $col,
+                Collection::make([$dummy1, $dummy2, $dummy3, $dummy2, $dummy3]),
+                fn (ModelDummy $d) => $d->id == 4
+            ]
+        ];
+    }
 }

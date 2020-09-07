@@ -58,6 +58,19 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
+     * Removes first element by column/property value or callable.
+     * 
+     * @param string|callable|null $by
+     * @param mixed $value
+     * @return mixed
+     */
+    public function removeFirst($by = null, $value = null) : self
+    {
+        $data = Arrays::removeFirstBy($this->data, $by, $value);
+        return static::make($data);
+    }
+
+    /**
      * Concats the collection.
      * 
      * @param static $other
