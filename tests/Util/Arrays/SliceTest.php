@@ -124,7 +124,7 @@ final class SliceTest extends TestCase
     /**
      * @dataProvider trimTailProvider
      */
-    public function testTrimTail(array $array, int $limit = null, array $result) : void
+    public function testTrimTail(array $array, int $limit, array $result) : void
     {
         $this->assertEquals(
             $result,
@@ -137,11 +137,9 @@ final class SliceTest extends TestCase
         $array = ['one', 'two', 'three'];
 
         return [
-            [[], null, []],
             [[], 1, []],
             [[], 3, []],
             [[], 5, []],
-            [$array, null, ['one', 'two']],
             [$array, 1, ['one', 'two']],
             [$array, 2, ['one']],
             [$array, 3, []],

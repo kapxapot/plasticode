@@ -193,7 +193,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * 
      * @return static
      */
-    public function slice(int $offset, int $limit = null) : self
+    public function slice(int $offset, int $limit) : self
     {
         $data = Arrays::slice($this->data, $offset, $limit);
         return static::make($data);
@@ -206,7 +206,13 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      */
     public function tail(int $limit) : self
     {
-        return $this->take(-$limit);
+        $offset = $this->count() - $limit;
+
+        if ($offset <= 0) {
+            return $this;
+        }
+
+        return $this->skip($offset);
     }
 
     /**
@@ -214,7 +220,7 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
      * 
      * @return static
      */
-    public function trimTail(int $limit = null) : self
+    public function trimTail(int $limit) : self
     {
         $data = Arrays::trimTail($this->data, $limit);
         return static::make($data);

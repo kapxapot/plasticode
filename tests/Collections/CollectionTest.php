@@ -438,10 +438,10 @@ final class CollectionTest extends TestCase
             [$empty, 1, $empty],
             [$empty, 3, $empty],
             [$empty, 5, $empty],
-            [$col, 1, Collection::make(['one', 'two'])],
-            [$col, 2, Collection::make(['one'])],
-            [$col, 3, $empty],
-            [$col, 5, $empty],
+            [$col, 1, Collection::make(['three'])],
+            [$col, 2, Collection::make(['two', 'three'])],
+            [$col, 3, $col],
+            [$col, 5, $col],
         ];
     }
 }

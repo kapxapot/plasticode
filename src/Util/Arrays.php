@@ -411,11 +411,11 @@ class Arrays
     }
 
     /**
-     * Removes $limit (1 by default) elements from the end of array.
+     * Removes $limit elements from the end of array.
      */
-    public static function trimTail(array $array, int $limit = null) : array
+    public static function trimTail(array $array, int $limit) : array
     {
-        return self::slice($array, 0, -($limit ?? 1));
+        return self::slice($array, 0, -$limit);
     }
 
     /**
