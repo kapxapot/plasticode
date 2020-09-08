@@ -200,13 +200,23 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
+     * Returns last $limit elements.
+     * 
+     * @return static
+     */
+    public function tail(int $limit) : self
+    {
+        return $this->take(-$limit);
+    }
+
+    /**
      * Removes $limit elements from the end of collection (backward skip).
      * 
      * @return static
      */
-    public function trimEnd(int $limit = null) : self
+    public function trimTail(int $limit = null) : self
     {
-        $data = Arrays::trimEnd($this->data, $limit);
+        $data = Arrays::trimTail($this->data, $limit);
         return static::make($data);
     }
 

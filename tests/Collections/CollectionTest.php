@@ -413,4 +413,35 @@ final class CollectionTest extends TestCase
             ]
         ];
     }
+
+    /**
+     * @dataProvider tailProvider
+     */
+    public function testTail(
+        Collection $original,
+        int $limit,
+        Collection $expected
+    ) : void
+    {
+        $this->assertEquals(
+            $expected->toArray(),
+            $original->tail($limit)->toArray()
+        );
+    }
+
+    public function tailProvider() : array
+    {
+        $empty = Collection::empty();
+        $col = Collection::make(['one', 'two', 'three']);
+
+        return [
+            [$empty, 1, $empty],
+            [$empty, 3, $empty],
+            [$empty, 5, $empty],
+            [$col, 1, Collection::make(['one', 'two'])],
+            [$col, 2, Collection::make(['one'])],
+            [$col, 3, $empty],
+            [$col, 5, $empty],
+        ];
+    }
 }

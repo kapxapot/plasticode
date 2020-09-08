@@ -122,17 +122,17 @@ final class SliceTest extends TestCase
     }
 
     /**
-     * @dataProvider trimEndProvider
+     * @dataProvider trimTailProvider
      */
-    public function testTrimEnd(array $array, int $limit = null, array $result) : void
+    public function testTrimTail(array $array, int $limit = null, array $result) : void
     {
         $this->assertEquals(
             $result,
-            Arrays::trimEnd($array, $limit)
+            Arrays::trimTail($array, $limit)
         );
     }
 
-    public function trimEndProvider() : array
+    public function trimTailProvider() : array
     {
         $array = ['one', 'two', 'three'];
 
