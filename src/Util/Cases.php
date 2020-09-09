@@ -2,6 +2,13 @@
 
 namespace Plasticode\Util;
 
+use Webmozart\Assert\Assert;
+
+/**
+ * Cases & conjugations support for Russian language.
+ * 
+ * Падежи и склонения для русского языка.
+ */
 class Cases
 {
     const NOM = 1; // именительный падеж
@@ -10,26 +17,26 @@ class Cases
     const ACC = 4; // винительный падеж
     const ABL = 5; // творительный падеж
     const PRE = 6; // предложный падеж
-    
+
     const SINGLE = 1; // единственное число
     const PLURAL = 2; // множественное число
-    
+
     const MAS = 1; // мужской род
     const FEM = 2; // женский род
     const NEU = 3; // средний род
     const PLU = 4; // множественный род (ножницы, вилы)
-    
+
     const INFINITIVE = 1; // инфинитив
     const PAST = 2; // прошлое время
     const PRESENT = 3; // настоящее время
     const FUTURE = 4; // будущее время
-    
+
     const FIRST = 1; // первое лицо
     const SECOND = 2; // второе лицо
     const THIRD = 3; // третье лицо
-    
+
     // [[им ед, им мн], [род ед, род мн], [дат ед, дат мн], [вин ед, вин мн], [тв ед, тв мн], [пр ед, пр мн ]]
-    private $caseTemplates = [
+    private array $caseTemplates = [
         // [картин]ка
         'картинка' => [['%ка', '%ки'], ['%ки', '%ок'], ['%ке', '%кам'], ['%ку', '%ки'], ['%кой', '%ками'], ['о %ке', 'о %ках']],
         // [выпуск]
@@ -47,120 +54,131 @@ class Cases
         // [слов]о
         'слово' => [['%о', '%а'], ['%а', '%'], ['%у', '%ам'], ['%о', '%а'], ['%ом', '%ами'], ['о %е', 'о %ах']],
     ];
-    
+
     // set 'index' if word != index
     // 'пень' => [ 'base' => 'п', 'index' => 'день' ],
-    private $caseData = [
-        'картинка' => [ 'base' => 'картин', 'gender' => self::FEM ],
-        'выпуск' => [ 'base' => 'выпуск', 'gender' => self::MAS ],
-        'стрим' => [ 'base' => 'стрим', 'gender' => self::MAS ],
-        'день' => [ 'base' => 'д', 'gender' => self::MAS ],
-        'пользователь' => [ 'base' => 'пользовател', 'gender' => self::MAS ],
-        'час' => [ 'base' => 'час', 'index' => 'стрим', 'gender' => self::MAS ],
-        'минута' => [ 'base' => 'минут', 'gender' => self::FEM ],
-        'копия' => [ 'base' => 'копи', 'gender' => self::FEM ],
-        'зритель' => [ 'base' => 'зрител', 'index' => 'пользователь', 'gender' => self::MAS ],
+    private array $caseData = [
+        'картинка' => ['base' => 'картин', 'gender' => self::FEM],
+        'выпуск' => ['base' => 'выпуск', 'gender' => self::MAS],
+        'стрим' => ['base' => 'стрим', 'gender' => self::MAS],
+        'день' => ['base' => 'д', 'gender' => self::MAS],
+        'пользователь' => ['base' => 'пользовател', 'gender' => self::MAS],
+        'час' => ['base' => 'час', 'index' => 'стрим', 'gender' => self::MAS],
+        'минута' => ['base' => 'минут', 'gender' => self::FEM],
+        'копия' => ['base' => 'копи', 'gender' => self::FEM],
+        'зритель' => ['base' => 'зрител', 'index' => 'пользователь', 'gender' => self::MAS],
         'слово' => ['base' => 'слов', 'gender' => self::NEU],
-        'ассоциация' => [ 'base' => 'ассоциаци', 'index' => 'копия', 'gender' => self::FEM ],
+        'ассоциация' => ['base' => 'ассоциаци', 'index' => 'копия', 'gender' => self::FEM],
         'ход' => ['base' => 'ход', 'index' => 'стрим', 'gender' => self::MAS],
+        'карта' => ['base' => 'карт', 'index' => 'минут', 'gender' => self::FEM],
     ];
-    
-    private $futureConjugationTemplates = [ [ 'буду', 'будем' ], [ 'будешь', 'будете' ], [ 'будет', 'будут' ] ];
-    
-    private $conjugationTemplates = [
+
+    private array $futureConjugationTemplates = [
+        ['буду', 'будем'],
+        ['будешь', 'будете'],
+        ['будет', 'будут']
+    ];
+
+    private array $conjugationTemplates = [
         // [игра]ть
         'играть' => [
             self::INFINITIVE => '%ть',
-            self::PAST => [ '%л', '%ла', '%ло', '%ли' ],
-            self::PRESENT => [ [ '%ю', '%ем' ], [ '%ешь', '%ете' ], [ '%ет', '%ют' ] ]
+            self::PAST => ['%л', '%ла', '%ло', '%ли'],
+            self::PRESENT => [['%ю', '%ем'], ['%ешь', '%ете'], ['%ет', '%ют']]
         ],
         // [ве]сти
         'вести' => [
             self::INFINITIVE => '%сти',
-            self::PAST => [ '%л', '%ла', '%ло', '%ли' ],
-            self::PRESENT => [ [ '%ду', '%дём' ], [ '%дёшь', '%дёте' ], [ '%дёт', '%дут' ] ]
+            self::PAST => ['%л', '%ла', '%ло', '%ли'],
+            self::PRESENT => [['%ду', '%дём'], ['%дёшь', '%дёте'], ['%дёт', '%дут']]
         ],
         // [транслир]овать
         'транслировать' => [
             self::INFINITIVE => '%овать',
-            self::PAST => [ '%овал', '%овала', '%овало', '%овали' ],
-            self::PRESENT => [ [ '%ую', '%уем' ], [ '%уешь', '%уете' ], [ '%ует', '%уют' ] ]
+            self::PAST => ['%овал', '%овала', '%овало', '%овали'],
+            self::PRESENT => [['%ую', '%уем'], ['%уешь', '%уете'], ['%ует', '%уют']]
         ],
     ];
-    
+
     // set 'index' if word != index
     // 'бравировать' => [ 'base' => 'бравир', 'index' => 'транслировать' ],
-    private $conjugationData = [
-        'играть' => [ 'base' => 'игра' ],
-        'вести' => [ 'base' => 'ве' ],
-        'транслировать' => [ 'base' => 'транслир' ],
+    private array $conjugationData = [
+        'играть' => ['base' => 'игра'],
+        'вести' => ['base' => 'ве'],
+        'транслировать' => ['base' => 'транслир'],
     ];
-    
+
     /**
-     * Returns case data for word.
+     * Returns case data for a word.
      * 
-     * If word not found, throws exception.
+     * If the word not found, throws {@see \InvalidArgumentException}.
      * 
-     * @param string $word
+     * @throws \InvalidArgumentException
      */
-    protected function getCaseData($word)
+    protected function getCaseData(string $word) : array
     {
-        if (!array_key_exists($word, $this->caseData)) {
-            throw new \InvalidArgumentException("Unknown word: {$word}.");
-        }
+        Assert::keyExists(
+            $this->caseData,
+            $word,
+            'Unknown word: ' . $word . '.'
+        );
 
         return $this->caseData[$word];
     }
-    
+
     /**
-     * Returns conjugation data for word.
+     * Returns conjugation data for a word.
      * 
-     * If word not found, throws exception.
+     * If the word is not found, throws {@see \InvalidArgumentException}.
      * 
-     * @param string $word
+     * @throws \InvalidArgumentException
      */
-    protected function getConjugationData($word)
+    protected function getConjugationData(string $word) : array
     {
-        if (!array_key_exists($word, $this->conjugationData)) {
-            throw new \InvalidArgumentException("Unknown word: {$word}.");
-        }
+        Assert::keyExists(
+            $this->conjugationData,
+            $word,
+            'Unknown word: ' . $word . '.'
+        );
 
         return $this->conjugationData[$word];
     }
-    
+
     /**
      * Adds custom cases.
      * 
      * @param array $cases Custom cases settings.
+     * @throws \InvalidArgumentException
      * 
      * Format:
      * 
-     * 	[
-     *		'word' => '_word_',
-     *		'base' => '_base_',
-     *
-     * 		'gender' => Cases::MAS|Cases::FEM|Cases::NEU|Cases::PLU,
-     *		'forms' => [ [ '%', '%' ] x6 ],
+     * [
+     *     'word' => '_word_',
+     *     'base' => '_base_',
      * 
-     * 		OR
+     *     'gender' => Cases::MAS|Cases::FEM|Cases::NEU|Cases::PLU,
+     *     'forms' => [ [ '%', '%' ] x6 ],
      * 
-     * 		'index' => '_index_'
-     *	]
+     *     OR
+     * 
+     *     'index' => '_index_'
+     * ]
      */
-    public function addCases($cases = [])
+    public function addCases(array $cases = []) : void
     {
         $word = $cases['word'] ?? null;
         $base = $cases['base'] ?? null;
         $gender = $cases['gender'] ?? self::MAS;
         $forms = $cases['forms'] ?? null;
         $index = $cases['index'] ?? null;
-        
-        if (!$word || !$base || (!$forms && !$index)) {
-            throw new \InvalidArgumentException("Invalid cases format.");
-        }
-        
-        $data = [ 'base' => $base ];
-        
+
+        Assert::true(
+            $word && $base && ($forms || $index),
+            'Invalid cases format.'
+        );
+
+        $data = ['base' => $base];
+
         if ($index) {
             $data['index'] = $index;
         }
@@ -168,7 +186,7 @@ class Cases
         $data['gender'] = $index
             ? $this->gender($index)
             : $gender;
-        
+
         if ($forms) {
             $this->caseTemplates[$word] = $forms;
         }
@@ -180,47 +198,50 @@ class Cases
      * Adds custom conjugations.
      * 
      * @param array $conjugations Custom conjugations settings.
+     * @throws \InvalidArgumentException
      * 
      * Format:
      * 
-     * 	[
-     * 		'word' => 'писать',
-     * 		'base' => 'пи',
-     *		
-     * 		'forms' => [
-     * 			Cases::INFINITIVE => '%',
-     * 			Cases::PAST => [ '%' x4 ],
-     * 			Cases::PRESENT => [ [ '%', '%' ] x3 ]
-     * 		]
+     *  [
+     *      'word' => 'писать',
+     *      'base' => 'пи',
+     *      
+     *      'forms' => [
+     *          Cases::INFINITIVE => '%',
+     *          Cases::PAST => [ '%' x4 ],
+     *          Cases::PRESENT => [ [ '%', '%' ] x3 ]
+     *      ]
      * 
-     * 		OR
+     *      OR
      * 
-     * 		'index' => '_index_'
-     * 	]
+     *      'index' => '_index_'
+     *  ]
      */
-    public function addConjugations($conjugations = [])
+    public function addConjugations(array $conjugations = []) : void
     {
         $word = $conjugations['word'] ?? null;
         $base = $conjugations['base'] ?? null;
         $forms = $conjugations['forms'] ?? null;
         $index = $conjugations['index'] ?? null;
-        
-        if (!$word || !$base || (!$forms && !$index)) {
-            throw new \InvalidArgumentException("Invalid conjugations format.");
-        }
-        
+
+        Assert::true(
+            $word && $base && ($forms || $index),
+            'Invalid conjugations format.'
+        );
+
         if ($forms) {
             $this->conjugationTemplates[$word] = $forms;
         }
-        
+
         $data = [ 'base' => $base ];
+
         if ($index) {
             $data['index'] = $index;
         }
 
         $this->conjugationData[$word] = $data;
     }
-    
+
     /**
      * Определяет (единственное|множественное) число для натурального числа.
      * 
@@ -231,36 +252,40 @@ class Cases
      * 11 ребят - мн
      * 21 ребенок - ед
      */
-    public function numberForNumber($num)
+    public function numberForNumber(int $num) : int
     {
         return (($num % 10 == 1) && ($num % 100 != 11))
             ? self::SINGLE
             : self::PLURAL;
     }
-    
-    public function gender($word)
+
+    public function gender(string $word) : int
     {
         $data = $this->getCaseData($word);
         return $data['gender'] ?? Cases::MAS;
     }
-    
+
     /**
      * Возвращает форму существительного, соответствующую указанному натуральному числу.
+     * 
+     * @throws \InvalidArgumentException
      */
-    public function caseForNumber($word, $num)
+    public function caseForNumber(string $word, int $num) : string
     {
-        if ($num < 0) {
-            throw new \InvalidArgumentException('Number must be non-negative.');
-        }
+        Assert::greaterThanEq(
+            $num,
+            0,
+            'Number must be non-negative.'
+        );
 
         $data = $this->getCaseData($word);
 
         $case = self::GEN;
         $caseNumber = self::PLURAL;
-        
+
         // только 2 последние цифры влияют на форму существительного
         $num = $num % 100;
-        
+
         if ($num < 5 || $num > 20) {
             switch ($num % 10) {
                 case 1:
@@ -276,73 +301,81 @@ class Cases
                     break;
             }
         }
-        
+
         $templateIndex = $data['index'] ?? $word;
         $base = $data['base'];
 
-        if (!array_key_exists($templateIndex, $this->caseTemplates)) {
-            throw new \InvalidArgumentException("No cases template for index: {$templateIndex}.");
-        }
+        Assert::keyExists(
+            $this->caseTemplates,
+            $templateIndex,
+            'No cases template for index: ' . $templateIndex . '.'
+        );
 
         $templateData = $this->caseTemplates[$templateIndex];
         $template = $templateData[$case - 1][$caseNumber - 1] ?? '%';
 
         return str_replace('%', $base, $template);
     }
-    
+
     /**
-     * [1..4] time, [1..3] person, [sp] number, [mfnp] gender
+     * [1..4] time, [1..3] person, [sp] number, [mfnp] gender.
+     * 
+     * @throws \InvalidArgumentException
      */
-    private function parseConjugationForm($str)
+    private function parseConjugationForm(string $str) : array
     {
         $bits = str_split($str);
-        
-        if (count($bits) < 3) {
-            throw new \InvalidArgumentException("Incorrect conjugation form format: {$str}.");
-        }
-        
+
+        Assert::minCount(
+            $bits,
+            3,
+            'Incorrect conjugation form format: ' . $str . '.'
+        );
+
         $numbers = [
             's' => self::SINGLE,
             'p' => self::PLURAL
         ];
-        
+
         $genders = [
             'm' => self::MAS,
             'f' => self::FEM,
             'n' => self::NEU,
             'p' => self::PLU
         ];
-        
+
         $form = [
             'time' => (int)$bits[0],
             'person' => (int)$bits[1],
             'number' => is_numeric($bits[2]) ? $bits[2] : $numbers[$bits[2]]
         ];
-        
+
         if (count($bits) == 4) {
             $form['gender'] = is_numeric($bits[3]) ? $bits[3] : $genders[$bits[3]];
         }
-        
+
         return $form;
     }
-    
+
     /**
      * Returns conjugation for word based on form.
      * 
-     * @param string $word
-     * @param mixed $form Array OR string.
+     * @param array|string $form Array OR string.
+     * @throws \InvalidArgumentException
      */
-    public function conjugation($word, $form)
+    public function conjugation(string $word, $form) : string
     {
         $data = $this->getConjugationData($word);
         $base = $data['base'];
-        
+
         $templateIndex = $data['index'] ?? $word;
 
-        if (!array_key_exists($templateIndex, $this->conjugationTemplates)) {
-            throw new \InvalidArgumentException("No conjugations template for index: {$templateIndex}.");
-        }
-        
+        Assert::keyExists(
+            $this->conjugationTemplates,
+            $templateIndex,
+            'No conjugations template for index: ' . $templateIndex . '.'
+        );
+
         $templateData = $this->conjugationTemplates[$templateIndex];
 
         if (!is_array($form)) {
@@ -353,31 +386,36 @@ class Cases
         $person = $form['person'];
         $number = $form['number'];
         $gender = $form['gender'];
-        
+
         if ($number == self::PLURAL) {
             $gender = self::PLU;
         }
-        
-        if ($gender == null) {
-            throw new \InvalidArgumentException("Undefined gender.");
-        }
 
-        if ($time == self::INFINITIVE) {
-            $template = $templateData[self::INFINITIVE];
-        }
-        elseif ($time == self::PAST) {
-            $template = $templateData[self::PAST][$gender - 1];
-        }
-        elseif ($time == self::PRESENT) {
-            $template = $templateData[self::PRESENT][$person - 1][$number - 1];
-        }
-        elseif ($time == self::FUTURE) {
-            if (array_key_exists(self::FUTURE, $templateData)) {
-                $template = $templateData[self::FUTURE][$person - 1][$number - 1];
-            }
-            else {
-                $template = $this->futureConjugationTemplates[$person - 1][$number - 1] . ' ' . $templateData[self::INFINITIVE];
-            }
+        Assert::notNull($gender, 'Undefined gender.');
+
+        $template = null;
+
+        switch ($time) {
+            case self::INFINITIVE:
+                $template = $templateData[self::INFINITIVE];
+                break;
+
+            case self::PAST:
+                $template = $templateData[self::PAST][$gender - 1];
+                break;
+
+            case self::PRESENT:
+                $template = $templateData[self::PRESENT][$person - 1][$number - 1];
+                break;
+
+            case self::FUTURE:
+                if (array_key_exists(self::FUTURE, $templateData)) {
+                    $template = $templateData[self::FUTURE][$person - 1][$number - 1];
+                } else {
+                    $template = $this->futureConjugationTemplates[$person - 1][$number - 1] . ' ' . $templateData[self::INFINITIVE];
+                }
+
+                break;
         }
 
         if ($template) {
@@ -387,7 +425,7 @@ class Cases
         if (!$result) {
             $error = "No conjugation found for word: {$word}, time: {$time}, person: {$person}, number: {$number}, gender: {$gender}";
         }
-        
+
         return $result ?? $error ?? $word;
     }
 }
