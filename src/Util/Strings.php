@@ -348,11 +348,11 @@ class Strings
     public static function toUtf8(?string $string, bool $control = true) : ?string
     {
         $string = iconv('UTF-8', 'UTF-8//IGNORE', $string);
-    
+
         if ($control === true) {
             $string = preg_replace('~\p{C}+~u', '', $string);
         }
-    
+
         return $string;
     }
 
