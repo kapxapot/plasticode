@@ -444,4 +444,51 @@ final class CollectionTest extends TestCase
             [$col, 5, $col],
         ];
     }
+
+    /**
+     * @dataProvider joinProvider
+     */
+    public function testJoin(Collection $original, string $delimiter, string $expected) : void
+    {
+        $this->assertEquals(
+            $expected,
+            $original->join($delimiter)
+        );
+    }
+
+    public function joinProvider() : array
+    {
+        return [
+            [
+                Collection::empty(),
+                '',
+                ''
+            ],
+            [
+                Collection::empty(),
+                ',',
+                ''
+            ],
+            [
+                Collection::make([1, 2]),
+                '',
+                '12'
+            ],
+            [
+                Collection::make([1, 2]),
+                ',',
+                '1,2'
+            ],
+            [
+                Collection::make(['a', 'b', 'c']),
+                '',
+                'abc'
+            ],
+            [
+                Collection::make(['a', 'b', 'c']),
+                '-',
+                'a-b-c'
+            ],
+        ];
+    }
 }

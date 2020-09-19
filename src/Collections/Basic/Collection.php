@@ -531,6 +531,14 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
         return static::make($data);
     }
 
+    /**
+     * Returns implode() result on the underlying data with the provided delimiter.
+     */
+    public function join(string $delimiter = '') : string
+    {
+        return implode($delimiter, $this->data);
+    }
+
     // ArrayAccess
 
     public function offsetSet($offset, $value)
