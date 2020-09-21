@@ -12,11 +12,9 @@ final class TypedCollectionTest extends TestCase
 {
     public function testCreateAndFilter() : void
     {
-        $typed = CollectionDummy::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-            ]
+        $typed = CollectionDummy::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two')
         );
 
         $this->assertInstanceOf(CollectionDummy::class, $typed);
@@ -32,11 +30,9 @@ final class TypedCollectionTest extends TestCase
 
     public function testFrom() : void
     {
-        $col = Collection::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-            ]
+        $col = Collection::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two')
         );
 
         $typed = CollectionDummy::from($col);
@@ -49,12 +45,10 @@ final class TypedCollectionTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $dc = CollectionDummy::make(
-            [
-                new ModelDummy(1, 'one'),
-                'two',
-                2,
-            ]
+        CollectionDummy::collect(
+            new ModelDummy(1, 'one'),
+            'two',
+            2
         );
     }
 
@@ -62,6 +56,6 @@ final class TypedCollectionTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $dc = InvalidTypedCollection::empty();
+        InvalidTypedCollection::empty();
     }
 }

@@ -7,13 +7,11 @@ use Plasticode\Collections\Basic\ArrayCollection;
 
 final class ArrayCollectionTest extends TestCase
 {
-    public function testMake() : void
+    public function testCollect() : void
     {
-        $col = ArrayCollection::make(
-            [
-                [1, 2, 3],
-                ['abc', 'def'],
-            ]
+        $col = ArrayCollection::collect(
+            [1, 2, 3],
+            ['abc', 'def']
         );
 
         $this->assertCount(2, $col);
@@ -25,12 +23,10 @@ final class ArrayCollectionTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        ArrayCollection::make(
-            [
-                [1, 2, 3],
-                'abc',
-                5,
-            ]
+        ArrayCollection::collect(
+            [1, 2, 3],
+            'abc',
+            5
         );
     }
 }

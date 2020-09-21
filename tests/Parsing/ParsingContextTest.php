@@ -16,11 +16,9 @@ final class ParsingContextTest extends TestCase
     {
         $context = ParsingContext::fromText('some text');
 
-        $context->contents = ContentsItemCollection::make(
-            [
-                new ContentsItem(1, '1', 'Hey'),
-                new ContentsItem(1, '2', 'Yay'),
-            ]
+        $context->contents = ContentsItemCollection::collect(
+            new ContentsItem(1, '1', 'Hey'),
+            new ContentsItem(1, '2', 'Yay')
         );
 
         $context->largeImages = ['largeImage1', 'largeImage2'];
