@@ -51,9 +51,9 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     /**
      * @return static
      */
-    public function add($item) : self
+    public function add(...$items) : self
     {
-        $col = static::make([$item]);
+        $col = static::make($items);
         return $this->concat($col);
     }
 
