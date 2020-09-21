@@ -26,36 +26,34 @@ class BBSequencer
                 new SequenceElement($text)
             ];
         }
-        
+
         $ctagsStr = implode('|', $ctags);
-        
+
         $parts = preg_split(
             '/(\[\/?(?:' . $ctagsStr . ')[^\[]*\])/Ui',
             $text,
             -1,
             PREG_SPLIT_DELIM_CAPTURE
         );
-        
+
         $parts = array_map(
-            function ($part) {
-                return Text::trimNewLinesAndBrs($part);
-            },
+            fn ($p) => Text::trimNewLinesAndBrs($p),
             $parts
         );
-        
+
         $sequence = [];
-        
+
         foreach ($parts as $part) {
             if (preg_match('/\[(' . $ctagsStr . ')([^\[]*)\]/Ui', $part, $matches)) {
                 // bb container start
                 $tag = $matches[1];
                 $attrs = self::parseAttributes($matches[2]);
-                
+
                 $sequence[] = new StartElement($tag, $attrs, $part);
 
                 continue;
             }
-            
+
             if (preg_match('/\[\/(' . $ctagsStr . ')\]/Ui', $part, $matches)) {
                 // bb container end
                 $tag = $matches[1];
@@ -64,7 +62,7 @@ class BBSequencer
 
                 continue;
             }
-            
+
             if (strlen($part) > 0) {
                 // some text
                 $sequence[] = new SequenceElement($part);

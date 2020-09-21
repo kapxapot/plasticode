@@ -84,9 +84,7 @@ class Captcha implements CaptchaInterface
         $scrambledString = implode(
             '',
             array_map(
-                function ($value) {
-                    return $this->scramble($value);
-                },
+                fn ($v) => $this->scramble($v),
                 explode(' ', $string)
             )
         );
