@@ -11,31 +11,52 @@ use Webmozart\Assert\Assert;
  */
 class Cases
 {
-    const NOM = 1; // именительный падеж
-    const GEN = 2; // родительный падеж
-    const DAT = 3; // дательный падеж
-    const ACC = 4; // винительный падеж
-    const ABL = 5; // творительный падеж
-    const PRE = 6; // предложный падеж
+    /** Именительный падеж */
+    const NOM = 1;
+    /** Родительный падеж */
+    const GEN = 2;
+    /** Дательный падеж */
+    const DAT = 3;
+    /** Винительный падеж */
+    const ACC = 4;
+    /** Творительный падеж */
+    const ABL = 5;
+    /** Предложный падеж */
+    const PRE = 6;
 
-    const SINGLE = 1; // единственное число
-    const PLURAL = 2; // множественное число
+    /** Единственное число */
+    const SINGLE = 1;
+    /** Множественное число */
+    const PLURAL = 2;
 
-    const MAS = 1; // мужской род
-    const FEM = 2; // женский род
-    const NEU = 3; // средний род
-    const PLU = 4; // множественный род (ножницы, вилы)
+    /** Мужской род */
+    const MAS = 1;
+    /** Женский род */
+    const FEM = 2;
+    /** Средний род */
+    const NEU = 3;
+    /** Множественный род (ножницы, вилы) */
+    const PLU = 4;
 
-    const INFINITIVE = 1; // инфинитив
-    const PAST = 2; // прошлое время
-    const PRESENT = 3; // настоящее время
-    const FUTURE = 4; // будущее время
+    /** Инфинитив */
+    const INFINITIVE = 1;
+    /** Прошлое время */
+    const PAST = 2;
+    /** Настоящее время */
+    const PRESENT = 3;
+    /** Будущее время */
+    const FUTURE = 4;
 
-    const FIRST = 1; // первое лицо
-    const SECOND = 2; // второе лицо
-    const THIRD = 3; // третье лицо
+    /** Первое лицо */
+    const FIRST = 1;
+    /** Второе лицо */
+    const SECOND = 2;
+    /** Третье лицо */
+    const THIRD = 3;
 
-    // [[им ед, им мн], [род ед, род мн], [дат ед, дат мн], [вин ед, вин мн], [тв ед, тв мн], [пр ед, пр мн ]]
+    /**
+     * [[им ед, им мн], [род ед, род мн], [дат ед, дат мн], [вин ед, вин мн], [тв ед, тв мн], [пр ед, пр мн ]]
+     */
     private array $caseTemplates = [
         // [картин]ка
         'картинка' => [['%ка', '%ки'], ['%ки', '%ок'], ['%ке', '%кам'], ['%ку', '%ки'], ['%кой', '%ками'], ['о %ке', 'о %ках']],
@@ -55,8 +76,10 @@ class Cases
         'слово' => [['%о', '%а'], ['%а', '%'], ['%у', '%ам'], ['%о', '%а'], ['%ом', '%ами'], ['о %е', 'о %ах']],
     ];
 
-    // set 'index' if word != index
-    // 'пень' => [ 'base' => 'п', 'index' => 'день' ],
+    /**
+     * set 'index' if word != index
+     * 'пень' => [ 'base' => 'п', 'index' => 'день' ]
+     */
     private array $caseData = [
         'картинка' => ['base' => 'картин', 'gender' => self::FEM],
         'выпуск' => ['base' => 'выпуск', 'gender' => self::MAS],
@@ -100,8 +123,10 @@ class Cases
         ],
     ];
 
-    // set 'index' if word != index
-    // 'бравировать' => [ 'base' => 'бравир', 'index' => 'транслировать' ],
+    /**
+     * set 'index' if word != index
+     * 'бравировать' => [ 'base' => 'бравир', 'index' => 'транслировать' ]
+     */
     private array $conjugationData = [
         'играть' => ['base' => 'игра'],
         'вести' => ['base' => 'ве'],
@@ -265,12 +290,65 @@ class Cases
         return $data['gender'] ?? Cases::MAS;
     }
 
+    // именительный - кто что (у меня есть...)
+    // 1, 21 карта/стол (кто что, И, ед)
+    // 2, 3, 4 карты/стола (кого чего, Р, ед)
+    // 5..20 карт/столов (кого чего, Р, мн)
+
+    // родительный - кого чего (родитель...)
+    // 1, 21 карты/стола (кого чего, Р, ед)
+    // 2, 3, 4 карт/столов (кого чего, Р, мн)
+    // 5..20 карт/столов (кого чего, Р, мн)
+
+    // дательный - кому чему (дать...)
+    // 1, 21 карте/столу (кому чему, Д, ед)
+    // 2, 3, 4 картам/столам (кому чему, Д, мн)
+    // 5..20 картам/столам (кому чему, Д, мн)
+
+    // винительный - кого что (берете...)
+    // 1, 21 карту/стол (кого что, В, ед)
+    // 2, 3, 4 карты/стола (кого чего, Р, ед)
+    // 5..20 карт/столов (кого чего, Р, мн)
+
+    // творительный - кем чем (сотворен...)
+    // 1, 21 картой/столом (кем чем, Т, ед)
+    // 2, 3, 4 картами/столами (кем чем, Т, мн)
+    // 5..20 картами/столами (кем чем, Т, мн)
+
+    // предложный - о ком о чем (сказка...)
+    // 1, 21 о карте/о столе (о ком о чем, П, ед)
+    // 2, 3, 4 о картах/о столах (о ком о чем, П, мн)
+    // 5..20 о картах/о столах (о ком о чем, П, мн)
+
+    /**
+     * [case 2/3, number 2, number 3]
+     */
+    private static function caseForNumberGroupSettings(int $case) : array
+    {
+        $settings = [
+            self::NOM => [self::GEN, self::SINGLE, self::PLURAL],
+            self::GEN => [self::GEN, self::PLURAL, self::PLURAL],
+            self::DAT => [self::DAT, self::PLURAL, self::PLURAL],
+            self::ACC => [self::GEN, self::SINGLE, self::PLURAL],
+            self::ABL => [self::ABL, self::PLURAL, self::PLURAL],
+            self::PRE => [self::PRE, self::PLURAL, self::PLURAL]
+        ];
+
+        $row = $settings[$case];
+
+        return [
+            1 => ['case' => $case, 'number' => self::SINGLE],
+            2 => ['case' => $row[0], 'number' => $row[1]],
+            3 => ['case' => $row[0], 'number' => $row[2]],
+        ];
+    }
+
     /**
      * Возвращает форму существительного, соответствующую указанному натуральному числу.
      * 
      * @throws \InvalidArgumentException
      */
-    public function caseForNumber(string $word, int $num) : string
+    public function caseForNumber(string $word, int $num, ?int $targetCase = null) : string
     {
         Assert::greaterThanEq(
             $num,
@@ -278,29 +356,44 @@ class Cases
             'Number must be non-negative.'
         );
 
-        $data = $this->getCaseData($word);
+        $targetCase ??= self::NOM;
 
-        $case = self::GEN;
-        $caseNumber = self::PLURAL;
+        Assert::range($targetCase, self::NOM, self::PRE);
+
+        // group 3
+        // $case = self::GEN;
+        // $caseNumber = self::PLURAL;
+        $group = 3;
 
         // только 2 последние цифры влияют на форму существительного
         $num = $num % 100;
 
         if ($num < 5 || $num > 20) {
             switch ($num % 10) {
+                // group 1
                 case 1:
-                    $case = self::NOM;
-                    $caseNumber = self::SINGLE;
+                    // $case = self::NOM;
+                    // $caseNumber = self::SINGLE;
+                    $group = 1;
                     break;
 
+                // group 2
                 case 2:
                 case 3:
                 case 4:
-                    $case = self::GEN;
-                    $caseNumber = self::SINGLE;
+                    // $case = self::GEN;
+                    // $caseNumber = self::SINGLE;
+                    $group = 2;
                     break;
             }
         }
+
+        $caseSettings = self::caseForNumberGroupSettings($targetCase);
+
+        $case = $caseSettings[$group]['case'];
+        $caseNumber = $caseSettings[$group]['number'];
+
+        $data = $this->getCaseData($word);
 
         $templateIndex = $data['index'] ?? $word;
         $base = $data['base'];
