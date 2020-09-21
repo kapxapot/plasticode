@@ -23,42 +23,36 @@ final class CollectionTest extends TestCase
     {
         return [
             [
-                Collection::make([1, 2, 3]),
-                Collection::make([1, 2, 3])
+                Collection::collect(1, 2, 3),
+                Collection::collect(1, 2, 3)
             ],
             [
-                Collection::make(
-                    [
-                        [1, 2, 3],
-                        [2, 3, 4],
-                        5
-                    ]
+                Collection::collect(
+                    [1, 2, 3],
+                    [2, 3, 4],
+                    5
                 ),
-                Collection::make([1, 2, 3, 2, 3, 4, 5])
+                Collection::collect(1, 2, 3, 2, 3, 4, 5)
             ],
             [
-                Collection::make(
-                    [
-                        'element',
-                        Collection::make(['one', 'two']),
-                        'another',
-                        1,
-                        [1, 2, 'hi'],
-                        'the end',
-                    ]
+                Collection::collect(
+                    'element',
+                    Collection::collect('one', 'two'),
+                    'another',
+                    1,
+                    [1, 2, 'hi'],
+                    'the end'
                 ),
-                Collection::make(
-                    [
-                        'element',
-                        'one',
-                        'two',
-                        'another',
-                        1,
-                        1,
-                        2,
-                        'hi',
-                        'the end'
-                    ]
+                Collection::collect(
+                    'element',
+                    'one',
+                    'two',
+                    'another',
+                    1,
+                    1,
+                    2,
+                    'hi',
+                    'the end'
                 )
             ],
         ];
@@ -66,11 +60,9 @@ final class CollectionTest extends TestCase
 
     public function testFlattenCreatesBaseCollection() : void
     {
-        $col = CollectionDummy::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-            ]
+        $col = CollectionDummy::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two')
         );
 
         $flat = $col->flatten();
@@ -80,18 +72,14 @@ final class CollectionTest extends TestCase
 
     public function testConcatPreservesCollectionType() : void
     {
-        $col = CollectionDummy::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-            ]
+        $col = CollectionDummy::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two'),
         );
 
         $concat = $col->concat(
-            CollectionDummy::make(
-                [
-                    new ModelDummy(3, 'three'),
-                ]
+            CollectionDummy::collect(
+                new ModelDummy(3, 'three')
             )
         );
 
@@ -101,17 +89,13 @@ final class CollectionTest extends TestCase
 
     public function testConcatBaseCollectionAllowsHeteroTypes() : void
     {
-        $col = Collection::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-            ]
+        $col = Collection::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two')
         );
 
         $concat = $col->concat(
-            Collection::make(
-                [1, 2, 3]
-            )
+            Collection::collect(1, 2, 3)
         );
 
         $this->assertEquals(Collection::class, get_class($concat));
@@ -122,27 +106,21 @@ final class CollectionTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $col = CollectionDummy::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-            ]
+        $col = CollectionDummy::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two')
         );
 
         $col->concat(
-            Collection::make(
-                [1, 2, 3]
-            )
+            Collection::collect(1, 2, 3)
         );
     }
 
     public function testAddPreservesCollectionType() : void
     {
-        $col = CollectionDummy::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-            ]
+        $col = CollectionDummy::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two')
         );
 
         $concat = $col->add(
@@ -155,14 +133,12 @@ final class CollectionTest extends TestCase
 
     public function testAddBaseCollectionAllowsHeteroTypes() : void
     {
-        $col = Collection::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-            ]
+        $col = Collection::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two')
         );
 
-        $concat = $col->add(1)->add(2)->add(3);
+        $concat = $col->add(1, 2, 3);
 
         $this->assertEquals(Collection::class, get_class($concat));
         $this->assertCount(5, $concat);
@@ -172,11 +148,9 @@ final class CollectionTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $col = CollectionDummy::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-            ]
+        $col = CollectionDummy::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two')
         );
 
         $col->add(1);
@@ -184,17 +158,13 @@ final class CollectionTest extends TestCase
 
     public function testMergeReturnsRightCollection() : void
     {
-        $col1 = CollectionDummy::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-            ]
+        $col1 = CollectionDummy::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two')
         );
 
-        $col2 = CollectionDummy::make(
-            [
-                new ModelDummy(3, 'three'),
-            ]
+        $col2 = CollectionDummy::collect(
+            new ModelDummy(3, 'three')
         );
 
         $col = CollectionDummy::merge($col1, $col2);
@@ -205,16 +175,12 @@ final class CollectionTest extends TestCase
 
     public function testMergeAllowsHeteroTypes() : void
     {
-        $col1 = CollectionDummy::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-            ]
+        $col1 = CollectionDummy::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two')
         );
 
-        $col2 = Collection::make(
-            [1, 2, 3]
-        );
+        $col2 = Collection::collect(1, 2, 3);
 
         $col = Collection::merge($col1, $col2);
 
@@ -240,16 +206,14 @@ final class CollectionTest extends TestCase
                 []
             ],
             [
-                Collection::make([1, 2, 3]),
+                Collection::collect(1, 2, 3),
                 [1, 2, 3]
             ],
             [
-                Collection::make(
-                    [
-                        [1, 2, 3],
-                        [2, 3, 4],
-                        5
-                    ]
+                Collection::collect(
+                    [1, 2, 3],
+                    [2, 3, 4],
+                    5
                 ),
                 [
                     [1, 2, 3],
@@ -258,15 +222,13 @@ final class CollectionTest extends TestCase
                 ]
             ],
             [
-                Collection::make(
-                    [
-                        'element',
-                        Collection::make(['one', 'two']),
-                        'another',
-                        1,
-                        [1, 2, 'hi'],
-                        'the end',
-                    ]
+                Collection::collect(
+                    'element',
+                    Collection::collect('one', 'two'),
+                    'another',
+                    1,
+                    [1, 2, 'hi'],
+                    'the end'
                 ),
                 [
                     'element',
@@ -282,12 +244,10 @@ final class CollectionTest extends TestCase
 
     public function testLastObjRemembers() : void
     {
-        $col = Collection::make(
-            [
-                new ModelDummy(1, 'one'),
-                new ModelDummy(2, 'two'),
-                new ModelDummy(3, 'three'),
-            ]
+        $col = Collection::collect(
+            new ModelDummy(1, 'one'),
+            new ModelDummy(2, 'two'),
+            new ModelDummy(3, 'three')
         );
 
         /** @var ModelDummy */
@@ -300,12 +260,10 @@ final class CollectionTest extends TestCase
 
     public function testLastArrayForgets() : void
     {
-        $col = Collection::make(
-            [
-                ['id' => 1, 'name' => 'one'],
-                ['id' => 2, 'name' => 'two'],
-                ['id' => 3, 'name' => 'three'],
-            ]
+        $col = Collection::collect(
+            ['id' => 1, 'name' => 'one'],
+            ['id' => 2, 'name' => 'two'],
+            ['id' => 3, 'name' => 'three']
         );
 
         /** @var array */
@@ -335,30 +293,26 @@ final class CollectionTest extends TestCase
                 Collection::empty()
             ],
             [
-                Collection::make(
-                    [
-                        'some',
-                        '',
-                        'string',
-                        null,
-                        [1, 2, 3],
-                        0
-                    ]
+                Collection::collect(
+                    'some',
+                    '',
+                    'string',
+                    null,
+                    [1, 2, 3],
+                    0
                 ),
-                Collection::make(
-                    ['some', 'string', [1, 2, 3]]
-                )
+                Collection::collect('some', 'string', [1, 2, 3])
             ],
             [
-                Collection::make(['already', 'clean']),
-                Collection::make(['already', 'clean'])
+                Collection::collect('already', 'clean'),
+                Collection::collect('already', 'clean')
             ],
         ];
     }
 
     public function testShuffle() : void
     {
-        $original = Collection::make([1, 2, 3]);
+        $original = Collection::collect(1, 2, 3);
         $shuffled = $original->shuffle();
 
         $this->assertNotSame($shuffled, $original);
@@ -388,27 +342,27 @@ final class CollectionTest extends TestCase
         $dummy2 = new ModelDummy(2, 'two');
         $dummy3 = new ModelDummy(3, 'three');
 
-        $col = Collection::make([$dummy1, $dummy2, $dummy3, $dummy2, $dummy3]);
+        $col = Collection::collect($dummy1, $dummy2, $dummy3, $dummy2, $dummy3);
 
         return [
             [
                 $col,
-                Collection::make([$dummy2, $dummy3, $dummy2, $dummy3]),
+                Collection::collect($dummy2, $dummy3, $dummy2, $dummy3),
                 fn (ModelDummy $d) => $d->id == 1
             ],
             [
                 $col,
-                Collection::make([$dummy1, $dummy3, $dummy2, $dummy3]),
+                Collection::collect($dummy1, $dummy3, $dummy2, $dummy3),
                 fn (ModelDummy $d) => $d->id == 2
             ],
             [
                 $col,
-                Collection::make([$dummy1, $dummy2, $dummy2, $dummy3]),
+                Collection::collect($dummy1, $dummy2, $dummy2, $dummy3),
                 fn (ModelDummy $d) => $d->id == 3
             ],
             [
                 $col,
-                Collection::make([$dummy1, $dummy2, $dummy3, $dummy2, $dummy3]),
+                Collection::collect($dummy1, $dummy2, $dummy3, $dummy2, $dummy3),
                 fn (ModelDummy $d) => $d->id == 4
             ]
         ];
@@ -432,14 +386,14 @@ final class CollectionTest extends TestCase
     public function tailProvider() : array
     {
         $empty = Collection::empty();
-        $col = Collection::make(['one', 'two', 'three']);
+        $col = Collection::collect('one', 'two', 'three');
 
         return [
             [$empty, 1, $empty],
             [$empty, 3, $empty],
             [$empty, 5, $empty],
-            [$col, 1, Collection::make(['three'])],
-            [$col, 2, Collection::make(['two', 'three'])],
+            [$col, 1, Collection::collect('three')],
+            [$col, 2, Collection::collect('two', 'three')],
             [$col, 3, $col],
             [$col, 5, $col],
         ];
@@ -470,25 +424,37 @@ final class CollectionTest extends TestCase
                 ''
             ],
             [
-                Collection::make([1, 2]),
+                Collection::collect(1, 2),
                 '',
                 '12'
             ],
             [
-                Collection::make([1, 2]),
+                Collection::collect(1, 2),
                 ',',
                 '1,2'
             ],
             [
-                Collection::make(['a', 'b', 'c']),
+                Collection::collect('a', 'b', 'c'),
                 '',
                 'abc'
             ],
             [
-                Collection::make(['a', 'b', 'c']),
+                Collection::collect('a', 'b', 'c'),
                 '-',
                 'a-b-c'
             ],
         ];
+    }
+
+    public function testUnpacking() : void
+    {
+        $func = fn (...$e) => implode('', $e);
+
+        $col = Collection::collect('a', 'b', 'c');
+
+        $this->assertEquals(
+            'abc',
+            $func(...$col)
+        );
     }
 }

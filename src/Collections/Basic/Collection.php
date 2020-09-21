@@ -17,6 +17,16 @@ class Collection implements \ArrayAccess, \Iterator, \Countable, \JsonSerializab
     }
 
     /**
+     * Creates collection from element(s).
+     *
+     * @return static
+     */
+    public static function collect(...$items) : self
+    {
+        return static::make($items);
+    }
+
+    /**
      * Creates collection from array.
      * 
      * @return static
