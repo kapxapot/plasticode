@@ -326,20 +326,20 @@ class Cases
     private static function caseForNumberGroupSettings(int $case) : array
     {
         $settings = [
-            self::NOM => [self::GEN, self::SINGLE, self::PLURAL],
-            self::GEN => [self::GEN, self::PLURAL, self::PLURAL],
-            self::DAT => [self::DAT, self::PLURAL, self::PLURAL],
-            self::ACC => [self::GEN, self::SINGLE, self::PLURAL],
-            self::ABL => [self::ABL, self::PLURAL, self::PLURAL],
-            self::PRE => [self::PRE, self::PLURAL, self::PLURAL]
+            self::NOM => [self::GEN, self::SINGLE],
+            self::GEN => [self::GEN, self::PLURAL],
+            self::DAT => [self::DAT, self::PLURAL],
+            self::ACC => [self::GEN, self::SINGLE],
+            self::ABL => [self::ABL, self::PLURAL],
+            self::PRE => [self::PRE, self::PLURAL]
         ];
 
-        $row = $settings[$case];
+        [$case23, $number2] = $settings[$case];
 
         return [
             1 => ['case' => $case, 'number' => self::SINGLE],
-            2 => ['case' => $row[0], 'number' => $row[1]],
-            3 => ['case' => $row[0], 'number' => $row[2]],
+            2 => ['case' => $case23, 'number' => $number2],
+            3 => ['case' => $case23, 'number' => self::PLURAL],
         ];
     }
 
