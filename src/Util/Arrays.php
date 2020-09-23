@@ -501,7 +501,7 @@ class Arrays
 
         Assert::isArray(
             $array,
-            'Error adopting array: it must be a ArrayableInterface or an array.'
+            'Error adopting an array: it must be an ArrayableInterface or an array.'
         );
 
         return $array;
