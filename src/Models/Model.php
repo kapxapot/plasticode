@@ -15,7 +15,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     use PropertyAccess;
 
     /**
-     * Data array or \ORM object
+     * Data array or \ORM object.
      *
      * @var array|\ORM
      */
@@ -76,20 +76,20 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     {
         $camelCase = Strings::toCamelCase($property);
         $snakeCase = Strings::toSnakeCase($property);
-        
+
         if (method_exists($this, $camelCase)) {
             $this->checkPropertyExists($snakeCase);
             return $this->{$camelCase}();
         }
-        
+
         return $this->obj[$snakeCase] ?? null;
     }
-    
+
     public function __set(string $property, $value)
     {
         $camelCase = Strings::toCamelCase($property);
         $snakeCase = Strings::toSnakeCase($property);
-        
+
         if (method_exists($this, $camelCase)) {
             $this->checkPropertyExists($snakeCase);
             $this->{$camelCase}($value);
@@ -97,27 +97,27 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
             $this->obj[$snakeCase] = $value;
         }
     }
-    
+
     public function __isset(string $property)
     {
         $camelCase = Strings::toCamelCase($property);
-        
+
         if (method_exists($this, $camelCase)) {
             return $this->{$camelCase}() !== null;
         }
-        
+
         $snakeCase = Strings::toSnakeCase($property);
         return isset($this->obj[$snakeCase]);
     }
-    
+
     public function __unset(string $property)
     {
         $camelCase = Strings::toCamelCase($property);
-        
+
         if (method_exists($this, $camelCase)) {
             return $this->{$camelCase}(null);
         }
-        
+
         $snakeCase = Strings::toSnakeCase($property);
         unset($this->obj[$snakeCase]);
     }
@@ -126,7 +126,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     {
         return $this->toString();
     }
-    
+
     public function toString() : string
     {
         return static::class;
@@ -143,7 +143,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
     {
         return $this->toArray();
     }
-    
+
     public function offsetSet($offset, $value)
     {
         Assert::notNull($offset);
