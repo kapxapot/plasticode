@@ -156,6 +156,8 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
                 'Method is not initialized: ' . $name . '.'
             );
         }
+
+        return null;
     }
 
     /**
