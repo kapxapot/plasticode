@@ -20,7 +20,7 @@ abstract class TagMapperSource implements TagMapperSourceInterface
         ?string $componentName = null
     ) : void
     {
-        Assert::notEmpty($tag);
+        Assert::stringNotEmpty($tag);
         Assert::alnum($tag);
 
         $this->map[$tag] = $mapper;
