@@ -28,10 +28,12 @@ class UserRepositoryMock implements UserRepositoryInterface
 
     public function save(User $user) : User
     {
+        // no need to save anything if the entity is already in the repo
         if ($this->users->contains($user)) {
             return $user;
         }
 
+        // if the entity doesn't have an id, it must be generated
         if (!$user->isPersisted()) {
             $user->id = $this->users->nextId();
         }

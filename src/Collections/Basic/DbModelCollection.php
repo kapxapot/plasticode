@@ -21,9 +21,9 @@ class DbModelCollection extends TypedCollection
     }
 
     /**
-     * Returns next id (max id + 1) based on current items.
+     * Returns the next id (max id + 1) based on the current items.
      * 
-     * Useful for repository mocks.
+     * For repository mocks.
      */
     public function nextId() : int
     {
@@ -33,7 +33,7 @@ class DbModelCollection extends TypedCollection
     }
 
     /**
-     * Extracts ids of models.
+     * Extracts the ids of the models.
      */
     public function ids() : ScalarCollection
     {
