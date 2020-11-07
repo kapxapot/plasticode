@@ -12,23 +12,16 @@ use Plasticode\ViewModels\ViewModel;
  */
 class ContentsItem extends ViewModel
 {
-    /** @var string */
     public const LABEL_DELIMITER = '_';
 
     /** @var string[] */
-    protected static $methodsToExclude = ['displayText'];
+    protected static array $methodsToExclude = ['displayText'];
 
-    /** @var integer */
-    private $level;
-
-    /** @var string|null */
-    private $label;
-
-    /** @var string */
-    private $text;
+    private int $level;
+    private ?string $label;
+    private string $text;
 
     /**
-     * @param integer $level
      * @param string|null $label For example: "1_1_2".
      * @param string $text Text is supposed to be parsed, can contain html tags.
      */

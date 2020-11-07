@@ -4,11 +4,8 @@ namespace Plasticode\Parsing;
 
 class SlugChunk
 {
-    /** @var string|null */
-    private $tag;
-
-    /** @var string */
-    private $slug;
+    private ?string $tag;
+    private string $slug;
 
     public function __construct(?string $tag, string $slug)
     {

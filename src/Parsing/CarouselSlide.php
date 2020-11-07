@@ -4,11 +4,8 @@ namespace Plasticode\Parsing;
 
 class CarouselSlide
 {
-    /** @var string */
-    private $src;
-
-    /** @var string|null */
-    private $caption;
+    private string $src;
+    private ?string $caption = null;
 
     public function __construct(string $src)
     {
