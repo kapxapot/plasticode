@@ -12,7 +12,7 @@ abstract class ViewModel implements \JsonSerializable, ArrayableInterface
      * 
      * @var string[]
      */
-    protected static $methodsToExclude = [];
+    protected static array $methodsToExclude = [];
 
     public function __construct()
     {
