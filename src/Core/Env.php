@@ -10,7 +10,7 @@ class Env
     private const STAGE = 'stage';
     private const PROD = 'prod';
 
-    private $appEnv;
+    private string $appEnv;
 
     private function __construct(string $appEnv)
     {
@@ -39,12 +39,8 @@ class Env
 
     /**
      * Loads environment variables from .env file.
-     *
-     * @param string $path
-     * @param null|string $appEnvVar
-     * @return void
      */
-    public static function load(string $path, string $appEnvVar = null) : self
+    public static function load(string $path, ?string $appEnvVar = null) : self
     {
         $appEnvVar = $appEnvVar ?? 'APP_ENV';
 
@@ -55,7 +51,7 @@ class Env
         }
         catch (\Exception $ex) {
         }
-        
+
         // APP_ENV must be set either in .env file (dev, stage),
         // or in environment variables (prod)
         $appEnv = getenv($appEnvVar);
