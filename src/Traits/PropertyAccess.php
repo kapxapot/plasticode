@@ -9,7 +9,7 @@ trait PropertyAccess
     /**
      * Returns property value.
      * 
-     * @param mixed $obj
+     * @param array|object $obj
      * @return mixed
      */
     protected static function getProperty($obj, string $property)
@@ -20,11 +20,14 @@ trait PropertyAccess
 
         Assert::object($obj);
 
-        return isset($obj->{$property})
-            ? $obj->{$property}
-            : null;
+        return $obj->{$property} ?? null;
     }
 
+    /**
+     * Checks if the array or the object has the property.
+     * 
+     * @param array|object $obj
+     */
     protected static function propertyExists($obj, string $property) : bool
     {
         if (is_array($obj)) {

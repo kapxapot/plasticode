@@ -59,7 +59,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
             : null;
     }
 
-    private function checkPropertyExists(string $property) : void
+    private function failIfPropertyExists(string $property) : void
     {
         if (self::propertyExists($this->obj, $property)) {
             $className = static::class;
@@ -78,7 +78,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         $snakeCase = Strings::toSnakeCase($property);
 
         if (method_exists($this, $camelCase)) {
-            $this->checkPropertyExists($snakeCase);
+            $this->failIfPropertyExists($snakeCase);
             return $this->{$camelCase}();
         }
 
@@ -91,7 +91,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         $snakeCase = Strings::toSnakeCase($property);
 
         if (method_exists($this, $camelCase)) {
-            $this->checkPropertyExists($snakeCase);
+            $this->failIfPropertyExists($snakeCase);
             $this->{$camelCase}($value);
         } else {
             $this->obj[$snakeCase] = $value;
