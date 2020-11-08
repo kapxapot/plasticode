@@ -5,6 +5,8 @@ namespace Plasticode\Config;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use ORM;
+use PDO;
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Auth;
 use Plasticode\Auth\Captcha;
@@ -22,6 +24,7 @@ use Plasticode\Core\Translator;
 use Plasticode\Data\Api;
 use Plasticode\Data\Db;
 use Plasticode\Events\EventDispatcher;
+use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\External\Gravatar;
 use Plasticode\External\Telegram;
 use Plasticode\External\Twitch;
@@ -117,19 +120,35 @@ class Bootstrap
 
         $map['db'] = function (CI $c) {
             $dbs = $this->dbSettings;
-            
-            \ORM::configure(
+
+            $adapter = $dbs['adapter'] ?? null;
+
+            if ($adapter !== 'mysql') {
+                throw new InvalidConfigurationException(
+                    'The only supported DB adapter is MySQL, sorry.'
+                );
+            }
+
+            ORM::configure(
                 'mysql:host=' . $dbs['host'] . ';dbname=' . $dbs['database']
             );
-            
-            \ORM::configure('username', $dbs['user']);
-            \ORM::configure('password', $dbs['password'] ?? '');
-            
-            \ORM::configure(
-                'driver_options',
-                [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8']
-            );
-            
+
+            $config = [
+                'username' => $dbs['user'],
+                'password' => $dbs['password'] ?? '',
+                'driver_options' => [
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+                ]
+            ];
+
+            $port = $dbs['port'] ?? null;
+
+            if ($port > 0) {
+                $config['port'] = $port;
+            }
+
+            ORM::configure($config);
+
             return new Db(
                 $c->cache,
                 $c->settingsProvider
@@ -160,13 +179,13 @@ class Bootstrap
                     if ($user) {
                         $record['extra']['user'] = $user->toString();
                     }
-                    
+
                     $token = $c->auth->getToken();
 
                     if ($token) {
                         $record['extra']['token'] = $token->toString();
                     }
-                
+
                     return $record;
                 }
             );
@@ -185,7 +204,7 @@ class Bootstrap
 
             $handler->setFormatter($formatter);
             $logger->pushHandler($handler);
-        
+
             return $logger;
         };
 
