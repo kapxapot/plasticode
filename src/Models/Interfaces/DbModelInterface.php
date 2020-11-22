@@ -24,4 +24,9 @@ interface DbModelInterface extends ArrayableInterface
      *  - Same id.
      */
     function equals(?DbModelInterface $model) : bool;
+
+    /**
+     * Was model saved or not.
+     */
+    function isPersisted() : bool;
 }

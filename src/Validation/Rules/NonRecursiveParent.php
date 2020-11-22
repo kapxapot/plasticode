@@ -2,31 +2,28 @@
 
 namespace Plasticode\Validation\Rules;
 
-/**
- * Todo: refactor this, remove container dependency.
- */
-class NonRecursiveParent extends ContainerRule
-{
-    private $table;
-    private $id;
-    private $parentField;
+use Plasticode\Repositories\Interfaces\Basic\ParentedRepositoryInterface;
+use Respect\Validation\Rules\AbstractRule;
 
-    /**
-     * Creates new instance.
-     */
-    public function __construct($table, $id, $parentField = null)
+class NonRecursiveParent extends AbstractRule
+{
+    /** @var callable fn (mixed) : bool */
+    private $isNonRecursive;
+
+    public function __construct(ParentedRepositoryInterface $repository, ?int $id = null)
     {
-        $this->table = $table;
-        $this->id = $id;
-        $this->parentField = $parentField;
+        $this->isNonRecursive = function ($parentId) use ($repository, $id) : bool {
+            $item = $repository->get($id);
+
+            return is_null($item) || !$item->isRecursiveParent($parentId);
+        };
     }
 
+    /**
+     * @param mixed $input
+     */
     public function validate($input)
     {
-        parent::validate($input);
-
-        return ($this->id == null) || !$this->container->db->isRecursiveParent(
-            $this->table, $this->id, $input, $this->parentField
-        );
+        return ($this->isNonRecursive)($input);
     }
 }

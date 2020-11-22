@@ -13,6 +13,9 @@ use Slim\App;
 use Slim\Http\Request as SlimRequest;
 use Slim\Interfaces\RouterInterface;
 
+/**
+ * todo: get rid of container
+ */
 class EntityGenerator
 {
     protected ContainerInterface $container;
@@ -73,8 +76,11 @@ class EntityGenerator
 
     protected function getRules(array $data, $id = null) : array
     {
+        // todo: dirty & temporary
+        $repository = $this->container[$this->entity . 'Repository'];
+
         return [
-            'updated_at' => Validator::unchanged($this->entity, $id),
+            'updated_at' => Validator::unchanged($repository, $id),
         ];
     }
 

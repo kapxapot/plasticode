@@ -9,79 +9,56 @@ use Respect\Validation\Validator;
 
 class ValidationRules
 {
-    private SettingsProviderInterface $settingsProvider;
+    /** @var array<string, Validator> */
     private array $rules;
 
-    public function __construct(SettingsProviderInterface $settingsProvider)
+    public function __construct(
+        SettingsProviderInterface $settingsProvider
+    )
     {
-        $this->settingsProvider = $settingsProvider;
-
-        $this->rules = $this->buildRules();
+        $this->rules = $this->buildRules($settingsProvider);
     }
 
-    private function buildRules() : array
+    /**
+     * @return array<string, Validator>
+     */
+    private function buildRules(
+        SettingsProviderInterface $settingsProvider
+    ) : array
     {
-        $notEmpty = function () {
-            return Validator::notEmpty();
-        };
-        
-        $solid = function () use ($notEmpty) {
-            return $notEmpty()->noWhitespace();
-        };
+        $notEmpty = Validator::notEmpty();
+        $solid = $notEmpty->noWhitespace();
+        $alias = $solid->alnum();
 
-        $alias = function () use ($solid) {
-            return $solid()->alnum();
-        };
-        
         return [
-            'name' => function () use ($notEmpty) {
-                return $notEmpty()->alnum();
-            },
-            'alias' => function () use ($alias) {
-                return $alias();
-            },
-            'extendedAlias' => function () use ($solid) {
-                return $solid()->regex('/^[\w]+$/');
-            },
-            'nullableAlias' => function () {
-                return Validator::noWhitespace();
-            },
-            'text' => function () use ($notEmpty) {
-                return $notEmpty();
-            },
-            'url' => function () use ($solid) {
-                return $solid();
-            },
-            'posInt' => function () {
-                return Validator::numeric()->positive();
-            },
-            'image' => function () {
-                return Validator::imageNotEmpty()->imageTypeAllowed();
-            },
-            'password' => function () {
-                $pwdMin = $this->settingsProvider->get('password_min');
-
-                return Validator::noWhitespace()->length($pwdMin);
-            },
-            'login' => function () use ($alias) {
-                $loginMin = $this->settingsProvider->get('login_min');
-                $loginMax = $this->settingsProvider->get('login_max');
-
-                return $alias()->length($loginMin, $loginMax);
-            },
+            'name' => $notEmpty->alnum(),
+            'alias' => $alias,
+            'extendedAlias' => $solid->regex('/^[\w]+$/'),
+            'nullableAlias' => Validator::noWhitespace(),
+            'text' => $notEmpty,
+            'url' => $solid,
+            'posInt' => Validator::numeric()->positive(),
+            'image' => Validator::imageNotEmpty()->imageTypeAllowed(),
+            'password' => Validator::noWhitespace()->length(
+                $settingsProvider->get('password_min', 5)
+            ),
+            'login' => $alias->length(
+                $settingsProvider->get('login_min', 3),
+                $settingsProvider->get('login_max', 20)
+            ),
         ];
     }
-    
+
     public function get(string $name, bool $optional = false) : Validator
     {
-        if (!array_key_exists($name, $this->rules)) {
+        $rule = $this->rules[$name] ?? null;
+
+        if (is_null($rule)) {
             throw new InvalidConfigurationException(
                 'Validation rule \'' . $name . '\' not found.'
             );
         }
-        
-        $rule = $this->rules[$name]();
-        
+
         return $optional
             ? $this->optional($rule)
             : $rule;

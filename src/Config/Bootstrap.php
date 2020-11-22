@@ -150,7 +150,6 @@ class Bootstrap
             ORM::configure($config);
 
             return new Db(
-                $c->cache,
                 $c->settingsProvider
             );
         };
@@ -395,7 +394,6 @@ class Bootstrap
 
         $map['validator'] = fn (CI $c) =>
             new Validator(
-                $c,
                 $c->translator
             );
 

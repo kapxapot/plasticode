@@ -3,6 +3,8 @@
 namespace Plasticode\Models\Traits;
 
 /**
+ * Implements {@see Plasticode\Models\Interfaces\ParentedInterface}.
+ * 
  * @method static|null parent()
  * @method static withParent(static|callable|null $parent)
  */
@@ -28,11 +30,27 @@ trait Parented
      */
     public function isOrphan() : bool
     {
-        return $this->hasParent();
+        return !$this->hasParent();
     }
 
     public function hasParent() : bool
     {
         return $this->parent() !== null;
     }
+
+    /**
+     * Checks if the $parentId creates a recursive chain of parents.
+     */
+    public function isRecursiveParent(?int $parentId) : bool
+    {
+        if (!$this->isPersisted() || is_null($parentId)) {
+            return false;
+        }
+
+        return $this->getId() === $parentId
+            || ($this->hasParent() && $this->parent()->isRecursiveParent($parentId));
+    }
+
+    abstract public function getId() : ?int;
+    abstract public function isPersisted() : bool;
 }

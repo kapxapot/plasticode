@@ -2,28 +2,25 @@
 
 namespace Plasticode\Core;
 
+use ArrayAccess;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Util\Arrays;
 
 class SettingsProvider implements SettingsProviderInterface
 {
-    /** @var array|\ArrayAccess */
+    /** @var array|ArrayAccess */
     public $settings;
 
     /**
-     * @param array|\ArrayAccess $settings
+     * @param array|ArrayAccess|null $settings
      */
-    public function __construct($settings = [])
+    public function __construct($settings = null)
     {
-        $this->settings = $settings;
+        $this->settings = $settings ?? [];
     }
 
     /**
-     * Returns settings value.
-     *
-     * @param string $path Path to settings value
-     * @param mixed $default Default value
-     * @return mixed
+     * @inheritDoc
      */
     public function get(string $path, $default = null)
     {

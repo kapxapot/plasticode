@@ -59,6 +59,9 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
             : null;
     }
 
+    /**
+     * @throws InvalidConfigurationException
+     */
     private function failIfPropertyExists(string $property) : void
     {
         if (self::propertyExists($this->obj, $property)) {

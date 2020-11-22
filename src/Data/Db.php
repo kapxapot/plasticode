@@ -2,7 +2,6 @@
 
 namespace Plasticode\Data;
 
-use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Util\Date;
 
@@ -11,7 +10,6 @@ use Plasticode\Util\Date;
  */
 final class Db
 {
-    private CacheInterface $cache;
     private SettingsProviderInterface $settingsProvider;
 
     /**
@@ -20,11 +18,9 @@ final class Db
     private ?array $tables = null;
 
     public function __construct(
-        CacheInterface $cache,
         SettingsProviderInterface $settingsProvider
     )
     {
-        $this->cache = $cache;
         $this->settingsProvider = $settingsProvider;
     }
 
@@ -147,38 +143,10 @@ final class Db
         return $item;
     }
 
-    public function isRecursiveParent(
-        string $table,
-        $id,
-        $parentId,
-        string $parentField = null
-    ) : bool
-    {
-        $parentField = $parentField ?? 'parent_id';
-        $recursive = false;
-
-        while ($parentId != null) {
-            if ($id == $parentId) {
-                $recursive = true;
-                break;
-            }
-            
-            $parent = $this->getObj($table, $parentId);
-
-            if (!$parent) {
-                break;
-            }
-            
-            $parentId = $parent[$parentField];
-        }
-
-        return $recursive;
-    }
-
     public function getQueryCount() : int
     {
         return \ORM::forTable(null)
-            ->rawQuery('SHOW STATUS LIKE ?', [ 'Questions' ])
+            ->rawQuery('SHOW STATUS LIKE ?', ['Questions'])
             ->findOne()['Value'];
     }
 }

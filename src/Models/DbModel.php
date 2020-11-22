@@ -22,9 +22,10 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     protected int $hydratedState = self::NOT_HYDRATED;
 
     /**
-     * Container for hydrated properties
+     * Container for hydrated properties.
+     * E.g., withUser(), user().
      * 
-     * E.g., withUser(), user()
+     * @var array<string, mixed>
      */
     private array $with = [];
 
@@ -62,7 +63,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     }
 
     /**
-     * Was model saved or not.
+     * @inheritDoc
      */
     public function isPersisted() : bool
     {
@@ -76,6 +77,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
 
     /**
      * @param HydratorInterface|ObjectProxy|null $hydrator
+     * @return $this
      */
     public function hydrate($hydrator, bool $forced = false) : self
     {
@@ -124,7 +126,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      * Sets value for property 'x()' (use it in 'withX($x)' methods).
      *
      * @param mixed $value
-     * @return static
+     * @return $this
      */
     protected function setWithProperty(string $name, $value) : self
     {

@@ -2,6 +2,7 @@
 
 namespace Plasticode\Models;
 
+use Plasticode\Models\Interfaces\UpdatedAtInterface;
 use Plasticode\Models\Traits\CreatedAt;
 use Plasticode\Models\Traits\UpdatedAt;
 
@@ -17,7 +18,7 @@ use Plasticode\Models\Traits\UpdatedAt;
  * @method static withGravatarUrl(string|callable $url)
  * @method static withRole(Role|callable $role)
  */
-class User extends DbModel
+class User extends DbModel implements UpdatedAtInterface
 {
     use CreatedAt;
     use UpdatedAt;

@@ -2,34 +2,32 @@
 
 namespace Plasticode\Validation\Rules;
 
-abstract class TableFieldAvailable extends ContainerRule
-{
-    private $table;
-    private $field;
-    private $id;
+use Plasticode\Repositories\Interfaces\Basic\FieldValidatingRepositoryInterface;
+use Respect\Validation\Rules\AbstractRule;
 
-    /**
-     * Creates new instance.
-     */
-    public function __construct($table, $field, $id = null)
+abstract class TableFieldAvailable extends AbstractRule
+{
+    /** @var callable fn (mixed) : bool */
+    private $validateField;
+
+    public function __construct(
+        FieldValidatingRepositoryInterface $repository,
+        string $field,
+        ?int $exceptId = null
+    )
     {
-        $this->table = $table;
-        $this->field = $field;
-        $this->id = $id;
+        $this->validateField = fn ($input) => $repository->isValidField(
+            $field,
+            $input,
+            $exceptId
+        );
     }
 
+    /**
+     * @param mixed $input
+     */
     public function validate($input)
     {
-        parent::validate($input);
-
-        $query = $this->container->db
-            ->forTable($this->table)
-            ->where($this->field, $input);
-
-        if ($this->id) {
-            $query = $query->whereNotEqual('id', $this->id);
-        }
-
-        return $query->count() == 0;
+        return ($this->validateField)($input);
     }
 }

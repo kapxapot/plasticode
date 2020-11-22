@@ -3,8 +3,9 @@
 namespace Plasticode\Repositories\Interfaces;
 
 use Plasticode\Models\User;
+use Plasticode\Repositories\Interfaces\Basic\ChangingRepositoryInterface;
 
-interface UserRepositoryInterface
+interface UserRepositoryInterface extends ChangingRepositoryInterface
 {
     function get(?int $id) : ?User;
     function create(array $data) : User;

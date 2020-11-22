@@ -9,7 +9,7 @@ trait ChildrenRepository
     protected string $parentIdField = 'parent_id';
 
     /**
-     * Get children by parent query.
+     * Adds filter by parent to a query.
      */
     protected function filterByParent(Query $query, ?int $parentId) : Query
     {
@@ -17,7 +17,7 @@ trait ChildrenRepository
     }
 
     /**
-     * Get entities without parent query.
+     * Adds filter by no parent to a query.
      */
     protected function filterOrphans(Query $query) : Query
     {

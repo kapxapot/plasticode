@@ -2,6 +2,7 @@
 
 namespace Plasticode\Util;
 
+use ArrayAccess;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Traits\PropertyAccess;
 use Webmozart\Assert\Assert;
@@ -15,20 +16,20 @@ class Arrays
     /**
      * Checks if $array is an array or implements \ArrayAccess.
      *
-     * @param array|\ArrayAccess $array
+     * @param array|ArrayAccess $array
      */
     private static function checkArray($array) : void
     {
         Assert::true(
-            is_array($array) || $array instanceof \ArrayAccess,
-            '$array must be an array or implement \ArrayAccess.'
+            is_array($array) || $array instanceof ArrayAccess,
+            '$array must be an array or implement ArrayAccess.'
         );
     }
 
     /**
      * Checks if the key is present in the array.
      *
-     * @param array|\ArrayAccess $array
+     * @param array|ArrayAccess $array
      * @param string|integer|null $key
      */
     public static function exists($array, $key) : bool
@@ -40,9 +41,9 @@ class Arrays
 
     /**
      * Get an item from an associative array using "dot" notation.
-     * Taken from Illuminate\Support\Arr.
+     * Taken from {@see Illuminate\Support\Arr}.
      *
-     * @param array|\ArrayAccess $array
+     * @param array|ArrayAccess $array
      * @param string|integer|null $key
      * @return mixed
      */
@@ -103,7 +104,8 @@ class Arrays
     /**
      * Returns distinct values from array grouped by selector.
      * 
-     * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
+     * @param string|callable|null $by Column/property name or callable,
+     * returning generated column/property name.
      */
     public static function distinctBy(array $array, $by) : array
     {
@@ -117,7 +119,8 @@ class Arrays
      * Selector must be unique, otherwise only first element is taken,
      * others are discarded.
      * 
-     * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
+     * @param string|callable|null $by Column/property name or callable,
+     * returning generated column/property name.
      * @return array<mixed, mixed>
      */
     public static function toAssocBy(array $array, $by) : array
@@ -477,7 +480,7 @@ class Arrays
 
     /**
      * Orders array items based on array of sort conditions.
-     * Shortcut for Sort::multi().
+     * Shortcut for {@see Sort::multi()}.
      */
     public static function sortBy(array $array, SortStep ...$steps) : array
     {
@@ -485,7 +488,7 @@ class Arrays
     }
 
     /**
-     * Adopts array or ArrayableInterface and converts them to array.
+     * Adopts array or {@see ArrayableInterface} and converts them to array.
      *
      * @param array|ArrayableInterface|null $array
      */

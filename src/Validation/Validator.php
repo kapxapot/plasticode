@@ -4,43 +4,41 @@ namespace Plasticode\Validation;
 
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
-use Plasticode\Validation\Rules\ContainerRule;
-use Psr\Container\ContainerInterface;
 use Respect\Validation\Exceptions\NestedValidationException;
 use Slim\Http\Request as SlimRequest;
 
+/**
+ * Validator with the optional translation of messages.
+ */
 class Validator implements ValidatorInterface
 {
-    private ContainerInterface $container;
-    private TranslatorInterface $translator;
+    private ?TranslatorInterface $translator;
 
     public function __construct(
-        ContainerInterface $container,
-        TranslatorInterface $translator
+        ?TranslatorInterface $translator = null
     )
     {
-        $this->container = $container;
         $this->translator = $translator;
     }
 
-    private function validate(\Closure $getField, array $rules) : ValidationResult
+    private function validate(callable $getField, array $rules) : ValidationResult
     {
         $errors = [];
 
         foreach ($rules as $field => $rule) {
             try {
-                foreach ($rule->getRules() as $subRule) {
-                    if ($subRule instanceof ContainerRule) {
-                        $subRule->setContainer($this->container);
-                    }
-                }
+                $name = $this->translator
+                    ? $this->translator->translate($field)
+                    : $field;
 
-                $name = $this->translator->translate($field);
                 $value = $getField($field);
 
                 $rule->setName($name)->assert($value);
             } catch (NestedValidationException $e) {
-                $e->setParam('translator', [$this->translator, 'translate']);
+                if ($this->translator) {
+                    $e->setParam('translator', [$this->translator, 'translate']);
+                }
+
                 $errors[$field] = $e->getMessages();
             }
         }

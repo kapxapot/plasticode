@@ -2,34 +2,28 @@
 
 namespace Plasticode\Validation\Rules;
 
-class Unchanged extends ContainerRule
-{
-    private $table;
-    private $id;
+use Plasticode\Repositories\Interfaces\Basic\ChangingRepositoryInterface;
+use Respect\Validation\Rules\AbstractRule;
 
-    /**
-     * Creates new instance.
-     */
-    public function __construct($table, $id)
+class Unchanged extends AbstractRule
+{
+    /** @var callable fn (mixed) : bool */
+    private $isUnchanged;
+
+    public function __construct(ChangingRepositoryInterface $repository, ?int $id = null)
     {
-        $this->table = $table;
-        $this->id = $id;
+        $this->isUnchanged = function ($input) use ($repository, $id) : bool {
+            $item = $repository->get($id);
+
+            return is_null($item) || $item->updatedAt === $input;
+        };
     }
 
+    /**
+     * @param mixed $input
+     */
     public function validate($input)
     {
-        parent::validate($input);
-
-        $valid = true;
-
-        if ($this->id) {
-            $item = $this->container->db->getObj($this->table, $this->id);
-
-            if ($item) {
-                $valid = ($item->updated_at == $input);
-            }
-        }
-
-        return $valid;
+        return ($this->isUnchanged)($input);
     }
 }

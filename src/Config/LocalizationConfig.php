@@ -25,7 +25,7 @@ class LocalizationConfig
 
         throw new InvalidConfigurationException(
             'Dictionary for language \'' . $lang . '\' not found. ' .
-            'Define it in App\\Config\\Localization class.'
+            'Define it in App\\Config\\LocalizationConfig class.'
         );
     }
     
@@ -78,14 +78,6 @@ class LocalizationConfig
             'icon' => 'Иконка',
             'alias' => 'Алиас',
             'description' => 'Описание',
-
-            'news_forum_id' => 'Id новостного форума',
-            'main_forum_id' => 'Id игрового форума',
-            'name_ru' => 'Заголовок',
-            'name_en' => 'Английский заголовок',
-            'comment' => 'Заголовок',
-            'title' => 'Название',
-            'stream_id' => 'Код',
             
             // 404
             'Page not found or moved.' => 'Страница не найдена или перемещена.',

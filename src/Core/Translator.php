@@ -4,17 +4,21 @@ namespace Plasticode\Core;
 
 use Plasticode\Core\Interfaces\TranslatorInterface;
 
+/**
+ * Translates text strings from one language to another.
+ */
 class Translator implements TranslatorInterface
 {
-    private $dictionaries;
+    /** @var array<string, string> */
+    private array $dictionary;
 
-    public function __construct(array $dictionaries)
+    public function __construct(?array $dictionary = null)
     {
-        $this->dictionaries = $dictionaries;
+        $this->dictionary = $dictionary ?? [];
     }
 
     public function translate(string $value) : string
     {
-        return $this->dictionaries[$value] ?? $value;
+        return $this->dictionary[$value] ?? $value;
     }
 }

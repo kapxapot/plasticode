@@ -40,7 +40,7 @@ final class ObjectProxyTest extends TestCase
                 new Access(),
                 $auth,
                 $cache,
-                new Db($cache, $settingsProvider)
+                new Db($settingsProvider)
             ),
             new ObjectProxy(
                 fn () =>
