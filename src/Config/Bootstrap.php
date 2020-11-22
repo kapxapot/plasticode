@@ -71,7 +71,6 @@ use Plasticode\Twig\TwigView;
 use Plasticode\Util\Cases;
 use Plasticode\Validation\ValidationRules;
 use Plasticode\Validation\Validator;
-use Slim\Collection as SlimCollection;
 use Slim\Container;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
@@ -79,7 +78,7 @@ use Twig\Extension\DebugExtension;
 
 class Bootstrap
 {
-    protected SlimCollection $settings;
+    protected array $settings;
 
     /**
      * Database settings
@@ -91,7 +90,7 @@ class Bootstrap
      */
     protected string $dir;
 
-    public function __construct(SlimCollection $settings, string $dir)
+    public function __construct(array $settings, string $dir)
     {
         $this->settings = $settings;
         $this->dbSettings = $this->settings['db'];
@@ -124,7 +123,7 @@ class Bootstrap
 
         $map['settingsProvider'] = fn (Container $c) =>
             new SettingsProvider(
-                $c->get('settings')
+                $this->settings
             );
 
         $map['db'] = function (Container $c) {

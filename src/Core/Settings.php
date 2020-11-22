@@ -8,32 +8,10 @@ use Symfony\Component\Yaml\Yaml;
 
 class Settings
 {
-    private static function loadFile(string $file)
-    {
-        $data = File::load($file);
-        $data = self::replaceEnvEntries($data);
-
-        return Yaml::parse($data);
-    }
-
-    private static function replaceEnvEntries(string $data) : string
-    {
-        return preg_replace_callback(
-            '/\{(\w+)\}/',
-            function ($matches) {
-                $var = $matches[1];
-                $env = getenv($var);
-
-                return ($env !== false) ? $env : '';
-            },
-            $data
-        );
-    }
-
     public static function load(
         string $path,
-        \Closure $enrich = null,
-        string $entryPoint = null
+        ?callable $enrich = null,
+        ?string $entryPoint = null
     ) : array
     {
         $entryPoint = $entryPoint ?? 'general.yml';
@@ -100,10 +78,32 @@ class Settings
             $settings['auth_token_key'] = $rootSafe . '_auth_token';
         }
 
-        if ($enrich != null) {
+        if ($enrich !== null) {
             $settings = $enrich($settings);
         }
 
-        return ['settings' => $settings];
+        return $settings;
+    }
+
+    private static function loadFile(string $file)
+    {
+        $data = File::load($file);
+        $data = self::replaceEnvEntries($data);
+
+        return Yaml::parse($data);
+    }
+
+    private static function replaceEnvEntries(string $data) : string
+    {
+        return preg_replace_callback(
+            '/\{(\w+)\}/',
+            function ($matches) {
+                $var = $matches[1];
+                $env = getenv($var);
+
+                return ($env !== false) ? $env : '';
+            },
+            $data
+        );
     }
 }
