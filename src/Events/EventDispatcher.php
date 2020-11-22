@@ -2,9 +2,14 @@
 
 namespace Plasticode\Events;
 
+use Closure;
+use Exception;
+use ReflectionFunction;
+
 class EventDispatcher
 {
-    private ?\Closure $logger = null;
+    /** @var callable|null */
+    private $logger;
 
     /**
      * @var array<string, callable[]> Event class -> handlers mapping.
@@ -24,7 +29,7 @@ class EventDispatcher
     /**
      * @param callable[] $handlers
      */
-    public function __construct(array $handlers = [], ?\Closure $logger = null)
+    public function __construct(array $handlers = [], ?callable $logger = null)
     {
         $this->logger = $logger;
 
@@ -40,10 +45,7 @@ class EventDispatcher
     {
         $paramClass = $this->getHandlerParamClass($handler);
 
-        if (!array_key_exists($paramClass, $this->map)) {
-            $this->map[$paramClass] = [];
-        }
-
+        $this->map[$paramClass] ??= [];
         $this->map[$paramClass][] = $handler;
 
         $this->log(get_class($handler) . ' mapped to ' . $paramClass);
@@ -61,7 +63,7 @@ class EventDispatcher
      */
     private function enqueue(Event $event) : void
     {
-        if ($this->isLoop($event)) {
+        if ($event->isLooped()) {
             $this->log('[!] Loop found, enqueue aborted for ' . $event);
             return;
         }
@@ -106,7 +108,7 @@ class EventDispatcher
     private function processEvent(Event $event) : void
     {
         if ($this->processing) {
-            throw new \Exception('Already processing an event!');
+            throw new Exception('Already processing an event!');
         }
 
         $this->processing = true;
@@ -128,7 +130,7 @@ class EventDispatcher
             try {
                 $handler($event);
             }
-            catch (\Exception $ex) {
+            catch (Exception $ex) {
                 $this->log('[!] Handler invocation error: ' . $ex->getMessage());
             }
         }
@@ -146,9 +148,9 @@ class EventDispatcher
 
     private function getHandlerParamClass(callable $handler) : ?string
     {
-        $closure = \Closure::fromCallable($handler);
+        $closure = Closure::fromCallable($handler);
 
-        $rf = new \ReflectionFunction($closure);
+        $rf = new ReflectionFunction($closure);
 
         $params = $rf->getParameters();
 
@@ -159,25 +161,5 @@ class EventDispatcher
         $rp = $params[0];
 
         return $rp->getClass()->name;
-    }
-
-    /**
-     * Looks for loops in the event chain.
-     * 
-     * Looks for the same event class with the same entity id.
-     */
-    private function isLoop(Event $event) : bool
-    {
-        $cur = $event->getParent();
-
-        while ($cur) {
-            if ($event->equals($cur)) {
-                return true;
-            }
-
-            $cur = $cur->getParent();
-        }
-
-        return false;
     }
 }

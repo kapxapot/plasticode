@@ -9,7 +9,7 @@ use Respect\Validation\Validator;
 
 class ValidationRules
 {
-    /** @var array<string, Validator> */
+    /** @var array<string, callable> */
     private array $rules;
 
     public function __construct(
@@ -20,29 +20,29 @@ class ValidationRules
     }
 
     /**
-     * @return array<string, Validator>
+     * @return array<string, callable>
      */
     private function buildRules(
         SettingsProviderInterface $settingsProvider
     ) : array
     {
-        $notEmpty = Validator::notEmpty();
-        $solid = $notEmpty->noWhitespace();
-        $alias = $solid->alnum();
+        $notEmpty = fn () => Validator::notEmpty();
+        $solid = fn () => $notEmpty()->noWhitespace();
+        $alias = fn () => $solid()->alnum();
 
         return [
-            'name' => $notEmpty->alnum(),
+            'name' => fn () => $notEmpty()->alnum(),
             'alias' => $alias,
-            'extendedAlias' => $solid->regex('/^[\w]+$/'),
-            'nullableAlias' => Validator::noWhitespace(),
+            'extendedAlias' => fn () => $solid()->regex('/^[\w]+$/'),
+            'nullableAlias' => fn () => Validator::noWhitespace(),
             'text' => $notEmpty,
             'url' => $solid,
-            'posInt' => Validator::numeric()->positive(),
-            'image' => Validator::imageNotEmpty()->imageTypeAllowed(),
-            'password' => Validator::noWhitespace()->length(
+            'posInt' => fn () => Validator::numeric()->positive(),
+            'image' => fn () => Validator::imageNotEmpty()->imageTypeAllowed(),
+            'password' => fn () => Validator::noWhitespace()->length(
                 $settingsProvider->get('password_min', 5)
             ),
-            'login' => $alias->length(
+            'login' => fn () => $alias()->length(
                 $settingsProvider->get('login_min', 3),
                 $settingsProvider->get('login_max', 20)
             ),
@@ -60,8 +60,8 @@ class ValidationRules
         }
 
         return $optional
-            ? $this->optional($rule)
-            : $rule;
+            ? $this->optional($rule())
+            : $rule();
     }
 
     public function lat(string $add = '') : string
