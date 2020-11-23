@@ -71,7 +71,7 @@ use Plasticode\Twig\TwigView;
 use Plasticode\Util\Cases;
 use Plasticode\Validation\ValidationRules;
 use Plasticode\Validation\Validator;
-use Slim\Container;
+use Psr\Container\ContainerInterface;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
 use Twig\Extension\DebugExtension;
@@ -97,7 +97,7 @@ class Bootstrap
         $this->dir = $dir;
     }
 
-    public function fillContainer(Container $container) : Container
+    public function fillContainer(ContainerInterface $container) : ContainerInterface
     {
         foreach ($this->getMappings() as $key => $value) {
             $container[$key] = $value;
@@ -113,20 +113,20 @@ class Bootstrap
     {
         $map = [];
 
-        $map['cache'] = fn (Container $c) =>
+        $map['cache'] = fn (ContainerInterface $c) =>
             new Cache();
 
-        $map['access'] = fn (Container $c) =>
+        $map['access'] = fn (ContainerInterface $c) =>
             new Access(
                 $this->settings['access']
             );
 
-        $map['settingsProvider'] = fn (Container $c) =>
+        $map['settingsProvider'] = fn (ContainerInterface $c) =>
             new SettingsProvider(
                 $this->settings
             );
 
-        $map['db'] = function (Container $c) {
+        $map['db'] = function (ContainerInterface $c) {
             $dbs = $this->dbSettings;
 
             $adapter = $dbs['adapter'] ?? null;
@@ -162,19 +162,19 @@ class Bootstrap
             );
         };
 
-        $map['auth'] = fn (Container $c) =>
+        $map['auth'] = fn (ContainerInterface $c) =>
             new Auth(
                 $c->session
             );
 
-        $map['session'] = function (Container $c) {
+        $map['session'] = function (ContainerInterface $c) {
             $root = $this->settings['root'];
             $name = 'sessionContainer' . $root;
             
             return new Session($name);
         };
 
-        $map['logger'] = function (Container $c) {
+        $map['logger'] = function (ContainerInterface $c) {
             $logger = new Logger(
                 $this->settings['logger']['name']
             );
@@ -215,25 +215,25 @@ class Bootstrap
             return $logger;
         };
 
-        $map['captchaConfig'] = fn (Container $c) =>
+        $map['captchaConfig'] = fn (ContainerInterface $c) =>
             new CaptchaConfig();
 
-        $map['captcha'] = fn (Container $c) =>
+        $map['captcha'] = fn (ContainerInterface $c) =>
             new Captcha(
                 $c->session,
                 $c->captchaConfig
             );
 
-        $map['generatorResolver'] = fn (Container $c) =>
+        $map['generatorResolver'] = fn (ContainerInterface $c) =>
             new GeneratorResolver(
                 $c,
                 ['\\App\\Generators']
             );
 
-        $map['cases'] = fn (Container $c) =>
+        $map['cases'] = fn (ContainerInterface $c) =>
             new Cases();
 
-        $map['repositoryContext'] = fn (Container $c) =>
+        $map['repositoryContext'] = fn (ContainerInterface $c) =>
             new RepositoryContext(
                 $c->access,
                 $c->auth,
@@ -241,7 +241,7 @@ class Bootstrap
                 $c->db
             );
 
-        $map['authTokenRepository'] = fn (Container $c) =>
+        $map['authTokenRepository'] = fn (ContainerInterface $c) =>
             new AuthTokenRepository(
                 $c->repositoryContext,
                 new ObjectProxy(
@@ -252,7 +252,7 @@ class Bootstrap
                 )
             );
 
-        $map['menuItemRepository'] = fn (Container $c) =>
+        $map['menuItemRepository'] = fn (ContainerInterface $c) =>
             new MenuItemRepository(
                 $c->repositoryContext,
                 new MenuItemHydrator(
@@ -260,7 +260,7 @@ class Bootstrap
                 )
             );
 
-        $map['menuRepository'] = fn (Container $c) =>
+        $map['menuRepository'] = fn (ContainerInterface $c) =>
             new MenuRepository(
                 $c->repositoryContext,
                 new ObjectProxy(
@@ -272,12 +272,12 @@ class Bootstrap
                 )
             );
 
-        $map['roleRepository'] = fn (Container $c) =>
+        $map['roleRepository'] = fn (ContainerInterface $c) =>
             new RoleRepository(
                 $c->repositoryContext
             );
 
-        $map['tagRepository'] = fn (Container $c) =>
+        $map['tagRepository'] = fn (ContainerInterface $c) =>
             new TagRepository(
                 $c->repositoryContext,
                 new TagHydrator(
@@ -285,7 +285,7 @@ class Bootstrap
                 )
             );
 
-        $map['userRepository'] = fn (Container $c) =>
+        $map['userRepository'] = fn (ContainerInterface $c) =>
             new UserRepository(
                 $c->repositoryContext,
                 new ObjectProxy(
@@ -298,7 +298,7 @@ class Bootstrap
                 )
             );
 
-        $map['appContext'] = fn (Container $c) =>
+        $map['appContext'] = fn (ContainerInterface $c) =>
             new AppContext(
                 $c->settingsProvider,
                 $c->translator,
@@ -308,7 +308,7 @@ class Bootstrap
                 $c->menuRepository
             );
 
-        $map['view'] = function (Container $c) {
+        $map['view'] = function (ContainerInterface $c) {
             $tws = $this->settings['view'];
 
             $path = $tws['templates_path'];
@@ -390,38 +390,38 @@ class Bootstrap
             return new TwigView($view);
         };
 
-        $map['localizationConfig'] = fn (Container $c) =>
+        $map['localizationConfig'] = fn (ContainerInterface $c) =>
             new LocalizationConfig();
 
-        $map['translator'] = function (Container $c) {
+        $map['translator'] = function (ContainerInterface $c) {
             $lang = $this->settings['view_globals']['lang'] ?? 'ru';
             $loc = $c->localizationConfig->get($lang);
             
             return new Translator($loc);
         };
 
-        $map['validator'] = fn (Container $c) =>
+        $map['validator'] = fn (ContainerInterface $c) =>
             new Validator(
                 $c->translator
             );
 
-        $map['validationRules'] = fn (Container $c) =>
+        $map['validationRules'] = fn (ContainerInterface $c) =>
             new ValidationRules(
                 $c->settingsProvider
             );
 
-        $map['passwordValidation'] = fn (Container $c) =>
+        $map['passwordValidation'] = fn (ContainerInterface $c) =>
             new PasswordValidation(
                 $c->validationRules
             );
 
-        $map['userValidation'] = fn (Container $c) =>
+        $map['userValidation'] = fn (ContainerInterface $c) =>
             new UserValidation(
                 $c->validationRules,
                 $c->userRepository
             );
 
-        $map['api'] = fn (Container $c) =>
+        $map['api'] = fn (ContainerInterface $c) =>
             new Api(
                 $c->access,
                 $c->auth,
@@ -430,41 +430,41 @@ class Bootstrap
                 $c->userRepository
             );
 
-        $map['renderer'] = fn (Container $c) =>
+        $map['renderer'] = fn (ContainerInterface $c) =>
             new Renderer(
                 $c->view
             );
 
-        $map['pagination'] = fn (Container $c) =>
+        $map['pagination'] = fn (ContainerInterface $c) =>
             new Pagination(
                 $c->linker,
                 $c->renderer
             );
 
-        $map['tagsConfig'] = fn (Container $c) =>
+        $map['tagsConfig'] = fn (ContainerInterface $c) =>
             new TagsConfig();
 
-        $map['linker'] = fn (Container $c) =>
+        $map['linker'] = fn (ContainerInterface $c) =>
             new Linker(
                 $c->settingsProvider,
                 $c->router,
                 $c->tagsConfig
             );
 
-        $map['replacesConfig'] = fn (Container $c) =>
+        $map['replacesConfig'] = fn (ContainerInterface $c) =>
             new ReplacesConfig();
 
-        $map['cleanupParser'] = fn (Container $c) =>
+        $map['cleanupParser'] = fn (ContainerInterface $c) =>
             new CleanupParser(
                 $c->replacesConfig
             );
 
-        $map['bbParserConfig'] = fn (Container $c) =>
+        $map['bbParserConfig'] = fn (ContainerInterface $c) =>
             new BBParserConfig(
                 $c->linker
             );
 
-        $map['bbParser'] = fn (Container $c) =>
+        $map['bbParser'] = fn (ContainerInterface $c) =>
             new BBParser(
                 $c->bbParserConfig,
                 $c->renderer
@@ -472,24 +472,24 @@ class Bootstrap
 
         // no double brackets link mappers by default
         // add them!
-        $map['doubleBracketsConfig'] = fn (Container $c) =>
+        $map['doubleBracketsConfig'] = fn (ContainerInterface $c) =>
             new LinkMapperSource();
 
-        $map['doubleBracketsParser'] = fn (Container $c) =>
+        $map['doubleBracketsParser'] = fn (ContainerInterface $c) =>
             new DoubleBracketsParser(
                 $c->doubleBracketsConfig
             );
 
-        $map['lineParser'] = fn (Container $c) =>
+        $map['lineParser'] = fn (ContainerInterface $c) =>
             new CompositeParser(
                 $c->bbParser,
                 $c->doubleBracketsParser
             );
 
-        $map['bbContainerConfig'] = fn (Container $c) =>
+        $map['bbContainerConfig'] = fn (ContainerInterface $c) =>
             new BBContainerConfig();
 
-        $map['bbContainerParser'] = fn (Container $c) =>
+        $map['bbContainerParser'] = fn (ContainerInterface $c) =>
             new BBContainerParser(
                 $c->bbContainerConfig,
                 new BBSequencer(),
@@ -497,7 +497,7 @@ class Bootstrap
                 new BBTreeRenderer($c->renderer)
             );
 
-        $map['parser'] = fn (Container $c) =>
+        $map['parser'] = fn (ContainerInterface $c) =>
             new CompositeParser(
                 new TitlesStep($c->renderer, $c->lineParser),
                 new MarkdownParser($c->renderer),
@@ -509,18 +509,18 @@ class Bootstrap
                 $c->cleanupParser
             );
 
-        $map['cutParser'] = fn (Container $c) =>
+        $map['cutParser'] = fn (ContainerInterface $c) =>
             new CutParser($c->cleanupParser);
 
-        $map['eventDispatcher'] = fn (Container $c) =>
+        $map['eventDispatcher'] = fn (ContainerInterface $c) =>
             new EventDispatcher(
                 $c->eventHandlers,
                 fn (string $msg) => $c->eventLog->info($msg)
             );
 
-        $map['eventHandlers'] = fn (Container $c) => [];
+        $map['eventHandlers'] = fn (ContainerInterface $c) => [];
 
-        $map['eventLog'] = function (Container $c) {
+        $map['eventLog'] = function (ContainerInterface $c) {
             $logger = new Logger(
                 $this->settings['event_log']['name']
             );
@@ -545,7 +545,7 @@ class Bootstrap
 
         // services
 
-        $map['authService'] = fn (Container $c) =>
+        $map['authService'] = fn (ContainerInterface $c) =>
             new AuthService(
                 $c->auth,
                 $c->settingsProvider,
@@ -555,37 +555,37 @@ class Bootstrap
 
         // external
 
-        $map['gravatar'] = fn (Container $c) =>
+        $map['gravatar'] = fn (ContainerInterface $c) =>
             new Gravatar();
         
-        $map['twitch'] = fn (Container $c) =>
+        $map['twitch'] = fn (ContainerInterface $c) =>
             new Twitch(
                 $this->settings['twitch']
             );
 
-        $map['telegram'] = fn (Container $c) =>
+        $map['telegram'] = fn (ContainerInterface $c) =>
             new Telegram(
                 $this->settings['telegram']
             );
 
-        $map['twitter'] = fn (Container $c) =>
+        $map['twitter'] = fn (ContainerInterface $c) =>
             new Twitter(
                 $this->settings['twitter']
             );
 
         // handlers
 
-        $map['notFoundHandler'] = fn (Container $c) =>
+        $map['notFoundHandler'] = fn (ContainerInterface $c) =>
             new NotFoundHandler(
                 $c->appContext
             );
 
-        $map['errorHandler'] = fn (Container $c) =>
+        $map['errorHandler'] = fn (ContainerInterface $c) =>
             new ErrorHandler(
                 $c->appContext
             );
 
-        $map['notAllowedHandler'] = fn (Container $c) =>
+        $map['notAllowedHandler'] = fn (ContainerInterface $c) =>
             new NotAllowedHandler(
                 $c->appContext
             );
