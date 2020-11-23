@@ -273,7 +273,7 @@ class Arrays
 
         Assert::true(
             $callable && is_null($value)
-            || is_string($by) && !is_null($value),
+            || is_string($by),
             '$by must be a property/column with provided $value, or it must be a callable without $value.'
         );
 
@@ -284,7 +284,7 @@ class Arrays
 
         return $callable
             ? ($by)($item)
-            : self::getProperty($item, $by) == $value;
+            : self::getProperty($item, $by) === $value;
     }
 
     /**
