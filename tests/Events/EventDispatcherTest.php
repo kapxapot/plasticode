@@ -27,13 +27,12 @@ final class EventDispatcherTest extends TestCase
             $log[] = $msg;
         };
 
-        $dispatcher = new EventDispatcher(
-            [
-                new EmptyEventHandler($writer),
-                new DataEventHandler($writer),
-                new DbModelDummyEventHandler($writer)
-            ],
-            $logger
+        $dispatcher = new EventDispatcher($logger);
+
+        $dispatcher->addHandlers(
+            new EmptyEventHandler($writer),
+            new DataEventHandler($writer),
+            new DbModelDummyEventHandler($writer)
         );
 
         $dispatcher->dispatch(
@@ -73,25 +72,24 @@ final class EventDispatcherTest extends TestCase
             $log[] = $msg;
         };
 
-        $dispatcher = new EventDispatcher(
-            [
-                function (EmptyEvent $event) use (&$output) {
-                    $output[] = 'Got an empty event in closure.';
-                },
-                function (DataEvent $event) use (&$output) {
-                    $output[] =
-                        'Got data in closure: '
-                        . $event->getData()
-                        . '.';
-                },
-                function (DbModelDummyEvent $event) use (&$output) {
-                    $output[] =
-                        'Got dummy model in closure: '
-                        . $event->getDummyModel()
-                        . '.';
-                }
-            ],
-            $logger
+        $dispatcher = new EventDispatcher($logger);
+
+        $dispatcher->addHandlers(
+            function (EmptyEvent $event) use (&$output) {
+                $output[] = 'Got an empty event in closure.';
+            },
+            function (DataEvent $event) use (&$output) {
+                $output[] =
+                    'Got data in closure: '
+                    . $event->getData()
+                    . '.';
+            },
+            function (DbModelDummyEvent $event) use (&$output) {
+                $output[] =
+                    'Got dummy model in closure: '
+                    . $event->getDummyModel()
+                    . '.';
+            }
         );
 
         $dispatcher->dispatch(
@@ -131,7 +129,7 @@ final class EventDispatcherTest extends TestCase
             $log[] = $msg;
         };
 
-        $dispatcher = new EventDispatcher([], $logger);
+        $dispatcher = new EventDispatcher($logger);
 
         $dispatcher->addHandler(
             function (DataEvent $event) use (&$output, $dispatcher) {
@@ -172,7 +170,7 @@ final class EventDispatcherTest extends TestCase
             $log[] = $msg;
         };
 
-        $dispatcher = new EventDispatcher([], $logger);
+        $dispatcher = new EventDispatcher($logger);
 
         $dispatcher->dispatch(
             new DataEvent('original')
@@ -190,7 +188,7 @@ final class EventDispatcherTest extends TestCase
             $log[] = $msg;
         };
 
-        $dispatcher = new EventDispatcher([], $logger);
+        $dispatcher = new EventDispatcher($logger);
 
         $dispatcher->addHandler(
             function (DataEvent $event) use (&$output, $dispatcher) {

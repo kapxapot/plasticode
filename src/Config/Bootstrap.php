@@ -103,6 +103,8 @@ class Bootstrap
             $container[$key] = $value;
         }
 
+        $this->registerEventHandlers($container);
+
         return $container;
     }
 
@@ -514,11 +516,8 @@ class Bootstrap
 
         $map['eventDispatcher'] = fn (ContainerInterface $c) =>
             new EventDispatcher(
-                $c->eventHandlers,
                 fn (string $msg) => $c->eventLog->info($msg)
             );
-
-        $map['eventHandlers'] = fn (ContainerInterface $c) => [];
 
         $map['eventLog'] = function (ContainerInterface $c) {
             $logger = new Logger(
@@ -591,5 +590,9 @@ class Bootstrap
             );
 
         return $map;
+    }
+
+    public function registerEventHandlers(ContainerInterface $c)
+    {
     }
 }

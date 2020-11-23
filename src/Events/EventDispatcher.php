@@ -26,13 +26,16 @@ class EventDispatcher
      */
     private bool $processing = false;
 
-    /**
-     * @param callable[] $handlers
-     */
-    public function __construct(array $handlers = [], ?callable $logger = null)
+    public function __construct(?callable $logger = null)
     {
         $this->logger = $logger;
+    }
 
+    /**
+     * Adds many handlers.
+     */
+    public function addHandlers(callable ...$handlers) : void
+    {
         foreach ($handlers as $handler) {
             $this->addHandler($handler);
         }
