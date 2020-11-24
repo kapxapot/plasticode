@@ -3,7 +3,7 @@
 namespace Plasticode\Hydrators\Basic;
 
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 use Plasticode\Traits\Frozen;
 
 abstract class Hydrator implements HydratorInterface

@@ -3,7 +3,7 @@
 namespace Plasticode\Hydrators\Basic;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 use Plasticode\Models\NewsSource;
 use Plasticode\Parsing\Interfaces\ParserInterface;
 use Plasticode\Parsing\Parsers\CutParser;

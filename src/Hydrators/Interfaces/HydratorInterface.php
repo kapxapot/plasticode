@@ -2,7 +2,7 @@
 
 namespace Plasticode\Hydrators\Interfaces;
 
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 
 interface HydratorInterface
 {

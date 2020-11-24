@@ -2,7 +2,7 @@
 
 namespace Plasticode\Testing\Dummies;
 
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 use Plasticode\Models\Traits\Stamps;
 
 class StampsDummy extends DbModel

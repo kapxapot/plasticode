@@ -2,7 +2,7 @@
 
 namespace Plasticode\Testing\Dummies;
 
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 
 /**
  * @method ModelDummy dummy()

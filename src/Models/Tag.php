@@ -2,6 +2,7 @@
 
 namespace Plasticode\Models;
 
+use Plasticode\Models\Basic\DbModel;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\Util\Strings;
 

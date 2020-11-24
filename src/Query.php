@@ -5,7 +5,7 @@ namespace Plasticode;
 use Plasticode\Collections\Basic\DbModelCollection;
 use Plasticode\Exceptions\SqlException;
 use Plasticode\Interfaces\ArrayableInterface;
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;

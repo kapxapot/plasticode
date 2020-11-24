@@ -7,7 +7,7 @@ use Plasticode\Exceptions\InvalidResultException;
 use Plasticode\Gallery\ThumbStrategies\Interfaces\ThumbStrategyInterface;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 use Webmozart\Assert\Assert;
 
 class Gallery

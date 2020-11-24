@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Models\Model;
+use Plasticode\Models\Basic\Model;
 use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Util\Arrays;
 

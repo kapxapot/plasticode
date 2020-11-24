@@ -10,7 +10,7 @@ use Plasticode\Data\Rights;
 use Plasticode\Exceptions\InvalidResultException;
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Interfaces\ArrayableInterface;
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 use Plasticode\Query;
 use Plasticode\Util\SortStep;
 use Webmozart\Assert\Assert;

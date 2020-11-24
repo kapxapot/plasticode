@@ -5,7 +5,7 @@ namespace Plasticode\Hydrators;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\External\Gravatar;
 use Plasticode\Hydrators\Basic\Hydrator;
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 use Plasticode\Models\User;
 use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
 

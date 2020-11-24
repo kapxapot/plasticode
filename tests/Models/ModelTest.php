@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Models;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Models\Model;
+use Plasticode\Models\Basic\Model;
 
 final class ModelTest extends TestCase
 {

@@ -3,7 +3,7 @@
 namespace Plasticode\Repositories\Idiorm\Traits;
 
 use Plasticode\Auth\Interfaces\AuthInterface;
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 use Plasticode\Query;
 use Plasticode\Repositories\Idiorm\Traits\FullPublishedRepository;
 

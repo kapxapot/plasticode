@@ -2,6 +2,8 @@
 
 namespace Plasticode\Models;
 
+use Plasticode\Models\Basic\DbModel;
+
 /**
  * @property integer $id
  * @property string $name

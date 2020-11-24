@@ -3,7 +3,7 @@
 namespace Plasticode\Models\Interfaces;
 
 /**
- * DbModel interface wrapper with $updatedAt property.
+ * {@see DbModelInterface} wrapper with $updatedAt property.
  * 
  * @property string|null $updatedAt
  */

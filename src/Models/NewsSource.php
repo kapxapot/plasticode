@@ -3,7 +3,7 @@
 namespace Plasticode\Models;
 
 use Plasticode\Collections\TagLinkCollection;
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 use Plasticode\Models\Interfaces\NewsSourceInterface;
 use Plasticode\Models\Interfaces\SearchableInterface;
 use Plasticode\Models\Traits\FullPublished;

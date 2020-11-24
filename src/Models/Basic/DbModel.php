@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Models;
+namespace Plasticode\Models\Basic;
 
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Models\Interfaces\DbModelInterface;

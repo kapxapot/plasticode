@@ -4,7 +4,7 @@ namespace Plasticode\Hydrators;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Hydrators\Basic\Hydrator;
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 use Plasticode\Models\MenuItem;
 
 class MenuItemHydrator extends Hydrator

@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Models;
+namespace Plasticode\Models\Basic;
 
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;

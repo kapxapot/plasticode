@@ -4,7 +4,7 @@ namespace Plasticode\Hydrators;
 
 use Plasticode\Hydrators\Basic\Hydrator;
 use Plasticode\Models\AuthToken;
-use Plasticode\Models\DbModel;
+use Plasticode\Models\Basic\DbModel;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 
 class AuthTokenHydrator extends Hydrator
