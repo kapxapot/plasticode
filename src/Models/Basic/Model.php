@@ -6,7 +6,6 @@ use ArrayAccess;
 use JsonSerializable;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;
-use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\Traits\Convert\ToBit;
 use Plasticode\Traits\Convert\ToBool;
 use Plasticode\Traits\Convert\ToIso;
@@ -14,7 +13,7 @@ use Plasticode\Traits\PropertyAccess;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
-class Model implements ArrayableInterface, ArrayAccess, JsonSerializable, SerializableInterface
+class Model implements ArrayableInterface, ArrayAccess, JsonSerializable
 {
     use PropertyAccess;
     use ToBit;
@@ -108,11 +107,6 @@ class Model implements ArrayableInterface, ArrayAccess, JsonSerializable, Serial
     }
 
     public function jsonSerialize()
-    {
-        return $this->serialize();
-    }
-
-    public function serialize() : array
     {
         return $this->toArray();
     }

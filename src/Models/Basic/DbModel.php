@@ -5,13 +5,14 @@ namespace Plasticode\Models\Basic;
 use BadMethodCallException;
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Models\Interfaces\DbModelInterface;
+use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\ObjectProxy;
 use Plasticode\Util\Classes;
 use Plasticode\Util\Pluralizer;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
-abstract class DbModel extends Model implements DbModelInterface
+abstract class DbModel extends Model implements DbModelInterface, SerializableInterface
 {
     private const NOT_HYDRATED = 1;
     private const BEING_HYDRATED = 2;
@@ -195,6 +196,11 @@ abstract class DbModel extends Model implements DbModelInterface
         return !is_null($model)
             && ($model->getId() === $this->getId())
             && (get_class($model) == static::class);
+    }
+
+    public function serialize() : array
+    {
+        return $this->toArray();
     }
 
     public function toString() : string
