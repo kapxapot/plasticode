@@ -2,16 +2,16 @@
 
 namespace Plasticode\Models\Basic;
 
+use BadMethodCallException;
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Models\Interfaces\DbModelInterface;
-use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\ObjectProxy;
 use Plasticode\Util\Classes;
 use Plasticode\Util\Pluralizer;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
-abstract class DbModel extends Model implements DbModelInterface, SerializableInterface
+abstract class DbModel extends Model implements DbModelInterface
 {
     private const NOT_HYDRATED = 1;
     private const BEING_HYDRATED = 2;
@@ -37,12 +37,11 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     /**
      * Static alias for new().
      * 
-     * @param array|\ORM|null $obj
      * @return static
      */
-    public static function create($obj = null) : self
+    public static function create(?array $data = null) : self
     {
-        return new static($obj);
+        return new static($data);
     }
 
     /**
@@ -114,7 +113,9 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
         if (preg_match('/^with[A-Z]/', $name)) {
             Assert::count($args, 1);
 
-            $propName = lcfirst(Strings::trimStart($name, 'with'));
+            $propName = lcfirst(
+                Strings::trimStart($name, 'with')
+            );
 
             return $this->setWithProperty($propName, $args[0]);
         }
@@ -154,7 +155,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
             || in_array($name, $this->requiredWiths());
 
         if ($required) {
-            throw new \BadMethodCallException(
+            throw new BadMethodCallException(
                 'Method is not initialized: ' . $name . '.'
             );
         }
@@ -180,11 +181,6 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
         $alias = Strings::toSnakeCase($entityPlural);
 
         return $alias;
-    }
-
-    public function serialize() : array
-    {
-        return $this->toArray();
     }
 
     /**

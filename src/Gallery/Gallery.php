@@ -2,6 +2,7 @@
 
 namespace Plasticode\Gallery;
 
+use ORM;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Exceptions\InvalidResultException;
 use Plasticode\Gallery\ThumbStrategies\Interfaces\ThumbStrategyInterface;
@@ -136,7 +137,7 @@ class Gallery
      * 
      * @return Image|null
      */
-    public function getPicture(\ORM $item, array $data) : ?Image
+    public function getPicture(ORM $item, array $data) : ?Image
     {
         $picture = $data[$this->pictureField] ?? null;
         
@@ -150,7 +151,7 @@ class Gallery
      * 
      * @return Image|null
      */
-    protected function getThumb(\ORM $item, array $data) : ?Image
+    protected function getThumb(ORM $item, array $data) : ?Image
     {
         return $this->thumbStrategy->getThumb($this, $item, $data);
     }
@@ -163,7 +164,7 @@ class Gallery
      * 
      * 'Thumb' can be null too, we don't resave it then.
      * 
-     * @param \ORM|array $item
+     * @param ORM|array $item
      * @param array $data
      * @return void
      */
@@ -198,7 +199,7 @@ class Gallery
         $item->save();
     }
 
-    protected function beforeSave(\ORM $item, ?Image $picture = null, ?Image $thumb = null) : \ORM
+    protected function beforeSave(ORM $item, ?Image $picture = null, ?Image $thumb = null) : ORM
     {
         if ($picture && $picture->notEmpty()) {
             $item->{$this->pictureTypeField} = $picture->imgType;
@@ -215,7 +216,7 @@ class Gallery
     }
     
     /**
-     * @param DbModel|\ORM $item
+     * @param DbModel|ORM $item
      * @return Image
      */
     public function loadPicture($item) : Image
@@ -231,7 +232,7 @@ class Gallery
      * 
      * Clean previous version if extension was changed.
      */
-    protected function savePicture(\ORM $item, Image $picture) : void
+    protected function savePicture(ORM $item, Image $picture) : void
     {
         $fileName = $this->buildPicturePath($item->id, $picture->imgType);
         $picture->save($fileName);
@@ -245,7 +246,7 @@ class Gallery
      * 
      * Clean previous version if extension was changed.
      */
-    protected function saveThumb(\ORM $item, Image $thumb) : void
+    protected function saveThumb(ORM $item, Image $thumb) : void
     {
         $fileName = $this->buildThumbPath($item->id, $thumb->imgType);
         $thumb->save($fileName);
@@ -257,7 +258,7 @@ class Gallery
     /**
      * Saves image with auto-generated thumb.
      */
-    public function saveImage(\ORM $item, Image $picture) : void
+    public function saveImage(ORM $item, Image $picture) : void
     {
         Assert::true(
             $picture && !$picture->empty(),
@@ -273,7 +274,7 @@ class Gallery
         $item->save();
     }
     
-    private function createAndSaveThumb(\ORM $item, Image $picture) : ?Image
+    private function createAndSaveThumb(ORM $item, Image $picture) : ?Image
     {
         $thumb = $this->getThumbFromImage($picture);
         
@@ -287,7 +288,7 @@ class Gallery
     /**
      * Delete picture
      *
-     * @param \ORM|array $item
+     * @param ORM|array $item
      * @return void
      */
     public function delete($item) : void
@@ -353,7 +354,7 @@ class Gallery
     /**
      * Calculates the average RBGA color for the picture.
      *
-     * @param DbModel|\ORM $item
+     * @param DbModel|ORM $item
      * @param Image|null $picture
      * @return string
      */

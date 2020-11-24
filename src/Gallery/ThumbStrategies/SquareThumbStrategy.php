@@ -2,6 +2,7 @@
 
 namespace Plasticode\Gallery\ThumbStrategies;
 
+use ORM;
 use Plasticode\Gallery\Gallery;
 use Plasticode\Gallery\ThumbStrategies\Interfaces\ThumbStrategyInterface;
 use Plasticode\IO\Image;
@@ -9,31 +10,27 @@ use Plasticode\IO\Image;
 class SquareThumbStrategy implements ThumbStrategyInterface
 {
     /**
-     * Size to resize to (final thumb size)
-     * 
-     * @var int $thumbSize
+     * Size to resize to (final thumb size).
      */
-    private $thumbSize;
-    
-    public function __construct(int $thumbSize = null)
+    private ?int $thumbSize = null;
+
+    public function __construct(?int $thumbSize = null)
     {
         $this->thumbSize = $thumbSize;
     }
-    
+
     /**
      * Get thumb from save data (API call).
-     * 
-     * @return Image|null
      */
-    public function getThumb(Gallery $gallery, \ORM $item, array $data) : ?Image
+    public function getThumb(Gallery $gallery, ORM $item, array $data) : ?Image
     {
         $thumb = $data[$gallery->thumbField] ?? null;
-        
+
         return $thumb
             ? Image::parseBase64($thumb)
             : null;
     }
-    
+
     /**
      * Creates GD image for thumb.
      *
@@ -52,12 +49,12 @@ class SquareThumbStrategy implements ThumbStrategyInterface
         $yOffset = intdiv($height - $srcSize, 2);
 
         $thumbImage = imagecreatetruecolor($thumbSize, $thumbSize);
-        
+
         imagecopyresampled(
             $thumbImage, $image, 0, 0, $xOffset, $yOffset,
             $thumbSize, $thumbSize, $srcSize, $srcSize
         );
-        
+
         return $thumbImage;
     }
 }

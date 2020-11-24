@@ -2,6 +2,7 @@
 
 namespace Plasticode\Gallery\ThumbStrategies;
 
+use ORM;
 use Plasticode\Gallery\Gallery;
 use Plasticode\Gallery\ThumbStrategies\Interfaces\ThumbStrategyInterface;
 use Plasticode\IO\Image;
@@ -9,15 +10,11 @@ use Plasticode\IO\Image;
 class UniformThumbStrategy implements ThumbStrategyInterface
 {
     /**
-     * Height to resize to
-     * 
-     * Final thumb height.
-     * 
-     * @var int $thumbHeight
+     * Height to resize to (final thumb height).
      */
-    private $thumbHeight;
-    
-    public function __construct(int $thumbHeight = null)
+    private ?int $thumbHeight = null;
+
+    public function __construct(?int $thumbHeight = null)
     {
         $this->thumbHeight = $thumbHeight;
     }
@@ -27,23 +24,23 @@ class UniformThumbStrategy implements ThumbStrategyInterface
      * 
      * This is different from Gallery, because thumb is auto-generated on every save.
      */
-    public function getThumb(Gallery $gallery, \ORM $item, array $data) : ?Image
+    public function getThumb(Gallery $gallery, ORM $item, array $data) : ?Image
     {
         $thumb = null;
-        
+
         $picture = $gallery->getPicture($item, $data);
-        
+
         if (!$picture && $item->id > 0) {
             $picture = $gallery->loadPicture($item);
         }
-        
+
         if ($picture && $picture->notEmpty()) {
             $thumb = $gallery->getThumbFromImage($picture);
         }
-        
+
         return $thumb;
     }
-    
+
     /**
      * Creates GD image for thumb
      *
@@ -59,8 +56,12 @@ class UniformThumbStrategy implements ThumbStrategyInterface
         $thumbWidth = $width * $thumbHeight / $height;
 
         $thumbImage = imagecreatetruecolor($thumbWidth, $thumbHeight);
-        imagecopyresampled($thumbImage, $image, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $width, $height);
-        
+
+        imagecopyresampled(
+            $thumbImage, $image, 0, 0, 0, 0,
+            $thumbWidth, $thumbHeight, $width, $height
+        );
+
         return $thumbImage;
     }
 }

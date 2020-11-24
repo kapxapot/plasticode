@@ -2,11 +2,12 @@
 
 namespace Plasticode\Data;
 
+use ORM;
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Util\Date;
 
 /**
- * Db layer via Idiorm (\ORM).
+ * Db layer via Idiorm ({@see ORM}).
  */
 final class Db
 {
@@ -39,11 +40,11 @@ final class Db
         return $tableSettings['table'] ?? $table;
     }
 
-    public function forTable(string $table) : \ORM
+    public function forTable(string $table) : ORM
     {
         $tableName = $this->getTableName($table);
         
-        return \ORM::forTable($tableName);
+        return ORM::forTable($tableName);
     }
 
     private function fields(string $table) : ?array
@@ -60,7 +61,7 @@ final class Db
         return $has && in_array($field, $has);
     }
 
-    public function selectMany(string $table, array $exclude = null) : \ORM
+    public function selectMany(string $table, array $exclude = null) : ORM
     {
         $t = $this->forTable($table);
         $fields = $this->fields($table);
@@ -74,7 +75,7 @@ final class Db
             : $t->selectMany();
     }
 
-    public function filterBy($items, string $field, array $args) : \ORM
+    public function filterBy($items, string $field, array $args) : ORM
     {
         return $items->where($field, $args['id']);
     }
@@ -110,7 +111,7 @@ final class Db
         return $data;
     }
 
-    public function getObj(string $table, $id, \Closure $where = null) : \ORM
+    public function getObj(string $table, $id, \Closure $where = null) : ORM
     {
         $query = $this
             ->forTable($table)
@@ -132,7 +133,7 @@ final class Db
     /**
      * Creates record and fills it with data
      */
-    public function create(string $table, array $data = null) : \ORM
+    public function create(string $table, array $data = null) : ORM
     {
         $item = $this->forTable($table)->create();
         
@@ -145,7 +146,7 @@ final class Db
 
     public function getQueryCount() : int
     {
-        return \ORM::forTable(null)
+        return ORM::forTable(null)
             ->rawQuery('SHOW STATUS LIKE ?', ['Questions'])
             ->findOne()['Value'];
     }

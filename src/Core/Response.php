@@ -2,6 +2,7 @@
 
 namespace Plasticode\Core;
 
+use ORM;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Exceptions\Interfaces\HttpExceptionInterface;
 use Plasticode\Exceptions\Interfaces\PropagatedExceptionInterface;
@@ -10,6 +11,7 @@ use Plasticode\Util\Text;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response as SlimResponse;
+use stdClass;
 use Webmozart\Assert\Assert;
 
 class Response
@@ -20,7 +22,7 @@ class Response
     /**
      * Writes data to response object and returns it.
      *
-     * @param ArrayableInterface|\ORM|array $data
+     * @param ArrayableInterface|ORM|array $data
      */
     public static function json(
         SlimResponse $response,
@@ -30,7 +32,7 @@ class Response
     {
         if ($data instanceof ArrayableInterface) {
             $data = $data->toArray();
-        } elseif ($data instanceof \ORM) {
+        } elseif ($data instanceof ORM) {
             $data = $data->asArray();
         }
         
@@ -44,7 +46,7 @@ class Response
 
             // datatables
             if ($format == 'dt') {
-                $wrapper = new \stdClass;
+                $wrapper = new stdClass;
                 $wrapper->data = $data;
                 
                 $data = $wrapper;

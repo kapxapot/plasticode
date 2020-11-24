@@ -2,6 +2,7 @@
 
 namespace Plasticode\Repositories\Idiorm\Basic;
 
+use ORM;
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Core\Interfaces\CacheInterface;
@@ -97,7 +98,7 @@ abstract class IdiormRepository
         return new Query(
             $dbQuery,
             $this->idField(),
-            fn (\ORM $obj) => $this->ormObjToEntity($obj)
+            fn (ORM $obj) => $this->ormObjToEntity($obj)
         );
     }
 
@@ -210,19 +211,18 @@ abstract class IdiormRepository
         return $this->ormObjToEntity($ormObj, true);
     }
 
-    protected function entityToOrmObj(DbModel $entity) : \ORM
+    protected function entityToOrmObj(DbModel $entity) : ORM
     {
-        $obj = $entity->getObj();
-
-        return $obj instanceof \ORM
-            ? $obj
-            : $this->db->create($this->getTable(), $obj);
+        return $this->db->create(
+            $this->getTable(),
+            $entity->toArray()
+        );
     }
 
     /**
      * Creates a bare entity and saves it (hydrating afterwards).
      * 
-     * @param array|\ORM|null $obj
+     * @param array|ORM|null $obj
      */
     protected function storeEntity($obj = null) : DbModel
     {
@@ -234,7 +234,7 @@ abstract class IdiormRepository
     /**
      * Just creates an entity, no hydration.
      *
-     * @param array|\ORM|null $obj
+     * @param array|ORM|null $obj
      */
     private function createBareEntity($obj = null) : DbModel
     {
@@ -245,7 +245,7 @@ abstract class IdiormRepository
     /**
      * Creates an entity and hydrates it.
      * 
-     * @param array|\ORM|null $obj
+     * @param array|ORM|null $obj
      */
     protected function createEntity($obj = null) : DbModel
     {
@@ -265,7 +265,7 @@ abstract class IdiormRepository
     }
 
     /**
-     * Converts ORM object to entity.
+     * Converts {@see ORM} object to entity.
      * 
      * If the object is present in cache and
      * $ignoreCache != true, it is loaded from cache.
@@ -273,7 +273,7 @@ abstract class IdiormRepository
      * Otherwise, the new entity is created, cached and hydrated.
      */
     private function ormObjToEntity(
-        \ORM $ormObj,
+        ORM $ormObj,
         bool $ignoreCache = false
     ) : DbModel
     {

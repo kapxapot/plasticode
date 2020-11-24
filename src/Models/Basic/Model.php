@@ -2,61 +2,33 @@
 
 namespace Plasticode\Models\Basic;
 
+use ArrayAccess;
+use JsonSerializable;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Interfaces\ArrayableInterface;
+use Plasticode\Models\Interfaces\SerializableInterface;
+use Plasticode\Traits\Convert\ToBit;
+use Plasticode\Traits\Convert\ToBool;
+use Plasticode\Traits\Convert\ToIso;
 use Plasticode\Traits\PropertyAccess;
-use Plasticode\Util\Convert;
-use Plasticode\Util\Date;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
-class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
+class Model implements ArrayableInterface, ArrayAccess, JsonSerializable, SerializableInterface
 {
     use PropertyAccess;
+    use ToBit;
+    use ToBool;
+    use ToIso;
 
     /**
-     * Data array or \ORM object.
-     *
-     * @var array|\ORM
+     * Data array.
      */
-    protected $obj;
+    protected array $data;
 
-    /**
-     * @param array|\ORM|null $obj
-     */
-    public function __construct($obj = null)
+    public function __construct(?array $data = null)
     {
-        $this->obj = $obj ?? [];
-    }
-
-    /**
-     * Returns the underlying obj - array or \ORM.
-     *
-     * @return array|\ORM
-     */
-    public function getObj()
-    {
-        return $this->obj;
-    }
-
-    protected static function toBool(?int $value) : bool
-    {
-        return Convert::fromBit($value);
-    }
-
-    protected static function toBit(?bool $value) : int
-    {
-        return Convert::toBit($value);
-    }
-
-    /**
-     * Null => null!
-     */
-    protected static function toIso(?string $date) : ?string
-    {
-        return $date
-            ? Date::iso($date)
-            : null;
+        $this->data = $data ?? [];
     }
 
     /**
@@ -64,7 +36,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
      */
     private function failIfPropertyExists(string $property) : void
     {
-        if (self::propertyExists($this->obj, $property)) {
+        if (self::propertyExists($this->data, $property)) {
             $className = static::class;
 
             throw new InvalidConfigurationException(
@@ -85,7 +57,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
             return $this->{$camelCase}();
         }
 
-        return $this->obj[$snakeCase] ?? null;
+        return $this->data[$snakeCase] ?? null;
     }
 
     public function __set(string $property, $value)
@@ -97,7 +69,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
             $this->failIfPropertyExists($snakeCase);
             $this->{$camelCase}($value);
         } else {
-            $this->obj[$snakeCase] = $value;
+            $this->data[$snakeCase] = $value;
         }
     }
 
@@ -110,7 +82,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         }
 
         $snakeCase = Strings::toSnakeCase($property);
-        return isset($this->obj[$snakeCase]);
+        return isset($this->data[$snakeCase]);
     }
 
     public function __unset(string $property)
@@ -122,7 +94,7 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         }
 
         $snakeCase = Strings::toSnakeCase($property);
-        unset($this->obj[$snakeCase]);
+        unset($this->data[$snakeCase]);
     }
 
     public function __toString() : string
@@ -135,16 +107,19 @@ class Model implements \ArrayAccess, \JsonSerializable, ArrayableInterface
         return static::class;
     }
 
-    public function toArray() : array
-    {
-        return $this->obj instanceof \ORM
-            ? $this->obj->asArray()
-            : $this->obj;
-    }
-
     public function jsonSerialize()
     {
+        return $this->serialize();
+    }
+
+    public function serialize() : array
+    {
         return $this->toArray();
+    }
+
+    public function toArray() : array
+    {
+        return $this->data;
     }
 
     public function offsetSet($offset, $value)

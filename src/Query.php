@@ -2,6 +2,9 @@
 
 namespace Plasticode;
 
+use IteratorAggregate;
+use ORM;
+use PDOException;
 use Plasticode\Collections\Basic\DbModelCollection;
 use Plasticode\Exceptions\SqlException;
 use Plasticode\Interfaces\ArrayableInterface;
@@ -9,6 +12,7 @@ use Plasticode\Models\Basic\DbModel;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;
+use ReflectionMethod;
 use Webmozart\Assert\Assert;
 
 /**
@@ -27,7 +31,7 @@ use Webmozart\Assert\Assert;
  * @method self whereNull(string $field)
  * @method self whereRaw(string $condition, array $params = null)
  */
-class Query implements \IteratorAggregate, ArrayableInterface
+class Query implements ArrayableInterface, IteratorAggregate
 {
     /**
      * Empty query.
@@ -37,37 +41,37 @@ class Query implements \IteratorAggregate, ArrayableInterface
     /**
      * ORM query.
      */
-    private ?\ORM $query = null;
+    private ?ORM $query = null;
 
     /**
      * Id field name.
      */
-    private string $idField;
-    
+    private ?string $idField = null;
+
     /**
      * Method for conversion of dbObj to model.
+     * 
+     * @var callable|null
      */
-    private \Closure $toModel;
+    private $toModel = null;
 
     /**
      * Array of sort steps.
      *
      * @var SortStep[]
      */
-    private array $sortOrder;
-    
+    private array $sortOrder = [];
+
     /**
-     * Constructor.
-     *
-     * @param \ORM $query The base query. Can be null for an empty query.
-     * @param string $idField Must be provided for non-empty query.
-     * @param \Closure $toModel Must be provided for non-empty query.
-     * @param SortStep[] $sortOrder
+     * @param ORM|null $query The base query. Can be null for an empty query.
+     * @param string|null $idField Must be provided for non-empty query.
+     * @param callable|null $toModel Must be provided for non-empty query.
+     * @param SortStep[]|null $sortOrder
      */
     public function __construct(
-        \ORM $query = null,
-        string $idField = null,
-        \Closure $toModel = null,
+        ?ORM $query = null,
+        ?string $idField = null,
+        ?callable $toModel = null,
         ?array $sortOrder = null
     )
     {
@@ -93,9 +97,9 @@ class Query implements \IteratorAggregate, ArrayableInterface
     }
 
     /**
-     * Get underlying \ORM query.
+     * Get underlying {@see ORM} query.
      */
-    public function getOrmQuery() : ?\ORM
+    public function getOrmQuery() : ?ORM
     {
         return $this->query;
     }
@@ -111,7 +115,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
 
         return self::$empty;
     }
-    
+
     /**
      * Checks if the query is empty (without table and filters).
      */
@@ -138,12 +142,12 @@ class Query implements \IteratorAggregate, ArrayableInterface
             $objs = $query->findMany();
 
             $all = array_map(
-                fn (\ORM $obj) => ($this->toModel)($obj),
+                fn (ORM $obj) => ($this->toModel)($obj),
                 $objs ?? []
             );
 
             return DbModelCollection::make($all);
-        } catch (\PDOException $pdoEx) {
+        } catch (PDOException $pdoEx) {
             throw new SqlException(
                 'Failed to execute query: ' . self::queryToString($query)
             );
@@ -151,11 +155,11 @@ class Query implements \IteratorAggregate, ArrayableInterface
     }
 
     /**
-     * Gets SQL statement for the ORM query.
+     * Gets SQL statement for the {@see ORM} query.
      */
-    private static function queryToString(\ORM $query) : string
+    private static function queryToString(ORM $query) : string
     {
-        $method = new \ReflectionMethod('\ORM', '_build_select');
+        $method = new ReflectionMethod(ORM::class, '_build_select');
         $method->setAccessible(true);
 
         $statement = $method->invoke($query);
@@ -164,7 +168,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     }
     
     /**
-     * Looks for a record with provided id.
+     * Looks for a record with the provided id.
      */
     public function find(?int $id) : ?DbModel
     {
@@ -204,7 +208,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     /**
      * Returns query with applied sort order.
      */
-    private function getSortedQuery() : \ORM
+    private function getSortedQuery() : ORM
     {
         $query = $this->query;
 
@@ -302,7 +306,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
      * @return mixed
      */
     private function branch(
-        ?\Closure $queryModifier = null,
+        ?callable $queryModifier = null,
         ?array $sortOrder = null
     )
     {
@@ -315,7 +319,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
 
             // if query resulted in any final result (!= query)
             // return it as is
-            if (!($result instanceof \ORM)) {
+            if (!($result instanceof ORM)) {
                 return $result;
             }
         }
@@ -331,14 +335,14 @@ class Query implements \IteratorAggregate, ArrayableInterface
     }
     
     /**
-     * Delegates method call to the underlying \ORM query.
+     * Delegates method call to the underlying {@see ORM} query.
      *
      * @return mixed
      */
     public function __call(string $name, array $args)
     {
         return $this->branch(
-            fn ($q) => $q->{$name}(...$args)
+            fn (ORM $q) => $q->{$name}(...$args)
         );
     }
 
@@ -359,7 +363,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
         }
 
         return $this->branch(
-            fn ($q) => $q->whereIn($field, $values)
+            fn (ORM $q) => $q->whereIn($field, $values)
         );
     }
 
@@ -379,8 +383,20 @@ class Query implements \IteratorAggregate, ArrayableInterface
         }
 
         return $this->branch(
-            fn ($q) => $q->whereNotIn($field, $values)
+            fn (ORM $q) => $q->whereNotIn($field, $values)
         );
+    }
+
+    /**
+     * Gets chunk based on offset and limit.
+     * 
+     * Shortcut for offset() + limit().
+     */
+    public function slice(int $offset, int $limit) : self
+    {
+        return $this
+            ->offset($offset)
+            ->limit($limit);
     }
 
     /**
@@ -395,7 +411,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
         }
         
         return $this->branch(
-            fn ($q) => $q->offset($offset)
+            fn (ORM $q) => $q->offset($offset)
         );
     }
 
@@ -411,20 +427,8 @@ class Query implements \IteratorAggregate, ArrayableInterface
         }
 
         return $this->branch(
-            fn ($q) => $q->limit($limit)
+            fn (ORM $q) => $q->limit($limit)
         );
-    }
-
-    /**
-     * Gets chunk based on offset and limit.
-     * 
-     * Shortcut for offset() + limit().
-     */
-    public function slice(int $offset, int $limit) : self
-    {
-        return $this
-            ->offset($offset)
-            ->limit($limit);
     }
 
     /**
@@ -498,7 +502,7 @@ class Query implements \IteratorAggregate, ArrayableInterface
     ) : self
     {
         return $this->branch(
-            function ($q) use ($searchStr, $where, $paramCount) {
+            function (ORM $q) use ($searchStr, $where, $paramCount) {
                 $words = Strings::toWords($searchStr);
 
                 foreach ($words as $word) {
@@ -584,6 +588,11 @@ class Query implements \IteratorAggregate, ArrayableInterface
 
     // __toString
 
+    public function __toString()
+    {
+        return $this->toString();
+    }
+
     public function toString() : string
     {
         if ($this->isEmpty()) {
@@ -591,10 +600,5 @@ class Query implements \IteratorAggregate, ArrayableInterface
         }
 
         return self::queryToString($this->getSortedQuery());
-    }
-
-    public function __toString()
-    {
-        return $this->toString();
     }
 }
