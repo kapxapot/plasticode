@@ -282,9 +282,13 @@ class Arrays
             '$by can be only callable if the $item is scalar or null.'
         );
 
-        return $callable
-            ? ($by)($item)
-            : self::getProperty($item, $by) === $value;
+        if ($callable) {
+            return ($by)($item);
+        }
+
+        $propValue = self::getProperty($item, $by);
+
+        return (is_null($value) && is_null($propValue)) || $propValue == $value;
     }
 
     /**
