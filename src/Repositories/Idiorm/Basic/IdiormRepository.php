@@ -221,35 +221,29 @@ abstract class IdiormRepository
 
     /**
      * Creates a bare entity and saves it (hydrating afterwards).
-     * 
-     * @param array|ORM|null $obj
      */
-    protected function storeEntity($obj = null) : DbModel
+    protected function storeEntity(array $data) : DbModel
     {
-        $entity = $this->createBareEntity($obj);
+        $entity = $this->createBareEntity($data);
 
         return $this->saveEntity($entity);
     }
 
     /**
      * Just creates an entity, no hydration.
-     *
-     * @param array|ORM|null $obj
      */
-    private function createBareEntity($obj = null) : DbModel
+    private function createBareEntity(array $obj) : DbModel
     {
         $entityClass = $this->getEntityClass();
         return $entityClass::create($obj);
     }
 
     /**
-     * Creates an entity and hydrates it.
-     * 
-     * @param array|ORM|null $obj
+     * Creates a bare entity and hydrates it.
      */
-    protected function createEntity($obj = null) : DbModel
+    protected function createEntity(array $data) : DbModel
     {
-        $entity = $this->createBareEntity($obj);
+        $entity = $this->createBareEntity($data);
 
         return $this->hydrateEntity($entity);
     }
@@ -289,7 +283,9 @@ abstract class IdiormRepository
             return $entity;
         }
 
-        $entity = $this->createBareEntity($ormObj);
+        $entity = $this->createBareEntity(
+            $ormObj->asArray()
+        );
 
         $this->cacheEntity($entity);
 
