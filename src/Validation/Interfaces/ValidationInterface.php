@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Models\Interfaces;
+namespace Plasticode\Validation\Interfaces;
 
 use Respect\Validation\Validator;
 
@@ -9,8 +9,7 @@ interface ValidationInterface
     /**
      * Returns validation rules.
      *
-     * @param array $data
-     * @param integer|string|null $id
+     * @param mixed $id
      * @return Validator[]
      */
     function getRules(array $data, $id = null) : array;

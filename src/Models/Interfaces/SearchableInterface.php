@@ -4,5 +4,5 @@ namespace Plasticode\Models\Interfaces;
 
 interface SearchableInterface
 {
-    public function code() : string;
+    function code() : string;
 }

@@ -6,5 +6,5 @@ use Plasticode\Models\Interfaces\DbModelInterface;
 
 interface ProtectedRepositoryInterface
 {
-    public function getProtected(?int $id) : ?DbModelInterface;
+    function getProtected(?int $id) : ?DbModelInterface;
 }

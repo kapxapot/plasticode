@@ -1,9 +1,8 @@
 <?php
 
-namespace Plasticode\Models\Validation;
+namespace Plasticode\Validation;
 
-use Plasticode\Models\Interfaces\ValidationInterface;
-use Plasticode\Validation\ValidationRules;
+use Plasticode\Validation\Interfaces\ValidationInterface;
 use Respect\Validation\Validator;
 
 abstract class Validation implements ValidationInterface
@@ -20,5 +19,8 @@ abstract class Validation implements ValidationInterface
         return $this->validationRules->get($name, $optional);
     }
 
-    public abstract function getRules(array $data, $id = null) : array;
+    /**
+     * @inheritDoc
+     */
+    abstract public function getRules(array $data, $id = null) : array;
 }

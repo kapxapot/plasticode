@@ -3,7 +3,7 @@
 namespace Plasticode\Generators;
 
 use Plasticode\Core\Security;
-use Plasticode\Models\Interfaces\ValidationInterface;
+use Plasticode\Validation\Interfaces\ValidationInterface;
 use Psr\Container\ContainerInterface;
 
 class UsersGenerator extends EntityGenerator

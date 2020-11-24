@@ -4,8 +4,6 @@ namespace Plasticode\Models\Interfaces;
 
 use Plasticode\Models\User;
 use Plasticode\Collections\TagLinkCollection;
-use Plasticode\Models\Interfaces\LinkableInterface;
-use Plasticode\Models\Interfaces\TaggedInterface;
 
 interface NewsSourceInterface extends DbModelInterface, LinkableInterface, TaggedInterface
 {

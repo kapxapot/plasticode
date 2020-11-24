@@ -3,6 +3,7 @@
 namespace Plasticode\Models\Validation;
 
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Validation\Validation;
 use Plasticode\Validation\ValidationRules;
 use Respect\Validation\Validator;
 
@@ -20,6 +21,9 @@ class UserValidation extends Validation
         $this->userRepository = $userRepository;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getRules(array $data, $id = null) : array
     {
         return [

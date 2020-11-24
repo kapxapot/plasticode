@@ -2,10 +2,14 @@
 
 namespace Plasticode\Models\Validation;
 
+use Plasticode\Validation\Validation;
 use Respect\Validation\Validator;
 
 class PasswordValidation extends Validation
 {
+    /**
+     * @inheritDoc
+     */
     public function getRules(array $data, $id = null) : array
     {
         return [
