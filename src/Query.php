@@ -16,7 +16,7 @@ use ReflectionMethod;
 use Webmozart\Assert\Assert;
 
 /**
- * Idiorm wrapper integrated with DbModel.
+ * Idiorm ({@see ORM}) wrapper integrated with {@see DbModel}.
  * 
  * @method self join(string $table, string|array $constraint, ?string $tableAlias = null)
  * @method self leftOuterJoin(string $table, string|array $constraint, ?string $tableAlias = null)
@@ -125,7 +125,7 @@ class Query implements ArrayableInterface, IteratorAggregate
     }
 
     /**
-     * Executes query and returns all records.
+     * Executes query and returns all entities.
      * 
      * "Select all".
      * In case of empty Query returns empty collection.
@@ -170,6 +170,16 @@ class Query implements ArrayableInterface, IteratorAggregate
     /**
      * Looks for a record with the provided id.
      */
+    public function findRecord(?int $id) : ?ORM
+    {
+        return $this
+            ->filterById($id)
+            ->findOne();
+    }
+
+    /**
+     * Looks for an entity with the provided id.
+     */
     public function find(?int $id) : ?DbModel
     {
         return $this
@@ -182,12 +192,11 @@ class Query implements ArrayableInterface, IteratorAggregate
      */
     public function filterById(?int $id) : self
     {
-        return $this
-            ->where($this->idField, $id);
+        return $this->where($this->idField, $id);
     }
-    
+
     /**
-     * Executes query and returns the first record if any.
+     * Executes query and returns the first entity if any.
      * 
      * "Select one".
      * In case of empty query returns null.
@@ -197,9 +206,9 @@ class Query implements ArrayableInterface, IteratorAggregate
         if ($this->isEmpty()) {
             return null;
         }
-        
+
         $obj = $this->getSortedQuery()->findOne();
-        
+
         return $obj
             ? ($this->toModel)($obj)
             : null;
@@ -279,7 +288,7 @@ class Query implements ArrayableInterface, IteratorAggregate
         if ($this->isEmpty()) {
             return 0;
         }
-        
+
         return $this->query->count();
     }
 
@@ -288,13 +297,13 @@ class Query implements ArrayableInterface, IteratorAggregate
      * 
      * In case of empty query returns null.
      */
-    public function create(?array $data = null) : ?ORM
+    public function createRecord(?array $data = null) : ?ORM
     {
         if ($this->isEmpty()) {
             return null;
         }
 
-        return $this->query->create();
+        return $this->query->create($data);
     }
 
     /**

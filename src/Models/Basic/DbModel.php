@@ -46,6 +46,18 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     }
 
     /**
+     * Updates data.
+     *
+     * @return $this
+     */
+    public function update(array $data) : self
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
      * Returns the id of the model.
      * 
      * Use getId() instead of id when $idField is custom.

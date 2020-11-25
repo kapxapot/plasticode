@@ -150,7 +150,7 @@ abstract class IdiormRepository
             $entity = $this->getCachedEntity($id);
         }
 
-        $entity ??= $this->findEntityById($id);
+        $entity ??= $this->baseQuery()->find($id);
 
         if (is_null($entity)) {
             $this->deleteCachedEntity($id);
@@ -224,8 +224,8 @@ abstract class IdiormRepository
     protected function entityToOrmObj(DbModel $entity) : ORM
     {
         $ormObj = ($entity->isPersisted())
-            ? $this->findEntityById($entity->getId())
-            : $this->baseQuery()->create();
+            ? $this->baseQuery()->findRecord($entity->getId())
+            : $this->baseQuery()->createRecord();
 
         $ormObj->set(
             $entity->toArray()
@@ -234,17 +234,53 @@ abstract class IdiormRepository
         return $ormObj;
     }
 
-    private function findEntityById(int $id) : ?DbModel
-    {
-        return $this->baseQuery()->find($id);
-    }
-
     /**
      * Creates a bare entity and hydrates it.
      */
     protected function createEntity(array $data) : DbModel
     {
         $entity = $this->createBareEntity($data);
+
+        return $this->hydrateEntity($entity);
+    }
+
+    /**
+     * Converts {@see ORM} object to entity.
+     * 
+     * If the object is present in cache and
+     * $updateCache !== true, it is loaded from cache.
+     * 
+     * Otherwise, the new entity is created, cached and hydrated.
+     */
+    private function ormObjToEntity(
+        ORM $ormObj,
+        bool $updateCache = false
+    ) : DbModel
+    {
+        $id = $ormObj[$this->idField()];
+        $entity = $this->getCachedEntity($id);
+
+        if ($entity) {
+            // if the entity is cached and doesn't need to be updated,
+            // just return it
+            if (!$updateCache) {
+                return $entity;
+            }
+
+            // otherwise the entity must be updated
+            $entity = $entity->update(
+                $ormObj->asArray()
+            );
+
+            return $this->rehydrateEntity($entity);
+        }
+
+        // create new entity and cache it
+        $entity = $this->createBareEntity(
+            $ormObj->asArray()
+        );
+
+        $this->cacheEntity($entity);
 
         return $this->hydrateEntity($entity);
     }
@@ -266,40 +302,6 @@ abstract class IdiormRepository
     protected function rehydrateEntity(DbModel $entity) : DbModel
     {
         return $entity->hydrate($this->hydrator, true);
-    }
-
-    /**
-     * Converts {@see ORM} object to entity.
-     * 
-     * If the object is present in cache and
-     * $ignoreCache != true, it is loaded from cache.
-     * 
-     * Otherwise, the new entity is created, cached and hydrated.
-     */
-    private function ormObjToEntity(
-        ORM $ormObj,
-        bool $ignoreCache = false
-    ) : DbModel
-    {
-        /** @var DbModel */
-        $entity = null;
-
-        if (!$ignoreCache) {
-            $id = $ormObj[$this->idField()];
-            $entity = $this->getCachedEntity($id);
-        }
-
-        if ($entity) {
-            return $entity;
-        }
-
-        $entity = $this->createBareEntity(
-            $ormObj->asArray()
-        );
-
-        $this->cacheEntity($entity);
-
-        return $this->hydrateEntity($entity);
     }
 
     public function tableAccess() : array
