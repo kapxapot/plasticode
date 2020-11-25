@@ -166,7 +166,7 @@ class Query implements ArrayableInterface, IteratorAggregate
 
         return $statement;
     }
-    
+
     /**
      * Looks for a record with the provided id.
      */
@@ -261,6 +261,14 @@ class Query implements ArrayableInterface, IteratorAggregate
     }
 
     /**
+     * Executes query and checks if there are any records.
+     */
+    public function any() : bool
+    {
+        return $this->count() > 0;
+    }
+
+    /**
      * Executes query and returns record count.
      * 
      * "Select count(*)".
@@ -274,15 +282,21 @@ class Query implements ArrayableInterface, IteratorAggregate
         
         return $this->query->count();
     }
-    
+
     /**
-     * Executes query and checks if there are any records.
+     * Creates a new record (for insert).
+     * 
+     * In case of empty query returns null.
      */
-    public function any() : bool
+    public function create(?array $data = null) : ?ORM
     {
-        return $this->count() > 0;
+        if ($this->isEmpty()) {
+            return null;
+        }
+
+        return $this->query->create();
     }
-    
+
     /**
      * Deletes records based on the query.
      * 
@@ -297,7 +311,7 @@ class Query implements ArrayableInterface, IteratorAggregate
 
         return $this->query->deleteMany();
     }
-    
+
     /**
      * Creates new Query based on the current one
      * plus applied modification.
@@ -323,7 +337,7 @@ class Query implements ArrayableInterface, IteratorAggregate
                 return $result;
             }
         }
-        
+
         // if query modification resulted in another query
         // wrap it and return as a new Query
         return new Query(
@@ -333,7 +347,7 @@ class Query implements ArrayableInterface, IteratorAggregate
             $sortOrder ?? $this->sortOrder
         );
     }
-    
+
     /**
      * Delegates method call to the underlying {@see ORM} query.
      *

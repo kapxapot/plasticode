@@ -150,7 +150,7 @@ abstract class IdiormRepository
             $entity = $this->getCachedEntity($id);
         }
 
-        $entity ??= $this->baseQuery()->find($id);
+        $entity ??= $this->findEntityById($id);
 
         if (is_null($entity)) {
             $this->deleteCachedEntity($id);
@@ -165,11 +165,6 @@ abstract class IdiormRepository
     protected function reloadEntity(?int $id) : ?DbModel
     {
         return $this->getEntity($id, true);
-    }
-
-    private function entityCacheKey(int $id) : string
-    {
-        return $this->getTable() . '_' . $id;
     }
 
     private function getCachedEntity(int $id) : ?DbModel
@@ -193,8 +188,23 @@ abstract class IdiormRepository
         $this->cache->delete($key);
     }
 
+    private function entityCacheKey(int $id) : string
+    {
+        return $this->getTable() . '_' . $id;
+    }
+
     /**
-     * Saves entity, adds it to cache and hydrates it.
+     * Creates a bare entity and saves it (hydrating afterwards).
+     */
+    protected function storeEntity(array $data) : DbModel
+    {
+        $entity = $this->createBareEntity($data);
+
+        return $this->saveEntity($entity);
+    }
+
+    /**
+     * Saves entity, adds it to the cache and hydrates it.
      */
     protected function saveEntity(DbModel $entity) : DbModel
     {
@@ -213,29 +223,20 @@ abstract class IdiormRepository
 
     protected function entityToOrmObj(DbModel $entity) : ORM
     {
-        return $this->db->create(
-            $this->getTable(),
+        $ormObj = ($entity->isPersisted())
+            ? $this->findEntityById($entity->getId())
+            : $this->baseQuery()->create();
+
+        $ormObj->set(
             $entity->toArray()
         );
+
+        return $ormObj;
     }
 
-    /**
-     * Creates a bare entity and saves it (hydrating afterwards).
-     */
-    protected function storeEntity(array $data) : DbModel
+    private function findEntityById(int $id) : ?DbModel
     {
-        $entity = $this->createBareEntity($data);
-
-        return $this->saveEntity($entity);
-    }
-
-    /**
-     * Just creates an entity, no hydration.
-     */
-    private function createBareEntity(array $obj) : DbModel
-    {
-        $entityClass = $this->getEntityClass();
-        return $entityClass::create($obj);
+        return $this->baseQuery()->find($id);
     }
 
     /**
@@ -246,6 +247,15 @@ abstract class IdiormRepository
         $entity = $this->createBareEntity($data);
 
         return $this->hydrateEntity($entity);
+    }
+
+    /**
+     * Just creates an entity, no hydration.
+     */
+    private function createBareEntity(array $data) : DbModel
+    {
+        $entityClass = $this->getEntityClass();
+        return $entityClass::create($data);
     }
 
     protected function hydrateEntity(DbModel $entity) : DbModel
