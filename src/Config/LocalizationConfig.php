@@ -67,6 +67,7 @@ class LocalizationConfig
             'Data already changed. Please reload page.' => "Данные уже изменены. Перезагрузите страницу.",
             'Upload successful.' => "Загрузка успешно завершена.",
             'Tags can\'t contain ?, # or + symbols.' => 'Теги не могут содержать символы ?, # или +.',
+            'Request failed. Please, check your connection.' => 'Не удалось выполнить запрос. Пожалуйста, проверьте ваше соединение.',
 
             // fields
             'login' => 'Логин',

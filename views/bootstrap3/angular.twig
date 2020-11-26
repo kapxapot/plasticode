@@ -147,15 +147,19 @@
                 setLoading(false);
                 setSaving(false);
             }, function(response) {
-                var data = response.data;
-                if (data.error) {
-                    setError(data.message);
-                }
-                else {
-                    let msg = response.status + ' ' + response.statusText;
-                    data = { error: true, message: msg };
+                if (response && response.data) {
+                    var data = response.data;
+                    if (data.error) {
+                        setError(data.message);
+                    }
+                    else {
+                        let msg = response.status + ' ' + response.statusText;
+                        data = { error: true, message: msg };
 
-                    setError(msg);
+                        setError(msg);
+                    }
+                } else {
+                    setError('{{ translate('Request failed. Please, check your connection.') }}');
                 }
 
                 showError();
