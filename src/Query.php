@@ -44,11 +44,6 @@ class Query implements ArrayableInterface, IteratorAggregate
     private ?ORM $query = null;
 
     /**
-     * Id field name.
-     */
-    private ?string $idField = null;
-
-    /**
      * Method for conversion of dbObj to model.
      * 
      * @var callable|null
@@ -64,13 +59,11 @@ class Query implements ArrayableInterface, IteratorAggregate
 
     /**
      * @param ORM|null $query The base query. Can be null for an empty query.
-     * @param string|null $idField Must be provided for non-empty query.
      * @param callable|null $toModel Must be provided for non-empty query.
      * @param SortStep[]|null $sortOrder
      */
     public function __construct(
         ?ORM $query = null,
-        ?string $idField = null,
         ?callable $toModel = null,
         ?array $sortOrder = null
     )
@@ -82,16 +75,10 @@ class Query implements ArrayableInterface, IteratorAggregate
         $this->query = $query;
 
         Assert::notNull(
-            $idField,
-            'Non-empty query requires $idField!'
-        );
-
-        Assert::notNull(
             $toModel,
             'Non-empty query requires toModel() function!'
         );
 
-        $this->idField = $idField;
         $this->toModel = $toModel;
         $this->sortOrder = $sortOrder ?? [];
     }
@@ -165,34 +152,6 @@ class Query implements ArrayableInterface, IteratorAggregate
         $statement = $method->invoke($query);
 
         return $statement;
-    }
-
-    /**
-     * Looks for a record with the provided id.
-     */
-    public function findRecord(?int $id) : ?ORM
-    {
-        return $this
-            ->filterById($id)
-            ->findOne();
-    }
-
-    /**
-     * Looks for an entity with the provided id.
-     */
-    public function find(?int $id) : ?DbModel
-    {
-        return $this
-            ->filterById($id)
-            ->one();
-    }
-
-    /**
-     * Adds filter by id.
-     */
-    public function filterById(?int $id) : self
-    {
-        return $this->where($this->idField, $id);
     }
 
     /**
@@ -293,20 +252,6 @@ class Query implements ArrayableInterface, IteratorAggregate
     }
 
     /**
-     * Creates a new record (for insert).
-     * 
-     * In case of empty query returns null.
-     */
-    public function createRecord(?array $data = null) : ?ORM
-    {
-        if ($this->isEmpty()) {
-            return null;
-        }
-
-        return $this->query->create($data);
-    }
-
-    /**
      * Deletes records based on the query.
      * 
      * "Delete all".
@@ -319,6 +264,18 @@ class Query implements ArrayableInterface, IteratorAggregate
         }
 
         return $this->query->deleteMany();
+    }
+
+    /**
+     * Delegates method call to the underlying {@see ORM} query.
+     *
+     * @return mixed
+     */
+    public function __call(string $name, array $args)
+    {
+        return $this->branch(
+            fn (ORM $q) => $q->{$name}(...$args)
+        );
     }
 
     /**
@@ -337,7 +294,7 @@ class Query implements ArrayableInterface, IteratorAggregate
             return $this;
         }
 
-        if (!is_null($queryModifier)) {
+        if ($queryModifier !== null) {
             $result = $queryModifier($this->query);
 
             // if query resulted in any final result (!= query)
@@ -351,21 +308,8 @@ class Query implements ArrayableInterface, IteratorAggregate
         // wrap it and return as a new Query
         return new Query(
             $result ?? $this->query,
-            $this->idField,
             $this->toModel,
             $sortOrder ?? $this->sortOrder
-        );
-    }
-
-    /**
-     * Delegates method call to the underlying {@see ORM} query.
-     *
-     * @return mixed
-     */
-    public function __call(string $name, array $args)
-    {
-        return $this->branch(
-            fn (ORM $q) => $q->{$name}(...$args)
         );
     }
 

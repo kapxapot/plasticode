@@ -18,7 +18,10 @@ trait ProtectedRepository
     {
         return $this
             ->protectedQuery()
-            ->find($id);
+            ->apply(
+                fn (Query $q) => $this->filterById($q, $id)
+            )
+            ->one();
     }
 
     protected function protectedQuery() : Query

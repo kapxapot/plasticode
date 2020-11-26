@@ -91,14 +91,16 @@ abstract class IdiormRepository
      */
     private function baseQuery() : Query
     {
-        $dbQuery = $this->db->forTable(
-            $this->getTable()
-        );
-
         return new Query(
-            $dbQuery,
-            $this->idField(),
+            $this->getDbQuery(),
             fn (ORM $obj) => $this->ormObjToEntity($obj)
+        );
+    }
+
+    private function getDbQuery() : ORM
+    {
+        return $this->db->forTable(
+            $this->getTable()
         );
     }
 
@@ -150,7 +152,12 @@ abstract class IdiormRepository
             $entity = $this->getCachedEntity($id);
         }
 
-        $entity ??= $this->baseQuery()->find($id);
+        $entity ??= $this
+            ->baseQuery()
+            ->apply(
+                fn (Query $q) => $this->filterById($q, $id)
+            )
+            ->one();
 
         if (is_null($entity)) {
             $this->deleteCachedEntity($id);
@@ -223,15 +230,35 @@ abstract class IdiormRepository
 
     protected function entityToOrmObj(DbModel $entity) : ORM
     {
-        $ormObj = ($entity->isPersisted())
-            ? $this->baseQuery()->findRecord($entity->getId())
-            : $this->baseQuery()->createRecord();
+        /** @var ORM|null */
+        $ormObj = null;
+        
+        if ($entity->isPersisted()) {
+            $ormObj = $this->findRecord($entity->getId());
+        }
+
+        $ormObj ??= $this->createRecord();
 
         $ormObj->set(
             $entity->toArray()
         );
 
         return $ormObj;
+    }
+
+    private function findRecord(int $id) : ?ORM
+    {
+        return $this
+            ->getDbQuery()
+            ->where($this->idField(), $id)
+            ->findOne();
+    }
+
+    private function createRecord() : ORM
+    {
+        return $this
+            ->getDbQuery()
+            ->create();
     }
 
     /**
@@ -347,5 +374,12 @@ abstract class IdiormRepository
         $entityClass = $this->getEntityClass();
 
         return $entityClass::pluralAlias();
+    }
+
+    // filters
+
+    protected function filterById(Query $query, ?int $id) : Query
+    {
+        return $query->where($this->idField(), $id);
     }
 }
