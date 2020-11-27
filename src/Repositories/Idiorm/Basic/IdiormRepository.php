@@ -6,7 +6,7 @@ use ORM;
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Core\Interfaces\CacheInterface;
-use Plasticode\Data\Db;
+use Plasticode\Data\DbMetadata;
 use Plasticode\Data\Rights;
 use Plasticode\Exceptions\InvalidResultException;
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
@@ -41,7 +41,7 @@ abstract class IdiormRepository
     private Access $access;
     private AuthInterface $auth;
     private CacheInterface $cache;
-    private Db $db;
+    private DbMetadata $dbMetadata;
 
     /** @var HydratorInterface|ObjectProxy|null */
     private $hydrator;
@@ -57,7 +57,7 @@ abstract class IdiormRepository
         $this->access = $context->access();
         $this->auth = $context->auth();
         $this->cache = $context->cache();
-        $this->db = $context->db();
+        $this->dbMetadata = $context->dbMetadata();
 
         $this->hydrator = $hydrator;
     }
@@ -99,9 +99,11 @@ abstract class IdiormRepository
 
     private function getDbQuery() : ORM
     {
-        return $this->db->forTable(
+        $tableName = $this->dbMetadata->tableName(
             $this->getTable()
         );
+
+        return ORM::forTable($tableName);
     }
 
     private function getEntityClass() : ?string

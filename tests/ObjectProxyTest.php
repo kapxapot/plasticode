@@ -8,7 +8,7 @@ use Plasticode\Auth\Auth;
 use Plasticode\Core\Cache;
 use Plasticode\Core\Session;
 use Plasticode\Core\SettingsProvider;
-use Plasticode\Data\Db;
+use Plasticode\Data\DbMetadata;
 use Plasticode\Hydrators\TagHydrator;
 use Plasticode\ObjectProxy;
 use Plasticode\Repositories\Idiorm\Basic\RepositoryContext;
@@ -40,7 +40,7 @@ final class ObjectProxyTest extends TestCase
                 new Access(),
                 $auth,
                 $cache,
-                new Db($settingsProvider)
+                new DbMetadata($settingsProvider)
             ),
             new ObjectProxy(
                 fn () =>

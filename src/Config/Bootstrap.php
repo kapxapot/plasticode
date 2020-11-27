@@ -23,6 +23,7 @@ use Plasticode\Core\SettingsProvider;
 use Plasticode\Core\Translator;
 use Plasticode\Data\Api;
 use Plasticode\Data\Db;
+use Plasticode\Data\DbMetadata;
 use Plasticode\Events\EventDispatcher;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\External\Gravatar;
@@ -128,6 +129,11 @@ class Bootstrap
                 $this->settings
             );
 
+        $map['dbMetadata'] = fn (ContainerInterface $c) =>
+            new DbMetadata(
+                $c->settingsProvider
+            );
+
         $map['db'] = function (ContainerInterface $c) {
             $dbs = $this->dbSettings;
 
@@ -160,7 +166,7 @@ class Bootstrap
             ORM::configure($config);
 
             return new Db(
-                $c->settingsProvider
+                $c->dbMetadata
             );
         };
 
@@ -240,7 +246,7 @@ class Bootstrap
                 $c->access,
                 $c->auth,
                 $c->cache,
-                $c->db
+                $c->dbMetadata
             );
 
         $map['authTokenRepository'] = fn (ContainerInterface $c) =>

@@ -115,7 +115,7 @@ class Api
             );
         }
 
-        $settings = $this->db->getTableSettings($table) ?? [];
+        $settings = $this->db->metadata()->tableSettings($table) ?? [];
         
         if (isset($settings['sort'])) {
             $sortBy = $settings['sort'];
@@ -281,28 +281,28 @@ class Api
      */
     private function addUserNames(string $table, array $item) : array
     {
-        if ($this->db->hasField($table, 'created_by')) {
+        if ($this->db->metadata()->hasField($table, 'created_by')) {
             $creator = '[no data]';
 
             if (isset($item['created_by'])) {
                 $created = $this->userRepository->get($item['created_by']);
                 $creator = $created->login ?? $item['created_by'];
             }
-    
+
             $item['created_by_name'] = $creator;
         }
 
-        if ($this->db->hasField($table, 'updated_by')) {
+        if ($this->db->metadata()->hasField($table, 'updated_by')) {
             $updater = '[no data]';
 
             if (isset($item['updated_by'])) {
                 $updated = $this->userRepository->get($item['updated_by']);
                 $updater = $updated->login ?? $item['updated_by'];
             }
-    
+
             $item['updated_by_name'] = $updater;
         }
-        
+
         return $item;
     }
 

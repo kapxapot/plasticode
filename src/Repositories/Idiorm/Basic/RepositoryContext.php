@@ -5,26 +5,26 @@ namespace Plasticode\Repositories\Idiorm\Basic;
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Core\Interfaces\CacheInterface;
-use Plasticode\Data\Db;
+use Plasticode\Data\DbMetadata;
 
 class RepositoryContext
 {
     private Access $access;
     private AuthInterface $auth;
     private CacheInterface $cache;
-    private Db $db;
+    private DbMetadata $dbMetadata;
 
     public function __construct(
         Access $access,
         AuthInterface $auth,
         CacheInterface $cache,
-        Db $db
+        DbMetadata $dbMetadata
     )
     {
         $this->access = $access;
         $this->auth = $auth;
         $this->cache = $cache;
-        $this->db = $db;
+        $this->dbMetadata = $dbMetadata;
     }
 
     public function access() : Access
@@ -42,8 +42,8 @@ class RepositoryContext
         return $this->cache;
     }
 
-    public function db() : Db
+    public function dbMetadata() : DbMetadata
     {
-        return $this->db;
+        return $this->dbMetadata;
     }
 }

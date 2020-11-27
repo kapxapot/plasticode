@@ -3,7 +3,6 @@
 namespace Plasticode\Data;
 
 use ORM;
-use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Util\Date;
 
 /**
@@ -11,71 +10,35 @@ use Plasticode\Util\Date;
  */
 final class Db
 {
-    private SettingsProviderInterface $settingsProvider;
-
-    /**
-     * Tables settings
-     */
-    private ?array $tables = null;
+    private DbMetadata $metadata;
 
     public function __construct(
-        SettingsProviderInterface $settingsProvider
+        DbMetadata $metadata
     )
     {
-        $this->settingsProvider = $settingsProvider;
+        $this->metadata = $metadata;
     }
 
-    public function getTableSettings(string $table) : ?array
+    public function metadata() : DbMetadata
     {
-        if (is_null($this->tables)) {
-            $this->tables = $this->settingsProvider->get('tables');
-        }
-
-        return $this->tables[$table] ?? null;
+        return $this->metadata;
     }
 
-    private function getTableName(string $table) : string
+    public function selectMany(string $tableAlias, array $exclude = null) : ORM
     {
-        $tableSettings = $this->getTableSettings($table);
-        return $tableSettings['table'] ?? $table;
-    }
+        $t = $this->forTable($tableAlias);
+        $fields = $this->metadata->fields($tableAlias);
 
-    public function forTable(string $table) : ORM
-    {
-        $tableName = $this->getTableName($table);
-        
-        return ORM::forTable($tableName);
-    }
-
-    private function fields(string $table) : ?array
-    {
-        $tableSettings = $this->getTableSettings($table);
-        return $tableSettings['fields'] ?? null;
-    }
-
-    public function hasField(string $table, string $field) : bool
-    {
-        $tableSettings = $this->getTableSettings($table);
-        $has = $tableSettings['has'] ?? null;
-
-        return $has && in_array($field, $has);
-    }
-
-    public function selectMany(string $table, array $exclude = null) : ORM
-    {
-        $t = $this->forTable($table);
-        $fields = $this->fields($table);
-        
-        if (!is_null($fields) && !is_null($exclude)) {
+        if ($fields && $exclude) {
             $fields = array_diff($fields, $exclude);
         }
 
-        return !is_null($fields)
+        return $fields
             ? $t->selectMany($fields)
             : $t->selectMany();
     }
 
-    public function filterBy($items, string $field, array $args) : ORM
+    public function filterBy(ORM $items, string $field, array $args) : ORM
     {
         return $items->where($field, $args['id']);
     }
@@ -84,64 +47,59 @@ final class Db
      * Returns new updated_at value for the table,
      * if it has the corresponding field.
      */
-    public function updatedAt(string $table) : ?string
+    public function updatedAt(string $tableAlias) : ?string
     {
-        return $this->hasField($table, 'updated_at')
+        return $this->metadata->hasField($tableAlias, 'updated_at')
             ? Date::dbNow()
             : null;
     }
 
     /**
-     * Updated created_by / updated_by fields if applicable
+     * Updated created_by / updated_by fields if applicable.
      *
      * @param mixed $userId
      */
-    public function stampBy(string $table, array $data, $userId) : array
+    public function stampBy(string $tableAlias, array $data, $userId) : array
     {
         $createdBy = $data['created_by'] ?? null;
 
-        if ($this->hasField($table, 'created_by') && is_null($createdBy)) {
+        if ($this->hasField($tableAlias, 'created_by') && is_null($createdBy)) {
             $data['created_by'] = $userId;
         }
-        
-        if ($this->hasField($table, 'updated_by')) {
+
+        if ($this->hasField($tableAlias, 'updated_by')) {
             $data['updated_by'] = $userId;
         }
 
         return $data;
     }
 
-    public function getObj(string $table, $id, \Closure $where = null) : ORM
+    public function getObj(string $tableAlias, $id, ?callable $where = null) : ORM
     {
         $query = $this
-            ->forTable($table)
+            ->forTable($tableAlias)
             ->where('id', $id);
-            
+
         if ($where) {
             $query = $where($query);
         }
-        
+
         return $query->findOne();
     }
 
-    public function isPublished(array $item) : bool
+    /**
+     * Creates record and fills it with data.
+     */
+    public function create(string $tableAlias, array $data = null) : ORM
     {
-        return isset($item['published_at'])
-            && Date::happened($item['published_at']);
+        return $this->forTable($tableAlias)->create($data);
     }
 
-    /**
-     * Creates record and fills it with data
-     */
-    public function create(string $table, array $data = null) : ORM
+    private function forTable(string $tableAlias) : ORM
     {
-        $item = $this->forTable($table)->create();
-        
-        if ($data) {
-            $item->set($data);
-        }
-        
-        return $item;
+        $tableName = $this->metadata->tableName($tableAlias);
+
+        return ORM::forTable($tableName);
     }
 
     public function getQueryCount() : int
