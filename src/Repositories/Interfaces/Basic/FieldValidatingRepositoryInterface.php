@@ -2,7 +2,7 @@
 
 namespace Plasticode\Repositories\Interfaces\Basic;
 
-interface FieldValidatingRepositoryInterface
+interface FieldValidatingRepositoryInterface extends RepositoryInterface
 {
     /**
      * @param mixed $value

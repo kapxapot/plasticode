@@ -3,6 +3,9 @@
 namespace Plasticode\Models;
 
 use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Interfaces\UpdatedAtInterface;
+use Plasticode\Models\Traits\CreatedAt;
+use Plasticode\Models\Traits\UpdatedAt;
 
 /**
  * @property integer $id
@@ -12,8 +15,11 @@ use Plasticode\Models\Basic\DbModel;
  * @method string url()
  * @method static withUrl(string|callable $url)
  */
-class MenuItem extends DbModel
+class MenuItem extends DbModel implements UpdatedAtInterface
 {
+    use CreatedAt;
+    use UpdatedAt;
+
     protected function requiredWiths(): array
     {
         return ['url'];

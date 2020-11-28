@@ -13,20 +13,18 @@ use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\Basic\DbModel;
 use Plasticode\Query;
+use Plasticode\Repositories\Interfaces\Basic\RepositoryInterface;
+use Plasticode\Traits\EntityRelated;
 use Plasticode\Util\SortStep;
-use Webmozart\Assert\Assert;
 
-abstract class IdiormRepository
+abstract class IdiormRepository implements RepositoryInterface
 {
+    use EntityRelated;
+
     /**
      * Overriden table name.
      */
     protected string $table = '';
-
-    /**
-     * Full entity class name, must be a subclass of {@see DbModel}.
-     */
-    protected string $entityClass = '';
 
     /**
      * Default sort field name.
@@ -67,12 +65,6 @@ abstract class IdiormRepository
         return $this->auth;
     }
 
-    protected function idField() : string
-    {
-        $entityClass = $this->getEntityClass();
-        return $entityClass::idField();
-    }
-
     /**
      * Query with default sort.
      */
@@ -104,13 +96,6 @@ abstract class IdiormRepository
         );
 
         return ORM::forTable($tableName);
-    }
-
-    private function getEntityClass() : ?string
-    {
-        Assert::subclassOf($this->entityClass, DbModel::class);
-
-        return $this->entityClass;
     }
 
     /**
@@ -369,13 +354,9 @@ abstract class IdiormRepository
      */
     public function getTable() : string
     {
-        if (strlen($this->table) > 0) {
-            return $this->table;
-        }
-
-        $entityClass = $this->getEntityClass();
-
-        return $entityClass::pluralAlias();
+        return (strlen($this->table) > 0)
+            ? $this->table
+            : $this->pluralAlias();
     }
 
     // filters

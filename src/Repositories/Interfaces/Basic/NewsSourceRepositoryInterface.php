@@ -5,8 +5,10 @@ namespace Plasticode\Repositories\Interfaces\Basic;
 use Plasticode\Collections\NewsSourceCollection;
 use Plasticode\Models\Interfaces\NewsSourceInterface;
 
-interface NewsSourceRepositoryInterface extends TaggedRepositoryInterface
+interface NewsSourceRepositoryInterface extends ChangingRepositoryInterface, ProtectedRepositoryInterface, TaggedRepositoryInterface
 {
+    function get(?int $id) : ?NewsSourceInterface;
+    function getProtected(?int $id) : ?NewsSourceInterface;
     function getAllByTag(string $tag, int $limit = 0) : NewsSourceCollection;
     function getNewsByTag(string $tag, int $limit = 0) : NewsSourceCollection;
     function getLatestNews(int $limit = 0, int $exceptId = 0) : NewsSourceCollection;

@@ -1,38 +1,43 @@
 <?php
 
-namespace Plasticode\Data;
+namespace Plasticode\Data\Idiorm;
 
+use ORM;
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Collections\Basic\Collection;
 use Plasticode\Core\Response;
+use Plasticode\Data\DbMetadata;
+use Plasticode\Data\Interfaces\ApiInterface;
+use Plasticode\Data\Rights;
 use Plasticode\Exceptions\Http\NotFoundException;
 use Plasticode\Exceptions\Http\AuthorizationException;
-use Plasticode\Generators\EntityGenerator;
+use Plasticode\Generators\Interfaces\EntityGeneratorInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Util\Date;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
-class Api
+class Api implements ApiInterface
 {
     private Access $access;
     private AuthInterface $auth;
-    private Db $db;
+    private DbMetadata $metadata;
     private LoggerInterface $logger;
     private UserRepositoryInterface $userRepository;
 
     public function __construct(
         Access $access,
         AuthInterface $auth,
-        Db $db,
+        DbMetadata $dbMetadata,
         LoggerInterface $logger,
         UserRepositoryInterface $userRepository
     )
     {
         $this->access = $access;
         $this->auth = $auth;
-        $this->db = $db;
+        $this->dbMetadata = $dbMetadata;
         $this->logger = $logger;
         $this->userRepository = $userRepository;
     }
@@ -49,19 +54,17 @@ class Api
     }
 
     /**
-     * Returns entity by id.
-     *
-     * @param string|integer $id
+     * @inheritDoc
      */
     public function get(
         ResponseInterface $response,
-        $id,
-        EntityGenerator $provider
+        int $id,
+        EntityGeneratorInterface $provider
     ) : ResponseInterface
     {
         $table = $provider->getEntity();
 
-        $obj = $this->db->getObj($table, $id);
+        $obj = $this->getObj($table, $id);
 
         if (is_null($obj)) {
             throw new NotFoundException();
@@ -86,11 +89,11 @@ class Api
     }
 
     /**
-     * Returns many entities.
+     * @inheritDoc
      */
     public function getMany(
         ResponseInterface $response,
-        EntityGenerator $provider,
+        EntityGeneratorInterface $provider,
         array $options = []
     ) : ResponseInterface
     {
@@ -107,16 +110,15 @@ class Api
         
         $exclude = $options['exclude'] ?? null;
 
-        $items = $this->db->selectMany($table, $exclude);
+        $items = $this->selectMany($table, $exclude);
 
         if (isset($options['filter'])) {
-            $items = $this->db->filterBy(
-                $items, $options['filter'], $options['args']
-            );
+            $args = $options['args'];
+            $items = $items->where($options['filter'], $args['id']);
         }
 
-        $settings = $this->db->metadata()->tableSettings($table) ?? [];
-        
+        $settings = $this->metadata->tableSettings($table) ?? [];
+
         if (isset($settings['sort'])) {
             $sortBy = $settings['sort'];
 
@@ -148,12 +150,12 @@ class Api
     }
 
     /**
-     * Creates entity.
+     * @inheritDoc
      */
     public function create(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        EntityGenerator $provider
+        EntityGeneratorInterface $provider
     ) : ResponseInterface
     {
         $table = $provider->getEntity();
@@ -176,7 +178,7 @@ class Api
         
         $data = $provider->beforeSave($data);
 
-        $entity = $this->db->create($table, $data);
+        $entity = $this->forTable($table)->create($data);
         $entity->save();
         
         $provider->afterSave($entity->asArray(), $original);
@@ -188,21 +190,19 @@ class Api
     }
 
     /**
-     * Updates entity.
-     *
-     * @param string|integer $id
+     * @inheritDoc
      */
     public function update(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        $id,
-        EntityGenerator $provider
+        int $id,
+        EntityGeneratorInterface $provider
     ) : ResponseInterface
     {
         $table = $provider->getEntity();
         $rights = $this->getRights($table);
 
-        $entity = $this->db->getObj($table, $id);
+        $entity = $this->getObj($table, $id);
 
         if (!$entity) {
             throw new NotFoundException();
@@ -233,26 +233,24 @@ class Api
         $this->logger->info(
             'Updated ' . $table . ': ' . $entity->id
         );
-        
+
         return $this->get($response, $entity->id, $provider);
     }
     
     /**
-     * Deletes entity.
-     *
-     * @param string|integer $id
+     * @inheritDoc
      */
     public function delete(
         ResponseInterface $response,
-        $id,
-        EntityGenerator $provider
+        int $id,
+        EntityGeneratorInterface $provider
     ) : ResponseInterface
     {
         $table = $provider->getEntity();
         $rights = $this->getRights($table);
 
-        $entity = $this->db->getObj($table, $id);
-        
+        $entity = $this->getObj($table, $id);
+
         if (!$entity) {
             throw new NotFoundException();
         }
@@ -272,16 +270,16 @@ class Api
         $this->logger->info(
             'Deleted ' . $table . ': ' . $entity->id
         );
-        
+
         return $response->withStatus(204);
     }
-    
+
     /**
      * Adds user names for created_by / updated_by.
      */
     private function addUserNames(string $table, array $item) : array
     {
-        if ($this->db->metadata()->hasField($table, 'created_by')) {
+        if ($this->metadata->hasField($table, 'created_by')) {
             $creator = '[no data]';
 
             if (isset($item['created_by'])) {
@@ -292,7 +290,7 @@ class Api
             $item['created_by_name'] = $creator;
         }
 
-        if ($this->db->metadata()->hasField($table, 'updated_by')) {
+        if ($this->metadata->hasField($table, 'updated_by')) {
             $updater = '[no data]';
 
             if (isset($item['updated_by'])) {
@@ -329,18 +327,70 @@ class Api
      */
     private function stamps(string $table, array $data) : array
     {
-        $upd = $this->db->updatedAt($table);
+        $upd = $this->metadata->hasField($table, 'updated_at')
+            ? Date::dbNow()
+            : null;
 
         if ($upd) {
             $data['updated_at'] = $upd;
         }
-        
+
         $user = $this->auth->getUser();
 
         if ($user) {
-            $data = $this->db->stampBy($table, $data, $user->getId());
+            $userId = $user->getId();
+            $createdBy = $data['created_by'] ?? null;
+
+            if ($this->metadata->hasField($table, 'created_by') && is_null($createdBy)) {
+                $data['created_by'] = $userId;
+            }
+
+            if ($this->metadata->hasField($table, 'updated_by')) {
+                $data['updated_by'] = $userId;
+            }
         }
 
         return $data;
+    }
+
+    private function selectMany(string $tableAlias, array $exclude = null) : ORM
+    {
+        $t = $this->forTable($tableAlias);
+        $fields = $this->metadata->fields($tableAlias);
+
+        if ($fields && $exclude) {
+            $fields = array_diff($fields, $exclude);
+        }
+
+        return $fields
+            ? $t->selectMany($fields)
+            : $t->selectMany();
+    }
+
+    private function getObj(string $tableAlias, $id, ?callable $where = null) : ORM
+    {
+        $query = $this
+            ->forTable($tableAlias)
+            ->where('id', $id);
+
+        if ($where) {
+            $query = $where($query);
+        }
+
+        return $query->findOne();
+    }
+
+    private function forTable(string $tableAlias) : ORM
+    {
+        $tableName = $this->metadata->tableName($tableAlias);
+
+        return ORM::forTable($tableName);
+    }
+
+    public function getQueryCount() : int
+    {
+        return ORM::forTable(null)
+            ->rawQuery('SHOW STATUS LIKE ?', ['Questions'])
+            ->findOne()['Value'];
     }
 }

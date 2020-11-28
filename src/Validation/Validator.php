@@ -5,7 +5,7 @@ namespace Plasticode\Validation;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Respect\Validation\Exceptions\NestedValidationException;
-use Slim\Http\Request as SlimRequest;
+use Slim\Http\Request;
 
 /**
  * Validator with the optional translation of messages.
@@ -54,10 +54,7 @@ class Validator implements ValidatorInterface
         );
     }
 
-    public function validateRequest(
-        SlimRequest $request,
-        array $rules
-    ) : ValidationResult
+    public function validateRequest(Request $request, array $rules) : ValidationResult
     {
         return $this->validate(
             fn ($field) => $request->getParam($field),

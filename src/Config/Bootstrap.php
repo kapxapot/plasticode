@@ -21,16 +21,20 @@ use Plasticode\Core\Renderer;
 use Plasticode\Core\Session;
 use Plasticode\Core\SettingsProvider;
 use Plasticode\Core\Translator;
-use Plasticode\Data\Api;
-use Plasticode\Data\Db;
 use Plasticode\Data\DbMetadata;
+use Plasticode\Data\Idiorm\Api;
 use Plasticode\Events\EventDispatcher;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\External\Gravatar;
 use Plasticode\External\Telegram;
 use Plasticode\External\Twitch;
 use Plasticode\External\Twitter;
+use Plasticode\Generators\GeneratorContext;
 use Plasticode\Generators\GeneratorResolver;
+use Plasticode\Generators\MenuGenerator;
+use Plasticode\Generators\MenuItemGenerator;
+use Plasticode\Generators\RoleGenerator;
+use Plasticode\Generators\UserGenerator;
 use Plasticode\Handlers\ErrorHandler;
 use Plasticode\Handlers\NotAllowedHandler;
 use Plasticode\Handlers\NotFoundHandler;
@@ -82,11 +86,6 @@ class Bootstrap
     protected array $settings;
 
     /**
-     * Database settings
-     */
-    protected array $dbSettings;
-
-    /**
      * Current directory
      */
     protected string $dir;
@@ -94,16 +93,21 @@ class Bootstrap
     public function __construct(array $settings, string $dir)
     {
         $this->settings = $settings;
-        $this->dbSettings = $this->settings['db'];
         $this->dir = $dir;
     }
 
-    public function fillContainer(ContainerInterface $container) : ContainerInterface
+    /**
+     * - Fill container.
+     * - Init database.
+     * - Register event handlers.
+     */
+    public function boot(ContainerInterface $container) : ContainerInterface
     {
         foreach ($this->getMappings() as $key => $value) {
             $container[$key] = $value;
         }
 
+        $this->initDatabase();
         $this->registerEventHandlers($container);
 
         return $container;
@@ -133,42 +137,6 @@ class Bootstrap
             new DbMetadata(
                 $c->settingsProvider
             );
-
-        $map['db'] = function (ContainerInterface $c) {
-            $dbs = $this->dbSettings;
-
-            $adapter = $dbs['adapter'] ?? null;
-
-            if ($adapter !== 'mysql') {
-                throw new InvalidConfigurationException(
-                    'The only supported DB adapter is MySQL, sorry.'
-                );
-            }
-
-            ORM::configure(
-                'mysql:host=' . $dbs['host'] . ';dbname=' . $dbs['database']
-            );
-
-            $config = [
-                'username' => $dbs['user'],
-                'password' => $dbs['password'] ?? '',
-                'driver_options' => [
-                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
-                ]
-            ];
-
-            $port = $dbs['port'] ?? null;
-
-            if ($port > 0) {
-                $config['port'] = $port;
-            }
-
-            ORM::configure($config);
-
-            return new Db(
-                $c->dbMetadata
-            );
-        };
 
         $map['auth'] = fn (ContainerInterface $c) =>
             new Auth(
@@ -232,10 +200,44 @@ class Bootstrap
                 $c->captchaConfig
             );
 
+        $map['generatorContext'] = fn (ContainerInterface $c) =>
+            new GeneratorContext(
+                $c->settingsProvider,
+                $c->router,
+                $c->api,
+                $c->validator,
+                $c->validationRules
+            );
+
         $map['generatorResolver'] = fn (ContainerInterface $c) =>
             new GeneratorResolver(
-                $c,
-                ['\\App\\Generators']
+                $c
+            );
+
+        $map['menusGenerator'] = fn (ContainerInterface $c) =>
+            new MenuGenerator(
+                $c->generatorContext,
+                $c->menuRepository
+            );
+
+        $map['menuItemsGenerator'] = fn (ContainerInterface $c) =>
+            new MenuItemGenerator(
+                $c->generatorContext,
+                $c->menuRepository,
+                $c->menuItemRepository
+            );
+
+        $map['rolesGenerator'] = fn (ContainerInterface $c) =>
+            new RoleGenerator(
+                $c->generatorContext,
+                $c->roleRepository
+            );
+
+        $map['usersGenerator'] = fn (ContainerInterface $c) =>
+            new UserGenerator(
+                $c->generatorContext,
+                $c->userRepository,
+                $c->userValidation
             );
 
         $map['cases'] = fn (ContainerInterface $c) =>
@@ -433,7 +435,7 @@ class Bootstrap
             new Api(
                 $c->access,
                 $c->auth,
-                $c->db,
+                $c->dbMetadata,
                 $c->logger,
                 $c->userRepository
             );
@@ -598,7 +600,42 @@ class Bootstrap
         return $map;
     }
 
-    public function registerEventHandlers(ContainerInterface $c)
+    public function initDatabase() : void
+    {
+        $dbs = $this->settings['db'];
+
+        $adapter = $dbs['adapter'] ?? null;
+
+        if ($adapter !== 'mysql') {
+            throw new InvalidConfigurationException(
+                'The only supported DB adapter is MySQL, sorry.'
+            );
+        }
+
+        // init Idiorm
+
+        ORM::configure(
+            'mysql:host=' . $dbs['host'] . ';dbname=' . $dbs['database']
+        );
+
+        $config = [
+            'username' => $dbs['user'],
+            'password' => $dbs['password'] ?? '',
+            'driver_options' => [
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+            ]
+        ];
+
+        $port = $dbs['port'] ?? null;
+
+        if ($port > 0) {
+            $config['port'] = $port;
+        }
+
+        ORM::configure($config);
+    }
+
+    public function registerEventHandlers(ContainerInterface $c) : void
     {
     }
 }

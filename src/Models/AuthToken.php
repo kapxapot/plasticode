@@ -3,6 +3,7 @@
 namespace Plasticode\Models;
 
 use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Interfaces\UpdatedAtInterface;
 use Plasticode\Models\Traits\CreatedAt;
 use Plasticode\Models\Traits\UpdatedAt;
 
@@ -14,7 +15,7 @@ use Plasticode\Models\Traits\UpdatedAt;
  * @method User user()
  * @method static withUser(User|callable $user)
 */
-class AuthToken extends DbModel
+class AuthToken extends DbModel implements UpdatedAtInterface
 {
     use CreatedAt;
     use UpdatedAt;

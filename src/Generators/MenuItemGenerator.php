@@ -2,21 +2,36 @@
 
 namespace Plasticode\Generators;
 
+use Plasticode\Generators\Basic\ChangingEntityGenerator;
+use Plasticode\Models\MenuItem;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
-use Psr\Container\ContainerInterface;
 
-class MenuItemsGenerator extends EntityGenerator
+class MenuItemGenerator extends ChangingEntityGenerator
 {
     private MenuRepositoryInterface $menuRepository;
     private MenuItemRepositoryInterface $menuItemRepository;
 
-    public function __construct(ContainerInterface $container, string $entity)
+    public function __construct(
+        GeneratorContext $context,
+        MenuRepositoryInterface $menuRepository,
+        MenuItemRepositoryInterface $menuItemRepository
+    )
     {
-        parent::__construct($container, $entity);
+        parent::__construct($context);
 
-        $this->menuRepository = $container->menuRepository;
-        $this->menuItemRepository = $container->menuItemRepository;
+        $this->menuRepository = $menuRepository;
+        $this->menuItemRepository = $menuItemRepository;
+    }
+
+    protected function entityClass() : string
+    {
+        return MenuItem::class;
+    }
+
+    protected function getRepository() : MenuItemRepositoryInterface
+    {
+        return $this->menuItemRepository;
     }
 
     public function getRules(array $data, $id = null) : array
@@ -44,7 +59,7 @@ class MenuItemsGenerator extends EntityGenerator
     {
         $item = parent::afterLoad($item);
 
-        $id = $item[$this->idField];
+        $id = $item[$this->idField()];
 
         $menuItem = $this->menuItemRepository->get($id);
 

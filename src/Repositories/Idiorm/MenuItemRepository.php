@@ -3,7 +3,6 @@
 namespace Plasticode\Repositories\Idiorm;
 
 use Plasticode\Collections\MenuItemCollection;
-use Plasticode\Models\Menu;
 use Plasticode\Models\MenuItem;
 use Plasticode\Repositories\Idiorm\Basic\IdiormRepository;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
@@ -11,7 +10,13 @@ use Plasticode\Util\SortStep;
 
 class MenuItemRepository extends IdiormRepository implements MenuItemRepositoryInterface
 {
-    protected string $entityClass = MenuItem::class;
+    /**
+     * @inheritDoc
+     */
+    protected function entityClass() : string
+    {
+        return MenuItem::class;
+    }
 
     protected string $parentIdField = 'menu_id';
 

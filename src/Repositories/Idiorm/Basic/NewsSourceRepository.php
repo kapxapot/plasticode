@@ -15,6 +15,11 @@ abstract class NewsSourceRepository extends TaggedRepository implements NewsSour
     protected string $sortField = 'published_at';
     protected bool $sortReverse = true;
 
+    public function get(?int $id) : ?NewsSourceInterface
+    {
+        return $this->getEntity($id);
+    }
+
     // TaggedRepositoryInterface
 
     public function getAllByTag(string $tag, int $limit = 0) : NewsSourceCollection

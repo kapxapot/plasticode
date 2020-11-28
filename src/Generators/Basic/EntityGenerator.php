@@ -3,65 +3,44 @@
 namespace Plasticode\Generators;
 
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
-use Plasticode\Data\Api;
+use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Data\Rights;
+use Plasticode\Generators\Interfaces\EntityGeneratorInterface;
+use Plasticode\Traits\EntityRelated;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Plasticode\Validation\ValidationRules;
-use Psr\Container\ContainerInterface;
 use Respect\Validation\Validator;
 use Slim\App;
-use Slim\Http\Request as SlimRequest;
+use Slim\Http\Request;
 use Slim\Interfaces\RouterInterface;
 
-/**
- * todo: get rid of container
- */
-class EntityGenerator
+abstract class EntityGenerator implements EntityGeneratorInterface
 {
-    protected ContainerInterface $container;
+    use EntityRelated;
 
     protected SettingsProviderInterface $settingsProvider;
     protected RouterInterface $router;
-    protected Api $api;
-
+    protected ApiInterface $api;
     protected ValidatorInterface $validator;
     protected ValidationRules $rules;
 
-    /**
-     * Entity name.
-     */
-    protected string $entity;
-
-    /**
-     * Id field.
-     * 
-     * 'id' by default. Override it if the id field is different.
-     */
-    protected string $idField = 'id';
-
     public function __construct(
-        ContainerInterface $container,
-        string $entity
+        GeneratorContext $context
     )
     {
-        $this->container = $container;
-
-        $this->settingsProvider = $container->settingsProvider;
-        $this->router = $container->router;
-        $this->api = $container->api;
-
-        $this->validator = $container->validator;
-        $this->rules = $container->validationRules;
-
-        $this->entity = $entity;
+        $this->settingsProvider = $context->settingsProvider();
+        $this->router = $context->router();
+        $this->api = $context->api();
+        $this->validator = $context->validator();
+        $this->rules = $context->validationRules();
     }
 
     /**
-     * Get entity name.
+     * Get entity name (plural form in snake case like 'auth_tokens').
      */
     public function getEntity() : string
     {
-        return $this->entity;
+        return $this->pluralAlias();
     }
 
     protected function rule(string $name, bool $optional = false) : Validator
@@ -76,16 +55,11 @@ class EntityGenerator
 
     protected function getRules(array $data, $id = null) : array
     {
-        // todo: dirty & temporary
-        $repository = $this->container[$this->entity . 'Repository'];
-
-        return [
-            'updated_at' => Validator::unchanged($repository, $id),
-        ];
+        return [];
     }
 
     public function validate(
-        SlimRequest $request,
+        Request $request,
         array $data,
         $id = null
     ) : void
@@ -121,10 +95,10 @@ class EntityGenerator
     {
     }
 
-    public function getAdminParams(array $args) : array
+    protected function getAdminParams(array $args) : array
     {
         $params = $this->settingsProvider
-            ->get('entities.' . $this->entity);
+            ->get('entities.' . $this->getEntity());
 
         $params['base'] = $this->router->pathFor('admin.index');
 
@@ -132,14 +106,12 @@ class EntityGenerator
     }
 
     /**
-     * Generate API routes based on settings.
-     *
-     * @param \Closure $access Creates {@see \Plasticode\Middleware\AccessMiddleware}
+     * @inheritDoc
      */
-    public function generateAPIRoutes(App $app, \Closure $access) : void
+    public function generateAPIRoutes(App $app, callable $access) : void
     {
         $api = $this->settingsProvider
-            ->get('tables.' . $this->entity . '.api');
+            ->get('tables.' . $this->getEntity() . '.api');
 
         if (strlen($api) == 0) {
             return;
@@ -161,9 +133,9 @@ class EntityGenerator
     /**
      * Generate API route for loading all entities.
      *
-     * @param \Closure $access Creates {@see \Plasticode\Middleware\AccessMiddleware}
+     * @param callable $access Creates {@see \Plasticode\Middleware\AccessMiddleware}.
      */
-    public function generateGetAllRoute(App $app, \Closure $access) : void
+    private function generateGetAllRoute(App $app, callable $access) : void
     {
         $provider = $this;
 
@@ -175,7 +147,7 @@ class EntityGenerator
         }
 
         $endPoints[] = [
-            'uri' => $this->entity,
+            'uri' => $this->getEntity(),
             'options' => $noFilterOptions,
         ];
 
@@ -203,7 +175,7 @@ class EntityGenerator
                     }
                 )
                 ->add(
-                    $access($this->entity, Rights::API_READ)
+                    $access($this->getEntity(), Rights::API_READ)
                 );
         }
     }
@@ -211,14 +183,14 @@ class EntityGenerator
     /**
      * Generate CRUD routes.
      *
-     * @param \Closure $access Creates {@see \Plasticode\Middleware\AccessMiddleware}
+     * @param callable $access Creates {@see \Plasticode\Middleware\AccessMiddleware}.
      */
-    public function generateCRUDRoutes(App $app, \Closure $access, bool $isFullApi) : void
+    private function generateCRUDRoutes(App $app, callable $access, bool $isFullApi) : void
     {
         $provider = $this;
 
-        $shortPath = '/' . $this->entity;
-        $fullPath = '/' . $this->entity . '/{id:\d+}';
+        $shortPath = '/' . $this->getEntity();
+        $fullPath = '/' . $this->getEntity() . '/{id:\d+}';
 
         $get = $app->get(
             $fullPath,
@@ -231,7 +203,7 @@ class EntityGenerator
 
         if ($access) {
             $get->add(
-                $access($this->entity, Rights::API_READ)
+                $access($this->getEntity(), Rights::API_READ)
             );
         }
 
@@ -268,30 +240,28 @@ class EntityGenerator
 
         if ($access) {
             $post->add(
-                $access($this->entity, Rights::API_CREATE)
+                $access($this->getEntity(), Rights::API_CREATE)
             );
 
             $put->add(
-                $access($this->entity, Rights::API_EDIT)
+                $access($this->getEntity(), Rights::API_EDIT)
             );
 
             $delete->add(
-                $access($this->entity, Rights::API_DELETE)
+                $access($this->getEntity(), Rights::API_DELETE)
             );
         }
     }
 
     /**
-     * Generate admin page route.
-     *
-     * @param \Closure $access Creates {@see \Plasticode\Middleware\AccessMiddleware}
+     * @inheritDoc
      */
-    public function generateAdminPageRoute(App $app, \Closure $access) : void
+    public function generateAdminPageRoute(App $app, callable $access) : void
     {
         $options = $this->getOptions();
         $provider = $this;
 
-        $uri = $options['admin_uri'] ?? $options['uri'] ?? $this->entity;
+        $uri = $options['admin_uri'] ?? $options['uri'] ?? $this->getEntity();
         $adminArgs = $options['admin_args'] ?? null;
 
         $route = $app->get(
@@ -324,7 +294,7 @@ class EntityGenerator
             }
         );
 
-        $route->add($access($this->entity, Rights::READ_OWN, 'admin.index'));
-        $route->setName('admin.entities.' . $this->entity);
+        $route->add($access($this->getEntity(), Rights::READ_OWN, 'admin.index'));
+        $route->setName('admin.entities.' . $this->getEntity());
     }
 }

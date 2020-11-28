@@ -8,7 +8,13 @@ use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
 
 class AuthTokenRepository extends IdiormRepository implements AuthTokenRepositoryInterface
 {
-    protected string $entityClass = AuthToken::class;
+    /**
+     * @inheritDoc
+     */
+    protected function entityClass() : string
+    {
+        return AuthToken::class;
+    }
 
     public function get(?int $id) : ?AuthToken
     {

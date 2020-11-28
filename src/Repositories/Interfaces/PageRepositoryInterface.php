@@ -4,8 +4,9 @@ namespace Plasticode\Repositories\Interfaces;
 
 use Plasticode\Collections\PageCollection;
 use Plasticode\Models\Interfaces\PageInterface;
+use Plasticode\Repositories\Interfaces\Basic\RepositoryInterface;
 
-interface PageRepositoryInterface
+interface PageRepositoryInterface extends RepositoryInterface
 {
     function getBySlug(?string $slug) : ?PageInterface;
 

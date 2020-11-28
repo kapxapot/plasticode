@@ -9,7 +9,13 @@ use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 
 class MenuRepository extends IdiormRepository implements MenuRepositoryInterface
 {
-    protected string $entityClass = Menu::class;
+    /**
+     * @inheritDoc
+     */
+    protected function entityClass() : string
+    {
+        return Menu::class;
+    }
 
     protected string $sortField = 'position';
 

@@ -3,8 +3,9 @@
 namespace Plasticode\Repositories\Interfaces;
 
 use Plasticode\Models\AuthToken;
+use Plasticode\Repositories\Interfaces\Basic\ChangingRepositoryInterface;
 
-interface AuthTokenRepositoryInterface
+interface AuthTokenRepositoryInterface extends ChangingRepositoryInterface
 {
     function get(?int $id) : ?AuthToken;
     function save(AuthToken $authToken) : AuthToken;
