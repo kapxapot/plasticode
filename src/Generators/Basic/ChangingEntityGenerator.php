@@ -2,7 +2,6 @@
 
 namespace Plasticode\Generators\Basic;
 
-use Plasticode\Generators\EntityGenerator;
 use Plasticode\Repositories\Interfaces\Basic\ChangingRepositoryInterface;
 use Respect\Validation\Validator;
 

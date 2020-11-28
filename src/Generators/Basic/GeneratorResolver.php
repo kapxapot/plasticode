@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Generators;
+namespace Plasticode\Generators\Basic;
 
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Generators\Interfaces\EntityGeneratorInterface;

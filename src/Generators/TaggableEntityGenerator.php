@@ -3,6 +3,7 @@
 namespace Plasticode\Generators;
 
 use Plasticode\Generators\Basic\ChangingEntityGenerator;
+use Plasticode\Generators\Basic\GeneratorContext;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\Util\Strings;
 use Respect\Validation\Validator;

@@ -2,6 +2,7 @@
 
 namespace Plasticode\Generators;
 
+use Plasticode\Generators\Basic\EntityGenerator;
 use Plasticode\Models\Role;
 
 class RoleGenerator extends EntityGenerator

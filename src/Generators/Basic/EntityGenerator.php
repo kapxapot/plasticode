@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Generators;
+namespace Plasticode\Generators\Basic;
 
 use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Data\Interfaces\ApiInterface;

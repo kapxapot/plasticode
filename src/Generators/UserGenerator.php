@@ -4,6 +4,7 @@ namespace Plasticode\Generators;
 
 use Plasticode\Core\Security;
 use Plasticode\Generators\Basic\ChangingEntityGenerator;
+use Plasticode\Generators\Basic\GeneratorContext;
 use Plasticode\Models\User;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Validation\Interfaces\ValidationInterface;

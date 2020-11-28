@@ -3,6 +3,7 @@
 namespace Plasticode\Generators;
 
 use Plasticode\Generators\Basic\ChangingEntityGenerator;
+use Plasticode\Generators\Basic\GeneratorContext;
 use Plasticode\Models\Menu;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 
