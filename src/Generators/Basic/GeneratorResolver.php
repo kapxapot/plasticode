@@ -27,7 +27,7 @@ class GeneratorResolver
         $entity = mb_strtolower($entity);
 
         // auth_tokens => authTokens
-        $pascalEntity = Strings::toPascalCase($entity);
+        $pascalEntity = Strings::toCamelCase($entity);
 
         $name = $pascalEntity . 'Generator';
 
