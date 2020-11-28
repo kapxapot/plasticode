@@ -30,14 +30,14 @@ class Api implements ApiInterface
     public function __construct(
         Access $access,
         AuthInterface $auth,
-        DbMetadata $dbMetadata,
+        DbMetadata $metadata,
         LoggerInterface $logger,
         UserRepositoryInterface $userRepository
     )
     {
         $this->access = $access;
         $this->auth = $auth;
-        $this->dbMetadata = $dbMetadata;
+        $this->metadata = $metadata;
         $this->logger = $logger;
         $this->userRepository = $userRepository;
     }
