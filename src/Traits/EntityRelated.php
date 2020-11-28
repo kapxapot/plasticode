@@ -17,7 +17,7 @@ trait EntityRelated
      */
     protected function getEntityClass() : string
     {
-        Assert::subclassOf($this->entityClass, DbModel::class);
+        Assert::subclassOf($this->entityClass(), DbModel::class);
 
         return $this->entityClass();
     }
