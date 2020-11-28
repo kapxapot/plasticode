@@ -229,8 +229,7 @@ class Bootstrap
 
         $map['rolesGenerator'] = fn (ContainerInterface $c) =>
             new RoleGenerator(
-                $c->generatorContext,
-                $c->roleRepository
+                $c->generatorContext
             );
 
         $map['usersGenerator'] = fn (ContainerInterface $c) =>
