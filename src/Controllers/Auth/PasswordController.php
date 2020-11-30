@@ -10,7 +10,7 @@ use Plasticode\Models\Validation\PasswordValidation;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Request as SlimRequest;
+use Slim\Http\Request;
 
 class PasswordController extends Controller
 {
@@ -27,7 +27,10 @@ class PasswordController extends Controller
         $this->passwordValidation = $container->passwordValidation;
     }
 
-    public function postChangePassword(SlimRequest $request, ResponseInterface $response) : ResponseInterface
+    public function postChangePassword(
+        Request $request,
+        ResponseInterface $response
+    ) : ResponseInterface
     {
         $user = $this->auth->getUser();
 

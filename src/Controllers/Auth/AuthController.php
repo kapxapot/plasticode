@@ -13,7 +13,7 @@ use Plasticode\Services\AuthService;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Http\Request as SlimRequest;
+use Slim\Http\Request;
 use Webmozart\Assert\Assert;
 
 class AuthController extends Controller
@@ -75,7 +75,7 @@ class AuthController extends Controller
     }
 
     public function postSignIn(
-        SlimRequest $request,
+        Request $request,
         ResponseInterface $response
     ) : ResponseInterface
     {

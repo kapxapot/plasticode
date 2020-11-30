@@ -8,7 +8,8 @@ use Plasticode\Exceptions\Http\BadRequestException;
 use Plasticode\IO\Image;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Request as SlimRequest;
+use Slim\Http\Request;
+use ZipArchive;
 
 abstract class ImageUploadController extends Controller
 {
@@ -18,7 +19,7 @@ abstract class ImageUploadController extends Controller
     }
 
     public function upload(
-        SlimRequest $request,
+        Request $request,
         ResponseInterface $response
     ) : ResponseInterface
     {
@@ -67,12 +68,12 @@ abstract class ImageUploadController extends Controller
      */
     protected function extractAndProcessImages(
         string $zipName,
-        \Closure $process
+        callable $process
     ) : array
     {
         $images = [];
 
-        $zip = new \ZipArchive;
+        $zip = new ZipArchive;
         $result = $zip->open($zipName);
 
         if ($result === true) {

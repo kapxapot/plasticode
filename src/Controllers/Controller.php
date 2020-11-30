@@ -11,7 +11,7 @@ use Plasticode\Util\Arrays;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use Slim\Http\Request as SlimRequest;
+use Slim\Http\Request;
 use Webmozart\Assert\Assert;
 
 /**
@@ -145,7 +145,7 @@ abstract class Controller
         return $this->view->render($response, $template, $data);
     }
 
-    protected function validate(SlimRequest $request, array $rules) : void
+    protected function validate(Request $request, array $rules) : void
     {
         $this
             ->validator
