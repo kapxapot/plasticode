@@ -2,11 +2,14 @@
 
 namespace Plasticode\Parsing;
 
+use InvalidArgumentException;
 use Plasticode\Collections\ContentsItemCollection;
 use Webmozart\Assert\Assert;
 
 /**
  * Context for TitlesStep parsing.
+ * 
+ * Accumulates contents items and tracks the paragraph count.
  */
 class TitlesContext
 {
@@ -17,6 +20,9 @@ class TitlesContext
     /** @var integer[] */
     private array $count = [];
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function __construct(int $minLevel, int $maxLevel)
     {
         Assert::greaterThan($minLevel, 0);
@@ -32,6 +38,8 @@ class TitlesContext
 
     /**
      * Increments count for $level and zeroes all next counts.
+     * 
+     * @throws InvalidArgumentException
      */
     public function incCount(int $level) : void
     {
@@ -55,6 +63,8 @@ class TitlesContext
      * Returns count slice from start to $level.
      *
      * @return integer[]
+     * 
+     * @throws InvalidArgumentException
      */
     public function getCountSlice(int $level) : array
     {
@@ -65,6 +75,8 @@ class TitlesContext
 
     /**
      * Checks that $level is in [$this->minLevel, $this->maxLevel] range.
+     * 
+     * @throws InvalidArgumentException
      */
     private function checkLevel(int $level) : void
     {

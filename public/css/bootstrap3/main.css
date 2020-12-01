@@ -618,6 +618,10 @@ fieldset[disabled] .btn-primary.focus {
     margin-left: 6rem;
 }
 
+.contents--level5 {
+    margin-left: 8rem;
+}
+
 /* charts */
 
 @media (max-width: 767px) {

@@ -17,7 +17,7 @@ class TitlesStep extends BaseStep
     private ParsingStepInterface $lineParser;
 
     /**
-     * @param ParsingStepInterface $lineParser Parser of [] and [[]] brackets
+     * @param ParsingStepInterface $lineParser Parser of [] and [[]] brackets.
      */
     public function __construct(
         RendererInterface $renderer,

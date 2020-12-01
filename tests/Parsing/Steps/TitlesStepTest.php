@@ -56,9 +56,9 @@ final class TitlesStepTest extends ParsingStepTestCase
 
         $this->assertEquals(
             [
-                '<p class="subtitle subtitle1" id="1">Title</p>',
+                '<h2 id="1">Title</h2>',
                 '[b]Hello[/b]',
-                '<p class="subtitle subtitle1" id="2">Some more</p>',
+                '<h2 id="2">Some more</h2>',
                 'Yay text lol'
             ],
             $resultLines
@@ -117,11 +117,11 @@ final class TitlesStepTest extends ParsingStepTestCase
         $this->assertEquals(
             [
                 '# Title',
-                '<p class="subtitle subtitle1" id="1">Title</p>',
-                '<p class="subtitle subtitle2" id="1_1">Title</p>',
-                '<p class="subtitle subtitle3" id="1_1_1">Title</p>',
-                '<p class="subtitle subtitle4" id="1_1_1_1">Title</p>',
-                '<p class="subtitle subtitle5" id="1_1_1_1_1">Title</p>',
+                '<h2 id="1">Title</h2>',
+                '<h3 id="1_1">Title</h3>',
+                '<h4 id="1_1_1">Title</h4>',
+                '<h5 id="1_1_1_1">Title</h5>',
+                '<h6 id="1_1_1_1_1">Title</h6>',
                 '####### Title',
             ],
             $resultLines
@@ -139,7 +139,7 @@ final class TitlesStepTest extends ParsingStepTestCase
 
         $this->assertEquals(
             [
-                '<p class="subtitle subtitle1">Title</p>',
+                '<h2>Title</h2>',
             ],
             $resultLines
         );
@@ -172,13 +172,13 @@ final class TitlesStepTest extends ParsingStepTestCase
         $this->assertEquals(
             [
                 '|Title|',
-                '<p class="subtitle subtitle1" id="1">Title</p>',
-                '<p class="subtitle subtitle1" id="2">Title</p>',
-                '<p class="subtitle subtitle2" id="2_1">Title</p>',
-                '<p class="subtitle subtitle3" id="2_1_1">Title</p>',
-                '<p class="subtitle subtitle4" id="2_1_1_1">Title</p>',
-                '<p class="subtitle subtitle5" id="2_1_1_1_1">Title</p>',
-                '<p class="subtitle subtitle5" id="2_1_1_1_2">Title</p>',
+                '<h2 id="1">Title</h2>',
+                '<h2 id="2">Title</h2>',
+                '<h3 id="2_1">Title</h3>',
+                '<h4 id="2_1_1">Title</h4>',
+                '<h5 id="2_1_1_1">Title</h5>',
+                '<h6 id="2_1_1_1_1">Title</h6>',
+                '<h6 id="2_1_1_1_2">Title</h6>',
             ],
             $resultLines
         );

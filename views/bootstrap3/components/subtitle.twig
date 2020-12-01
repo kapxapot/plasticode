@@ -1,3 +1,8 @@
 {% if text %}
-    <p class="subtitle subtitle{{ level ?? 1 }}"{% if label %} id="{{ label }}"{% endif %}>{{ text|raw }}</p>
+    {% set level = (level ?? 0) + 1 %}
+    {% if level <= 6 %}
+        <h{{ level }}{% if label %} id="{{ label }}"{% endif %}>{{ text|raw }}</h{{ level }}>
+    {% else %}
+        <p class="subtitle subtitle{{ level }}"{% if label %} id="{{ label }}"{% endif %}>{{ text|raw }}</p>
+    {% endif %}
 {% endif %}
