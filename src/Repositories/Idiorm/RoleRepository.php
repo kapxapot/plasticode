@@ -8,9 +8,6 @@ use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
 
 class RoleRepository extends IdiormRepository implements RoleRepositoryInterface
 {
-    /**
-     * @inheritDoc
-     */
     protected function entityClass() : string
     {
         return Role::class;

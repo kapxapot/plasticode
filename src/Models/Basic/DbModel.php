@@ -74,9 +74,6 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
         return $this->getId() > 0;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function isPersisted() : bool
     {
         return $this->hasId();

@@ -19,8 +19,5 @@ abstract class Validation implements ValidationInterface
         return $this->validationRules->get($name, $optional);
     }
 
-    /**
-     * @inheritDoc
-     */
     abstract public function getRules(array $data, $id = null) : array;
 }

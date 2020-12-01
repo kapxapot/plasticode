@@ -11,9 +11,6 @@ use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 
 class TagRepository extends IdiormRepository implements TagRepositoryInterface
 {
-    /**
-     * @inheritDoc
-     */
     protected function entityClass() : string
     {
         return Tag::class;

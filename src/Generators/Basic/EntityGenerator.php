@@ -105,9 +105,6 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         return $params;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function generateAPIRoutes(App $app, callable $access) : void
     {
         $api = $this->settingsProvider
@@ -253,9 +250,6 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         }
     }
 
-    /**
-     * @inheritDoc
-     */
     public function generateAdminPageRoute(App $app, callable $access) : void
     {
         $options = $this->getOptions();

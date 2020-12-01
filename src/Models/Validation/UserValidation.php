@@ -21,9 +21,6 @@ class UserValidation extends Validation
         $this->userRepository = $userRepository;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getRules(array $data, $id = null) : array
     {
         return [

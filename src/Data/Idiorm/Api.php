@@ -53,9 +53,6 @@ class Api implements ApiInterface
         );
     }
 
-    /**
-     * @inheritDoc
-     */
     public function get(
         ResponseInterface $response,
         int $id,
@@ -88,9 +85,6 @@ class Api implements ApiInterface
         return Response::json($response, $item);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getMany(
         ResponseInterface $response,
         EntityGeneratorInterface $provider,
@@ -149,9 +143,6 @@ class Api implements ApiInterface
         return Response::json($response, $items, $options);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function create(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -189,9 +180,6 @@ class Api implements ApiInterface
             ->withStatus(201);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function update(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -236,10 +224,7 @@ class Api implements ApiInterface
 
         return $this->get($response, $entity->id, $provider);
     }
-    
-    /**
-     * @inheritDoc
-     */
+
     public function delete(
         ResponseInterface $response,
         int $id,

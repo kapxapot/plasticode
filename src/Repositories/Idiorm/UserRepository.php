@@ -8,9 +8,6 @@ use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 
 class UserRepository extends IdiormRepository implements UserRepositoryInterface
 {
-    /**
-     * @inheritDoc
-     */
     protected function entityClass() : string
     {
         return User::class;

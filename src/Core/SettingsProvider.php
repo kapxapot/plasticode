@@ -19,9 +19,6 @@ class SettingsProvider implements SettingsProviderInterface
         $this->settings = $settings ?? [];
     }
 
-    /**
-     * @inheritDoc
-     */
     public function get(string $path, $default = null)
     {
         return Arrays::get($this->settings, $path) ?? $default;

@@ -10,9 +10,6 @@ use Plasticode\Util\SortStep;
 
 class MenuItemRepository extends IdiormRepository implements MenuItemRepositoryInterface
 {
-    /**
-     * @inheritDoc
-     */
     protected function entityClass() : string
     {
         return MenuItem::class;

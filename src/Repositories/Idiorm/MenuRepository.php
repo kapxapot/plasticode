@@ -9,9 +9,6 @@ use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 
 class MenuRepository extends IdiormRepository implements MenuRepositoryInterface
 {
-    /**
-     * @inheritDoc
-     */
     protected function entityClass() : string
     {
         return Menu::class;

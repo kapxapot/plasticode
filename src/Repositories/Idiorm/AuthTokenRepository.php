@@ -8,9 +8,6 @@ use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
 
 class AuthTokenRepository extends IdiormRepository implements AuthTokenRepositoryInterface
 {
-    /**
-     * @inheritDoc
-     */
     protected function entityClass() : string
     {
         return AuthToken::class;
