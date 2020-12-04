@@ -3,31 +3,22 @@
 namespace Plasticode\Tests\Parsing\Steps;
 
 use Plasticode\Parsing\Interfaces\ParsingStepInterface;
-use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Parsing\Steps\TitlesStep;
 
 final class TitlesStepTest extends ParsingStepTestCase
 {
-    /** @var ParsingStepInterface */
-    private $lineParser;
-
-    /** @var TitlesStep */
-    private $step;
+    private TitlesStep $step;
 
     protected function setUp() : void
     {
         parent::setUp();
 
-        // dummy parser for now
-        $this->lineParser = new CompositeParser();
-
-        $this->step = new TitlesStep($this->renderer, $this->lineParser);
+        $this->step = new TitlesStep($this->renderer);
     }
 
     protected function tearDown() : void
     {
         unset($this->step);
-        unset($this->lineParser);
 
         parent::tearDown();
     }

@@ -8,16 +8,26 @@ class ReplacesConfig implements ReplacesConfigInterface
 {
     public function getCleanupReplaces() : array
     {
+        $br = '\<br\/\>';
+        $pOpen = '\<p\>';
+        $pClose = '\<\/p\>';
+        $hOpen = '\<(h[2-6])';
+        $hClose = '\<\/(h[2-6])\>';
+
         return [
-            '\<\/p\>\<br\/\>' => '</p><p>',
-            '(\<p\>)+\<p' => '<p',
-            '(\<\/p\>)+' => '</p>',
-            '\<p\>\<(div|figure)' => '<$2',
-            '\<\/(div|figure)\>\<\/p\>' => '</$2>',
-            '\<br\/\>\<div' => '<div',
-            '\<\/div\>\<br\/\>' => '</div>',
-            '\<p\>\<(u|o)l\>' => '<$2l>',
-            '\<\/(u|o)l\>\<\/p\>' => '</$2l>',
+            $pClose . $br => '</p><p>',
+            '(' . $pOpen . ')+\<p' => '<p',
+            '(' . $pClose . ')+' => '</p>',
+            $pOpen . '\<(div|figure)' => '<$2',
+            '\<\/(div|figure)\>' . $pClose => '</$2>',
+            $br . '\<div' => '<div',
+            '\<\/div\>' . $br => '</div>',
+            $pOpen . '\<(ul|ol)\>' => '<$2>',
+            '\<\/(ul|ol)\>' . $pClose => '</$2>',
+            $br . $hOpen => '</p><$2',
+            $hClose . $br => '</$2><p>',
+            $pOpen . $hOpen => '<$2',
+            $hClose . $pClose => '</$2>',
         ];
     }
 

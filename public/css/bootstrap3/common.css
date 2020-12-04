@@ -40,9 +40,7 @@
 
     --bs-modal-z-index: 1050;
 
-    /* move this to warcry.ru stylesheet */
-    --bluepost-color: #00bfff;
-    --bluepost-quote-border-color: #2db32d;
+    --line-height: 1.42857143;
 }
 
 html {
@@ -257,8 +255,34 @@ textarea.form-control {
     padding-top: 0;
 }
 
-.article p {
-    margin-bottom: 1rem;
+.article p,
+.article h2,
+.article h3,
+.article h4,
+.article h5,
+.article h6 {
+    margin: 0 0 1rem;
+    line-height: var(--line-height);
+}
+
+.article h2,
+.article h3,
+.article h4,
+.article h5,
+.article h6 {
+    font-weight: bolder;
+}
+
+.article h2 {
+    font-size: 140%;
+    padding-top: 1.5rem;
+}
+
+.article h3,
+.article h4,
+.article h5,
+.article h6 {
+    padding-top: 0.5rem;
 }
 
 .article p:first-child {
@@ -510,21 +534,6 @@ a.gray:hover {
 
 .quote .spoiler {
     background-color: inherit;
-}
-
-/* move to warcry.ru stylesheet */
-.quote--bluepost .collapse__header,
-.quote--bluepost .collapse__header:visited,
-.quote--bluepost .collapse__header:active,
-.quote--bluepost .collapse__header:focus,
-.quote--bluepost .collapse__header:hover {
-    color: var(--bluepost-color);
-}
-
-/* move to warcry.ru stylesheet */
-.quote--bluepost .quote {
-    background-color: var(--gray-3);
-    border-left: 4px solid var(--bluepost-quote-border-color);
 }
 
 /* article */

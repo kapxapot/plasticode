@@ -14,14 +14,15 @@ class TitlesStep extends BaseStep
     private const MAX_LEVEL = 6;
 
     private RendererInterface $renderer;
-    private ParsingStepInterface $lineParser;
+    private ?ParsingStepInterface $lineParser;
 
     /**
-     * @param ParsingStepInterface $lineParser Parser of [] and [[]] brackets.
+     * @param ParsingStepInterface $lineParser If the line itself must be parsed
+     * additionally (e.g., to parse [] and [[]] brackets), provide a line parser.
      */
     public function __construct(
         RendererInterface $renderer,
-        ParsingStepInterface $lineParser
+        ?ParsingStepInterface $lineParser = null
     )
     {
         $this->renderer = $renderer;
@@ -98,10 +99,12 @@ class TitlesStep extends BaseStep
             );
         }
 
-        // parse brackets (!)
-        $parsedContent = $this->lineParser->parse($content);
+        // parse line, if the parser is provided
+        $parsedContent = $this->lineParser
+            ? $this->lineParser->parse($content)->text
+            : $content;
 
-        $contentsLine = new ContentsItem($level - 1, $label, $parsedContent->text);
+        $contentsLine = new ContentsItem($level - 1, $label, $parsedContent);
 
         if ($withContents) {
             $context->addContents($contentsLine);

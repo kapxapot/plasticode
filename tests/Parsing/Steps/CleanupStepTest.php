@@ -7,8 +7,7 @@ use Plasticode\Parsing\Steps\CleanupStep;
 
 final class CleanupStepTest extends ParsingStepTestCase
 {
-    /** @var CleanupStep */
-    private $step;
+    private CleanupStep $step;
 
     protected function setUp() : void
     {

@@ -8,8 +8,7 @@ use Plasticode\Tests\BaseRenderTestCase;
 
 abstract class BaseParsingRenderTestCase extends BaseRenderTestCase
 {
-    /** @var ReplacesConfigInterface */
-    protected $config;
+    protected ReplacesConfigInterface $config;
 
     protected function setUp() : void
     {

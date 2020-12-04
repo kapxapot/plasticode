@@ -7,8 +7,7 @@ use Plasticode\Parsing\ParsingContext;
 
 class ReplacesStep extends BaseStep
 {
-    /** @var ReplacesConfigInterface */
-    protected $config;
+    protected ReplacesConfigInterface $config;
 
     public function __construct(ReplacesConfigInterface $config)
     {
@@ -24,7 +23,7 @@ class ReplacesStep extends BaseStep
         foreach ($replaces as $from => $to) {
             $context->text = str_replace($from, $to, $context->text);
         }
-        
+
         return $context;
     }
 }
