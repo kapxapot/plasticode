@@ -2,6 +2,10 @@
 
 namespace Plasticode\Util;
 
+use DateInterval;
+use DateTime;
+use DateTimeZone;
+
 class Date
 {
     const DATE_FORMAT = 'Y-m-d H:i:s';
@@ -57,31 +61,31 @@ class Date
      * Converts to \DateTime with time zone.
      * null = now()
      *
-     * @param string|\DateTime|null $date
+     * @param string|DateTime|null $date
      */
-    public static function dt($date = null, ?string $timeZone = null) : \DateTime
+    public static function dt($date = null, ?string $timeZone = null) : DateTime
     {
         $tz = (!is_null($timeZone))
-            ? new \DateTimeZone($timeZone)
+            ? new DateTimeZone($timeZone)
             : null;
         
-        return ($date instanceof \DateTime)
+        return ($date instanceof DateTime)
             ? ($tz
                 ? self::toTimeZone($date, $tz)
                 : $date)
-            : new \DateTime($date, $tz);
+            : new DateTime($date, $tz);
     }
 
     /**
      * Sets time zone.
      *
-     * @param string|\DateTime $date
-     * @param string|\DateTimeZone $timeZone
+     * @param string|DateTime $date
+     * @param string|DateTimeZone $timeZone
      */
-    public static function toTimeZone($date, $timeZone) : \DateTime
+    public static function toTimeZone($date, $timeZone) : DateTime
     {
-        if (!($timeZone instanceof \DateTimeZone)) {
-            $timeZone = new \DateTimeZone($timeZone);
+        if (!($timeZone instanceof DateTimeZone)) {
+            $timeZone = new DateTimeZone($timeZone);
         }
         
         $copy = clone self::dt($date);
@@ -90,12 +94,12 @@ class Date
         return $copy;
     }
 
-    public static function utc($date = null) : \DateTime
+    public static function utc($date = null) : DateTime
     {
         return self::dt($date, 'UTC');
     }
 
-    public static function fromUtc($utc) : \DateTime
+    public static function fromUtc($utc) : DateTime
     {
         return self::toTimeZone($utc, date_default_timezone_get());
     }
@@ -103,7 +107,7 @@ class Date
     /**
      * Formats date as ISO.
      *
-     * @param string|\DateTime|null $date
+     * @param string|DateTime|null $date
      */
     public static function iso($date = null) : string
     {
@@ -112,11 +116,11 @@ class Date
         );
     }
 
-    public static function interval($interval) : \DateInterval
+    public static function interval($interval) : DateInterval
     {
-        return ($interval instanceof \DateInterval)
+        return ($interval instanceof DateInterval)
             ? $interval
-            : new \DateInterval($interval);
+            : new DateInterval($interval);
     }
 
     public static function dbNow() : string
@@ -124,8 +128,11 @@ class Date
         return self::formatDb(self::dt());
     }
 
-    // null = now()
-    public static function diff($start, $end = null) : \DateInterval
+    /**
+     * @param string|DateTime $start
+     * @param string|DateTime $end null = now()
+     */
+    public static function diff($start, $end = null) : DateInterval
     {
         $startDate = self::dt($start);
         $endDate = self::dt($end);
@@ -133,7 +140,7 @@ class Date
         return $startDate->diff($endDate);
     }
 
-    public static function age($date) : \DateInterval
+    public static function age($date) : DateInterval
     {
         return self::diff($date);
     }
@@ -239,7 +246,7 @@ class Date
         return $str ?? (($lang == 'en') ? 'never' : 'неизвестно когда');
     }
 
-    public static function startOfHour($date) : \DateTime
+    public static function startOfHour($date) : DateTime
     {
         $copy = clone self::dt($date);
         $hour = self::hour($copy);
@@ -248,7 +255,7 @@ class Date
         return $copy;
     }
 
-    public static function stripTime($date) : \DateTime
+    public static function stripTime($date) : DateTime
     {
         $copy = clone self::dt($date);
         $copy->setTime(0, 0, 0);
@@ -256,12 +263,12 @@ class Date
         return $copy;
     }
 
-    public static function startOfDay($date) : \DateTime
+    public static function startOfDay($date) : DateTime
     {
         return self::stripTime($date);
     }
 
-    public static function endOfDay($date) : \DateTime
+    public static function endOfDay($date) : DateTime
     {
         $copy = clone self::dt($date);
         $copy->setTime(23, 59, 59);
@@ -282,11 +289,11 @@ class Date
     /**
      * Formats date in ISO format.
      *
-     * @param string|\DateTime $date
+     * @param string|DateTime $date
      */
     public static function formatIso($date) : string
     {
-        return ($date instanceof \DateTime)
+        return ($date instanceof DateTime)
             ? $date->format('c')
             : strftime('%FT%T%z', $date);
     }
