@@ -3,6 +3,7 @@
 namespace Plasticode\Models;
 
 use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Interfaces\CreatedAtInterface;
 use Plasticode\Models\Interfaces\UpdatedAtInterface;
 use Plasticode\Models\Traits\CreatedAt;
 use Plasticode\Models\Traits\UpdatedAt;
@@ -15,7 +16,7 @@ use Plasticode\Models\Traits\UpdatedAt;
  * @method string url()
  * @method static withUrl(string|callable $url)
  */
-class MenuItem extends DbModel implements UpdatedAtInterface
+class MenuItem extends DbModel implements CreatedAtInterface, UpdatedAtInterface
 {
     use CreatedAt;
     use UpdatedAt;
