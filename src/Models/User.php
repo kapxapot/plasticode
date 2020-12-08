@@ -25,7 +25,7 @@ class User extends DbModel implements CreatedAtInterface, UpdatedAtInterface
     use CreatedAt;
     use UpdatedAt;
 
-    protected function requiredWiths(): array
+    protected function requiredWiths() : array
     {
         return ['gravatarUrl', 'role'];
     }

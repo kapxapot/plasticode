@@ -21,7 +21,7 @@ class AuthToken extends DbModel implements CreatedAtInterface, UpdatedAtInterfac
     use CreatedAt;
     use UpdatedAt;
 
-    protected function requiredWiths(): array
+    protected function requiredWiths() : array
     {
         return ['user'];
     }

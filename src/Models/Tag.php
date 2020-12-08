@@ -16,7 +16,7 @@ use Plasticode\Util\Strings;
  */
 class Tag extends DbModel implements SerializableInterface
 {
-    protected function requiredWiths(): array
+    protected function requiredWiths() : array
     {
         return ['url'];
     }

@@ -31,7 +31,7 @@ abstract class NewsSource extends DbModel implements NewsSourceInterface, Search
     protected string $parsedPropertyName = 'parsed';
     protected string $shortTextPropertyName = 'shortText';
 
-    protected function requiredWiths(): array
+    protected function requiredWiths() : array
     {
         return [
             $this->creatorPropertyName,
