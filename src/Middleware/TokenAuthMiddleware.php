@@ -22,6 +22,11 @@ class TokenAuthMiddleware
         $next
     ) : ResponseInterface
     {
+        // check if already authenticated (by cookie?)
+        if ($this->authService->check()) {
+            return $next($request, $response);
+        }
+
         $tokenLine = $request->getHeaderLine('Authorization');
         $lineParts = explode(' ', $tokenLine);
         
