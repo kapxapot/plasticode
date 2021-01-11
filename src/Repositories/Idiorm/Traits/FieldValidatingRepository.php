@@ -2,17 +2,17 @@
 
 namespace Plasticode\Repositories\Idiorm\Traits;
 
-use Plasticode\Query;
+use Plasticode\Data\Query;
 
 /**
- * Implements {@see \Plasticode\Repositories\Interfaces\Basic\FieldValidatingRepositoryInterface}.
+ * Implements {@see \Plasticode\Repositories\Interfaces\Generic\FieldValidatingRepositoryInterface}.
  */
 trait FieldValidatingRepository
 {
     /**
      * @param mixed $value
      */
-    public function isValidField(string $field, $value, ?int $exceptId = null) : bool
+    public function isValidField(string $field, $value, ?int $exceptId = null): bool
     {
         $query = $this
             ->query()
@@ -25,7 +25,7 @@ trait FieldValidatingRepository
         return $query->count() == 0;
     }
 
-    abstract protected function query() : Query;
+    abstract protected function query(): Query;
 
-    abstract protected function idField() : string;
+    abstract protected function idField(): string;
 }

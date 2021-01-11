@@ -3,12 +3,12 @@
 namespace Plasticode\Services;
 
 use Plasticode\Auth\Interfaces\AuthInterface;
-use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Core\Security;
 use Plasticode\Exceptions\Http\AuthenticationException;
 use Plasticode\Models\AuthToken;
 use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Util\Date;
 
 class AuthService

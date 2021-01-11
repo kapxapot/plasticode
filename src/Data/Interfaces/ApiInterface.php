@@ -15,7 +15,7 @@ interface ApiInterface
         ResponseInterface $response,
         int $id,
         EntityGeneratorInterface $provider
-    ) : ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * Returns many entities.
@@ -24,7 +24,7 @@ interface ApiInterface
         ResponseInterface $response,
         EntityGeneratorInterface $provider,
         array $options = []
-    ) : ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * Creates entity.
@@ -33,7 +33,7 @@ interface ApiInterface
         ServerRequestInterface $request,
         ResponseInterface $response,
         EntityGeneratorInterface $provider
-    ) : ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * Updates entity.
@@ -43,8 +43,8 @@ interface ApiInterface
         ResponseInterface $response,
         int $id,
         EntityGeneratorInterface $provider
-    ) : ResponseInterface;
-    
+    ): ResponseInterface;
+
     /**
      * Deletes entity.
      */
@@ -52,5 +52,5 @@ interface ApiInterface
         ResponseInterface $response,
         int $id,
         EntityGeneratorInterface $provider
-    ) : ResponseInterface;
+    ): ResponseInterface;
 }

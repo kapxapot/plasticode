@@ -3,8 +3,8 @@
 namespace Plasticode\Generators;
 
 use Plasticode\Core\Security;
-use Plasticode\Generators\Basic\ChangingEntityGenerator;
-use Plasticode\Generators\Basic\GeneratorContext;
+use Plasticode\Generators\Core\GeneratorContext;
+use Plasticode\Generators\Generic\ChangingEntityGenerator;
 use Plasticode\Models\User;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Validation\Interfaces\ValidationInterface;
@@ -28,17 +28,17 @@ class UserGenerator extends ChangingEntityGenerator
         $this->userValidation = $userValidation;
     }
 
-    protected function entityClass() : string
+    protected function entityClass(): string
     {
         return User::class;
     }
 
-    protected function getRepository() : UserRepositoryInterface
+    protected function getRepository(): UserRepositoryInterface
     {
         return $this->userRepository;
     }
 
-    public function getRules(array $data, $id = null) : array
+    public function getRules(array $data, $id = null): array
     {
         return array_merge(
             parent::getRules($data, $id),
@@ -46,7 +46,7 @@ class UserGenerator extends ChangingEntityGenerator
         );
     }
 
-    public function beforeSave(array $data, $id = null) : array
+    public function beforeSave(array $data, $id = null): array
     {
         $data = parent::beforeSave($data, $id);
 

@@ -2,7 +2,7 @@
 
 namespace Plasticode\Collections;
 
-use Plasticode\Collections\Basic\TypedCollection;
+use Plasticode\Collections\Generic\TypedCollection;
 use Plasticode\Parsing\ContentsItem;
 
 class ContentsItemCollection extends TypedCollection

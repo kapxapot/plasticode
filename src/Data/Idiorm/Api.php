@@ -111,12 +111,12 @@ class Api implements ApiInterface
             $items = $items->where($options['filter'], $args['id']);
         }
 
-        $settings = $this->metadata->tableSettings($table) ?? [];
+        $tableMetadata = $this->metadata->tableMetadata($table) ?? [];
 
-        if (isset($settings['sort'])) {
-            $sortBy = $settings['sort'];
+        if (isset($tableMetadata['sort'])) {
+            $sortBy = $tableMetadata['sort'];
 
-            $items = isset($settings['reverse'])
+            $items = isset($tableMetadata['reverse'])
                 ? $items->orderByDesc($sortBy)
                 : $items->orderByAsc($sortBy);
         }

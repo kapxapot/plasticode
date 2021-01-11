@@ -24,7 +24,7 @@ class TwigView implements ViewInterface
         return $this->twig->render($response, $template, $data);
     }
 
-    function fetch(string $component, array $data = []) : string
+    public function fetch(string $component, array $data = []) : string
     {
         return $this->twig->fetch($component, $data);
     }

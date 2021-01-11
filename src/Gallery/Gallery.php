@@ -3,12 +3,12 @@
 namespace Plasticode\Gallery;
 
 use ORM;
-use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Exceptions\InvalidResultException;
 use Plasticode\Gallery\ThumbStrategies\Interfaces\ThumbStrategyInterface;
 use Plasticode\IO\File;
 use Plasticode\IO\Image;
 use Plasticode\Models\Basic\DbModel;
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Webmozart\Assert\Assert;
 
 class Gallery

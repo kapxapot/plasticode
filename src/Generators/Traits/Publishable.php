@@ -6,7 +6,7 @@ use Plasticode\Util\Date;
 
 trait Publishable
 {
-    private function publishIfNeeded(array $data) : array
+    private function publishIfNeeded(array $data): array
     {
         if ($this->needsPublish($data)) {
             $data = $this->publish($data);
@@ -15,14 +15,14 @@ trait Publishable
         return $data;
     }
     
-    protected function publish(array $data) : array
+    protected function publish(array $data): array
     {
         $data['published_at'] = Date::dbNow();
 
         return $data;
     }
 
-    protected function needsPublish(array $data) : bool
+    protected function needsPublish(array $data): bool
     {
         return
             isset($data['published']) &&
@@ -31,7 +31,7 @@ trait Publishable
             $data['published_at'] == null;
     }
 
-    protected function isJustPublished(array $item, array $data) : bool
+    protected function isJustPublished(array $item, array $data): bool
     {
         return
             $this->needsPublish($data) &&
@@ -41,7 +41,7 @@ trait Publishable
 
     // generators overrides
 
-    public function beforeSave(array $data, $id = null) : array
+    public function beforeSave(array $data, $id = null): array
     {
         $data = parent::beforeSave($data, $id);
 

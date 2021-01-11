@@ -2,8 +2,8 @@
 
 namespace Plasticode\Generators;
 
-use Plasticode\Generators\Basic\ChangingEntityGenerator;
-use Plasticode\Generators\Basic\GeneratorContext;
+use Plasticode\Generators\Core\GeneratorContext;
+use Plasticode\Generators\Generic\ChangingEntityGenerator;
 use Plasticode\Models\Menu;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 
@@ -21,17 +21,17 @@ class MenuGenerator extends ChangingEntityGenerator
         $this->menuRepository = $menuRepository;
     }
 
-    protected function entityClass() : string
+    protected function entityClass(): string
     {
         return Menu::class;
     }
 
-    protected function getRepository() : MenuRepositoryInterface
+    protected function getRepository(): MenuRepositoryInterface
     {
         return $this->menuRepository;
     }
 
-    public function getRules(array $data, $id = null) : array
+    public function getRules(array $data, $id = null): array
     {
         $rules = parent::getRules($data, $id);
 
@@ -42,7 +42,7 @@ class MenuGenerator extends ChangingEntityGenerator
         return $rules;
     }
 
-    public function afterLoad(array $item) : array
+    public function afterLoad(array $item): array
     {
         $item = parent::afterLoad($item);
 

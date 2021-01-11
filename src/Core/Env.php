@@ -3,6 +3,7 @@
 namespace Plasticode\Core;
 
 use Dotenv\Dotenv;
+use Exception;
 
 class Env
 {
@@ -17,22 +18,22 @@ class Env
         $this->appEnv = $appEnv;
     }
 
-    public function is(string $appEnv) : bool
+    public function is(string $appEnv): bool
     {
         return $this->appEnv === $appEnv;
     }
 
-    public function isDev() : bool
+    public function isDev(): bool
     {
         return $this->is(self::DEV);
     }
 
-    public function isStage() : bool
+    public function isStage(): bool
     {
         return $this->is(self::STAGE);
     }
 
-    public function isProd() : bool
+    public function isProd(): bool
     {
         return $this->is(self::PROD);
     }
@@ -40,7 +41,7 @@ class Env
     /**
      * Loads environment variables from .env file.
      */
-    public static function load(string $path, ?string $appEnvVar = null) : self
+    public static function load(string $path, ?string $appEnvVar = null): self
     {
         $appEnvVar = $appEnvVar ?? 'APP_ENV';
 
@@ -49,7 +50,7 @@ class Env
             $dotenv = new Dotenv($path);
             $dotenv->load();
         }
-        catch (\Exception $ex) {
+        catch (Exception $ex) {
         }
 
         // APP_ENV must be set either in .env file (dev, stage),

@@ -2,20 +2,24 @@
 
 namespace Plasticode\Traits;
 
-use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Generic\DbModel;
 use Webmozart\Assert\Assert;
 
+/**
+ * Implements {@see \Plasticode\Interfaces\EntityRelatedInterface}.
+ */
 trait EntityRelated
 {
     /**
      * Full entity class name, must be a subclass of {@see DbModel}.
      */
-    abstract protected function entityClass() : string;
+    abstract protected function entityClass(): string;
 
     /**
-     * Returns entity class name and checks that it is a subclass of {@see DbModel}.
+     * Returns the related entity class name and checks that
+     * it is a subclass of {@see DbModel}.
      */
-    protected function getEntityClass() : string
+    public function getEntityClass(): string
     {
         Assert::subclassOf($this->entityClass(), DbModel::class);
 
@@ -26,9 +30,10 @@ trait EntityRelated
      * Returns the id field name of the related entity.
      * Usually it's 'id'.
      */
-    protected function idField() : string
+    protected function idField(): string
     {
         $entityClass = $this->getEntityClass();
+
         return $entityClass::idField();
     }
 
@@ -37,7 +42,7 @@ trait EntityRelated
      * 
      * ArticleCategory -> article_categories.
      */
-    protected function pluralAlias() : string
+    protected function pluralAlias(): string
     {
         $entityClass = $this->getEntityClass();
 

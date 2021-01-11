@@ -27,7 +27,7 @@ class PasswordController extends Controller
         $this->passwordValidation = $container->passwordValidation;
     }
 
-    public function postChangePassword(
+    public function __invoke(
         Request $request,
         ResponseInterface $response
     ) : ResponseInterface

@@ -2,52 +2,39 @@
 
 namespace Plasticode\Data;
 
-use Plasticode\Core\Interfaces\SettingsProviderInterface;
+use Plasticode\Config\Config;
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 
 /**
- * Provides ORM-agnostic database metadata settings.
+ * Provides database tables metadata.
  */
 class DbMetadata
 {
-    private SettingsProviderInterface $settingsProvider;
+    private SettingsProviderInterface $metadata;
 
-    /**
-     * Tables settings.
-     */
-    private ?array $tables = null;
-
-    public function __construct(
-        SettingsProviderInterface $settingsProvider
-    )
+    public function __construct(Config $config)
     {
-        $this->settingsProvider = $settingsProvider;
+        $this->metadata = $config->tableMetadata();
     }
 
-    public function tableSettings(string $tableAlias) : ?array
+    public function tableMetadata(string $tableAlias): ?array
     {
-        $this->tables ??= $this->settingsProvider->get('tables');
-
-        return $this->tables[$tableAlias] ?? null;
+        return $this->metadata->get($tableAlias);
     }
 
-    public function tableName(string $tableAlias) : string
+    public function tableName(string $tableAlias): string
     {
-        $tableSettings = $this->tableSettings($tableAlias);
-
-        return $tableSettings['table'] ?? $tableAlias;
+        return $this->metadata->get($tableAlias . '.table', $tableAlias);
     }
 
-    public function fields(string $tableAlias) : ?array
+    public function fields(string $tableAlias): ?array
     {
-        $tableSettings = $this->tableSettings($tableAlias);
-
-        return $tableSettings['fields'] ?? null;
+        return $this->metadata->get($tableAlias . '.fields');
     }
 
-    public function hasField(string $tableAlias, string $field) : bool
+    public function hasField(string $tableAlias, string $field): bool
     {
-        $tableSettings = $this->tableSettings($tableAlias);
-        $has = $tableSettings['has'] ?? null;
+        $has = $this->metadata->get($tableAlias . '.has');
 
         return is_array($has) && in_array($field, $has);
     }

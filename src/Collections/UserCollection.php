@@ -2,7 +2,7 @@
 
 namespace Plasticode\Collections;
 
-use Plasticode\Collections\Basic\DbModelCollection;
+use Plasticode\Collections\Generic\DbModelCollection;
 use Plasticode\Models\User;
 
 class UserCollection extends DbModelCollection

@@ -96,9 +96,12 @@ class File
         foreach ($parts as $part) {
             $part = self::normalizePath($part);
 
-            $path = is_null($path)
-                ? $part
-                : rtrim($path, $sep) . $sep . ltrim($part, $sep);
+            if (is_null($path)) {
+                $path = $part;
+                continue;
+            }
+
+            $path = rtrim($path, $sep) . $sep . ltrim($part, $sep);
         }
 
         return $path;

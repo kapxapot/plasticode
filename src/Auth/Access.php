@@ -2,6 +2,7 @@
 
 namespace Plasticode\Auth;
 
+use Plasticode\Config\Config;
 use Plasticode\Data\Rights;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Models\User;
@@ -34,12 +35,17 @@ class Access
     private array $rightsSettings;
 
     public function __construct(
-        array $accessSettings = []
+        Config $config
     )
     {
-        $this->actionData = $this->flattenActionData($accessSettings['actions'] ?? []);
-        $this->rightsTemplates = $accessSettings['templates'] ?? [];
-        $this->rightsSettings = $accessSettings['rights'] ?? [];
+        $settings = $config->accessSettings();
+
+        $this->actionData = $this->flattenActionData(
+            $settings->get('actions', [])
+        );
+
+        $this->rightsTemplates = $settings->get('templates', []);
+        $this->rightsSettings = $settings->get('rights', []);
     }
 
     /**

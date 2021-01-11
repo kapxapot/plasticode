@@ -3,7 +3,7 @@
 namespace Plasticode\Collections;
 
 use Plasticode\Models\NewsYear;
-use Plasticode\Collections\Basic\TypedCollection;
+use Plasticode\Collections\Generic\TypedCollection;
 
 class NewsYearCollection extends TypedCollection
 {
@@ -14,7 +14,7 @@ class NewsYearCollection extends TypedCollection
      *
      * @return static
      */
-    public function sort() : self
+    public function sort(): self
     {
         return $this->desc(
             fn (NewsYear $y) => $y->year()

@@ -43,19 +43,23 @@ class Strings
     }
 
     /**
+     * Converts 'snake_case'/'Snake_Case' to 'snakeCase'.
+     */
+    public static function toCamelCase(string $str) : string
+    {
+        return lcfirst(
+            self::toPascalCase(
+                mb_strtolower($str)
+            )
+        );
+    }
+
+    /**
      * Converts 'snake_case' to 'SnakeCase'.
      */
     public static function toPascalCase(string $str) : string
     {
         return str_replace('_', '', ucwords($str, '_'));
-    }
-
-    /**
-     * Converts 'snake_case' to 'snakeCase'.
-     */
-    public static function toCamelCase(string $str) : string
-    {
-        return lcfirst(self::toPascalCase($str));
     }
 
     /**

@@ -4,13 +4,13 @@ namespace Plasticode\Controllers\Auth;
 
 use Plasticode\Auth\Interfaces\CaptchaInterface;
 use Plasticode\Controllers\Controller;
+use Plasticode\Core\AppContext;
 use Plasticode\Core\Response;
 use Plasticode\Core\Security;
 use Plasticode\Exceptions\Http\AuthenticationException;
 use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Services\AuthService;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Request;
@@ -23,17 +23,23 @@ class AuthController extends Controller
     private UserRepositoryInterface $userRepository;
     private UserValidation $userValidation;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(
+        AppContext $appContext,
+        AuthService $authService,
+        CaptchaInterface $captcha,
+        UserRepositoryInterface $userRepository,
+        UserValidation $userValidation
+    )
     {
-        parent::__construct($container->appContext);
+        parent::__construct($appContext);
 
-        $this->authService = $container->authService;
-        $this->captcha = $container->captcha;
-        $this->userRepository = $container->userRepository;
-        $this->userValidation = $container->userValidation;
+        $this->authService = $authService;
+        $this->captcha = $captcha;
+        $this->userRepository = $userRepository;
+        $this->userValidation = $userValidation;
     }
 
-    public function postSignUp(
+    public function signUp(
         ServerRequestInterface $request,
         ResponseInterface $response
     ) : ResponseInterface
@@ -74,7 +80,7 @@ class AuthController extends Controller
         return $response;
     }
 
-    public function postSignIn(
+    public function signIn(
         Request $request,
         ResponseInterface $response
     ) : ResponseInterface
@@ -103,7 +109,7 @@ class AuthController extends Controller
         );
     }
 
-    public function postSignOut(
+    public function signOut(
         ServerRequestInterface $request,
         ResponseInterface $response
     ) : ResponseInterface

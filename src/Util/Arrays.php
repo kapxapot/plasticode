@@ -50,7 +50,7 @@ class Arrays
     public static function get($array, $key)
     {
         self::checkArray($array);
-        
+
         if (empty($array) || strlen($key) == 0) {
             return null;
         }

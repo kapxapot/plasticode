@@ -2,9 +2,9 @@
 
 namespace Plasticode\Repositories\Idiorm\Traits;
 
+use Plasticode\Data\Query;
 use Plasticode\Data\Rights;
 use Plasticode\Models\User;
-use Plasticode\Query;
 
 /**
  * Full publish support: published + published_at.
@@ -26,7 +26,7 @@ trait FullPublishedRepository
      * Entity is filtered out if it isn't published and
      * the user isn't its creator.
      */
-    public function protectQuery(Query $query, ?User $user) : Query
+    public function protectQuery(Query $query, ?User $user): Query
     {
         $editor = $this->can(Rights::EDIT);
 
@@ -49,9 +49,9 @@ trait FullPublishedRepository
         return $query->whereRaw($publishedCondition);
     }
 
-    public abstract function can(string $rights) : bool;
+    public abstract function can(string $rights): bool;
 
-    protected function filterPublished(Query $query) : Query
+    protected function filterPublished(Query $query): Query
     {
         return $this
             ->parentFilterPublished($query)

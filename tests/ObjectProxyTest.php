@@ -7,12 +7,12 @@ use Plasticode\Auth\Access;
 use Plasticode\Auth\Auth;
 use Plasticode\Core\Cache;
 use Plasticode\Core\Session;
-use Plasticode\Core\SettingsProvider;
 use Plasticode\Data\DbMetadata;
 use Plasticode\Hydrators\TagHydrator;
 use Plasticode\ObjectProxy;
 use Plasticode\Repositories\Idiorm\Basic\RepositoryContext;
 use Plasticode\Repositories\Idiorm\TagRepository;
+use Plasticode\Settings\SettingsProvider;
 use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Testing\Mocks\LinkerMock;
 
@@ -33,7 +33,7 @@ final class ObjectProxyTest extends TestCase
         $session = new Session('test');
         $auth = new Auth($session);
         $cache = new Cache();
-        $settingsProvider = new SettingsProvider();
+        $settingsProvider = new SettingsProvider(); // dummy
 
         $tagRepository = new TagRepository(
             new RepositoryContext(

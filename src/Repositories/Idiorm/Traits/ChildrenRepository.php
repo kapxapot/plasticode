@@ -2,7 +2,7 @@
 
 namespace Plasticode\Repositories\Idiorm\Traits;
 
-use Plasticode\Query;
+use Plasticode\Data\Query;
 
 trait ChildrenRepository
 {
@@ -11,7 +11,7 @@ trait ChildrenRepository
     /**
      * Adds filter by parent to a query.
      */
-    protected function filterByParent(Query $query, ?int $parentId) : Query
+    protected function filterByParent(Query $query, ?int $parentId): Query
     {
         return $query->where($this->parentIdField, $parentId);
     }
@@ -19,7 +19,7 @@ trait ChildrenRepository
     /**
      * Adds filter by no parent to a query.
      */
-    protected function filterOrphans(Query $query) : Query
+    protected function filterOrphans(Query $query): Query
     {
         return $query->whereNull($this->parentIdField);
     }

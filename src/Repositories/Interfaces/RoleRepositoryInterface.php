@@ -3,9 +3,9 @@
 namespace Plasticode\Repositories\Interfaces;
 
 use Plasticode\Models\Role;
-use Plasticode\Repositories\Interfaces\Basic\GetRepositoryInterface;
+use Plasticode\Repositories\Interfaces\Generic\GetRepositoryInterface;
 
 interface RoleRepositoryInterface extends GetRepositoryInterface
 {
-    function get(?int $id) : ?Role;
+    function get(?int $id): ?Role;
 }

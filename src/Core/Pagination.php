@@ -8,7 +8,7 @@ class Pagination
 {
     protected $linker;
     protected $renderer;
-    
+
     public function __construct(Linker $linker, Renderer $renderer)
     {
         $this->linker = $linker;
@@ -19,10 +19,10 @@ class Pagination
     {
         $paging = [];
         $pages = [];
-        
+
         $stepping = 1;
         $neighbours = 7;
-        
+
         if ($count > $pageSize) {
             // prev page
             if ($index > 1) {
@@ -39,7 +39,7 @@ class Pagination
             }
 
             $pageCount = ceil($count / $pageSize);
-            
+
             $shownIndex = 1;
             $step = ceil($pageCount / $stepping);
 
@@ -51,7 +51,7 @@ class Pagination
                 ) {
                     $pages[] = $this->page($url, $shownIndex, $shownIndex == $index);
                 }
-                
+
                 $shownIndex++;
             }
 
@@ -68,10 +68,10 @@ class Pagination
                 $pages[] = $next;
                 $paging['next'] = $next;
             }
-            
+
             $paging['pages'] = $pages;
         }
-        
+
         return $paging;
     }
 
@@ -81,7 +81,7 @@ class Pagination
 
         if ($totalPages > 1) {
             $pages = [];
-            
+
             if ($page > 1) {
                 $prev = $this->page(
                     $baseUrl,
@@ -98,7 +98,7 @@ class Pagination
             for ($i = 1; $i <= $totalPages; $i++) {
                 $pages[] = $this->page($baseUrl , $i, $i == $page);
             }
-            
+
             if ($page < $totalPages) {
                 $next = $this->page(
                     $baseUrl,
@@ -111,7 +111,7 @@ class Pagination
                 $paging['next'] = $next;
                 $pages[] = $next;
             }
-            
+
             $paging['page'] = $page;
             $paging['pages'] = $pages;
         }
@@ -129,7 +129,7 @@ class Pagination
             'title' => ($title != null) ? $title : "Страница {$page}",
         ];
     }
-    
+
     private function pageLink(string $base, int $page) : string
     {
         if ($page <= 1) {
@@ -138,5 +138,4 @@ class Pagination
 
         return Strings::appendQueryParam($base, 'page', $page);
     }
-
 }

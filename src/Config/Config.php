@@ -2,12 +2,12 @@
 
 namespace Plasticode\Config;
 
-use Plasticode\Core\Interfaces\SettingsProviderInterface;
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
+use Plasticode\Settings\SettingsProvider;
 
-abstract class Config
+class Config
 {
-    /** @var SettingsProviderInterface */
-    private $settingsProvider;
+    private SettingsProviderInterface $settingsProvider;
 
     public function __construct(SettingsProviderInterface $settingsProvider)
     {
@@ -15,9 +15,54 @@ abstract class Config
     }
 
     /**
+     * Root application directory path.
+     */
+    public function rootDir(): string
+    {
+        return $this->get('root_dir');
+    }
+
+    /**
+     * Access settings.
+     */
+    public function accessSettings(): SettingsProviderInterface
+    {
+        return new SettingsProvider(
+            $this->get('access', [])
+        );
+    }
+
+    /**
+     * Database table metadata.
+     */
+    public function tableMetadata(): SettingsProviderInterface
+    {
+        return new SettingsProvider(
+            $this->get('tables', [])
+        );
+    }
+
+    /**
+     * Entity settings.
+     */
+    public function entitySettings(): SettingsProviderInterface
+    {
+        return new SettingsProvider(
+            $this->get('entities', [])
+        );
+    }
+
+    /**
+     * View global settings.
+     */
+    public function viewGlobals(): array
+    {
+        return $this->get('view_globals', []);
+    }
+
+    /**
      * Get settings value.
      *
-     * @param string $var
      * @param mixed $def
      * @return mixed
      */

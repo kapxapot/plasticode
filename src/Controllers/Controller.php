@@ -4,9 +4,9 @@ namespace Plasticode\Controllers;
 
 use Plasticode\Collections\MenuCollection;
 use Plasticode\Core\AppContext;
-use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Core\Interfaces\ViewInterface;
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Util\Arrays;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Psr\Http\Message\ResponseInterface;

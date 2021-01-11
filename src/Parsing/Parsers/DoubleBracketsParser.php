@@ -94,8 +94,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
     {
         $mapper =
             $this->config->getTaggedMapper($tag)
-            ??
-            $this->config->getGenericMapper();
+            ?? $this->config->getGenericMapper();
 
         return $mapper
             ? $mapper->map($chunks)
@@ -125,9 +124,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
     {
         return Arrays::filter(
             $this->config->getAllMappers(),
-            function ($item) {
-                return $item instanceof LinkRendererInterface;
-            }
+            fn ($item) => $item instanceof LinkRendererInterface
         );
     }
 }

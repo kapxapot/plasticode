@@ -6,19 +6,13 @@ use Plasticode\Core\Response;
 use Plasticode\Controllers\Controller;
 use Plasticode\Exceptions\Http\BadRequestException;
 use Plasticode\IO\Image;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use ZipArchive;
 
 abstract class ImageUploadController extends Controller
 {
-    public function __construct(ContainerInterface $container)
-    {
-        parent::__construct($container->appContext);
-    }
-
-    public function upload(
+    public function __invoke(
         Request $request,
         ResponseInterface $response
     ) : ResponseInterface

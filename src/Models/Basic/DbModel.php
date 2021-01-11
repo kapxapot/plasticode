@@ -24,7 +24,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
 
     /**
      * Container for hydrated properties.
-     * E.g., withUser(), user().
+     * E.g., withUser() <=> user().
      * 
      * @var array<string, mixed>
      */

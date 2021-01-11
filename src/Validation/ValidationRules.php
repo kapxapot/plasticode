@@ -2,8 +2,8 @@
 
 namespace Plasticode\Validation;
 
-use Plasticode\Core\Interfaces\SettingsProviderInterface;
 use Plasticode\Exceptions\InvalidConfigurationException;
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Respect\Validation\Validatable;
 use Respect\Validation\Validator;
 

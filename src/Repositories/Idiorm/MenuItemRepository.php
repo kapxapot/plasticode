@@ -4,23 +4,23 @@ namespace Plasticode\Repositories\Idiorm;
 
 use Plasticode\Collections\MenuItemCollection;
 use Plasticode\Models\MenuItem;
-use Plasticode\Repositories\Idiorm\Basic\IdiormRepository;
+use Plasticode\Repositories\Idiorm\Generic\IdiormRepository;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Util\SortStep;
 
 class MenuItemRepository extends IdiormRepository implements MenuItemRepositoryInterface
 {
-    protected function entityClass() : string
+    protected string $parentIdField = 'menu_id';
+
+    protected function entityClass(): string
     {
         return MenuItem::class;
     }
 
-    protected string $parentIdField = 'menu_id';
-
     /**
      * @return SortStep[]
      */
-    protected function getSortOrder() : array
+    protected function getSortOrder(): array
     {
         return [
             SortStep::asc('position'),
@@ -28,12 +28,12 @@ class MenuItemRepository extends IdiormRepository implements MenuItemRepositoryI
         ];
     }
 
-    public function get(?int $id) : ?MenuItem
+    public function get(?int $id): ?MenuItem
     {
         return $this->getEntity($id);
     }
 
-    public function getAllByMenuId(int $menuId) : MenuItemCollection
+    public function getAllByMenuId(int $menuId): MenuItemCollection
     {
         return MenuItemCollection::from(
             $this

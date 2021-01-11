@@ -2,8 +2,8 @@
 
 namespace Plasticode\Generators;
 
-use Plasticode\Generators\Basic\ChangingEntityGenerator;
-use Plasticode\Generators\Basic\GeneratorContext;
+use Plasticode\Generators\Core\GeneratorContext;
+use Plasticode\Generators\Generic\ChangingEntityGenerator;
 use Plasticode\Models\MenuItem;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
@@ -25,17 +25,17 @@ class MenuItemGenerator extends ChangingEntityGenerator
         $this->menuItemRepository = $menuItemRepository;
     }
 
-    protected function entityClass() : string
+    protected function entityClass(): string
     {
         return MenuItem::class;
     }
 
-    protected function getRepository() : MenuItemRepositoryInterface
+    protected function getRepository(): MenuItemRepositoryInterface
     {
         return $this->menuItemRepository;
     }
 
-    public function getRules(array $data, $id = null) : array
+    public function getRules(array $data, $id = null): array
     {
         $rules = parent::getRules($data, $id);
 
@@ -46,7 +46,7 @@ class MenuItemGenerator extends ChangingEntityGenerator
         return $rules;
     }
 
-    public function getOptions() : array
+    public function getOptions(): array
     {
         $options = parent::getOptions();
 
@@ -56,7 +56,7 @@ class MenuItemGenerator extends ChangingEntityGenerator
         return $options;
     }
 
-    public function afterLoad(array $item) : array
+    public function afterLoad(array $item): array
     {
         $item = parent::afterLoad($item);
 
@@ -69,7 +69,7 @@ class MenuItemGenerator extends ChangingEntityGenerator
         return $item;
     }
 
-    public function getAdminParams(array $args) : array
+    public function getAdminParams(array $args): array
     {
         $params = parent::getAdminParams($args);
 
