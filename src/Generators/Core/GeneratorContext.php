@@ -5,6 +5,7 @@ namespace Plasticode\Generators\Core;
 use Plasticode\Config\Config;
 use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Data\Interfaces\ApiInterface;
+use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Plasticode\Validation\ValidationRules;
@@ -19,6 +20,7 @@ class GeneratorContext
     private ValidatorInterface $validator;
     private ValidationRules $validationRules;
     private ViewInterface $view;
+    private AccessMiddlewareFactory $accessMiddlewareFactory;
 
     public function __construct(
         SettingsProviderInterface $settingsProvider,
@@ -27,7 +29,8 @@ class GeneratorContext
         ApiInterface $api,
         ValidatorInterface $validator,
         ValidationRules $validationRules,
-        ViewInterface $view
+        ViewInterface $view,
+        AccessMiddlewareFactory $accessMiddlewareFactory
     )
     {
         $this->settingsProvider = $settingsProvider;
@@ -37,6 +40,7 @@ class GeneratorContext
         $this->validator = $validator;
         $this->validationRules = $validationRules;
         $this->view = $view;
+        $this->accessMiddlewareFactory = $accessMiddlewareFactory;
     }
 
     public function settingsProvider(): SettingsProviderInterface
@@ -72,5 +76,10 @@ class GeneratorContext
     public function view(): ViewInterface
     {
         return $this->view;
+    }
+
+    public function accessMiddlewareFactory(): AccessMiddlewareFactory
+    {
+        return $this->accessMiddlewareFactory;
     }
 }

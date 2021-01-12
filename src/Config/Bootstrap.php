@@ -48,6 +48,7 @@ use Plasticode\Handlers\NotAllowedHandler;
 use Plasticode\Handlers\NotFoundHandler;
 use Plasticode\Interfaces\MappingProviderInterface;
 use Plasticode\IO\File;
+use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
 use Plasticode\Parsing\Interfaces\ParserInterface;
 use Plasticode\Parsing\LinkMapperSource;
 use Plasticode\Parsing\Parsers\BB\BBParser;
@@ -63,6 +64,7 @@ use Plasticode\Parsing\Parsers\MarkdownParser;
 use Plasticode\Parsing\Steps\NewLinesToBrsStep;
 use Plasticode\Parsing\Steps\ReplacesStep;
 use Plasticode\Parsing\Steps\TitlesStep;
+use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Services\AuthService;
@@ -224,13 +226,13 @@ class Bootstrap implements MappingProviderInterface
                 $c->get(UserRepositoryInterface::class)
             );
 
-        $map['renderer'] = fn (ContainerInterface $c) =>
-            new Renderer(
+        $map['renderer'] =
+            fn (ContainerInterface $c) => new Renderer(
                 $c->view
             );
 
-        $map['pagination'] = fn (ContainerInterface $c) =>
-            new Pagination(
+        $map['pagination'] =
+            fn (ContainerInterface $c) => new Pagination(
                 $c->linker,
                 $c->renderer
             );
@@ -238,54 +240,54 @@ class Bootstrap implements MappingProviderInterface
         $map[TagsConfigInterface::class] =
             fn (ContainerInterface $c) => new TagsConfig();
 
-        $map['replacesConfig'] = fn (ContainerInterface $c) =>
-            new ReplacesConfig();
+        $map['replacesConfig'] =
+            fn (ContainerInterface $c) => new ReplacesConfig();
 
-        $map['cleanupParser'] = fn (ContainerInterface $c) =>
-            new CleanupParser(
+        $map['cleanupParser'] =
+            fn (ContainerInterface $c) => new CleanupParser(
                 $c->replacesConfig
             );
 
-        $map['bbParserConfig'] = fn (ContainerInterface $c) =>
-            new BBParserConfig(
+        $map['bbParserConfig'] =
+            fn (ContainerInterface $c) => new BBParserConfig(
                 $c->linker
             );
 
-        $map['bbParser'] = fn (ContainerInterface $c) =>
-            new BBParser(
+        $map['bbParser'] =
+            fn (ContainerInterface $c) => new BBParser(
                 $c->bbParserConfig,
                 $c->renderer
             );
 
         // no double brackets link mappers by default
         // add them!
-        $map['doubleBracketsConfig'] = fn (ContainerInterface $c) =>
-            new LinkMapperSource();
+        $map['doubleBracketsConfig'] =
+            fn (ContainerInterface $c) => new LinkMapperSource();
 
-        $map['doubleBracketsParser'] = fn (ContainerInterface $c) =>
-            new DoubleBracketsParser(
+        $map['doubleBracketsParser'] =
+            fn (ContainerInterface $c) => new DoubleBracketsParser(
                 $c->doubleBracketsConfig
             );
 
-        $map['lineParser'] = fn (ContainerInterface $c) =>
-            new CompositeParser(
+        $map['lineParser'] =
+            fn (ContainerInterface $c) => new CompositeParser(
                 $c->bbParser,
                 $c->doubleBracketsParser
             );
 
-        $map['bbContainerConfig'] = fn (ContainerInterface $c) =>
-            new BBContainerConfig();
+        $map['bbContainerConfig'] =
+            fn (ContainerInterface $c) => new BBContainerConfig();
 
-        $map['bbContainerParser'] = fn (ContainerInterface $c) =>
-            new BBContainerParser(
+        $map['bbContainerParser'] =
+            fn (ContainerInterface $c) => new BBContainerParser(
                 $c->bbContainerConfig,
                 new BBSequencer(),
                 new BBTreeBuilder(),
                 new BBTreeRenderer($c->renderer)
             );
 
-        $map[ParserInterface::class] = fn (ContainerInterface $c) =>
-            new CompositeParser(
+        $map[ParserInterface::class] =
+            fn (ContainerInterface $c) => new CompositeParser(
                 new TitlesStep($c->renderer, $c->lineParser),
                 new MarkdownParser($c->renderer),
                 new NewLinesToBrsStep(),
@@ -296,11 +298,13 @@ class Bootstrap implements MappingProviderInterface
                 $c->cleanupParser
             );
 
-        $map[CutParser::class] = fn (ContainerInterface $c) =>
-            new CutParser($c->cleanupParser);
+        $map[CutParser::class] =
+            fn (ContainerInterface $c) => new CutParser(
+                $c->cleanupParser
+            );
 
-        $map[EventDispatcher::class] = fn (ContainerInterface $c) =>
-            new EventDispatcher(
+        $map[EventDispatcher::class] =
+            fn (ContainerInterface $c) => new EventDispatcher(
                 fn (string $msg) => $c->eventLog->info($msg)
             );
 
@@ -329,23 +333,27 @@ class Bootstrap implements MappingProviderInterface
 
         // services
 
-        $map[AuthService::class] = fn (ContainerInterface $c) =>
-            new AuthService(
-                $c->auth,
+        $map[AuthService::class] =
+            fn (ContainerInterface $c) => new AuthService(
+                $c->get(AuthInterface::class),
                 $c->get(SettingsProviderInterface::class),
-                $c->authTokenRepository,
-                $c->userRepository
+                $c->get(AuthTokenRepositoryInterface::class),
+                $c->get(UserRepositoryInterface::class)
             );
 
         // factories
 
-        $map = array_merge(
-            $map,
-            [
-                AuthController::class => AuthControllerFactory::class,
-                ParserController::class => ParserControllerFactory::class,
-            ]
-        );
+        $map[AuthController::class] = AuthControllerFactory::class;
+        $map[ParserController::class] = ParserControllerFactory::class;
+
+        // middleware factories
+
+        $map[AccessMiddlewareFactory::class] =
+            fn (ContainerInterface $c) => new AccessMiddlewareFactory(
+                $c->get(Access::class),
+                $c->get(AuthInterface::class),
+                $c->get(RouterInterface::class)
+            );
 
         // external
 

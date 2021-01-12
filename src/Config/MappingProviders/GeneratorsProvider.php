@@ -10,6 +10,7 @@ use Plasticode\Generators\MenuItemGenerator;
 use Plasticode\Generators\RoleGenerator;
 use Plasticode\Generators\UserGenerator;
 use Plasticode\Interfaces\MappingProviderInterface;
+use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
 use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
@@ -32,7 +33,8 @@ class GeneratorsProvider implements MappingProviderInterface
                     $c->get(ApiInterface::class),
                     $c->get(ValidatorInterface::class),
                     $c->get(ValidationRules::class),
-                    $c->get(ViewInterface::class)
+                    $c->get(ViewInterface::class),
+                    $c->get(AccessMiddlewareFactory::class)
                 ),
 
             GeneratorResolver::class =>

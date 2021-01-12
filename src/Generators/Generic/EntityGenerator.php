@@ -8,6 +8,7 @@ use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Data\Rights;
 use Plasticode\Generators\Core\GeneratorContext;
 use Plasticode\Generators\Interfaces\EntityGeneratorInterface;
+use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Traits\EntityRelated;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
@@ -28,6 +29,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
     protected ValidatorInterface $validator;
     protected ValidationRules $rules;
     protected ViewInterface $view;
+    protected AccessMiddlewareFactory $accessMiddlewareFactory;
 
     public function __construct(
         GeneratorContext $context
@@ -40,6 +42,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         $this->validator = $context->validator();
         $this->rules = $context->validationRules();
         $this->view = $context->view();
+        $this->accessMiddlewareFactory = $context->accessMiddlewareFactory();
     }
 
     public function getEntity(): string
@@ -111,7 +114,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         return $params;
     }
 
-    public function generateAPIRoutes(App $app, callable $access): void
+    public function generateAPIRoutes(App $app): void
     {
         $api = $this
             ->config
@@ -129,18 +132,16 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         // read_one: get one
 
         if ($api == 'full' || $api == 'read') {
-            $this->generateGetAllRoute($app, $access);
+            $this->generateGetAllRoute($app);
         }
 
-        $this->generateCRUDRoutes($app, $access, $api == 'full');
+        $this->generateCRUDRoutes($app, $api == 'full');
     }
 
     /**
      * Generate API route for loading all entities.
-     *
-     * @param callable $access Creates {@see \Plasticode\Middleware\AccessMiddleware}.
      */
-    private function generateGetAllRoute(App $app, callable $access): void
+    private function generateGetAllRoute(App $app): void
     {
         $generator = $this;
         $api = $this->api;
@@ -181,17 +182,18 @@ abstract class EntityGenerator implements EntityGeneratorInterface
                     )
                 )
                 ->add(
-                    $access($this->getEntity(), Rights::API_READ)
+                    $this->accessMiddlewareFactory->make(
+                        $this->getEntity(),
+                        Rights::API_READ
+                    )
                 );
         }
     }
 
     /**
      * Generate CRUD routes.
-     *
-     * @param callable $access Creates {@see \Plasticode\Middleware\AccessMiddleware}.
      */
-    private function generateCRUDRoutes(App $app, callable $access, bool $isFullApi): void
+    private function generateCRUDRoutes(App $app, bool $isFullApi): void
     {
         $generator = $this;
         $api = $this->api;
@@ -199,36 +201,40 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         $shortPath = '/' . $this->getEntity();
         $fullPath = '/' . $this->getEntity() . '/{id:\d+}';
 
-        $get = $app->get(
+        $app->get(
             $fullPath,
             fn ($request, $response, $args) => $api->get(
                 $response,
                 $args['id'],
                 $generator
             )
+        )->add(
+            $this->accessMiddlewareFactory->make(
+                $this->getEntity(),
+                Rights::API_READ
+            )
         );
-
-        if ($access) {
-            $get->add(
-                $access($this->getEntity(), Rights::API_READ)
-            );
-        }
 
         if (!$isFullApi) {
             // that's all, folks
             return;
         }
 
-        $post = $app->post(
+        $app->post(
             $shortPath,
             fn ($request, $response) => $api->create(
                 $request,
                 $response,
                 $generator
             )
+        )->add(
+            $this->accessMiddlewareFactory->make(
+                $this->getEntity(),
+                Rights::API_CREATE
+            )
         );
 
-        $put = $app->put(
+        $app->put(
             $fullPath,
             fn ($request, $response, $args) => $api->update(
                 $request,
@@ -236,33 +242,29 @@ abstract class EntityGenerator implements EntityGeneratorInterface
                 $args['id'],
                 $generator
             )
+        )->add(
+            $this->accessMiddlewareFactory->make(
+                $this->getEntity(),
+                Rights::API_EDIT
+            )
         );
 
-        $delete = $app->delete(
+        $app->delete(
             $fullPath,
             fn ($request, $response, $args) => $api->delete(
                 $response,
                 $args['id'],
                 $generator
             )
+        )->add(
+            $this->accessMiddlewareFactory->make(
+                $this->getEntity(),
+                Rights::API_DELETE
+            )
         );
-
-        if ($access) {
-            $post->add(
-                $access($this->getEntity(), Rights::API_CREATE)
-            );
-
-            $put->add(
-                $access($this->getEntity(), Rights::API_EDIT)
-            );
-
-            $delete->add(
-                $access($this->getEntity(), Rights::API_DELETE)
-            );
-        }
     }
 
-    public function generateAdminPageRoute(App $app, callable $access): void
+    public function generateAdminPageRoute(App $app): void
     {
         $options = $this->getOptions();
         $generator = $this;
@@ -271,7 +273,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         $uri = $options['admin_uri'] ?? $options['uri'] ?? $this->getEntity();
         $adminArgs = $options['admin_args'] ?? null;
 
-        $route = $app->get(
+        $app->get(
             '/' . $uri,
             function ($request, $response, $args) use ($generator, $view, $options, $adminArgs) {
                 $templateName = isset($options['admin_template'])
@@ -300,9 +302,12 @@ abstract class EntityGenerator implements EntityGeneratorInterface
                     $params
                 );
             }
-        );
-
-        $route->add($access($this->getEntity(), Rights::READ_OWN, 'admin.index'));
-        $route->setName('admin.entities.' . $this->getEntity());
+        )->add(
+            $this->accessMiddlewareFactory->make(
+                $this->getEntity(),
+                Rights::READ_OWN,
+                'admin.index'
+            )
+        )->setName('admin.entities.' . $this->getEntity());
     }
 }

@@ -22,15 +22,11 @@ interface EntityGeneratorInterface extends EntityRelatedInterface
 
     /**
      * Generates API routes based on settings.
-     *
-     * @param callable $access Creates {@see \Plasticode\Middleware\AccessMiddleware}.
      */
-    function generateAPIRoutes(App $app, callable $access): void;
+    function generateAPIRoutes(App $app): void;
 
     /**
      * Generates admin page route.
-     *
-     * @param callable $access Creates {@see \Plasticode\Middleware\AccessMiddleware}.
      */
-    function generateAdminPageRoute(App $app, callable $access): void;
+    function generateAdminPageRoute(App $app): void;
 }

@@ -45,7 +45,7 @@ class Api implements ApiInterface
     /**
      * Returns access rights for the table.
      */
-    private function getRights(string $table) : Rights
+    private function getRights(string $table): Rights
     {
         return $this->access->getTableRights(
             $table,
@@ -56,10 +56,10 @@ class Api implements ApiInterface
     public function get(
         ResponseInterface $response,
         int $id,
-        EntityGeneratorInterface $provider
-    ) : ResponseInterface
+        EntityGeneratorInterface $generator
+    ): ResponseInterface
     {
-        $table = $provider->getEntity();
+        $table = $generator->getEntity();
 
         $obj = $this->getObj($table, $id);
 
@@ -78,7 +78,7 @@ class Api implements ApiInterface
             throw new AuthorizationException();
         }
 
-        $item = $provider->afterLoad($item);
+        $item = $generator->afterLoad($item);
         $item = $this->addUserNames($table, $item);
         $item = $rights->enrichRights($item);
 
@@ -87,11 +87,11 @@ class Api implements ApiInterface
 
     public function getMany(
         ResponseInterface $response,
-        EntityGeneratorInterface $provider,
+        EntityGeneratorInterface $generator,
         array $options = []
-    ) : ResponseInterface
+    ): ResponseInterface
     {
-        $table = $provider->getEntity();
+        $table = $generator->getEntity();
         $rights = $this->getRights($table);
 
         if (!$rights->can(Rights::API_READ)) {
@@ -101,7 +101,7 @@ class Api implements ApiInterface
 
             throw new AuthorizationException();
         }
-        
+
         $exclude = $options['exclude'] ?? null;
 
         $items = $this->selectMany($table, $exclude);
@@ -126,13 +126,11 @@ class Api implements ApiInterface
 
         $items = Collection::make($array)
             ->where(
-                function ($item) use ($rights) {
-                    return $rights->canEntity($item, Rights::READ);
-                }
+                fn ($item) => $rights->canEntity($item, Rights::READ)
             )
             ->map(
-                function ($item) use ($provider, $table, $rights) {
-                    $item = $provider->afterLoad($item);
+                function ($item) use ($generator, $table, $rights) {
+                    $item = $generator->afterLoad($item);
                     $item = $this->addUserNames($table, $item);
                     $item = $rights->enrichRights($item);
 
@@ -146,10 +144,10 @@ class Api implements ApiInterface
     public function create(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        EntityGeneratorInterface $provider
-    ) : ResponseInterface
+        EntityGeneratorInterface $generator
+    ): ResponseInterface
     {
-        $table = $provider->getEntity();
+        $table = $generator->getEntity();
         $rights = $this->getRights($table);
 
         if (!$rights->can(Rights::CREATE)) {
@@ -164,19 +162,20 @@ class Api implements ApiInterface
 
         $data = $this->securePublished($table, $original);
         $data = $this->stamps($table, $data);
-        
-        $provider->validate($request, $data);
-        
-        $data = $provider->beforeSave($data);
+
+        $generator->validate($request, $data);
+
+        $data = $generator->beforeSave($data);
 
         $entity = $this->forTable($table)->create($data);
         $entity->save();
-        
-        $provider->afterSave($entity->asArray(), $original);
+
+        $generator->afterSave($entity->asArray(), $original);
 
         $this->logger->info('Created ' . $table . ': ' . $entity->id);
-        
-        return $this->get($response, $entity->id, $provider)
+
+        return $this
+            ->get($response, $entity->id, $generator)
             ->withStatus(201);
     }
 
@@ -184,10 +183,10 @@ class Api implements ApiInterface
         ServerRequestInterface $request,
         ResponseInterface $response,
         int $id,
-        EntityGeneratorInterface $provider
-    ) : ResponseInterface
+        EntityGeneratorInterface $generator
+    ): ResponseInterface
     {
-        $table = $provider->getEntity();
+        $table = $generator->getEntity();
         $rights = $this->getRights($table);
 
         $entity = $this->getObj($table, $id);
@@ -209,29 +208,29 @@ class Api implements ApiInterface
         $data = $this->securePublished($table, $original);
         $data = $this->stamps($table, $data);
 
-        $provider->validate($request, $data, $id);
-        
-        $data = $provider->beforeSave($data, $id);
+        $generator->validate($request, $data, $id);
+
+        $data = $generator->beforeSave($data, $id);
 
         $entity->set($data);
         $entity->save();
-        
-        $provider->afterSave($entity->asArray(), $original);
-        
+
+        $generator->afterSave($entity->asArray(), $original);
+
         $this->logger->info(
             'Updated ' . $table . ': ' . $entity->id
         );
 
-        return $this->get($response, $entity->id, $provider);
+        return $this->get($response, $entity->id, $generator);
     }
 
     public function delete(
         ResponseInterface $response,
         int $id,
-        EntityGeneratorInterface $provider
-    ) : ResponseInterface
+        EntityGeneratorInterface $generator
+    ): ResponseInterface
     {
-        $table = $provider->getEntity();
+        $table = $generator->getEntity();
         $rights = $this->getRights($table);
 
         $entity = $this->getObj($table, $id);
@@ -249,8 +248,8 @@ class Api implements ApiInterface
         }
 
         $entity->delete();
-        
-        $provider->afterDelete($entity->asArray());
+
+        $generator->afterDelete($entity->asArray());
 
         $this->logger->info(
             'Deleted ' . $table . ': ' . $entity->id
@@ -262,7 +261,7 @@ class Api implements ApiInterface
     /**
      * Adds user names for created_by / updated_by.
      */
-    private function addUserNames(string $table, array $item) : array
+    private function addUserNames(string $table, array $item): array
     {
         if ($this->metadata->hasField($table, 'created_by')) {
             $creator = '[no data]';
@@ -295,22 +294,22 @@ class Api implements ApiInterface
      * This is a security check,
      * alternatively ~NotAuthorized() exception can be thrown.
      */
-    private function securePublished(string $table, array $data) : array
+    private function securePublished(string $table, array $data): array
     {
         $rights = $this->getRights($table);
         $canPublish = $rights->can(Rights::PUBLISH);
-        
+
         if (isset($data['published']) && !$canPublish) {
             unset($data['published']);
         }
 
         return $data;
     }
-    
+
     /**
      * Adds updated_at / created_by / updated_by values.
      */
-    private function stamps(string $table, array $data) : array
+    private function stamps(string $table, array $data): array
     {
         $upd = $this->metadata->hasField($table, 'updated_at')
             ? Date::dbNow()
@@ -338,21 +337,21 @@ class Api implements ApiInterface
         return $data;
     }
 
-    private function selectMany(string $tableAlias, array $exclude = null) : ORM
+    private function selectMany(string $tableAlias, ?array $exclude = null): ORM
     {
-        $t = $this->forTable($tableAlias);
+        $table = $this->forTable($tableAlias);
         $fields = $this->metadata->fields($tableAlias);
 
-        if ($fields && $exclude) {
+        if (!empty($fields) && !empty($exclude)) {
             $fields = array_diff($fields, $exclude);
         }
 
-        return $fields
-            ? $t->selectMany($fields)
-            : $t->selectMany();
+        return !empty($fields)
+            ? $table->selectMany($fields)
+            : $table->selectMany();
     }
 
-    private function getObj(string $tableAlias, $id, ?callable $where = null) : ORM
+    private function getObj(string $tableAlias, $id, ?callable $where = null): ORM
     {
         $query = $this
             ->forTable($tableAlias)
@@ -365,14 +364,14 @@ class Api implements ApiInterface
         return $query->findOne();
     }
 
-    private function forTable(string $tableAlias) : ORM
+    private function forTable(string $tableAlias): ORM
     {
         $tableName = $this->metadata->tableName($tableAlias);
 
         return ORM::forTable($tableName);
     }
 
-    public function getQueryCount() : int
+    public function getQueryCount(): int
     {
         return ORM::forTable(null)
             ->rawQuery('SHOW STATUS LIKE ?', ['Questions'])
