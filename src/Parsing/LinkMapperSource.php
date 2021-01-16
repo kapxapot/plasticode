@@ -14,40 +14,40 @@ class LinkMapperSource implements LinkMapperSourceInterface
     private ?LinkMapperInterface $defaultMapper = null;
     private ?LinkMapperInterface $genericMapper = null;
 
-    public function registerTaggedMapper(TaggedLinkMapperInterface $mapper) : void
+    public function registerTaggedMapper(TaggedLinkMapperInterface $mapper): void
     {
         $tag = $mapper->tag();
         $this->taggedMappers[$tag] = $mapper;
     }
 
-    public function registerTaggedMappers(array $mappers) : void
+    public function registerTaggedMappers(TaggedLinkMapperInterface ...$mappers): void
     {
         foreach ($mappers as $mapper) {
             $this->registerTaggedMapper($mapper);
         }
     }
 
-    public function getTaggedMapper(string $tag) : ?TaggedLinkMapperInterface
+    public function getTaggedMapper(string $tag): ?TaggedLinkMapperInterface
     {
         return $this->taggedMappers[$tag] ?? null;
     }
 
-    public function getDefaultMapper() : ?LinkMapperInterface
+    public function getDefaultMapper(): ?LinkMapperInterface
     {
         return $this->defaultMapper;
     }
 
-    public function setDefaultMapper(LinkMapperInterface $mapper) : void
+    public function setDefaultMapper(LinkMapperInterface $mapper): void
     {
         $this->defaultMapper = $mapper;
     }
 
-    public function getGenericMapper() : ?LinkMapperInterface
+    public function getGenericMapper(): ?LinkMapperInterface
     {
         return $this->genericMapper;
     }
 
-    public function setGenericMapper(LinkMapperInterface $mapper) : void
+    public function setGenericMapper(LinkMapperInterface $mapper): void
     {
         $this->genericMapper = $mapper;
     }
@@ -57,7 +57,7 @@ class LinkMapperSource implements LinkMapperSourceInterface
      *
      * @return LinkMapperInterface[]
      */
-    public function getAllMappers() : array
+    public function getAllMappers(): array
     {
         return array_filter(
             [

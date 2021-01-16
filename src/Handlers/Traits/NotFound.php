@@ -8,12 +8,24 @@ use Plasticode\Exceptions\Http\NotFoundException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * {@see \Plasticode\Handlers\Interfaces\NotFoundHandlerInterface} implementation.
+ */
 trait NotFound
 {
+    abstract protected function buildParams(array $settings): array;
+    abstract protected function translate(string $message): string;
+
+    abstract protected function render(
+        ResponseInterface $response,
+        string $template,
+        array $data = []
+    ): ResponseInterface;
+
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response
-    ) : ResponseInterface
+    ): ResponseInterface
     {
         if (Request::isJson($request)) {
             $ex = new NotFoundException();
@@ -38,7 +50,8 @@ trait NotFound
             ]
         );
 
-        return $this->render($response, 'main/generic.twig', $params)
+        return $this
+            ->render($response, 'main/generic.twig', $params)
             ->withStatus(404);
     }
 }

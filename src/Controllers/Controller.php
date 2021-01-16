@@ -53,7 +53,7 @@ abstract class Controller
         return $this->settingsProvider->get($path, $default);
     }
 
-    protected function buildParams(array $settings) : array
+    protected function buildParams(array $settings): array
     {
         $params = [
             'menu' => $this->buildMenu($settings),
@@ -89,12 +89,12 @@ abstract class Controller
         return array_merge($params, $settings['params']);
     }
 
-    protected function buildMenu(array $settings) : MenuCollection
+    protected function buildMenu(array $settings): MenuCollection
     {
         return $this->appContext->getMenus();
     }
 
-    protected function buildSidebar(array $settings) : array
+    protected function buildSidebar(array $settings): array
     {
         $result = [];
 
@@ -109,7 +109,7 @@ abstract class Controller
         return $result;
     }
 
-    protected function buildActionPart(array $result, string $part) : array
+    protected function buildActionPart(array $result, string $part): array
     {
         $bits = explode('.', $part);
 
@@ -126,12 +126,12 @@ abstract class Controller
      * Builds sidebar part and adds it to result.
      * If the part is not built, returns null.
      */
-    protected function buildPart(array $settings, array $result, string $part) : ?array
+    protected function buildPart(array $settings, array $result, string $part): ?array
     {
         return null;
     }
 
-    protected function translate(string $message) : string
+    protected function translate(string $message): string
     {
         return $this->translator->translate($message);
     }
@@ -140,12 +140,12 @@ abstract class Controller
         ResponseInterface $response,
         string $template,
         array $data = []
-    ) : ResponseInterface
+    ): ResponseInterface
     {
         return $this->view->render($response, $template, $data);
     }
 
-    protected function validate(Request $request, array $rules) : void
+    protected function validate(Request $request, array $rules): void
     {
         $this
             ->validator

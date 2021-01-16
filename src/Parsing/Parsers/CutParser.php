@@ -11,11 +11,8 @@ use Plasticode\Util\Text;
  */
 class CutParser
 {
-    /** @var ParsingStepInterface */
-    private $cleanupParser;
-
-    /** @var string */
-    private $tag = '[cut]';
+    private ParsingStepInterface $cleanupParser;
+    private string $tag = '[cut]';
 
     public function __construct(ParsingStepInterface $cleanupParser, string $tag = null)
     {
@@ -29,7 +26,7 @@ class CutParser
     /**
      * Just removes the [cut] tag.
      */
-    public function full(?string $text) : ?string
+    public function full(?string $text): ?string
     {
         $cut = $this->tag;
         $cutpos = strpos($text, $cut);
@@ -47,7 +44,7 @@ class CutParser
      * Cuts the already parsed text by [cut] tag.
      * If there's no [cut] tag, returns null (!).
      */
-    public function short(?string $text) : ?string
+    public function short(?string $text): ?string
     {
         $cut = $this->tag;
         $cutpos = strpos($text, $cut);
@@ -62,7 +59,7 @@ class CutParser
         return $this->cleanup($text);
     }
 
-    private function cleanup(?string $text) : ?string
+    private function cleanup(?string $text): ?string
     {
         $context = $this->cleanupParser->parse($text);
 

@@ -28,10 +28,8 @@ class LinkMapperSourceFactory
         $config->setDefaultMapper($pageLinkMapper);
 
         $config->registerTaggedMappers(
-            [
-                new NewsLinkMapper($renderer, $linker),
-                $tagLinkMapper,
-            ]
+            new NewsLinkMapper($renderer, $linker),
+            $tagLinkMapper
         );
 
         $config->setGenericMapper(new GenericLinkMapperMock());

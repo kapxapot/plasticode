@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Core\Factories;
+namespace Plasticode\Twig;
 
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Interfaces\AuthInterface;
@@ -21,7 +21,7 @@ use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
 use Twig\Extension\DebugExtension;
 
-class ViewFactory
+class TwigViewFactory
 {
     public function __invoke(ContainerInterface $container): ViewInterface
     {
