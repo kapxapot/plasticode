@@ -2,7 +2,7 @@
 
 namespace Plasticode\Models;
 
-use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Generic\DbModel;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\Util\Strings;
 
@@ -16,12 +16,12 @@ use Plasticode\Util\Strings;
  */
 class Tag extends DbModel implements SerializableInterface
 {
-    protected function requiredWiths() : array
+    protected function requiredWiths(): array
     {
         return ['url'];
     }
 
-    public function serialize() : array
+    public function serialize(): array
     {
         return [
             'id' => $this->getId(),
@@ -29,7 +29,7 @@ class Tag extends DbModel implements SerializableInterface
         ];
     }
 
-    public function code() : string
+    public function code(): string
     {
         return Strings::doubleBracketsTag('tag', $this->tag);
     }

@@ -3,7 +3,7 @@
 namespace Plasticode\Models;
 
 use Plasticode\Collections\MenuItemCollection;
-use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Generic\DbModel;
 use Plasticode\Models\Interfaces\CreatedAtInterface;
 use Plasticode\Models\Interfaces\UpdatedAtInterface;
 use Plasticode\Models\Traits\CreatedAt;
@@ -24,7 +24,7 @@ class Menu extends DbModel implements CreatedAtInterface, UpdatedAtInterface
     use CreatedAt;
     use UpdatedAt;
 
-    protected function requiredWiths() : array
+    protected function requiredWiths(): array
     {
         return ['items', 'url'];
     }

@@ -2,6 +2,7 @@
 
 namespace Plasticode\Util;
 
+use InvalidArgumentException;
 use Webmozart\Assert\Assert;
 
 /**
@@ -136,11 +137,11 @@ class Cases
     /**
      * Returns case data for a word.
      * 
-     * If the word not found, throws {@see \InvalidArgumentException}.
+     * If the word not found, throws {@see InvalidArgumentException}.
      * 
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    protected function getCaseData(string $word) : array
+    protected function getCaseData(string $word): array
     {
         Assert::keyExists(
             $this->caseData,
@@ -154,11 +155,11 @@ class Cases
     /**
      * Returns conjugation data for a word.
      * 
-     * If the word is not found, throws {@see \InvalidArgumentException}.
+     * If the word is not found, throws {@see InvalidArgumentException}.
      * 
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    protected function getConjugationData(string $word) : array
+    protected function getConjugationData(string $word): array
     {
         Assert::keyExists(
             $this->conjugationData,
@@ -173,7 +174,7 @@ class Cases
      * Adds custom cases.
      * 
      * @param array $cases Custom cases settings.
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      * 
      * Format:
      * 
@@ -189,7 +190,7 @@ class Cases
      *     'index' => '_index_'
      * ]
      */
-    public function addCases(array $cases = []) : void
+    public function addCases(array $cases = []): void
     {
         $word = $cases['word'] ?? null;
         $base = $cases['base'] ?? null;
@@ -223,7 +224,7 @@ class Cases
      * Adds custom conjugations.
      * 
      * @param array $conjugations Custom conjugations settings.
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      * 
      * Format:
      * 
@@ -242,7 +243,7 @@ class Cases
      *      'index' => '_index_'
      *  ]
      */
-    public function addConjugations(array $conjugations = []) : void
+    public function addConjugations(array $conjugations = []): void
     {
         $word = $conjugations['word'] ?? null;
         $base = $conjugations['base'] ?? null;
@@ -277,14 +278,14 @@ class Cases
      * 11 ребят - мн
      * 21 ребенок - ед
      */
-    public function numberForNumber(int $num) : int
+    public function numberForNumber(int $num): int
     {
         return (($num % 10 == 1) && ($num % 100 != 11))
             ? self::SINGLE
             : self::PLURAL;
     }
 
-    public function gender(string $word) : int
+    public function gender(string $word): int
     {
         $data = $this->getCaseData($word);
         return $data['gender'] ?? Cases::MAS;
@@ -323,7 +324,7 @@ class Cases
     /**
      * [case 2/3, number 2, number 3]
      */
-    private static function caseForNumberGroupSettings(int $case) : array
+    private static function caseForNumberGroupSettings(int $case): array
     {
         $settings = [
             self::NOM => [self::GEN, self::SINGLE],
@@ -346,9 +347,9 @@ class Cases
     /**
      * Возвращает форму существительного, соответствующую указанному натуральному числу.
      * 
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public function caseForNumber(string $word, int $num, ?int $targetCase = null) : string
+    public function caseForNumber(string $word, int $num, ?int $targetCase = null): string
     {
         Assert::greaterThanEq(
             $num,
@@ -413,9 +414,9 @@ class Cases
     /**
      * [1..4] time, [1..3] person, [sp] number, [mfnp] gender.
      * 
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    private function parseConjugationForm(string $str) : array
+    private function parseConjugationForm(string $str): array
     {
         $bits = str_split($str);
 
@@ -454,9 +455,9 @@ class Cases
      * Returns conjugation for word based on form.
      * 
      * @param array|string $form Array OR string.
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    public function conjugation(string $word, $form) : string
+    public function conjugation(string $word, $form): string
     {
         $data = $this->getConjugationData($word);
         $base = $data['base'];

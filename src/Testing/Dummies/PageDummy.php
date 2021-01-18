@@ -2,8 +2,8 @@
 
 namespace Plasticode\Testing\Dummies;
 
+use Plasticode\Models\Generic\NewsSource;
 use Plasticode\Models\Interfaces\PageInterface;
-use Plasticode\Models\NewsSource;
 use Plasticode\Util\Strings;
 
 /**
@@ -14,22 +14,22 @@ use Plasticode\Util\Strings;
  */
 class PageDummy extends NewsSource implements PageInterface
 {
-    public function getSlug() : string
+    public function getSlug(): string
     {
         return $this->slug;
     }
 
-    public function displayTitle() : string
+    public function displayTitle(): string
     {
         return $this->title;
     }
 
-    public function rawText() : ?string
+    public function rawText(): ?string
     {
         return $this->text;
     }
 
-    public function code() : string
+    public function code(): string
     {
         $parts[] = $this->slug;
 

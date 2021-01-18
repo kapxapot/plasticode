@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode;
+namespace Plasticode\Models;
 
 class TagLink
 {
@@ -13,12 +13,12 @@ class TagLink
         $this->url = $url;
     }
 
-    public function text() : string
+    public function text(): string
     {
         return $this->tag;
     }
 
-    public function url() : string
+    public function url(): string
     {
         return $this->url;
     }

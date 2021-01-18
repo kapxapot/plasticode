@@ -1,30 +1,29 @@
 <?php
 
-namespace Plasticode;
+namespace Plasticode\Models;
 
 use Plasticode\Util\Date;
 
 class Moment
 {
-    /** @var string */
-    private $date;
+    private string $date;
 
     public function __construct(string $date)
     {
         $this->date = $date;
     }
-    
-    public function iso() : string
+
+    public function iso(): string
     {
         return Date::iso($this->date);
     }
-    
-    public function hasTime() : bool
+
+    public function hasTime(): bool
     {
         return Date::hasTime($this->date);
     }
-    
-    public function __toString() : string
+
+    public function __toString()
     {
         return $this->date;
     }

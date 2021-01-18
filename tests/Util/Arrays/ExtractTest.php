@@ -3,7 +3,7 @@
 namespace Plasticode\Tests\Util\Arrays;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Models\Basic\Model;
+use Plasticode\Models\Generic\Model;
 use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Util\Arrays;
 
@@ -12,12 +12,12 @@ final class ExtractTest extends TestCase
     /**
      * @dataProvider extractProvider
      */
-    public function testExtract(array $array, string $column, array $result) : void
+    public function testExtract(array $array, string $column, array $result): void
     {
         $this->assertEquals($result, Arrays::extract($array, $column));
     }
 
-    public function extractProvider() : array
+    public function extractProvider(): array
     {
         $item1 = ['id' => 1, 'name' => 'one'];
         $item11 = ['id' => 1, 'name' => 'one one'];

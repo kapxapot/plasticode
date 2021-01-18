@@ -3,14 +3,14 @@
 namespace Plasticode\Tests\Models;
 
 use PHPUnit\Framework\TestCase;
-use Plasticode\Models\Basic\Model;
+use Plasticode\Models\Generic\Model;
 
 final class ModelTest extends TestCase
 {
     /**
      * @dataProvider jsonEncodeProvider
      */
-    public function testJsonEncode(Model $original, array $expected) : void
+    public function testJsonEncode(Model $original, array $expected): void
     {
         $actual = json_encode($original);
 

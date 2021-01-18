@@ -36,30 +36,4 @@ class ScalarCollection extends Collection
             fn ($v) => $v
         );
     }
-
-    /**
-     * Returns max value.
-     * 
-     * In case of empty collection returns null.
-     *
-     * @return mixed
-     */
-    public function max()
-    {
-        return $this->isEmpty()
-            ? null
-            : max($this->data);
-    }
-
-    /**
-     * Returns sum of the elements.
-     * 
-     * In case of empty collection returns 0.
-     *
-     * @return mixed
-     */
-    public function sum()
-    {
-        return array_sum($this->data);
-    }
 }

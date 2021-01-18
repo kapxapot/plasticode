@@ -2,26 +2,27 @@
 
 namespace Plasticode\Tests\Models;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Plasticode\AspectRatio;
+use Plasticode\Models\AspectRatio;
 
 final class AspectRatioTest extends TestCase
 {
-    public function testInvalidDimensions() : void
+    public function testInvalidDimensions(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new AspectRatio(0, 10);
     }
 
-    public function testIsHorizontal() : void
+    public function testIsHorizontal(): void
     {
         $ratio = new AspectRatio(200, 100);
 
         $this->assertTrue($ratio->isHorizontal());
     }
 
-    public function testIsVertical() : void
+    public function testIsVertical(): void
     {
         $ratio = new AspectRatio(100, 200);
 
@@ -31,14 +32,14 @@ final class AspectRatioTest extends TestCase
     /**
      * @dataProvider exactProvider
      */
-    public function testExact(int $width, int $height, float $expected) : void
+    public function testExact(int $width, int $height, float $expected): void
     {
         $ratio = new AspectRatio($width, $height);
 
         $this->assertEquals($expected, $ratio->exact());
     }
 
-    public function exactProvider()
+    public function exactProvider(): array
     {
         return [
             [100, 200, 2],
@@ -49,19 +50,16 @@ final class AspectRatioTest extends TestCase
     /**
      * @dataProvider closestProvider
      * 
-     * @param integer $width
-     * @param integer $height
      * @param integer[] $expected
-     * @return void
      */
-    public function testClosest(int $width, int $height, array $expected) : void
+    public function testClosest(int $width, int $height, array $expected): void
     {
         $ratio = new AspectRatio($width, $height);
 
         $this->assertEquals($expected, $ratio->closest());
     }
 
-    public function closestProvider()
+    public function closestProvider(): array
     {
         return [
             [100, 110, [1, 1]],
@@ -72,14 +70,14 @@ final class AspectRatioTest extends TestCase
     /**
      * @dataProvider cssProvider
      */
-    public function testCss(int $width, int $height, string $expected) : void
+    public function testCss(int $width, int $height, string $expected): void
     {
         $ratio = new AspectRatio($width, $height);
 
         $this->assertEquals($expected, $ratio->cssClasses());
     }
 
-    public function cssProvider()
+    public function cssProvider(): array
     {
         return [
             [100, 110, 'ratio-w1 ratio-h1'],
@@ -94,13 +92,15 @@ final class AspectRatioTest extends TestCase
     /**
      * @dataProvider supportedRatiosProvider
      *
-     * @param integer $width
-     * @param integer $height
      * @param integer[][] $supportedRatios
      * @param integer[] $expected
-     * @return void
      */
-    public function testSupportedRatios(int $width, int $height, array $supportedRatios, array $expected) : void
+    public function testSupportedRatios(
+        int $width,
+        int $height,
+        array $supportedRatios,
+        array $expected
+    ): void
     {
         $ratio = new AspectRatio($width, $height, $supportedRatios);
 
@@ -110,7 +110,7 @@ final class AspectRatioTest extends TestCase
         );
     }
 
-    public function supportedRatiosProvider() : array
+    public function supportedRatiosProvider(): array
     {
         $supportedRatios = [
             [1, 1],

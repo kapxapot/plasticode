@@ -35,10 +35,10 @@ class NewsSourceCollection extends TaggedCollection
         return $this->sort(true);
     }
 
-    public function years(): ScalarCollection
+    public function years(): NumericCollection
     {
         return $this
-            ->scalarize(
+            ->numerize(
                 fn (NewsSourceInterface $n) => Date::year(
                     $n->publishedAtIso()
                 )

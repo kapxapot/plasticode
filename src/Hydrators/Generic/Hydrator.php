@@ -1,14 +1,14 @@
 <?php
 
-namespace Plasticode\Hydrators\Basic;
+namespace Plasticode\Hydrators\Generic;
 
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
-use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Generic\DbModel;
 use Plasticode\Traits\Frozen;
 
 abstract class Hydrator implements HydratorInterface
 {
     use Frozen;
 
-    abstract public function hydrate(DbModel $entity) : DbModel;
+    abstract public function hydrate(DbModel $entity): DbModel;
 }

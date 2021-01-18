@@ -2,9 +2,9 @@
 
 namespace Plasticode\Hydrators;
 
-use Plasticode\Hydrators\Basic\Hydrator;
+use Plasticode\Hydrators\Generic\Hydrator;
 use Plasticode\Models\AuthToken;
-use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Generic\DbModel;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 
 class AuthTokenHydrator extends Hydrator
@@ -21,7 +21,7 @@ class AuthTokenHydrator extends Hydrator
     /**
      * @param AuthToken $entity
      */
-    public function hydrate(DbModel $entity) : AuthToken
+    public function hydrate(DbModel $entity): AuthToken
     {
         return $entity
             ->withUser(

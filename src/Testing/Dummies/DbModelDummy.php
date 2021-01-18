@@ -2,7 +2,7 @@
 
 namespace Plasticode\Testing\Dummies;
 
-use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Generic\DbModel;
 
 /**
  * @method ModelDummy dummy()
@@ -10,7 +10,7 @@ use Plasticode\Models\Basic\DbModel;
  */
 class DbModelDummy extends DbModel
 {
-    protected function requiredWiths() : array
+    protected function requiredWiths(): array
     {
         return ['dummy'];
     }

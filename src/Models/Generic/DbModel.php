@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Models\Basic;
+namespace Plasticode\Models\Generic;
 
 use BadMethodCallException;
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
@@ -30,7 +30,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      */
     private array $with = [];
 
-    public static function idField() : string
+    public static function idField(): string
     {
         return static::$idField;
     }
@@ -40,7 +40,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      * 
      * @return static
      */
-    public static function create(?array $data = null) : self
+    public static function create(?array $data = null): self
     {
         return new static($data);
     }
@@ -50,7 +50,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      *
      * @return $this
      */
-    public function update(array $data) : self
+    public function update(array $data): self
     {
         $this->data = $data;
 
@@ -63,23 +63,24 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      * Use getId() instead of id when $idField is custom.
      * It is recommended to use getId() always for safer code.
      */
-    public function getId() : ?int
+    public function getId(): ?int
     {
         $idField = self::idField();
+
         return $this->{$idField};
     }
 
-    public function hasId() : bool
+    public function hasId(): bool
     {
         return $this->getId() > 0;
     }
 
-    public function isPersisted() : bool
+    public function isPersisted(): bool
     {
         return $this->hasId();
     }
 
-    public function isNotHydrated() : bool
+    public function isNotHydrated(): bool
     {
         return $this->hydratedState == self::NOT_HYDRATED;
     }
@@ -88,7 +89,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      * @param HydratorInterface|ObjectProxy|null $hydrator
      * @return $this
      */
-    public function hydrate($hydrator, bool $forced = false) : self
+    public function hydrate($hydrator, bool $forced = false): self
     {
         if (!$forced && !$this->isNotHydrated()) {
             return $this;
@@ -111,7 +112,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      *
      * @return string[]
      */
-    protected function requiredWiths() : array
+    protected function requiredWiths(): array
     {
         return [];
     }
@@ -139,7 +140,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      * @param mixed $value
      * @return $this
      */
-    protected function setWithProperty(string $name, $value) : self
+    protected function setWithProperty(string $name, $value): self
     {
         $this->with[$name] = $value;
 
@@ -178,7 +179,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      * 
      * ArticleCategory -> article_categories.
      */
-    public static function pluralAlias() : string
+    public static function pluralAlias(): string
     {
         // \App\Models\ArticleCategory
         // -> ArticleCategory
@@ -200,19 +201,19 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      *  - Same class.
      *  - Same id.
      */
-    public function equals(?DbModelInterface $model) : bool
+    public function equals(?DbModelInterface $model): bool
     {
         return !is_null($model)
             && ($model->getId() === $this->getId())
             && (get_class($model) == static::class);
     }
 
-    public function serialize() : array
+    public function serialize(): array
     {
         return $this->toArray();
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return '[' . $this->getId() . '] ' . static::class;
     }

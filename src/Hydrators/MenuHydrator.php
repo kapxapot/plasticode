@@ -3,8 +3,8 @@
 namespace Plasticode\Hydrators;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Hydrators\Basic\Hydrator;
-use Plasticode\Models\Basic\DbModel;
+use Plasticode\Hydrators\Generic\Hydrator;
+use Plasticode\Models\Generic\DbModel;
 use Plasticode\Models\Menu;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 
@@ -25,7 +25,7 @@ class MenuHydrator extends Hydrator
     /**
      * @param Menu $entity
      */
-    public function hydrate(DbModel $entity) : Menu
+    public function hydrate(DbModel $entity): Menu
     {
         return $entity
             ->withItems(

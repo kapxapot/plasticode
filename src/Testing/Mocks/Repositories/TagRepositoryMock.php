@@ -2,7 +2,7 @@
 
 namespace Plasticode\Testing\Mocks\Repositories;
 
-use Plasticode\Collections\Basic\ScalarCollection;
+use Plasticode\Collections\Generic\NumericCollection;
 use Plasticode\Collections\TagCollection;
 use Plasticode\Models\Tag;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
@@ -17,7 +17,7 @@ class TagRepositoryMock implements TagRepositoryInterface
         $this->tags = TagCollection::make($seeder->seed());
     }
 
-    public function store(array $data) : Tag
+    public function store(array $data): Tag
     {
         $tag = new Tag($data);
 
@@ -30,27 +30,27 @@ class TagRepositoryMock implements TagRepositoryInterface
         return $tag;
     }
 
-    public function getIdsByTag(string $entityType, string $tag) : ScalarCollection
+    public function getIdsByTag(string $entityType, string $tag): NumericCollection
     {
         return $this
             ->getAllByTag($tag)
             ->where('entity_type', $entityType)
-            ->scalarize('entity_id');
+            ->numerize('entity_id');
     }
 
-    public function getAllByTag(string $tag) : TagCollection
+    public function getAllByTag(string $tag): TagCollection
     {
         return $this
             ->tags
             ->where('tag', $tag);
     }
 
-    public function exists(string $tag) : bool
+    public function exists(string $tag): bool
     {
         return $this->getAllByTag($tag)->any();
     }
 
-    public function deleteByEntity(string $entityType, int $entityId) : bool
+    public function deleteByEntity(string $entityType, int $entityId): bool
     {
         $this->tags = $this->tags
             ->where(
@@ -62,7 +62,7 @@ class TagRepositoryMock implements TagRepositoryInterface
         return true;
     }
 
-    public function search(string $searchQuery) : TagCollection
+    public function search(string $searchQuery): TagCollection
     {
         // placeholder
         return $this->getAllByTag($searchQuery);

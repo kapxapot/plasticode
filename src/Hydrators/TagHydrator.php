@@ -3,8 +3,8 @@
 namespace Plasticode\Hydrators;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Hydrators\Basic\Hydrator;
-use Plasticode\Models\Basic\DbModel;
+use Plasticode\Hydrators\Generic\Hydrator;
+use Plasticode\Models\Generic\DbModel;
 use Plasticode\Models\Tag;
 
 class TagHydrator extends Hydrator
@@ -21,7 +21,7 @@ class TagHydrator extends Hydrator
     /**
      * @param Tag $entity
      */
-    public function hydrate(DbModel $entity) : Tag
+    public function hydrate(DbModel $entity): Tag
     {
         return $entity
             ->withUrl(

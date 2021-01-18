@@ -2,9 +2,9 @@
 
 namespace Plasticode\Hydrators\Interfaces;
 
-use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Generic\DbModel;
 
 interface HydratorInterface
 {
-    function hydrate(DbModel $entity) : DbModel;
+    function hydrate(DbModel $entity): DbModel;
 }

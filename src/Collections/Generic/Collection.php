@@ -4,6 +4,7 @@ namespace Plasticode\Collections\Generic;
 
 use ArrayAccess;
 use Countable;
+use InvalidArgumentException;
 use Iterator;
 use JsonSerializable;
 use Plasticode\Interfaces\ArrayableInterface;
@@ -11,7 +12,7 @@ use Plasticode\Util\Arrays;
 use Plasticode\Util\SortStep;
 use Webmozart\Assert\Assert;
 
-class Collection implements ArrayAccess, Iterator, Countable, JsonSerializable, ArrayableInterface
+class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator, JsonSerializable
 {
     protected array $data;
 
@@ -73,21 +74,21 @@ class Collection implements ArrayAccess, Iterator, Countable, JsonSerializable, 
     }
 
     /**
-     * Removes first element by column/property value or callable.
+     * Removes first element by selector.
      * 
-     * @param string|callable|null $by
+     * @param string|callable|null $selector
      * @param mixed $value
-     * @return mixed
+     * @return static
      */
-    public function removeFirst($by = null, $value = null): self
+    public function removeFirst($selector = null, $value = null): self
     {
-        $data = Arrays::removeFirstBy($this->data, $by, $value);
+        $data = Arrays::removeFirstBy($this->data, $selector, $value);
 
         return static::make($data);
     }
 
     /**
-     * Concats the collection.
+     * Concats the other collection of the same type.
      * 
      * @param static $other
      * @return static
@@ -100,7 +101,7 @@ class Collection implements ArrayAccess, Iterator, Countable, JsonSerializable, 
     }
 
     /**
-     * Merges several collections.
+     * Merges several collections of the same type.
      * 
      * @param static[] $collections
      * @return static
@@ -119,68 +120,48 @@ class Collection implements ArrayAccess, Iterator, Countable, JsonSerializable, 
     /**
      * Returns distinct values grouped by selector.
      * 
-     * @param string|callable $by Column/property name or callable,
+     * @param string|callable $selector Column/property name or callable,
      * returning generated column/property name.
      * @return static
      */
-    public function distinctBy($by): self
+    public function distinctBy($selector): self
     {
-        $data = Arrays::distinctBy($this->data, $by);
+        $data = Arrays::distinctBy($this->data, $selector);
 
         return static::make($data);
     }
 
     /**
-     * Converts collection to associative array by column/property or callable.
-     * Selector must be unique, otherwise only first element is taken, others are discarded.
+     * Converts collection to associative array by selector.
      * 
-     * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
+     * Selector should produce unique results, otherwise only first element is taken,
+     * others are discarded.
+     * 
+     * @param string|callable|null $selector Column/property name or callable, returning generated column/property name.
      * @return array<string, mixed>
      */
-    public function toAssoc($by = null): array
+    public function toAssoc($selector = null): array
     {
-        return Arrays::toAssocBy($this->data, $by);
+        return Arrays::toAssocBy($this->data, $selector);
     }
 
     /**
-     * Groups collection by column/property or callable.
+     * Groups collection by selector.
      * 
-     * @param string|callable|null $by Column/property name or callable, returning generated column/property name.
+     * @param string|callable|null $selector Column/property name or callable, returning generated column/property name.
      * @return array<string, static>
      */
-    public function group($by = null): array
+    public function group($selector = null): array
     {
         $result = [];
 
-        $groups = Arrays::groupBy($this->data, $by);
+        $groups = Arrays::groupBy($this->data, $selector);
 
         foreach ($groups as $key => $group) {
             $result[$key] = static::make($group);
         }
 
         return $result;
-    }
-
-    /**
-     * Flattens a collection of elements, arrays and collections one level.
-     * 
-     * Does not make collection distinct!
-     */
-    public function flatten(): self
-    {
-        $data = [];
-
-        foreach ($this->data as $item) {
-            if (is_array($item) || $item instanceof self) {
-                foreach ($item as $subItem) {
-                    $data[] = $subItem;
-                }
-            } else {
-                $data[] = $item;
-            }
-        }
-
-        return self::make($data);
     }
 
     /**
@@ -279,22 +260,61 @@ class Collection implements ArrayAccess, Iterator, Countable, JsonSerializable, 
     }
 
     /**
-     * Converts collection to ScalarCollection, optionally
+     * Converts collection to {@see StringCollection}, using $item->__toString() by default.
+     * Can be customized by selector.
+     * 
+     * Don't confuse with stringify!
+     * 
+     * In case of non-string values will throw an {@see InvalidArgumentException}.
+     * 
+     * @param string|callable|null $selector Column/property name or callable, that
+     * produces a string value.
+     * @throws InvalidArgumentException
+     */
+    public function stringize($selector = null): StringCollection
+    {
+        return StringCollection::from(
+            $this->scalarize(
+                $selector ?? (fn ($item) => (string)$item)
+            )
+        );
+    }
+
+    /**
+     * Converts collection to {@see NumericCollection}, optionally
+     * mapping (reducing) its values to numeric values.
+     * 
+     * In case of non-numeric values will throw an {@see InvalidArgumentException}.
+     * 
+     * @param string|callable|null $selector Column/property name or callable, that
+     * produces a numeric value.
+     * @throws InvalidArgumentException
+     */
+    public function numerize($selector = null): NumericCollection
+    {
+        return NumericCollection::from(
+            $this->scalarize($selector)
+        );
+    }
+
+    /**
+     * Converts collection to {@see ScalarCollection}, optionally
      * mapping (reducing) its values to scalars.
      * 
-     * In case of non-scalar values will throw an \InvalidArgumentException.
+     * In case of non-scalar values will throw an {@see InvalidArgumentException}.
      * 
-     * @param string|callable|null $by Column/property name or callable, that
-     * produces scalar value.
+     * @param string|callable|null $selector Column/property name or callable, that
+     * produces a scalar value.
+     * @throws InvalidArgumentException
      */
-    public function scalarize($by = null): ScalarCollection
+    public function scalarize($selector = null): ScalarCollection
     {
         $col = $this;
 
-        if (is_string($by)) {
-            $col = $col->extract($by);
-        } elseif (is_callable($by)) {
-            $col = $col->map($by);
+        if (is_string($selector)) {
+            $col = $col->extract($selector);
+        } elseif (is_callable($selector)) {
+            $col = $col->map($selector);
         }
 
         return ScalarCollection::from($col);
@@ -316,13 +336,13 @@ class Collection implements ArrayAccess, Iterator, Countable, JsonSerializable, 
      * Uses 'where' filtering internally.
      * Suitable for looking for 'null' as well.
      *
-     * @param string|callable|null $by
+     * @param string|callable|null $selector
      * @param mixed $value
      */
-    public function any($by = null, $value = null): bool
+    public function any($selector = null, $value = null): bool
     {
-        return $by
-            ? $this->where($by, $value)->any()
+        return $selector
+            ? $this->where($selector, $value)->any()
             : !$this->isEmpty();
     }
 
@@ -346,45 +366,43 @@ class Collection implements ArrayAccess, Iterator, Countable, JsonSerializable, 
     }
 
     /**
-     * Filters collection by column/property value or callable,
-     * then returns first item or null.
+     * Filters collection by selector, then returns first item or null.
      * 
-     * @param string|callable|null $by
+     * @param string|callable|null $selector
      * @param mixed $value
      * @return mixed
      */
-    public function first($by = null, $value = null)
+    public function first($selector = null, $value = null)
     {
-        return $by
-            ? Arrays::firstBy($this->data, $by, $value)
+        return $selector
+            ? Arrays::firstBy($this->data, $selector, $value)
             : Arrays::first($this->data);
     }
 
     /**
-     * Filters collection by column/property value or callable,
-     * then returns last item or null.
+     * Filters collection by selector, then returns last item or null.
      * 
-     * @param string|callable|null $by
+     * @param string|callable|null $selector
      * @param mixed $value
      * @return mixed
      */
-    public function last($by = null, $value = null)
+    public function last($selector = null, $value = null)
     {
-        return $by
-            ? Arrays::lastBy($this->data, $by, $value)
+        return $selector
+            ? Arrays::lastBy($this->data, $selector, $value)
             : Arrays::last($this->data);
     }
 
     /**
-     * Filters collection by property value or callable.
+     * Filters collection by selector.
      * 
-     * @param string|callable $by
+     * @param string|callable $selector
      * @param mixed $value
      * @return static
      */
-    public function where($by, $value = null): self
+    public function where($selector, $value = null): self
     {
-        $data = Arrays::filter($this->data, $by, $value);
+        $data = Arrays::filter($this->data, $selector, $value);
 
         return static::make($data);
     }
@@ -431,6 +449,28 @@ class Collection implements ArrayAccess, Iterator, Countable, JsonSerializable, 
     }
 
     /**
+     * Flattens a collection of elements, arrays and collections one level.
+     * 
+     * Doesn't make collection distinct!
+     */
+    public function flatten(): self
+    {
+        $data = [];
+
+        foreach ($this->data as $item) {
+            if (is_array($item) || $item instanceof self) {
+                foreach ($item as $subItem) {
+                    $data[] = $subItem;
+                }
+            } else {
+                $data[] = $item;
+            }
+        }
+
+        return self::make($data);
+    }
+
+    /**
      * Applies callable to all collection's items.
      */
     public function apply(callable $func): void
@@ -439,77 +479,75 @@ class Collection implements ArrayAccess, Iterator, Countable, JsonSerializable, 
     }
 
     /**
-     * Sorts collection ascending using property or callable.
+     * Sorts collection ascending using selector.
      *
-     * @param string|callable $by
+     * @param string|callable $selector
      * @return static
      */
-    public function asc($by, ?string $type = null): self
+    public function asc($selector, ?string $type = null): self
     {
-        return $this->orderBy($by, null, $type);
+        return $this->orderBy($selector, null, $type);
     }
 
     /**
-     * Sorts collection descending using property or callable.
+     * Sorts collection descending using selector.
      *
-     * @param string|callable $by
+     * @param string|callable $selector
      * @return static
      */
-    public function desc($by, ?string $type = null): self
+    public function desc($selector, ?string $type = null): self
     {
-        $data = Arrays::orderByDesc($this->data, $by, $type);
+        $data = Arrays::orderByDesc($this->data, $selector, $type);
 
         return static::make($data);
     }
 
     /**
-     * Sorts collection by column or callable.
-     * Ascending by default.
+     * Sorts collection by selector. Ascending by default.
      *
-     * @param string|callable $by
+     * @param string|callable $selector
      * @return static
      */
-    public function orderBy($by, ?string $dir = null, ?string $type = null): self
+    public function orderBy($selector, ?string $dir = null, ?string $type = null): self
     {
-        $data = Arrays::orderBy($this->data, $by, $dir, $type);
+        $data = Arrays::orderBy($this->data, $selector, $dir, $type);
 
         return static::make($data);
     }
 
     /**
-     * Sorts collection ascending by column or callable as strings.
+     * Sorts collection as strings ascending by selector.
      *
-     * @param string|callable $by
+     * @param string|callable $selector
      * @return static
      */
-    public function ascStr($by): self
+    public function ascStr($selector): self
     {
-        return $this->orderByStr($by);
+        return $this->orderByStr($selector);
     }
 
     /**
-     * Sorts collection descending by column or callable as strings.
+     * Sorts collection as strings descending by selector.
      *
-     * @param string|callable $by
+     * @param string|callable $selector
      * @return static
      */
-    public function descStr($by): self
+    public function descStr($selector): self
     {
-        $data = Arrays::orderByStrDesc($this->data, $by);
+        $data = Arrays::orderByStrDesc($this->data, $selector);
 
         return static::make($data);
     }
 
     /**
-     * Sorts collection by column or callable as strings.
-     * Ascending by default.
+     * Sorts collection as strings by selector. Ascending by default.
      *
-     * @param string|callable $by
+     * @param string|callable $selector
      * @return static
      */
-    public function orderByStr($by, ?string $dir = null): self
+    public function orderByStr($selector, ?string $dir = null): self
     {
-        $data = Arrays::orderByStr($this->data, $by, $dir);
+        $data = Arrays::orderByStr($this->data, $selector, $dir);
 
         return static::make($data);
     }
@@ -565,11 +603,12 @@ class Collection implements ArrayAccess, Iterator, Countable, JsonSerializable, 
     }
 
     /**
-     * Returns implode() result on the underlying data with the provided delimiter.
+     * Returns implode() result on the underlying data with the provided delimiter
+     * (no delimiter by default).
      */
-    public function join(string $delimiter = ''): string
+    public function join(?string $delimiter = null): string
     {
-        return implode($delimiter, $this->data);
+        return implode($delimiter ?? '', $this->data);
     }
 
     // ArrayAccess
@@ -642,7 +681,7 @@ class Collection implements ArrayAccess, Iterator, Countable, JsonSerializable, 
 
     // ArrayableInterface
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return $this->data;
     }

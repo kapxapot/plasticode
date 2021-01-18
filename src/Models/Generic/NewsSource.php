@@ -1,9 +1,8 @@
 <?php
 
-namespace Plasticode\Models;
+namespace Plasticode\Models\Generic;
 
 use Plasticode\Collections\TagLinkCollection;
-use Plasticode\Models\Basic\DbModel;
 use Plasticode\Models\Interfaces\NewsSourceInterface;
 use Plasticode\Models\Interfaces\SearchableInterface;
 use Plasticode\Models\Traits\FullPublished;
@@ -31,7 +30,7 @@ abstract class NewsSource extends DbModel implements NewsSourceInterface, Search
     protected string $parsedPropertyName = 'parsed';
     protected string $shortTextPropertyName = 'shortText';
 
-    protected function requiredWiths() : array
+    protected function requiredWiths(): array
     {
         return [
             $this->creatorPropertyName,
@@ -44,59 +43,59 @@ abstract class NewsSource extends DbModel implements NewsSourceInterface, Search
         ];
     }
 
-    public function parsedText() : ?string
+    public function parsedText(): ?string
     {
         return $this->parsed()->text;
     }
 
     // NewsSourceInterface
 
-    public function largeImage() : ?string
+    public function largeImage(): ?string
     {
         return $this->parsed()->largeImage();
     }
 
-    public function image() : ?string
+    public function image(): ?string
     {
         return $this->parsed()->image();
     }
 
-    public function video() : ?string
+    public function video(): ?string
     {
         return $this->parsed()->video();
     }
 
-    abstract public function displayTitle() : string;
+    abstract public function displayTitle(): string;
 
-    abstract public function rawText() : ?string;
+    abstract public function rawText(): ?string;
 
-    public function hasText() : bool
+    public function hasText(): bool
     {
         return strlen($this->rawText()) > 0;
     }
 
-    public function fullText() : ?string
+    public function fullText(): ?string
     {
         return $this->getWithProperty(
             $this->fullTextPropertyName
         );
     }
 
-    public function shortText() : ?string
+    public function shortText(): ?string
     {
         return $this->getWithProperty(
             $this->shortTextPropertyName
         );
     }
 
-    public function creator() : ?User
+    public function creator(): ?User
     {
         return $this->getWithProperty(
             $this->creatorPropertyName
         );
     }
 
-    public function tagLinks() : TagLinkCollection
+    public function tagLinks(): TagLinkCollection
     {
         return $this->getWithProperty(
             $this->tagLinksPropertyName
@@ -111,5 +110,5 @@ abstract class NewsSource extends DbModel implements NewsSourceInterface, Search
 
     // SearchableInterface
 
-    abstract public function code() : string;
+    abstract public function code(): string;
 }

@@ -2,7 +2,7 @@
 
 namespace Plasticode\Models;
 
-use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Generic\DbModel;
 
 /**
  * @property integer $id

@@ -2,7 +2,7 @@
 
 namespace Plasticode\Models;
 
-use Plasticode\Models\Basic\DbModel;
+use Plasticode\Models\Generic\DbModel;
 use Plasticode\Models\Interfaces\CreatedAtInterface;
 use Plasticode\Models\Interfaces\UpdatedAtInterface;
 use Plasticode\Models\Traits\CreatedAt;
@@ -25,17 +25,17 @@ class User extends DbModel implements CreatedAtInterface, UpdatedAtInterface
     use CreatedAt;
     use UpdatedAt;
 
-    protected function requiredWiths() : array
+    protected function requiredWiths(): array
     {
         return ['gravatarUrl', 'role'];
     }
 
-    public function displayName() : string
+    public function displayName(): string
     {
         return $this->name ?? $this->login;
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return '[' . $this->getId() . '] ' . $this->displayName();
     }

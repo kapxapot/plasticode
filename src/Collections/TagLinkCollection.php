@@ -3,7 +3,7 @@
 namespace Plasticode\Collections;
 
 use Plasticode\Collections\Generic\TypedCollection;
-use Plasticode\TagLink;
+use Plasticode\Models\TagLink;
 
 class TagLinkCollection extends TypedCollection
 {

@@ -8,8 +8,8 @@ use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\IO\Image;
 use Plasticode\Models\Interfaces\PageInterface;
 use Plasticode\Models\Interfaces\TaggedInterface;
+use Plasticode\Models\TagLink;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
-use Plasticode\TagLink;
 use Plasticode\Util\Numbers;
 use Plasticode\Util\Strings;
 use Slim\Interfaces\RouterInterface;
@@ -36,7 +36,7 @@ class Linker implements LinkerInterface
     /**
      * Makes url absolute. If no url provided, returns site url with trailing '/'.
      */
-    public function abs(string $url = null) : string
+    public function abs(string $url = null): string
     {
         $siteUrl = $this
             ->settingsProvider
@@ -52,22 +52,22 @@ class Linker implements LinkerInterface
         return $url;
     }
 
-    public function rel(string $url = null) : string
+    public function rel(string $url = null): string
     {
         return rtrim($this->root(), '/') . '/' . ltrim($url, '/');
     }
 
-    public function root() : ?string
+    public function root(): ?string
     {
         return $this->settingsProvider->get('root');
     }
 
-    public function getImageExtension(?string $type) : string
+    public function getImageExtension(?string $type): string
     {
         return Image::getExtension($type) ?? 'jpg';
     }
 
-    public function page(PageInterface $page = null) : string
+    public function page(PageInterface $page = null): string
     {
         return $this->router->pathFor(
             'main.page',
@@ -75,12 +75,12 @@ class Linker implements LinkerInterface
         );
     }
 
-    public function news(int $id = null) : string
+    public function news(int $id = null): string
     {
         return $this->router->pathFor('main.news', ['id' => $id]);
     }
 
-    public function tag(string $tag = null, string $tab = null) : string
+    public function tag(string $tag = null, string $tab = null): string
     {
         $tag = Strings::fromSpaces($tag, '+');
         $url = $this->router->pathFor('main.tag', ['tag' => $tag]);
@@ -92,7 +92,7 @@ class Linker implements LinkerInterface
         return $url;
     }
 
-    public function newsYear(int $year) : string
+    public function newsYear(int $year): string
     {
         return $this->router->pathFor(
             'main.news.archive.year',
@@ -100,44 +100,44 @@ class Linker implements LinkerInterface
         );
     }
 
-    public function twitchImg(string $id) : string
+    public function twitchImg(string $id): string
     {
         return 'https://static-cdn.jtvnw.net/previews-ttv/live_user_' . $id . '-320x180.jpg';
     }
 
-    public function twitchLargeImg(string $id) : string
+    public function twitchLargeImg(string $id): string
     {
         return 'https://static-cdn.jtvnw.net/previews-ttv/live_user_' . $id . '-640x360.jpg';
     }
 
-    public function twitch(string $id) : string
+    public function twitch(string $id): string
     {
         return 'https://twitch.tv/' . $id;
     }
 
-    public function youtube(string $code) : string
+    public function youtube(string $code): string
     {
         return 'https://youtube.com/watch?v=' . $code;
     }
 
-    public function gravatarUrl(string $hash = null) : string
+    public function gravatarUrl(string $hash = null): string
     {
         $hash = $hash ?? '0';
 
         return 'https://www.gravatar.com/avatar/' . $hash . '?s=100&d=mp';
     }
 
-    public function defaultGravatarUrl() : string
+    public function defaultGravatarUrl(): string
     {
         return $this->gravatarUrl();
     }
 
-    public function randPic(int $width, int $height) : string
+    public function randPic(int $width, int $height): string
     {
         return 'https://picsum.photos/' . $width . '/' . $height . '?' . Numbers::generate(6);
     }
 
-    public function tagLinks(TaggedInterface $entity) : TagLinkCollection
+    public function tagLinks(TaggedInterface $entity): TagLinkCollection
     {
         $tags = $entity->getTags();
 

@@ -2,7 +2,7 @@
 
 namespace Plasticode\Repositories\Idiorm;
 
-use Plasticode\Collections\Generic\ScalarCollection;
+use Plasticode\Collections\Generic\NumericCollection;
 use Plasticode\Collections\TagCollection;
 use Plasticode\Models\Tag;
 use Plasticode\Data\Query;
@@ -21,13 +21,13 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface
         return $this->storeEntity($data);
     }
 
-    public function getIdsByTag(string $entityType, string $tag): ScalarCollection
+    public function getIdsByTag(string $entityType, string $tag): NumericCollection
     {
         return $this
             ->entityQuery($entityType)
             ->where('tag', $tag)
             ->all()
-            ->scalarize('entity_id');
+            ->numerize('entity_id');
     }
 
     public function getAllByTag(string $tag): TagCollection

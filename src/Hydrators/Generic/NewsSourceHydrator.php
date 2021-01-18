@@ -1,10 +1,10 @@
 <?php
 
-namespace Plasticode\Hydrators\Basic;
+namespace Plasticode\Hydrators\Generic;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Models\Basic\DbModel;
-use Plasticode\Models\NewsSource;
+use Plasticode\Models\Generic\DbModel;
+use Plasticode\Models\Generic\NewsSource;
 use Plasticode\Parsing\Interfaces\ParserInterface;
 use Plasticode\Parsing\Parsers\CutParser;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
@@ -34,7 +34,7 @@ abstract class NewsSourceHydrator extends ParsingHydrator
     /**
      * @param NewsSource $entity
      */
-    public function hydrate(DbModel $entity) : NewsSource
+    public function hydrate(DbModel $entity): NewsSource
     {
         return $entity
             ->withParsed(

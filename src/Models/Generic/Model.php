@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Models\Basic;
+namespace Plasticode\Models\Generic;
 
 use ArrayAccess;
 use JsonSerializable;
@@ -33,7 +33,7 @@ class Model implements ArrayableInterface, ArrayAccess, JsonSerializable
     /**
      * @throws InvalidConfigurationException
      */
-    private function failIfPropertyExists(string $property) : void
+    private function failIfPropertyExists(string $property): void
     {
         if (self::propertyExists($this->data, $property)) {
             $className = static::class;
@@ -96,12 +96,12 @@ class Model implements ArrayableInterface, ArrayAccess, JsonSerializable
         unset($this->data[$snakeCase]);
     }
 
-    public function __toString() : string
+    public function __toString()
     {
         return $this->toString();
     }
 
-    public function toString() : string
+    public function toString(): string
     {
         return static::class;
     }
@@ -111,7 +111,7 @@ class Model implements ArrayableInterface, ArrayAccess, JsonSerializable
         return $this->toArray();
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return $this->data;
     }
@@ -123,7 +123,7 @@ class Model implements ArrayableInterface, ArrayAccess, JsonSerializable
         $this->{$offset} = $value;
     }
 
-    public function offsetExists($offset) : bool
+    public function offsetExists($offset): bool
     {
         return isset($this->{$offset});
     }

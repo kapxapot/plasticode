@@ -35,11 +35,15 @@ class DbModelCollection extends TypedCollection
     /**
      * Extracts the ids of the models.
      */
-    public function ids(): ScalarCollection
+    public function ids(): NumericCollection
     {
-        return $this->scalarize(
-            fn (DbModelInterface $m) => $m->getId()
-        );
+        return $this
+            ->where(
+                fn (DbModelInterface $m) => $m->getId() !== null
+            )
+            ->numerize(
+                fn (DbModelInterface $m) => $m->getId()
+            );
     }
 
     public function contains(DbModelInterface $model): bool

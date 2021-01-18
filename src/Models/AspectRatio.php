@@ -1,19 +1,16 @@
 <?php
 
-namespace Plasticode;
+namespace Plasticode\Models;
 
 use Webmozart\Assert\Assert;
 
 class AspectRatio
 {
-    /** @var integer */
-    private $width;
-
-    /** @var integer */
-    private $height;
+    private int $width;
+    private int $height;
 
     /**
-     * Ratios must have bigger value first, smaller value second (to be >= 1)
+     * Ratios must have bigger value first, smaller value second (to be >= 1).
      *
      * @var integer[][]
      */
@@ -23,20 +20,18 @@ class AspectRatio
         [3, 1],
         [3, 2],
     ];
-    
+
     /**
-     * @param integer $width
-     * @param integer $height
      * @param integer[][]|null $supportedRatios
      */
-    public function __construct(int $width, int $height, array $supportedRatios = null)
+    public function __construct(int $width, int $height, ?array $supportedRatios = null)
     {
         Assert::greaterThan($width, 0);
         Assert::greaterThan($height, 0);
-        
+
         $this->width = $width;
         $this->height = $height;
-        
+
         if (!empty($supportedRatios)) {
             $this->validateRatios($supportedRatios);
             $this->setSupportedRatios($supportedRatios);
@@ -47,9 +42,8 @@ class AspectRatio
      * Validates ratios.
      *
      * @param integer[][] $ratios
-     * @return void
      */
-    private function validateRatios(array $ratios) : void
+    private function validateRatios(array $ratios): void
     {
         foreach ($ratios as $ratio) {
             Assert::isArray($ratio);
@@ -62,9 +56,8 @@ class AspectRatio
      * Sets new supported ratios assuming that they are valid.
      * 
      * @param integer[][] $ratios
-     * @return void
      */
-    private function setSupportedRatios(array $ratios) : void
+    private function setSupportedRatios(array $ratios): void
     {
         /** @var integer[][] */
         $this->supportedRatios = [];
@@ -81,44 +74,38 @@ class AspectRatio
 
     /**
      * Returns true, if width >= height.
-     *
-     * @return boolean
      */
-    public function isHorizontal() : bool
+    public function isHorizontal(): bool
     {
         return $this->width >= $this->height;
     }
-    
+
     /**
      * Returns true, if width < height.
-     *
-     * @return boolean
      */
-    public function isVertical() : bool
+    public function isVertical(): bool
     {
         return !$this->isHorizontal();
     }
-    
+
     /**
      * Returns the exact ratio as a float value.
      * 
      * Ratio is calculated as (bigger size / smaller size) and is always >= 1.
-     *
-     * @return float
      */
-    public function exact() : float
+    public function exact(): float
     {
         return $this->isHorizontal()
             ? $this->width / $this->height
             : $this->height / $this->width;
     }
-    
+
     /**
      * Returns the closest supported ratio as [x, y].
      *
      * @return integer[]
      */
-    public function closest() : array
+    public function closest(): array
     {
         $ratio = $this->exact();
 
@@ -130,7 +117,7 @@ class AspectRatio
 
         foreach ($this->supportedRatios as $sup) {
             $delta = abs($ratio - ($sup[0] / $sup[1]));
-    
+
             if (is_null($minDelta) || $minDelta >= $delta) {
                 if ($delta !== $minDelta) {
                     $minDelta = $delta;
@@ -150,17 +137,15 @@ class AspectRatio
                 $result = $min;
             }
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Generates CSS classes for the closest ratio.
      * Returns empty string if there is none.
-     *
-     * @return string
      */
-    public function cssClasses() : string
+    public function cssClasses(): string
     {
         $ratio = $this->closest();
         $hor = $this->isHorizontal();
