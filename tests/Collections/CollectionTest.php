@@ -405,7 +405,11 @@ final class CollectionTest extends TestCase
     /**
      * @dataProvider joinProvider
      */
-    public function testJoin(Collection $original, string $delimiter, string $expected): void
+    public function testJoin(
+        Collection $original,
+        ?string $delimiter,
+        string $expected
+    ): void
     {
         $this->assertEquals(
             $expected,

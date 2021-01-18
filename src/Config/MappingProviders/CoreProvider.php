@@ -80,7 +80,7 @@ class CoreProvider implements MappingProviderInterface
 
             Access::class =>
                 fn (ContainerInterface $c) => new Access(
-                    $c->get(Config::class)
+                    $c->get(Config::class)->accessSettings()
                 ),
 
             DbMetadata::class =>

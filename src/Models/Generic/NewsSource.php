@@ -9,6 +9,7 @@ use Plasticode\Models\Traits\FullPublished;
 use Plasticode\Models\Traits\Linkable;
 use Plasticode\Models\Traits\Stamps;
 use Plasticode\Models\Traits\Tagged;
+use Plasticode\Models\User;
 use Plasticode\Parsing\ParsingContext;
 
 /**

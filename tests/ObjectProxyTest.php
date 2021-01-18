@@ -39,7 +39,7 @@ final class ObjectProxyTest extends TestCase
 
         $tagRepository = new TagRepository(
             new RepositoryContext(
-                new Access(),
+                new Access($config->accessSettings()),
                 $auth,
                 $cache,
                 new DbMetadata($config)

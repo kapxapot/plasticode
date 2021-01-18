@@ -16,17 +16,17 @@ class UserRepositoryMock implements UserRepositoryInterface
         $this->users = UserCollection::make($seeder->seed());
     }
 
-    public function get(?int $id) : ?User
+    public function get(?int $id): ?User
     {
         return $this->users->first('id', $id);
     }
 
-    public function create(array $data) : User
+    public function create(array $data): User
     {
         return User::create($data);
     }
 
-    public function save(User $user) : User
+    public function save(User $user): User
     {
         // no need to save anything if the entity is already in the repo
         if ($this->users->contains($user)) {
@@ -43,7 +43,7 @@ class UserRepositoryMock implements UserRepositoryInterface
         return $user;
     }
 
-    public function getByLogin(string $login) : ?User
+    public function getByLogin(string $login): ?User
     {
         return $this->users->first('login', $login);
     }

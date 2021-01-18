@@ -20,36 +20,40 @@ class UserSeeder implements ArraySeederInterface
     /**
      * @return User[]
      */
-    public function seed() : array
+    public function seed(): array
     {
-        return [
-            (new User(
+        $users = [
+            new User(
                 [
                     'id' => 1,
                     'name' => 'Gorge Brugilio',
                     'login' => 'admino',
                     'role_id' => 1,
                 ]
-            ))
-            ->withRole($this->roleRepository->get(1)),
-            (new User(
+            ),
+            new User(
                 [
                     'id' => 2,
                     'name' => 'Andrea Gonzalez',
                     'login' => 'editress',
                     'role_id' => 2,
                 ]
-            ))
-            ->withRole($this->roleRepository->get(2)),
-            (new User(
+            ),
+            new User(
                 [
                     'id' => 3,
                     'name' => 'Santa Claus',
                     'login' => 'noob',
                     'role_id' => 3,
                 ]
-            ))
-            ->withRole($this->roleRepository->get(3)),
+            ),
         ];
+
+        return array_map(
+            fn (User $u) => $u->withRole(
+                $this->roleRepository->get($u->roleId)
+            ),
+            $users
+        );
     }
 }

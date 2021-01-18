@@ -4,7 +4,9 @@ namespace Plasticode\Tests\Auth;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Auth\Access;
+use Plasticode\Config\Config;
 use Plasticode\IO\File;
+use Plasticode\Settings\SettingsProvider;
 use Plasticode\Testing\Mocks\Repositories\RoleRepositoryMock;
 use Plasticode\Testing\Mocks\Repositories\UserRepositoryMock;
 use Plasticode\Testing\Seeders\RoleSeeder;
@@ -19,9 +21,9 @@ final class AccessTest extends TestCase
         $data = File::load($path);
         $settings = Yaml::parse($data);
 
-        $access = new Access(
-            $settings
-        );
+        $settingsProvider = new SettingsProvider($settings);
+
+        $access = new Access($settingsProvider);
 
         $roleRepository = new RoleRepositoryMock(
             new RoleSeeder()

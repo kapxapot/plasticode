@@ -323,11 +323,11 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     /**
      * Extracts non-null column/property values from collection.
      */
-    public function extract(string $column): self
+    public function extract(string $column): Collection
     {
         $data = Arrays::extract($this->data, $column);
 
-        return self::make($data);
+        return Collection::make($data);
     }
 
     /**
@@ -434,18 +434,18 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     /**
      * Shortcut for map()->flatten().
      */
-    public function flatMap(callable $func): self
+    public function flatMap(callable $func): Collection
     {
         return $this
             ->map($func)
             ->flatten();
     }
 
-    public function map(callable $func): self
+    public function map(callable $func): Collection
     {
         $data = array_map($func, $this->data);
 
-        return self::make($data);
+        return Collection::make($data);
     }
 
     /**
@@ -453,12 +453,12 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
      * 
      * Doesn't make collection distinct!
      */
-    public function flatten(): self
+    public function flatten(): Collection
     {
         $data = [];
 
         foreach ($this->data as $item) {
-            if (is_array($item) || $item instanceof self) {
+            if (is_array($item) || $item instanceof Collection) {
                 foreach ($item as $subItem) {
                     $data[] = $subItem;
                 }
@@ -467,7 +467,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
             }
         }
 
-        return self::make($data);
+        return Collection::make($data);
     }
 
     /**

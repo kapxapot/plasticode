@@ -43,15 +43,11 @@ class Strings
     }
 
     /**
-     * Converts 'snake_case'/'Snake_Case' to 'snakeCase'.
+     * Converts 'snake_case'/'Snake_Case'/'SnakeCase' to 'snakeCase'.
      */
     public static function toCamelCase(string $str) : string
     {
-        return lcfirst(
-            self::toPascalCase(
-                mb_strtolower($str)
-            )
-        );
+        return lcfirst(self::toPascalCase($str));
     }
 
     /**

@@ -2,10 +2,10 @@
 
 namespace Plasticode\Auth;
 
-use Plasticode\Config\Config;
 use Plasticode\Data\Rights;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Models\User;
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Webmozart\Assert\Assert;
 
 class Access
@@ -35,17 +35,15 @@ class Access
     private array $rightsSettings;
 
     public function __construct(
-        Config $config
+        SettingsProviderInterface $settingsProvider
     )
     {
-        $settings = $config->accessSettings();
-
         $this->actionData = $this->flattenActionData(
-            $settings->get('actions', [])
+            $settingsProvider->get('actions', [])
         );
 
-        $this->rightsTemplates = $settings->get('templates', []);
-        $this->rightsSettings = $settings->get('rights', []);
+        $this->rightsTemplates = $settingsProvider->get('templates', []);
+        $this->rightsSettings = $settingsProvider->get('rights', []);
     }
 
     /**
