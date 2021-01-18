@@ -2,12 +2,12 @@
 
 namespace Plasticode\Validation\Rules;
 
-use Plasticode\Repositories\Interfaces\Basic\FieldValidatingRepositoryInterface;
+use Plasticode\Repositories\Interfaces\Generic\FieldValidatingRepositoryInterface;
 use Respect\Validation\Rules\AbstractRule;
 
 abstract class TableFieldAvailable extends AbstractRule
 {
-    /** @var callable fn (mixed) : bool */
+    /** @var callable fn (mixed): bool */
     private $validateField;
 
     public function __construct(

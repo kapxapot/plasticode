@@ -2,15 +2,16 @@
 
 namespace Plasticode\Tests\Collections;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Plasticode\Collections\Basic\Collection;
+use Plasticode\Collections\Generic\Collection;
 use Plasticode\Testing\Dummies\CollectionDummy;
 use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Testing\Dummies\InvalidTypedCollection;
 
 final class TypedCollectionTest extends TestCase
 {
-    public function testCreateAndFilter() : void
+    public function testCreateAndFilter(): void
     {
         $typed = CollectionDummy::collect(
             new ModelDummy(1, 'one'),
@@ -28,7 +29,7 @@ final class TypedCollectionTest extends TestCase
         $this->assertCount(1, $filtered);
     }
 
-    public function testFrom() : void
+    public function testFrom(): void
     {
         $col = Collection::collect(
             new ModelDummy(1, 'one'),
@@ -41,9 +42,9 @@ final class TypedCollectionTest extends TestCase
         $this->assertCount(2, $typed);
     }
 
-    public function testInvalidData() : void
+    public function testInvalidData(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         CollectionDummy::collect(
             new ModelDummy(1, 'one'),
@@ -52,9 +53,9 @@ final class TypedCollectionTest extends TestCase
         );
     }
 
-    public function testInvalidCollection() : void
+    public function testInvalidCollection(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         InvalidTypedCollection::empty();
     }

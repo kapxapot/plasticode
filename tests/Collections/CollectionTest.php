@@ -2,8 +2,9 @@
 
 namespace Plasticode\Tests\Collections;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Plasticode\Collections\Basic\Collection;
+use Plasticode\Collections\Generic\Collection;
 use Plasticode\Testing\Dummies\CollectionDummy;
 use Plasticode\Testing\Dummies\ModelDummy;
 
@@ -12,14 +13,17 @@ final class CollectionTest extends TestCase
     /**
      * @dataProvider flattenProvider
      */
-    public function testFlatten(Collection $original, Collection $expected) : void
+    public function testFlatten(Collection $original, Collection $expected): void
     {
         $actual = $original->flatten();
 
-        $this->assertEquals($expected->toArray(), $actual->toArray());
+        $this->assertEquals(
+            $expected->toArray(),
+            $actual->toArray()
+        );
     }
 
-    public function flattenProvider()
+    public function flattenProvider(): array
     {
         return [
             [
@@ -58,7 +62,7 @@ final class CollectionTest extends TestCase
         ];
     }
 
-    public function testFlattenCreatesBaseCollection() : void
+    public function testFlattenCreatesBaseCollection(): void
     {
         $col = CollectionDummy::collect(
             new ModelDummy(1, 'one'),
@@ -70,7 +74,7 @@ final class CollectionTest extends TestCase
         $this->assertEquals(Collection::class, get_class($flat));
     }
 
-    public function testConcatPreservesCollectionType() : void
+    public function testConcatPreservesCollectionType(): void
     {
         $col = CollectionDummy::collect(
             new ModelDummy(1, 'one'),
@@ -87,7 +91,7 @@ final class CollectionTest extends TestCase
         $this->assertCount(3, $concat);
     }
 
-    public function testConcatBaseCollectionAllowsHeteroTypes() : void
+    public function testConcatBaseCollectionAllowsHeteroTypes(): void
     {
         $col = Collection::collect(
             new ModelDummy(1, 'one'),
@@ -102,9 +106,9 @@ final class CollectionTest extends TestCase
         $this->assertCount(5, $concat);
     }
 
-    public function testConcatTypedCollectionDoesntAllowHeteroTypes() : void
+    public function testConcatTypedCollectionDoesNotAllowHeteroTypes(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $col = CollectionDummy::collect(
             new ModelDummy(1, 'one'),
@@ -116,7 +120,7 @@ final class CollectionTest extends TestCase
         );
     }
 
-    public function testAddPreservesCollectionType() : void
+    public function testAddPreservesCollectionType(): void
     {
         $col = CollectionDummy::collect(
             new ModelDummy(1, 'one'),
@@ -131,7 +135,7 @@ final class CollectionTest extends TestCase
         $this->assertCount(3, $concat);
     }
 
-    public function testAddBaseCollectionAllowsHeteroTypes() : void
+    public function testAddBaseCollectionAllowsHeteroTypes(): void
     {
         $col = Collection::collect(
             new ModelDummy(1, 'one'),
@@ -144,9 +148,9 @@ final class CollectionTest extends TestCase
         $this->assertCount(5, $concat);
     }
 
-    public function testAddTypedCollectionDoesntAllowHeteroTypes() : void
+    public function testAddTypedCollectionDoesntAllowHeteroTypes(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $col = CollectionDummy::collect(
             new ModelDummy(1, 'one'),
@@ -156,7 +160,7 @@ final class CollectionTest extends TestCase
         $col->add(1);
     }
 
-    public function testMergeReturnsRightCollection() : void
+    public function testMergeReturnsRightCollection(): void
     {
         $col1 = CollectionDummy::collect(
             new ModelDummy(1, 'one'),
@@ -173,7 +177,7 @@ final class CollectionTest extends TestCase
         $this->assertCount(3, $col);
     }
 
-    public function testMergeAllowsHeteroTypes() : void
+    public function testMergeAllowsHeteroTypes(): void
     {
         $col1 = CollectionDummy::collect(
             new ModelDummy(1, 'one'),
@@ -191,14 +195,14 @@ final class CollectionTest extends TestCase
     /**
      * @dataProvider jsonEncodeProvider
      */
-    public function testJsonEncode(Collection $original, array $expected) : void
+    public function testJsonEncode(Collection $original, array $expected): void
     {
         $actual = json_encode($original);
 
         $this->assertEquals(json_encode($expected), $actual);
     }
 
-    public function jsonEncodeProvider()
+    public function jsonEncodeProvider(): array
     {
         return [
             [
@@ -242,7 +246,7 @@ final class CollectionTest extends TestCase
         ];
     }
 
-    public function testLastObjRemembers() : void
+    public function testLastObjRemembers(): void
     {
         $col = Collection::collect(
             new ModelDummy(1, 'one'),
@@ -258,7 +262,7 @@ final class CollectionTest extends TestCase
         $this->assertEquals('four', $col->last()->name);
     }
 
-    public function testLastArrayForgets() : void
+    public function testLastArrayForgets(): void
     {
         $col = Collection::collect(
             ['id' => 1, 'name' => 'one'],
@@ -277,7 +281,7 @@ final class CollectionTest extends TestCase
     /**
      * @dataProvider cleanProvider
      */
-    public function testClean(Collection $col, Collection $result) : void
+    public function testClean(Collection $col, Collection $result): void
     {
         $this->assertEquals(
             $result->toArray(),
@@ -285,7 +289,7 @@ final class CollectionTest extends TestCase
         );
     }
 
-    public function cleanProvider() : array
+    public function cleanProvider(): array
     {
         return [
             [
@@ -310,7 +314,7 @@ final class CollectionTest extends TestCase
         ];
     }
 
-    public function testShuffle() : void
+    public function testShuffle(): void
     {
         $original = Collection::collect(1, 2, 3);
         $shuffled = $original->shuffle();
@@ -320,7 +324,6 @@ final class CollectionTest extends TestCase
         $this->assertEqualsCanonicalizing($shuffled->toArray(), $original->toArray());
     }
 
-
     /**
      * @dataProvider removeFirstProvider
      */
@@ -328,7 +331,7 @@ final class CollectionTest extends TestCase
         Collection $original,
         Collection $expected,
         callable $by
-    ) : void
+    ): void
     {
         $this->assertEquals(
             $expected->toArray(),
@@ -336,7 +339,7 @@ final class CollectionTest extends TestCase
         );
     }
 
-    public function removeFirstProvider() : array
+    public function removeFirstProvider(): array
     {
         $dummy1 = new ModelDummy(1, 'one');
         $dummy2 = new ModelDummy(2, 'two');
@@ -375,7 +378,7 @@ final class CollectionTest extends TestCase
         Collection $original,
         int $limit,
         Collection $expected
-    ) : void
+    ): void
     {
         $this->assertEquals(
             $expected->toArray(),
@@ -383,7 +386,7 @@ final class CollectionTest extends TestCase
         );
     }
 
-    public function tailProvider() : array
+    public function tailProvider(): array
     {
         $empty = Collection::empty();
         $col = Collection::collect('one', 'two', 'three');
@@ -402,7 +405,7 @@ final class CollectionTest extends TestCase
     /**
      * @dataProvider joinProvider
      */
-    public function testJoin(Collection $original, string $delimiter, string $expected) : void
+    public function testJoin(Collection $original, string $delimiter, string $expected): void
     {
         $this->assertEquals(
             $expected,
@@ -410,12 +413,12 @@ final class CollectionTest extends TestCase
         );
     }
 
-    public function joinProvider() : array
+    public function joinProvider(): array
     {
         return [
             [
                 Collection::empty(),
-                '',
+                null,
                 ''
             ],
             [
@@ -425,7 +428,7 @@ final class CollectionTest extends TestCase
             ],
             [
                 Collection::collect(1, 2),
-                '',
+                null,
                 '12'
             ],
             [
@@ -435,7 +438,7 @@ final class CollectionTest extends TestCase
             ],
             [
                 Collection::collect('a', 'b', 'c'),
-                '',
+                null,
                 'abc'
             ],
             [
@@ -446,7 +449,7 @@ final class CollectionTest extends TestCase
         ];
     }
 
-    public function testUnpacking() : void
+    public function testUnpacking(): void
     {
         $func = fn (...$e) => implode('', $e);
 

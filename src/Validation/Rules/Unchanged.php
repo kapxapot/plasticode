@@ -2,12 +2,12 @@
 
 namespace Plasticode\Validation\Rules;
 
-use Plasticode\Repositories\Interfaces\Basic\ChangingRepositoryInterface;
+use Plasticode\Repositories\Interfaces\Generic\ChangingRepositoryInterface;
 use Respect\Validation\Rules\AbstractRule;
 
 class Unchanged extends AbstractRule
 {
-    /** @var callable fn (mixed) : bool */
+    /** @var callable fn (mixed): bool */
     private $isUnchanged;
 
     public function __construct(ChangingRepositoryInterface $repository, ?int $id = null)

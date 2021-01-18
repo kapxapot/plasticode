@@ -7,7 +7,7 @@ use Plasticode\Collections\NewsYearCollection;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Models\Interfaces\NewsSourceInterface;
 use Plasticode\Models\NewsYear;
-use Plasticode\Repositories\Interfaces\Basic\NewsSourceRepositoryInterface as SrcRepoInterface;
+use Plasticode\Repositories\Interfaces\Generic\NewsSourceRepositoryInterface as SrcRepoInterface;
 use Plasticode\Util\Date;
 use Webmozart\Assert\Assert;
 
@@ -38,7 +38,7 @@ class NewsAggregatorService
     public function registerSource(
         SrcRepoInterface $source,
         bool $strict = false
-    ) : void
+    ): void
     {
         $this->sources[] = $source;
 
@@ -52,7 +52,7 @@ class NewsAggregatorService
      *
      * @return SrcRepoInterface[]
      */
-    private function getSources(bool $strict = false) : array
+    private function getSources(bool $strict = false): array
     {
         return $strict
             ? $this->strictSources
@@ -62,7 +62,7 @@ class NewsAggregatorService
     /**
      * Apply action to sources.
      */
-    private function withSources(bool $strict, \Closure $action) : array
+    private function mapSources(bool $strict, callable $action): array
     {
         return array_map($action, $this->getSources($strict));
     }
@@ -71,17 +71,17 @@ class NewsAggregatorService
      * Returns action results as one collection.
      * Action must return a NewsSourceCollection.
      */
-    private function collect(bool $strict, \Closure $action) : NewsSourceCollection
+    private function collect(bool $strict, callable $action): NewsSourceCollection
     {
         return NewsSourceCollection::merge(
-            ...$this->withSources($strict, $action)
+            ...$this->mapSources($strict, $action)
         );
     }
 
     public function getAllByTag(
         string $tag,
         bool $strict = true
-    ) : NewsSourceCollection
+    ): NewsSourceCollection
     {
         return $this
             ->collect(
@@ -91,9 +91,9 @@ class NewsAggregatorService
             ->sort();
     }
 
-    public function getCount(bool $strict = false) : int
+    public function getCount(bool $strict = false): int
     {
-        $counts = $this->withSources(
+        $counts = $this->mapSources(
             $strict,
             fn (SrcRepoInterface $s) => $s->getNewsCount()
         );
@@ -105,7 +105,7 @@ class NewsAggregatorService
         int $limit = 0,
         int $exceptId = 0,
         bool $strict = true
-    ) : NewsSourceCollection
+    ): NewsSourceCollection
     {
         return $this->getPage(1, $limit, $exceptId, $strict);
     }
@@ -115,7 +115,7 @@ class NewsAggregatorService
         int $pageSize = 7,
         int $exceptId = 0,
         bool $strict = false
-    ) : NewsSourceCollection
+    ): NewsSourceCollection
     {
         if ($page < 1) {
             $page = 1;
@@ -139,9 +139,9 @@ class NewsAggregatorService
     }
 
     /**
-     * Looks for News or ForumTopic with the provided id.
+     * Looks for strict news item with the provided id.
      */
-    public function getNews(?int $newsId) : ?NewsSourceInterface
+    public function getNews(?int $newsId): ?NewsSourceInterface
     {
         foreach ($this->strictSources as $source) {
             $news = $source->getNews($newsId);
@@ -157,9 +157,8 @@ class NewsAggregatorService
     public function getPrev(
         NewsSourceInterface $news,
         bool $strict = true
-    ) : ?NewsSourceInterface
+    ): ?NewsSourceInterface
     {
-        // todo: this is not a part of interface (!)
         $date = $news->publishedAt;
 
         if (is_null($date)) {
@@ -178,9 +177,8 @@ class NewsAggregatorService
     public function getNext(
         NewsSourceInterface $news,
         bool $strict = true
-    ) : ?NewsSourceInterface
+    ): ?NewsSourceInterface
     {
-        // todo: this is not a part of interface (!)
         $date = $news->publishedAt;
 
         if (is_null($date)) {
@@ -196,7 +194,7 @@ class NewsAggregatorService
             ->first();
     }
 
-    private function getAllRaw(bool $strict = false) : NewsSourceCollection
+    private function getAllRaw(bool $strict = false): NewsSourceCollection
     {
         return $this->collect(
             $strict,
@@ -204,7 +202,7 @@ class NewsAggregatorService
         );
     }
 
-    public function getTop(int $limit, bool $strict = false) : NewsSourceCollection
+    public function getTop(int $limit, bool $strict = false): NewsSourceCollection
     {
         return $this->getPage(1, $limit, 0, $strict);
     }
@@ -212,14 +210,13 @@ class NewsAggregatorService
     /**
      * Descending.
      */
-    public function getYears(bool $strict = true) : NewsYearCollection
+    public function getYears(bool $strict = true): NewsYearCollection
     {
         $years = $this
             ->getAllRaw($strict)
             ->years()
             ->map(
-                fn (int $y) =>
-                new NewsYear(
+                fn (int $y) => new NewsYear(
                     $y,
                     $this->linker->newsYear($y)
                 )
@@ -228,7 +225,7 @@ class NewsAggregatorService
         return NewsYearCollection::from($years)->sort();
     }
 
-    public function getPrevYear(int $year, bool $strict = true) : ?NewsYear
+    public function getPrevYear(int $year, bool $strict = true): ?NewsYear
     {
         return $this->getYears($strict)
             ->where(
@@ -238,7 +235,7 @@ class NewsAggregatorService
             ->first();
     }
 
-    public function getNextYear(int $year, bool $strict = true) : ?NewsYear
+    public function getNextYear(int $year, bool $strict = true): ?NewsYear
     {
         return $this->getYears($strict)
             ->where(
@@ -248,7 +245,7 @@ class NewsAggregatorService
             ->first();
     }
 
-    public function getByYear(int $year, bool $strict = true) : array
+    public function getByYear(int $year, bool $strict = true): array
     {
         $byYear = $this
             ->collect(

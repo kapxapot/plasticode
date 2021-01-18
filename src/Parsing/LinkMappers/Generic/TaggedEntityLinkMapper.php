@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing\LinkMappers\Basic;
+namespace Plasticode\Parsing\LinkMappers\Generic;
 
 use Plasticode\Parsing\Interfaces\TaggedLinkMapperInterface;
 use Plasticode\Parsing\LinkMappers\Traits\SimpleMapSlug;
@@ -10,12 +10,12 @@ abstract class TaggedEntityLinkMapper extends EntityLinkMapper implements Tagged
 {
     use SimpleMapSlug, Tagged;
 
-    public function tag() : string
+    public function tag(): string
     {
         return $this->entity();
     }
 
-    protected function renderSlug(string $slug, string $text) : ?string
+    protected function renderSlug(string $slug, string $text): ?string
     {
         return $this->renderPlaceholder($slug, $text);
     }

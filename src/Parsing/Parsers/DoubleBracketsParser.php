@@ -4,7 +4,7 @@ namespace Plasticode\Parsing\Parsers;
 
 use Plasticode\Parsing\Interfaces\LinkMapperSourceInterface;
 use Plasticode\Parsing\Interfaces\LinkRendererInterface;
-use Plasticode\Parsing\LinkMappers\Basic\SlugLinkMapper;
+use Plasticode\Parsing\LinkMappers\Generic\SlugLinkMapper;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\Steps\BaseStep;
 use Plasticode\Util\Arrays;
@@ -34,7 +34,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
         $this->config = $config;
     }
 
-    public function parseContext(ParsingContext $context) : ParsingContext
+    public function parseContext(ParsingContext $context): ParsingContext
     {
         $context = clone $context;
 
@@ -53,7 +53,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
         return $context;
     }
 
-    private function parseDoubleBracketsMatch(?string $match) : ?string
+    private function parseDoubleBracketsMatch(?string $match): ?string
     {
         $chunks = preg_split(self::ChunkDelimiterPattern, $match);
         $chunks = Arrays::trim($chunks);
@@ -76,7 +76,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
      *
      * @param string[] $chunks
      */
-    private function renderDefault(array $chunks) : ?string
+    private function renderDefault(array $chunks): ?string
     {
         $mapper = $this->config->getDefaultMapper();
 
@@ -90,7 +90,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
      *
      * @param string[] $chunks
      */
-    private function renderTag(string $tag, array $chunks) : ?string
+    private function renderTag(string $tag, array $chunks): ?string
     {
         $mapper =
             $this->config->getTaggedMapper($tag)
@@ -104,7 +104,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
     /**
      * Renders %template% links using registered link renderers.
      */
-    public function renderLinks(ParsingContext $context) : ParsingContext
+    public function renderLinks(ParsingContext $context): ParsingContext
     {
         $context = clone $context;
 
@@ -120,7 +120,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
      *
      * @return LinkRendererInterface[]
      */
-    private function getLinkRenderers() : array
+    private function getLinkRenderers(): array
     {
         return Arrays::filter(
             $this->config->getAllMappers(),

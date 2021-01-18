@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Parsing\LinkMappers\Basic;
+namespace Plasticode\Parsing\LinkMappers\Generic;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
@@ -14,11 +14,8 @@ use Webmozart\Assert\Assert;
  */
 abstract class EntityLinkMapper extends SlugLinkMapper implements EntityLinkMapperInterface
 {
-    /** @var RendererInterface */
-    protected $renderer;
-
-    /** @var LinkerInterface */
-    protected $linker;
+    protected RendererInterface $renderer;
+    protected LinkerInterface $linker;
 
     public function __construct(RendererInterface $renderer, LinkerInterface $linker)
     {
@@ -29,24 +26,21 @@ abstract class EntityLinkMapper extends SlugLinkMapper implements EntityLinkMapp
         Assert::alnum($this->entity());
     }
 
-    protected abstract function entity() : string;
+    abstract protected function entity(): string;
 
-    protected function renderPlaceholder(string $slug, string $text) : string
+    protected function renderPlaceholder(string $slug, string $text): string
     {
         $url = '%' . $this->entity() . '%/' . $slug;
         
         return $this->renderer->entityUrl($url, $text);
     }
 
-    protected abstract function baseUrl() : string;
+    abstract protected function baseUrl(): string;
 
     /**
      * Adapts the provided slug chunk to the current entity's slug chunk.
-     *
-     * @param SlugChunk $slugChunk
-     * @return SlugChunk
      */
-    public function adaptSlugChunk(SlugChunk $slugChunk) : SlugChunk
+    public function adaptSlugChunk(SlugChunk $slugChunk): SlugChunk
     {
         return new SlugChunk(
             $this->entity(),
@@ -54,7 +48,7 @@ abstract class EntityLinkMapper extends SlugLinkMapper implements EntityLinkMapp
         );
     }
 
-    public function renderLinks(ParsingContext $context) : ParsingContext
+    public function renderLinks(ParsingContext $context): ParsingContext
     {
         $context = clone $context;
 

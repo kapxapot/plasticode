@@ -2,7 +2,7 @@
 
 namespace Plasticode\Testing\Dummies;
 
-use Plasticode\Collections\Basic\TypedCollection;
+use Plasticode\Collections\Generic\TypedCollection;
 
 class InvalidTypedCollection extends TypedCollection
 {

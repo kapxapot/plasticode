@@ -2,7 +2,7 @@
 
 namespace Plasticode\Parsing\LinkMappers;
 
-use Plasticode\Parsing\LinkMappers\Basic\TaggedEntityLinkMapper;
+use Plasticode\Parsing\LinkMappers\Generic\TaggedEntityLinkMapper;
 use Plasticode\Util\Strings;
 
 /**
@@ -10,17 +10,17 @@ use Plasticode\Util\Strings;
  */
 class TagLinkMapper extends TaggedEntityLinkMapper
 {
-    protected function entity() : string
+    protected function entity(): string
     {
         return 'tag';
     }
 
-    protected function baseUrl() : string
+    protected function baseUrl(): string
     {
         return $this->linker->tag();
     }
 
-    protected function escapeSlug(string $slug) : string
+    protected function escapeSlug(string $slug): string
     {
         return Strings::fromSpaces($slug, '+');
     }

@@ -5,6 +5,9 @@ namespace Plasticode\Models\Interfaces;
 use Plasticode\Models\User;
 use Plasticode\Collections\TagLinkCollection;
 
+/**
+ * @property string|null $publishedAt
+ */
 interface NewsSourceInterface extends CreatedAtInterface, LinkableInterface, TaggedInterface, UpdatedAtInterface
 {
     function largeImage() : ?string;

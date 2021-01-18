@@ -4,7 +4,7 @@ namespace Plasticode\Parsing\LinkMappers;
 
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
-use Plasticode\Parsing\LinkMappers\Basic\EntityLinkMapper;
+use Plasticode\Parsing\LinkMappers\Generic\EntityLinkMapper;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Parsing\SlugChunk;
 use Plasticode\Repositories\Interfaces\PageRepositoryInterface;
@@ -35,12 +35,12 @@ class PageLinkMapper extends EntityLinkMapper
         $this->tagLinkMapper = $tagLinkMapper;
     }
 
-    protected function entity() : string
+    protected function entity(): string
     {
         return 'page';
     }
 
-    protected function baseUrl() : string
+    protected function baseUrl(): string
     {
         return $this->linker->page();
     }
@@ -50,7 +50,7 @@ class PageLinkMapper extends EntityLinkMapper
      *
      * @param string[] $otherChunks
      */
-    public function mapSlug(SlugChunk $slugChunk, array $otherChunks) : ?string
+    public function mapSlug(SlugChunk $slugChunk, array $otherChunks): ?string
     {
         $rawSlug = $slugChunk->slug();
         $content = $otherChunks[0] ?? $rawSlug;
@@ -73,14 +73,14 @@ class PageLinkMapper extends EntityLinkMapper
         return $this->renderer->noUrl($content, $rawSlug);
     }
 
-    private function renderAsTag(SlugChunk $slugChunk, array $otherChunks) : string
+    private function renderAsTag(SlugChunk $slugChunk, array $otherChunks): string
     {
         $slugChunk = $this->tagLinkMapper->adaptSlugChunk($slugChunk);
 
         return $this->tagLinkMapper->mapSlug($slugChunk, $otherChunks);
     }
 
-    public function renderLinks(ParsingContext $context) : ParsingContext
+    public function renderLinks(ParsingContext $context): ParsingContext
     {
         $context = parent::renderLinks($context);
 

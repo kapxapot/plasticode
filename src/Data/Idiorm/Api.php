@@ -5,7 +5,7 @@ namespace Plasticode\Data\Idiorm;
 use ORM;
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Interfaces\AuthInterface;
-use Plasticode\Collections\Basic\Collection;
+use Plasticode\Collections\Generic\Collection;
 use Plasticode\Core\Response;
 use Plasticode\Data\DbMetadata;
 use Plasticode\Data\Interfaces\ApiInterface;

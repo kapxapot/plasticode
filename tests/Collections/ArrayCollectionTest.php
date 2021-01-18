@@ -2,12 +2,13 @@
 
 namespace Plasticode\Tests\Collections;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Plasticode\Collections\Basic\ArrayCollection;
+use Plasticode\Collections\Generic\ArrayCollection;
 
 final class ArrayCollectionTest extends TestCase
 {
-    public function testCollect() : void
+    public function testCollect(): void
     {
         $col = ArrayCollection::collect(
             [1, 2, 3],
@@ -19,9 +20,9 @@ final class ArrayCollectionTest extends TestCase
         $this->assertIsArray($col[1]);
     }
 
-    public function testFailForIncorrectData() : void
+    public function testFailForIncorrectData(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         ArrayCollection::collect(
             [1, 2, 3],

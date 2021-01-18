@@ -2,7 +2,7 @@
 
 namespace Plasticode\Validation\Rules;
 
-use Plasticode\Repositories\Interfaces\Basic\FieldValidatingRepositoryInterface;
+use Plasticode\Repositories\Interfaces\Generic\FieldValidatingRepositoryInterface;
 
 class LoginAvailable extends TableFieldAvailable
 {

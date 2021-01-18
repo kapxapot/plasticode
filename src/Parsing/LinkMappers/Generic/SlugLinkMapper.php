@@ -1,7 +1,8 @@
 <?php
 
-namespace Plasticode\Parsing\LinkMappers\Basic;
+namespace Plasticode\Parsing\LinkMappers\Generic;
 
+use InvalidArgumentException;
 use Plasticode\Parsing\Interfaces\LinkMapperInterface;
 use Plasticode\Parsing\SlugChunk;
 use Plasticode\Util\Arrays;
@@ -13,9 +14,8 @@ abstract class SlugLinkMapper implements LinkMapperInterface
      * Maps chunks to a link.
      *
      * @param string[] $chunks
-     * @return string|null
      */
-    public function map(array $chunks) : ?string
+    public function map(array $chunks): ?string
     {
         Assert::notEmpty($chunks);
     
@@ -30,24 +30,20 @@ abstract class SlugLinkMapper implements LinkMapperInterface
     }
 
     /**
-     * This method must throw exceptions (use Assert) if the slug chunk is not valid.
-     *
-     * @param SlugChunk $slugChunk
-     * @return void
+     * This method must throw {@see InvalidArgumentException} (use Assert) if the slug chunk is not valid.
+     * 
+     * @throws InvalidArgumentException
      */
-    protected function validateSlugChunk(SlugChunk $slugChunk) : void
+    protected function validateSlugChunk(SlugChunk $slugChunk): void
     {
     }
 
-    protected abstract function mapSlug(SlugChunk $slugChunk, array $otherChunks) : ?string;
+    abstract protected function mapSlug(SlugChunk $slugChunk, array $otherChunks): ?string;
 
     /**
      * Parses chunk in the form of "tag:slug" or just "slug" as a slug chunk.
-     *
-     * @param string $chunk
-     * @return SlugChunk
      */
-    public static function toSlugChunk(string $chunk) : SlugChunk
+    public static function toSlugChunk(string $chunk): SlugChunk
     {
         $parts = preg_split('/:/', $chunk, null, PREG_SPLIT_NO_EMPTY);
 
