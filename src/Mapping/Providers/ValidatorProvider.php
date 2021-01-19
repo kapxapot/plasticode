@@ -1,9 +1,9 @@
 <?php
 
-namespace Plasticode\Config\MappingProviders;
+namespace Plasticode\Mapping\Providers;
 
 use Plasticode\Core\Interfaces\TranslatorInterface;
-use Plasticode\Interfaces\MappingProviderInterface;
+use Plasticode\Mapping\Providers\Generic\MappingProvider;
 use Plasticode\Models\Validation\PasswordValidation;
 use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
@@ -12,7 +12,7 @@ use Plasticode\Validation\ValidationRules;
 use Plasticode\Validation\Validator;
 use Psr\Container\ContainerInterface;
 
-class ValidatorsProvider implements MappingProviderInterface
+class ValidatorProvider extends MappingProvider
 {
     public function getMappings(): array
     {

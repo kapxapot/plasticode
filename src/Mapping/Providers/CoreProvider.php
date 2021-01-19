@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Config\MappingProviders;
+namespace Plasticode\Mapping\Providers;
 
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Auth;
@@ -44,7 +44,7 @@ use Plasticode\External\Gravatar;
 use Plasticode\External\Telegram;
 use Plasticode\External\Twitch;
 use Plasticode\External\Twitter;
-use Plasticode\Interfaces\MappingProviderInterface;
+use Plasticode\Mapping\Providers\Generic\MappingProvider;
 use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
 use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
@@ -58,7 +58,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Interfaces\RouterInterface;
 
-class CoreProvider implements MappingProviderInterface
+class CoreProvider extends MappingProvider
 {
     protected array $settings;
 

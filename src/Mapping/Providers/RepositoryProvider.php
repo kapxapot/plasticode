@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Config\MappingProviders;
+namespace Plasticode\Mapping\Providers;
 
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Interfaces\AuthInterface;
@@ -13,7 +13,7 @@ use Plasticode\Hydrators\MenuHydrator;
 use Plasticode\Hydrators\MenuItemHydrator;
 use Plasticode\Hydrators\TagHydrator;
 use Plasticode\Hydrators\UserHydrator;
-use Plasticode\Interfaces\MappingProviderInterface;
+use Plasticode\Mapping\Providers\Generic\MappingProvider;
 use Plasticode\ObjectProxy;
 use Plasticode\Repositories\Idiorm\AuthTokenRepository;
 use Plasticode\Repositories\Idiorm\Core\RepositoryContext;
@@ -30,7 +30,7 @@ use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Psr\Container\ContainerInterface;
 
-class RepositoriesProvider implements MappingProviderInterface
+class RepositoryProvider extends MappingProvider
 {
     public function getMappings(): array
     {

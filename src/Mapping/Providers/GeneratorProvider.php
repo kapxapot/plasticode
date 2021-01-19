@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Config\MappingProviders;
+namespace Plasticode\Mapping\Providers;
 
 use Plasticode\Config\Config;
 use Plasticode\Generators\Core\GeneratorContext;
@@ -9,7 +9,7 @@ use Plasticode\Generators\MenuGenerator;
 use Plasticode\Generators\MenuItemGenerator;
 use Plasticode\Generators\RoleGenerator;
 use Plasticode\Generators\UserGenerator;
-use Plasticode\Interfaces\MappingProviderInterface;
+use Plasticode\Mapping\Providers\Generic\MappingProvider;
 use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
 use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
@@ -20,7 +20,7 @@ use Plasticode\Validation\ValidationRules;
 use Psr\Container\ContainerInterface;
 use Slim\Interfaces\RouterInterface;
 
-class GeneratorsProvider implements MappingProviderInterface
+class GeneratorProvider extends MappingProvider
 {
     public function getMappings(): array
     {
@@ -39,7 +39,12 @@ class GeneratorsProvider implements MappingProviderInterface
 
             GeneratorResolver::class =>
                 fn (ContainerInterface $c) => new GeneratorResolver(),
+        ];
+    }
 
+    public function getGenerators(): array
+    {
+        return [
             MenuGenerator::class =>
                 fn (ContainerInterface $c) => new MenuGenerator(
                     $c->get(GeneratorContext::class),

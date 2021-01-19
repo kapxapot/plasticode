@@ -2,7 +2,7 @@
 
 namespace Plasticode\Repositories\Interfaces\Generic;
 
-use Plasticode\Collections\NewsSourceCollection;
+use Plasticode\Collections\Generic\NewsSourceCollection;
 use Plasticode\Models\Interfaces\NewsSourceInterface;
 
 interface NewsSourceRepositoryInterface extends ChangingRepositoryInterface, ProtectedRepositoryInterface, TaggedRepositoryInterface

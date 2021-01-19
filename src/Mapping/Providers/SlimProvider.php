@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Config\MappingProviders;
+namespace Plasticode\Mapping\Providers;
 
 use Plasticode\Core\AppContext;
 use Plasticode\Handlers\ErrorHandler;
@@ -9,11 +9,14 @@ use Plasticode\Handlers\Interfaces\NotAllowedHandlerInterface;
 use Plasticode\Handlers\Interfaces\NotFoundHandlerInterface;
 use Plasticode\Handlers\NotAllowedHandler;
 use Plasticode\Handlers\NotFoundHandler;
-use Plasticode\Interfaces\MappingProviderInterface;
+use Plasticode\Mapping\Providers\Generic\MappingProvider;
 use Psr\Container\ContainerInterface;
 use Slim\Interfaces\RouterInterface;
 
-class SlimProvider implements MappingProviderInterface
+/**
+ * Provides native Slim mappings.
+ */
+class SlimProvider extends MappingProvider
 {
     public function getMappings(): array
     {
@@ -32,20 +35,16 @@ class SlimProvider implements MappingProviderInterface
                 fn (ContainerInterface $c) => new NotAllowedHandler(
                     $c->get(AppContext::class)
                 ),
+        ];
+    }
 
-            // aliases
-
-            RouterInterface::class =>
-                fn (ContainerInterface $c) => $c->get('router'),
-
-            NotFoundHandlerInterface::class =>
-                fn (ContainerInterface $c) => $c->get('notFoundHandler'),
-
-            ErrorHandlerInterface::class =>
-                fn (ContainerInterface $c) => $c->get('errorHandler'),
-
-            NotAllowedHandlerInterface::class =>
-                fn (ContainerInterface $c) => $c->get('notAllowedHandler'),
+    public function getAliases(): array
+    {
+        return [
+            RouterInterface::class => 'router',
+            NotFoundHandlerInterface::class => 'notFoundHandler',
+            ErrorHandlerInterface::class => 'errorHandler',
+            NotAllowedHandlerInterface::class => 'notAllowedHandler',
         ];
     }
 }

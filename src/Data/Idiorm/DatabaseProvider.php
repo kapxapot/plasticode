@@ -5,22 +5,20 @@ namespace Plasticode\Data\Idiorm;
 use ORM;
 use PDO;
 use Plasticode\Exceptions\InvalidConfigurationException;
+use Plasticode\Mapping\Providers\Generic\MappingProvider;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
+use Psr\Container\ContainerInterface;
 
-class DatabaseInitializer
+class DatabaseProvider extends MappingProvider
 {
-    private SettingsProviderInterface $settingsProvider;
-
-    public function __construct(
-        SettingsProviderInterface $settingsProvider
-    )
+    public function boot(ContainerInterface $container): void
     {
-        $this->settingsProvider = $settingsProvider;
-    }
+        parent::boot($container);
 
-    public function init(): void
-    {
-        $dbs = $this->settingsProvider->get('db');
+        /** @var SettingsProviderInterface */
+        $settingsProvider = $container->get(SettingsProviderInterface::class);
+
+        $dbs = $settingsProvider->get('db');
 
         $adapter = $dbs['adapter'] ?? null;
 

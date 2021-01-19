@@ -3,7 +3,7 @@
 namespace Plasticode\Repositories\Interfaces\Generic;
 
 /**
- * Base repository interface.
+ * Generic repository interface.
  */
 interface RepositoryInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Config\MappingProviders;
+namespace Plasticode\Mapping\Providers;
 
 use Plasticode\Config\Parsing\BBContainerConfig;
 use Plasticode\Config\Parsing\BBParserConfig;
@@ -9,7 +9,7 @@ use Plasticode\Config\Parsing\Interfaces\ReplacesConfigInterface;
 use Plasticode\Config\Parsing\ReplacesConfig;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
-use Plasticode\Interfaces\MappingProviderInterface;
+use Plasticode\Mapping\Providers\Generic\MappingProvider;
 use Plasticode\Parsing\Factories\BBContainerParserFactory;
 use Plasticode\Parsing\Factories\ParserFactory;
 use Plasticode\Parsing\Interfaces\ParserInterface;
@@ -21,7 +21,7 @@ use Plasticode\Parsing\Parsers\DoubleBracketsParser;
 use Plasticode\Parsing\Parsers\LineParser;
 use Psr\Container\ContainerInterface;
 
-class ParsingProvider implements MappingProviderInterface
+class ParsingProvider extends MappingProvider
 {
     public function getMappings(): array
     {
