@@ -3,7 +3,7 @@
 namespace Plasticode\Controllers\Factories;
 
 use Plasticode\Auth\Interfaces\CaptchaInterface;
-use Plasticode\Controllers\Auth\AuthController;
+use Plasticode\Controllers\AuthController;
 use Plasticode\Core\AppContext;
 use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;

@@ -3,19 +3,11 @@
 namespace Plasticode\Config;
 
 use Plasticode\Interfaces\MappingProviderInterface;
-use Psr\Container\ContainerInterface;
 
-class Bootstrap implements MappingProviderInterface
+abstract class Bootstrap
 {
-    protected array $settings;
-
     /** @var MappingProviderInterface[] */
     protected array $mappingProviders = [];
-
-    public function __construct(array $settings)
-    {
-        $this->settings = $settings;
-    }
 
     /**
      * Registers mapping providers.
@@ -32,21 +24,11 @@ class Bootstrap implements MappingProviderInterface
     }
 
     /**
-     * - Fill container.
+     * Returns aggregated mappings from the registered providers.
      */
-    public function boot(ContainerInterface $container): void
+    public function getMappings(): array
     {
-        foreach ($this->aggregateMappings() as $key => $value) {
-            $container[$key] = $value;
-        }
-    }
-
-    /**
-     * Aggregates the own mappings with all mappings from providers.
-     */
-    private function aggregateMappings(): array
-    {
-        $mappings = $this->getMappings();
+        $mappings = [];
 
         foreach ($this->mappingsProviders as $provider) {
             $mappings = array_merge(
@@ -56,13 +38,5 @@ class Bootstrap implements MappingProviderInterface
         }
 
         return $mappings;
-    }
-
-    /**
-     * Get mappings for DI container. Add more mappings in overrides.
-     */
-    public function getMappings(): array
-    {
-        return [];
     }
 }

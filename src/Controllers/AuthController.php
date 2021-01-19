@@ -1,9 +1,8 @@
 <?php
 
-namespace Plasticode\Controllers\Auth;
+namespace Plasticode\Controllers;
 
 use Plasticode\Auth\Interfaces\CaptchaInterface;
-use Plasticode\Controllers\Controller;
 use Plasticode\Core\AppContext;
 use Plasticode\Core\Response;
 use Plasticode\Core\Security;

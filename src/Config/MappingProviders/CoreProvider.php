@@ -13,10 +13,14 @@ use Plasticode\Config\Interfaces\CaptchaConfigInterface;
 use Plasticode\Config\Interfaces\TagsConfigInterface;
 use Plasticode\Config\LocalizationConfig;
 use Plasticode\Config\TagsConfig;
-use Plasticode\Controllers\Auth\AuthController;
 use Plasticode\Controllers\Factories\AuthControllerFactory;
 use Plasticode\Controllers\Factories\ParserControllerFactory;
+use Plasticode\Controllers\Factories\PasswordControllerFactory;
+use Plasticode\Controllers\AuthController;
+use Plasticode\Controllers\CaptchaController;
+use Plasticode\Controllers\Factories\CaptchaControllerFactory;
 use Plasticode\Controllers\ParserController;
+use Plasticode\Controllers\PasswordController;
 use Plasticode\Core\AppContext;
 use Plasticode\Core\Cache;
 use Plasticode\Core\Factories\LoggerFactory;
@@ -173,7 +177,9 @@ class CoreProvider implements MappingProviderInterface
             // controller factories
 
             AuthController::class => AuthControllerFactory::class,
+            CaptchaController::class => CaptchaControllerFactory::class,
             ParserController::class => ParserControllerFactory::class,
+            PasswordController::class => PasswordControllerFactory::class,
 
             // middleware factories
 
