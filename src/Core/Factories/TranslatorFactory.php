@@ -3,7 +3,7 @@
 namespace Plasticode\Core\Factories;
 
 use Plasticode\Config\Config;
-use Plasticode\Config\LocalizationConfig;
+use Plasticode\Config\Interfaces\LocalizationConfigInterface;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Core\Translator;
 use Psr\Container\ContainerInterface;
@@ -15,8 +15,8 @@ class TranslatorFactory
         /** @var Config */
         $config = $container->get(Config::class);
 
-        /** @var LocalizationConfig */
-        $localizationConfig = $container->get(LocalizationConfig::class);
+        /** @var LocalizationConfigInterface */
+        $localizationConfig = $container->get(LocalizationConfigInterface::class);
 
         $lang = $config->viewGlobals()['lang'] ?? 'ru';
         $loc = $localizationConfig->get($lang);

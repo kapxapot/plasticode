@@ -12,5 +12,5 @@ interface ValidationInterface
      * @param mixed $id
      * @return Validator[]
      */
-    function getRules(array $data, $id = null) : array;
+    function getRules(array $data, $id = null): array;
 }

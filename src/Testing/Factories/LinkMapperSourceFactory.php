@@ -11,7 +11,7 @@ use Plasticode\Testing\Mocks\LinkMappers\GenericLinkMapperMock;
 
 class LinkMapperSourceFactory
 {
-    public static function make(RendererInterface $renderer) : LinkMapperSource
+    public static function make(RendererInterface $renderer): LinkMapperSource
     {
         $linker = new LinkerMock();
 
@@ -23,17 +23,12 @@ class LinkMapperSourceFactory
             $tagLinkMapper
         );
 
-        $config = new LinkMapperSource();
-
-        $config->setDefaultMapper($pageLinkMapper);
-
-        $config->registerTaggedMappers(
-            new NewsLinkMapper($renderer, $linker),
-            $tagLinkMapper
-        );
-
-        $config->setGenericMapper(new GenericLinkMapperMock());
-
-        return $config;
+        return (new LinkMapperSource())
+            ->setDefaultMapper($pageLinkMapper)
+            ->registerTaggedMappers(
+                new NewsLinkMapper($renderer, $linker),
+                $tagLinkMapper
+            )
+            ->setGenericMapper(new GenericLinkMapperMock());
     }
 }

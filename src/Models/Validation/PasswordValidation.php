@@ -2,12 +2,12 @@
 
 namespace Plasticode\Models\Validation;
 
-use Plasticode\Validation\Validation;
+use Plasticode\Validation\ExtendableValidation;
 use Respect\Validation\Validator;
 
-class PasswordValidation extends Validation
+class PasswordValidation extends ExtendableValidation
 {
-    public function getRules(array $data, $id = null) : array
+    protected function getOwnRules(array $data, $id = null): array
     {
         return [
             'password_old' => Validator::matchesPassword($data['password']),

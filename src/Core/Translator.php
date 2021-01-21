@@ -12,12 +12,12 @@ class Translator implements TranslatorInterface
     /** @var array<string, string> */
     private array $dictionary;
 
-    public function __construct(?array $dictionary = null)
+    public function __construct(?array $dictionary)
     {
         $this->dictionary = $dictionary ?? [];
     }
 
-    public function translate(string $value) : string
+    public function translate(string $value): string
     {
         return $this->dictionary[$value] ?? $value;
     }

@@ -14,17 +14,21 @@ class LinkMapperSource implements LinkMapperSourceInterface
     private ?LinkMapperInterface $defaultMapper = null;
     private ?LinkMapperInterface $genericMapper = null;
 
-    public function registerTaggedMapper(TaggedLinkMapperInterface $mapper): void
+    public function registerTaggedMapper(TaggedLinkMapperInterface $mapper): self
     {
         $tag = $mapper->tag();
         $this->taggedMappers[$tag] = $mapper;
+
+        return $this;
     }
 
-    public function registerTaggedMappers(TaggedLinkMapperInterface ...$mappers): void
+    public function registerTaggedMappers(TaggedLinkMapperInterface ...$mappers): self
     {
         foreach ($mappers as $mapper) {
             $this->registerTaggedMapper($mapper);
         }
+
+        return $this;
     }
 
     public function getTaggedMapper(string $tag): ?TaggedLinkMapperInterface
@@ -37,9 +41,11 @@ class LinkMapperSource implements LinkMapperSourceInterface
         return $this->defaultMapper;
     }
 
-    public function setDefaultMapper(LinkMapperInterface $mapper): void
+    public function setDefaultMapper(LinkMapperInterface $mapper): self
     {
         $this->defaultMapper = $mapper;
+
+        return $this;
     }
 
     public function getGenericMapper(): ?LinkMapperInterface
@@ -47,16 +53,13 @@ class LinkMapperSource implements LinkMapperSourceInterface
         return $this->genericMapper;
     }
 
-    public function setGenericMapper(LinkMapperInterface $mapper): void
+    public function setGenericMapper(LinkMapperInterface $mapper): self
     {
         $this->genericMapper = $mapper;
+
+        return $this;
     }
 
-    /**
-     * Returns all mappers, including default & generic mappers.
-     *
-     * @return LinkMapperInterface[]
-     */
     public function getAllMappers(): array
     {
         return array_filter(

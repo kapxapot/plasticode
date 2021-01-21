@@ -12,7 +12,7 @@ use Plasticode\Validation\ValidationRules;
 use Plasticode\Validation\Validator;
 use Psr\Container\ContainerInterface;
 
-class ValidatorProvider extends MappingProvider
+class ValidationProvider extends MappingProvider
 {
     public function getMappings(): array
     {

@@ -10,6 +10,7 @@ use Plasticode\Auth\Interfaces\CaptchaInterface;
 use Plasticode\Config\CaptchaConfig;
 use Plasticode\Config\Config;
 use Plasticode\Config\Interfaces\CaptchaConfigInterface;
+use Plasticode\Config\Interfaces\LocalizationConfigInterface;
 use Plasticode\Config\Interfaces\TagsConfigInterface;
 use Plasticode\Config\LocalizationConfig;
 use Plasticode\Config\TagsConfig;
@@ -138,7 +139,7 @@ class CoreProvider extends MappingProvider
 
             Cases::class => fn (ContainerInterface $c) => new Cases(),
 
-            LocalizationConfig::class =>
+            LocalizationConfigInterface::class =>
                 fn (ContainerInterface $c) => new LocalizationConfig(),
 
             ApiInterface::class =>

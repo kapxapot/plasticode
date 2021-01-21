@@ -3,11 +3,11 @@
 namespace Plasticode\Models\Validation;
 
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
-use Plasticode\Validation\Validation;
+use Plasticode\Validation\ExtendableValidation;
 use Plasticode\Validation\ValidationRules;
 use Respect\Validation\Validator;
 
-class UserValidation extends Validation
+class UserValidation extends ExtendableValidation
 {
     private UserRepositoryInterface $userRepository;
 
@@ -21,7 +21,7 @@ class UserValidation extends Validation
         $this->userRepository = $userRepository;
     }
 
-    public function getRules(array $data, $id = null) : array
+    protected function getOwnRules(array $data, $id = null): array
     {
         return [
             'updated_at' => Validator::unchanged($this->userRepository, $id),

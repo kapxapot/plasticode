@@ -14,10 +14,10 @@ abstract class Validation implements ValidationInterface
         $this->validationRules = $validationRules;
     }
 
-    protected function rule(string $name, bool $optional = false) : Validator
+    protected function rule(string $name, bool $optional = false): Validator
     {
         return $this->validationRules->get($name, $optional);
     }
 
-    abstract public function getRules(array $data, $id = null) : array;
+    abstract public function getRules(array $data, $id = null): array;
 }

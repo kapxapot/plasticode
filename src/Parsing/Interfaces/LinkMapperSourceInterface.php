@@ -11,18 +11,24 @@ interface LinkMapperSourceInterface
 
     /**
      * Sets mapper for no tag.
+     * 
+     * @return $this
      */
-    function setDefaultMapper(LinkMapperInterface $mapper): void;
+    function setDefaultMapper(LinkMapperInterface $mapper): self;
 
     /**
      * Registers tagged mapper.
+     * 
+     * @return $this
      */
-    function registerTaggedMapper(TaggedLinkMapperInterface $mapper): void;
+    function registerTaggedMapper(TaggedLinkMapperInterface $mapper): self;
 
     /**
      * Registers many tagged mappers.
+     * 
+     * @return $this
      */
-    function registerTaggedMappers(TaggedLinkMapperInterface ...$mappers): void;
+    function registerTaggedMappers(TaggedLinkMapperInterface ...$mappers): self;
 
     /**
      * Returns tagged mapper for the tag.
@@ -36,8 +42,10 @@ interface LinkMapperSourceInterface
 
     /**
      * Sets mapper for non-specified tags.
+     * 
+     * @return $this
      */
-    function setGenericMapper(LinkMapperInterface $mapper): void;
+    function setGenericMapper(LinkMapperInterface $mapper): self;
 
     /**
      * Returns all mappers, including default & generic mappers.
