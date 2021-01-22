@@ -13,7 +13,7 @@ class Auth implements AuthInterface
     private SessionInterface $session;
 
     /**
-     * Current auth token
+     * The current auth token.
      */
     private ?AuthToken $token = null;
 
@@ -24,19 +24,13 @@ class Auth implements AuthInterface
         $this->session = $session;
     }
 
-    /**
-     * Set current auth token.
-     */
-    public function setToken(AuthToken $token) : void
+    public function setToken(AuthToken $token): void
     {
         $this->token = $token;
         $this->session->set('token_id', $token->id);
     }
 
-    /**
-     * Resets (deletes) current auth token.
-     */
-    public function resetToken() : void
+    public function resetToken(): void
     {
         $this->token = null;
         $this->session->delete('token_id');
@@ -47,28 +41,33 @@ class Auth implements AuthInterface
         return $this->session->get('token_id');
     }
 
-    /**
-     * Get current auth token.
-     */
-    public function getToken() : ?AuthToken
+    public function getToken(): ?AuthToken
     {
         return $this->token;
     }
 
-    /**
-     * Get current user.
-     */
-    public function getUser() : ?User
+    public function getUserId(): ?int
+    {
+        return $this->getToken()
+            ? $this->getToken()->userId
+            : null;
+    }
+
+    public function getUser(): ?User
     {
         return $this->getToken()
             ? $this->getToken()->user()
             : null;
     }
 
-    /**
-     * Get current role.
-     */
-    public function getRole() : ?Role
+    public function getRoleId(): ?int
+    {
+        return $this->getUser()
+            ? $this->getUser()->roleId
+            : null;
+    }
+
+    public function getRole(): ?Role
     {
         return $this->getUser()
             ? $this->getUser()->role()

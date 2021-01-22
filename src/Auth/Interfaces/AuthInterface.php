@@ -9,29 +9,42 @@ use Plasticode\Models\User;
 interface AuthInterface
 {
     /**
-     * Set current auth token.
+     * Sets the current auth token.
      */
-    function setToken(AuthToken $token) : void;
+    function setToken(AuthToken $token): void;
 
     /**
-     * Resets (deletes) current auth token.
+     * Resets (deletes) the current auth token.
      */
-    public function resetToken() : void;
-
-    public function getTokenId() : ?int;
+    function resetToken(): void;
 
     /**
-     * Get current auth token.
+     * Returns the current auth token's id.
      */
-    public function getToken() : ?AuthToken;
+    function getTokenId(): ?int;
 
     /**
-     * Get current user.
+     * Returns the current auth token.
      */
-    public function getUser() : ?User;
+    function getToken(): ?AuthToken;
 
     /**
-     * Get current role.
+     * Returns the current user's id.
      */
-    public function getRole() : ?Role;
+    function getUserId(): ?int;
+
+    /**
+     * Returns the current user.
+     */
+    function getUser(): ?User;
+
+    /**
+     * Returns the current role's id.
+     */
+    function getRoleId(): ?int;
+
+    /**
+     * Returns the current role.
+     */
+    function getRole(): ?Role;
 }
