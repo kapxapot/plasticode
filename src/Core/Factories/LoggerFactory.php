@@ -5,7 +5,7 @@ namespace Plasticode\Core\Factories;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use Plasticode\Auth\Auth;
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Config\Config;
 use Plasticode\IO\File;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
@@ -19,8 +19,8 @@ class LoggerFactory
         /** @var SettingsProviderInterface */
         $settingsProvider = $container->get(SettingsProviderInterface::class);
 
-        /** @var Auth */
-        $auth = $container->get(Auth::class);
+        /** @var AuthInterface */
+        $auth = $container->get(AuthInterface::class);
 
         /** @var Config */
         $config = $container->get(Config::class);

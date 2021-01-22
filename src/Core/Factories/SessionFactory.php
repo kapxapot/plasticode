@@ -4,6 +4,7 @@ namespace Plasticode\Core\Factories;
 
 use Plasticode\Core\Interfaces\SessionInterface;
 use Plasticode\Core\Session;
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Psr\Container\ContainerInterface;
 
 class SessionFactory
