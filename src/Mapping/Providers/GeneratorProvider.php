@@ -6,7 +6,6 @@ use Plasticode\Config\Config;
 use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Generators\Core\GeneratorContext;
-use Plasticode\Generators\Core\GeneratorResolver;
 use Plasticode\Generators\MenuGenerator;
 use Plasticode\Generators\MenuItemGenerator;
 use Plasticode\Generators\RoleGenerator;
@@ -39,9 +38,6 @@ class GeneratorProvider extends MappingProvider
                     $c->get(ViewInterface::class),
                     $c->get(AccessMiddlewareFactory::class)
                 ),
-
-            GeneratorResolver::class =>
-                fn (ContainerInterface $c) => new GeneratorResolver(),
         ];
     }
 
