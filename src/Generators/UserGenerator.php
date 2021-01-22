@@ -12,8 +12,7 @@ use Plasticode\Validation\Interfaces\ValidationInterface;
 class UserGenerator extends ChangingEntityGenerator
 {
     private UserRepositoryInterface $userRepository;
-
-    protected ValidationInterface $userValidation;
+    private ValidationInterface $userValidation;
 
     public function __construct(
         GeneratorContext $context,
@@ -24,7 +23,6 @@ class UserGenerator extends ChangingEntityGenerator
         parent::__construct($context);
 
         $this->userRepository = $userRepository;
-
         $this->userValidation = $userValidation;
     }
 

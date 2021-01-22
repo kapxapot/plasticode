@@ -18,6 +18,11 @@ class ValidationProvider extends MappingProvider
     public function getMappings(): array
     {
         return [
+            PasswordValidation::class =>
+                fn (ContainerInterface $c) => new PasswordValidation(
+                    $c->get(ValidationRules::class)
+                ),
+
             ValidatorInterface::class =>
                 fn (ContainerInterface $c) => new Validator(
                     $c->get(TranslatorInterface::class)
@@ -26,11 +31,6 @@ class ValidationProvider extends MappingProvider
             ValidationRules::class =>
                 fn (ContainerInterface $c) => new ValidationRules(
                     $c->get(SettingsProviderInterface::class)
-                ),
-
-            PasswordValidation::class =>
-                fn (ContainerInterface $c) => new PasswordValidation(
-                    $c->get(ValidationRules::class)
                 ),
 
             UserValidation::class =>

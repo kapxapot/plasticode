@@ -66,46 +66,25 @@ class CoreProvider extends MappingProvider
     public function getMappings(): array
     {
         return [
-            SettingsProviderInterface::class =>
-                fn (ContainerInterface $c) => new SettingsProvider(
-                    $this->settings
-                ),
-
-            Config::class =>
-                fn (ContainerInterface $c) => new Config(
-                    $c->get(SettingsProviderInterface::class)
-                ),
-
-            CacheInterface::class => fn (ContainerInterface $c) => new Cache(),
-
             Access::class =>
                 fn (ContainerInterface $c) => new Access(
                     $c->get(Config::class)->accessSettings()
                 ),
 
-            DbMetadata::class =>
-                fn (ContainerInterface $c) => new DbMetadata(
-                    $c->get(Config::class)
+            AccessMiddlewareFactory::class =>
+                fn (ContainerInterface $c) => new AccessMiddlewareFactory(
+                    $c->get(Access::class),
+                    $c->get(AuthInterface::class),
+                    $c->get(RouterInterface::class)
                 ),
 
-            RendererInterface::class =>
-                fn (ContainerInterface $c) => new Renderer(
-                    $c->get(ViewInterface::class)
-                ),
-
-            AuthInterface::class =>
-                fn (ContainerInterface $c) => new Auth(
-                    $c->get(SessionInterface::class)
-                ),
-
-            TagsConfigInterface::class =>
-                fn (ContainerInterface $c) => new TagsConfig(),
-
-            LinkerInterface::class =>
-                fn (ContainerInterface $c) => new Linker(
-                    $c->get(SettingsProviderInterface::class),
-                    $c->get(RouterInterface::class),
-                    $c->get(TagsConfigInterface::class)
+            ApiInterface::class =>
+                fn (ContainerInterface $c) => new Api(
+                    $c->get(Access::class),
+                    $c->get(AuthInterface::class),
+                    $c->get(DbMetadata::class),
+                    $c->get(LoggerInterface::class),
+                    $c->get(UserRepositoryInterface::class)
                 ),
 
             AppContext::class =>
@@ -118,6 +97,13 @@ class CoreProvider extends MappingProvider
                     $c->get(MenuRepositoryInterface::class)
                 ),
 
+            AuthInterface::class =>
+                fn (ContainerInterface $c) => new Auth(
+                    $c->get(SessionInterface::class)
+                ),
+
+            CacheInterface::class => fn (ContainerInterface $c) => new Cache(),
+
             CaptchaConfigInterface::class =>
                 fn (ContainerInterface $c) => new CaptchaConfig(),
 
@@ -129,22 +115,14 @@ class CoreProvider extends MappingProvider
 
             Cases::class => fn (ContainerInterface $c) => new Cases(),
 
-            LocalizationConfigInterface::class =>
-                fn (ContainerInterface $c) => new LocalizationConfig(),
-
-            ApiInterface::class =>
-                fn (ContainerInterface $c) => new Api(
-                    $c->get(Access::class),
-                    $c->get(AuthInterface::class),
-                    $c->get(DbMetadata::class),
-                    $c->get(LoggerInterface::class),
-                    $c->get(UserRepositoryInterface::class)
+            Config::class =>
+                fn (ContainerInterface $c) => new Config(
+                    $c->get(SettingsProviderInterface::class)
                 ),
 
-            Pagination::class =>
-                fn (ContainerInterface $c) => new Pagination(
-                    $c->get(LinkerInterface::class),
-                    $c->get(RendererInterface::class)
+            DbMetadata::class =>
+                fn (ContainerInterface $c) => new DbMetadata(
+                    $c->get(Config::class)
                 ),
 
             EventDispatcher::class =>
@@ -152,14 +130,34 @@ class CoreProvider extends MappingProvider
                     fn (string $msg) => $c->get('eventLogger')->info($msg)
                 ),
 
-            // middleware factories
-
-            AccessMiddlewareFactory::class =>
-                fn (ContainerInterface $c) => new AccessMiddlewareFactory(
-                    $c->get(Access::class),
-                    $c->get(AuthInterface::class),
-                    $c->get(RouterInterface::class)
+            LinkerInterface::class =>
+                fn (ContainerInterface $c) => new Linker(
+                    $c->get(SettingsProviderInterface::class),
+                    $c->get(RouterInterface::class),
+                    $c->get(TagsConfigInterface::class)
                 ),
+
+            LocalizationConfigInterface::class =>
+                fn (ContainerInterface $c) => new LocalizationConfig(),
+
+            Pagination::class =>
+                fn (ContainerInterface $c) => new Pagination(
+                    $c->get(LinkerInterface::class),
+                    $c->get(RendererInterface::class)
+                ),
+
+            RendererInterface::class =>
+                fn (ContainerInterface $c) => new Renderer(
+                    $c->get(ViewInterface::class)
+                ),
+
+            SettingsProviderInterface::class =>
+                fn (ContainerInterface $c) => new SettingsProvider(
+                    $this->settings
+                ),
+
+            TagsConfigInterface::class =>
+                fn (ContainerInterface $c) => new TagsConfig(),
         ];
     }
 
@@ -170,8 +168,8 @@ class CoreProvider extends MappingProvider
 
             LoggerInterface::class => LoggerFactory::class,
             SessionInterface::class => SessionFactory::class,
-            ViewInterface::class => TwigViewFactory::class,
             TranslatorInterface::class => TranslatorFactory::class,
+            ViewInterface::class => TwigViewFactory::class,
 
             // todo: DI for duplicate interface instances (logger + eventLogger)
             'eventLogger' => EventLoggerFactory::class,

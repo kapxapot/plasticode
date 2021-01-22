@@ -21,11 +21,6 @@ class SlimProvider extends MappingProvider
     public function getMappings(): array
     {
         return [
-            'notFoundHandler' =>
-                fn (ContainerInterface $c) => new NotFoundHandler(
-                    $c->get(AppContext::class)
-                ),
-
             'errorHandler' =>
                 fn (ContainerInterface $c) => new ErrorHandler(
                     $c->get(AppContext::class)
@@ -35,16 +30,21 @@ class SlimProvider extends MappingProvider
                 fn (ContainerInterface $c) => new NotAllowedHandler(
                     $c->get(AppContext::class)
                 ),
+
+            'notFoundHandler' =>
+                fn (ContainerInterface $c) => new NotFoundHandler(
+                    $c->get(AppContext::class)
+                ),
         ];
     }
 
     public function getAliases(): array
     {
         return [
-            RouterInterface::class => 'router',
-            NotFoundHandlerInterface::class => 'notFoundHandler',
             ErrorHandlerInterface::class => 'errorHandler',
             NotAllowedHandlerInterface::class => 'notAllowedHandler',
+            NotFoundHandlerInterface::class => 'notFoundHandler',
+            RouterInterface::class => 'router',
         ];
     }
 }

@@ -43,6 +43,8 @@ class RepositoryProvider extends MappingProvider
                     $c->get(DbMetadata::class)
                 ),
 
+            // repositories
+
             AuthTokenRepositoryInterface::class =>
                 fn (ContainerInterface $c) => new AuthTokenRepository(
                     $c->get(RepositoryContext::class),
