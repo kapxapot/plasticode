@@ -91,10 +91,11 @@ class TwigViewFactory
             $view[$key] = $value;
         }
 
+        $check = $authService->check();
         $user = $auth->getUser();
 
         $view['auth'] = [
-            'check' => $authService->check(),
+            'check' => $check,
             'user' => $user,
             'role' => $auth->getRole(),
             'avatar' => is_null($user)
