@@ -2,7 +2,7 @@
 
 namespace Plasticode\Services;
 
-use Plasticode\Collections\NewsSourceCollection;
+use Plasticode\Collections\Generic\NewsSourceCollection;
 use Plasticode\Collections\NewsYearCollection;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Models\Interfaces\NewsSourceInterface;

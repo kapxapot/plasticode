@@ -2,7 +2,7 @@
 
 namespace Plasticode\Repositories\Interfaces\Generic;
 
-use Plasticode\Collections\NewsSourceCollection;
+use Plasticode\Collections\Generic\NewsSourceCollection;
 
 interface SearchableNewsSourceRepositoryInterface extends NewsSourceRepositoryInterface, SearchableRepositoryInterface
 {
