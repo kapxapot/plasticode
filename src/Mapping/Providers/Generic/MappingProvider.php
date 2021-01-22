@@ -43,9 +43,14 @@ abstract class MappingProvider implements MappingProviderInterface
         /** @var GeneratorResolver */
         $resolver = $container->get(GeneratorResolver::class);
 
-        $resolver->register(
-            ...array_values($this->getGenerators())
-        );
+        /** @var string[] */
+        $generatorClasses = array_keys($this->getGenerators());
+
+        foreach ($generatorClasses as $generatorClass) {
+            $generator = $container->get($generatorClass);
+
+            $resolver->register($generator);
+        }
     }
 
     private function registerEventHandlers(ContainerInterface $c): void
