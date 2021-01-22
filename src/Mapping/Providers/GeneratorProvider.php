@@ -15,6 +15,7 @@ use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Plasticode\Validation\ValidationRules;
 use Psr\Container\ContainerInterface;
