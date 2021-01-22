@@ -49,6 +49,7 @@ use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Settings\SettingsProvider;
 use Plasticode\Twig\TwigViewFactory;
 use Plasticode\Util\Cases;
+use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Interfaces\RouterInterface;

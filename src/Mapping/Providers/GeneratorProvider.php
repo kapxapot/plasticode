@@ -3,6 +3,8 @@
 namespace Plasticode\Mapping\Providers;
 
 use Plasticode\Config\Config;
+use Plasticode\Core\Interfaces\ViewInterface;
+use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Generators\Core\GeneratorContext;
 use Plasticode\Generators\Core\GeneratorResolver;
 use Plasticode\Generators\MenuGenerator;

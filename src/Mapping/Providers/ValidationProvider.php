@@ -7,6 +7,7 @@ use Plasticode\Mapping\Providers\Generic\MappingProvider;
 use Plasticode\Models\Validation\PasswordValidation;
 use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Plasticode\Validation\ValidationRules;
 use Plasticode\Validation\Validator;
