@@ -88,11 +88,6 @@ class CoreProvider extends MappingProvider
                     $c->get(Config::class)
                 ),
 
-            LoggerInterface::class => LoggerFactory::class,
-            SessionInterface::class => SessionFactory::class,
-            ViewInterface::class => TwigViewFactory::class,
-            TranslatorInterface::class => TranslatorFactory::class,
-
             RendererInterface::class =>
                 fn (ContainerInterface $c) => new Renderer(
                     $c->get(ViewInterface::class)
@@ -152,20 +147,10 @@ class CoreProvider extends MappingProvider
                     $c->get(RendererInterface::class)
                 ),
 
-            // todo: DI for duplicate interface instances (logger + eventLogger)
-            'eventLogger' => EventLoggerFactory::class,
-
             EventDispatcher::class =>
                 fn (ContainerInterface $c) => new EventDispatcher(
                     fn (string $msg) => $c->get('eventLogger')->info($msg)
                 ),
-
-            // controller factories
-
-            AuthController::class => AuthControllerFactory::class,
-            CaptchaController::class => CaptchaControllerFactory::class,
-            ParserController::class => ParserControllerFactory::class,
-            PasswordController::class => PasswordControllerFactory::class,
 
             // middleware factories
 
@@ -175,6 +160,28 @@ class CoreProvider extends MappingProvider
                     $c->get(AuthInterface::class),
                     $c->get(RouterInterface::class)
                 ),
+        ];
+    }
+
+    public function getFactories(): array
+    {
+        return [
+            // core factories
+
+            LoggerInterface::class => LoggerFactory::class,
+            SessionInterface::class => SessionFactory::class,
+            ViewInterface::class => TwigViewFactory::class,
+            TranslatorInterface::class => TranslatorFactory::class,
+
+            // todo: DI for duplicate interface instances (logger + eventLogger)
+            'eventLogger' => EventLoggerFactory::class,
+
+            // controller factories
+
+            AuthController::class => AuthControllerFactory::class,
+            CaptchaController::class => CaptchaControllerFactory::class,
+            ParserController::class => ParserControllerFactory::class,
+            PasswordController::class => PasswordControllerFactory::class,
         ];
     }
 }

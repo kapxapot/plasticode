@@ -14,6 +14,11 @@ abstract class MappingProvider implements MappingProviderInterface
         return [];
     }
 
+    public function getFactories(): array
+    {
+        return [];
+    }
+
     public function getAliases(): array
     {
         return [];

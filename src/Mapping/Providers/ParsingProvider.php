@@ -68,7 +68,12 @@ class ParsingProvider extends MappingProvider
                 fn (ContainerInterface $c) => new CutParser(
                     $c->get(CleanupParser::class)
                 ),
+        ];
+    }
 
+    public function getFactories(): array
+    {
+        return [
             BBContainerParser::class => BBContainerParserFactory::class,
 
             // main parser

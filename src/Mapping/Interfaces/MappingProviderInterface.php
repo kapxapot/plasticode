@@ -11,6 +11,11 @@ interface MappingProviderInterface
     /**
      * @return array<string, string>
      */
+    function getFactories(): array;
+
+    /**
+     * @return array<string, string>
+     */
     function getAliases(): array;
 
     function getGenerators(): array;

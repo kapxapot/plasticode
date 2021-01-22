@@ -48,6 +48,11 @@ abstract class MappingAggregator
     {
         $mappings = $this->mergeMappings();
 
+        // resolve factories
+        foreach ($this->mergeFactories() as $class => $factoryClass) {
+            $mappings[$class] = new $factoryClass();
+        }
+
         // convert aliases to mappings
         foreach ($this->mergeAliases() as $alias => $key) {
             $mappings[$alias] = fn (ContainerInterface $c) => $c->get($key);
@@ -80,6 +85,13 @@ abstract class MappingAggregator
     {
         return $this->mergeArrays(
             fn (MappingProviderInterface $p) => $p->getMappings()
+        );
+    }
+
+    private function mergeFactories(): array
+    {
+        return $this->mergeArrays(
+            fn (MappingProviderInterface $p) => $p->getFactories()
         );
     }
 
