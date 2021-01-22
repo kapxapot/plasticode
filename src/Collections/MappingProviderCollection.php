@@ -7,5 +7,5 @@ use Plasticode\Mapping\Interfaces\MappingProviderInterface;
 
 class MappingProviderCollection extends TypedCollection
 {
-    protected static $class = MappingProviderInterface::class;
+    protected $class = MappingProviderInterface::class;
 }
