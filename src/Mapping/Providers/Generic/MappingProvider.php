@@ -44,7 +44,7 @@ abstract class MappingProvider implements MappingProviderInterface
         $resolver = $container->get(GeneratorResolver::class);
 
         $resolver->register(
-            ...array_keys($this->getGenerators())
+            ...array_values($this->getGenerators())
         );
     }
 
