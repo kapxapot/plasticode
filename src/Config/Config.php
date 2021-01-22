@@ -7,6 +7,8 @@ use Plasticode\Settings\SettingsProvider;
 
 class Config
 {
+    const ROOT_DIR_PATH = 'root_dir';
+
     private SettingsProviderInterface $settingsProvider;
 
     public function __construct(SettingsProviderInterface $settingsProvider)
@@ -19,7 +21,7 @@ class Config
      */
     public function rootDir(): string
     {
-        return $this->get('root_dir');
+        return $this->get(self::ROOT_DIR_PATH);
     }
 
     /**
