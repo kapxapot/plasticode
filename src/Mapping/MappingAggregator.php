@@ -2,6 +2,7 @@
 
 namespace Plasticode\Mapping;
 
+use Plasticode\Collections\MappingProviderCollection;
 use Plasticode\Mapping\Interfaces\MappingProviderInterface;
 use Psr\Container\ContainerInterface;
 
@@ -9,6 +10,22 @@ abstract class MappingAggregator
 {
     /** @var MappingProviderInterface[] */
     protected array $mappingProviders = [];
+
+    /**
+     * Registers mapping provider collections.
+     * 
+     * @return $this
+     */
+    public function registerMany(
+        MappingProviderCollection ...$mappingProviderCollections
+    ): self
+    {
+        foreach ($mappingProviderCollections as $collection) {
+            $this->register(...$collection);
+        }
+
+        return $this;
+    }
 
     /**
      * Registers mapping providers.

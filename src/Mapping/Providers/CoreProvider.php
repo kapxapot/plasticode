@@ -41,16 +41,10 @@ use Plasticode\Data\Idiorm\Api;
 use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Events\EventDispatcher;
 use Plasticode\Events\Factories\EventLoggerFactory;
-use Plasticode\External\Gravatar;
-use Plasticode\External\Telegram;
-use Plasticode\External\Twitch;
-use Plasticode\External\Twitter;
 use Plasticode\Mapping\Providers\Generic\MappingProvider;
 use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
-use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
-use Plasticode\Services\AuthService;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Settings\SettingsProvider;
 use Plasticode\Twig\TwigViewFactory;
@@ -165,16 +159,6 @@ class CoreProvider extends MappingProvider
                     fn (string $msg) => $c->get('eventLogger')->info($msg)
                 ),
 
-            // services
-
-            AuthService::class =>
-                fn (ContainerInterface $c) => new AuthService(
-                    $c->get(AuthInterface::class),
-                    $c->get(SettingsProviderInterface::class),
-                    $c->get(AuthTokenRepositoryInterface::class),
-                    $c->get(UserRepositoryInterface::class)
-                ),
-
             // controller factories
 
             AuthController::class => AuthControllerFactory::class,
@@ -189,25 +173,6 @@ class CoreProvider extends MappingProvider
                     $c->get(Access::class),
                     $c->get(AuthInterface::class),
                     $c->get(RouterInterface::class)
-                ),
-
-            // external
-
-            Gravatar::class => fn (ContainerInterface $c) => new Gravatar(),
-
-            Twitch::class =>
-                fn (ContainerInterface $c) => new Twitch(
-                    $c->get(SettingsProviderInterface::class)->get('twitch')
-                ),
-
-            Telegram::class =>
-                fn (ContainerInterface $c) => new Telegram(
-                    $c->get(SettingsProviderInterface::class)->get('telegram')
-                ),
-
-            Twitter::class =>
-                fn (ContainerInterface $c) => new Twitter(
-                    $c->get(SettingsProviderInterface::class)->get('twitter')
                 ),
         ];
     }

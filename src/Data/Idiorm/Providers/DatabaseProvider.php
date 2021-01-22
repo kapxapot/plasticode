@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Data\Idiorm;
+namespace Plasticode\Data\Idiorm\Providers;
 
 use ORM;
 use PDO;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Data\Idiorm;
+namespace Plasticode\Data\Idiorm\Providers;
 
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Interfaces\AuthInterface;
