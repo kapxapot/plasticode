@@ -7,6 +7,7 @@ use Plasticode\Exceptions\ValidationException;
 use Plasticode\Exceptions\Interfaces\HttpExceptionInterface;
 use Plasticode\Exceptions\Interfaces\PropagatedExceptionInterface;
 use Plasticode\Interfaces\ArrayableInterface;
+use Plasticode\Util\Debug;
 use Plasticode\Util\Text;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -120,12 +121,7 @@ class Response
             $logger->error("Error: {$msg}");
 
             if (!($ex instanceof ValidationException)) {
-                $lines = [];
-
-                foreach ($ex->getTrace() as $trace) {
-                    $lines[] = $trace['file'] . ' (' . $trace['line'] . '), ' . $trace['class'] . $trace['type'] . $trace['function'];
-                }
-
+                $lines = Debug::exceptionTrace($ex);
                 $logger->info(Text::join($lines));
             }
         }
