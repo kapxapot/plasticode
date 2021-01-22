@@ -101,7 +101,7 @@ abstract class MappingAggregator
     {
         $accumulator = [];
 
-        foreach ($this->mappingsProviders as $provider) {
+        foreach ($this->mappingProviders as $provider) {
             $accumulator = array_merge(
                 $accumulator,
                 $extractArray($provider)
