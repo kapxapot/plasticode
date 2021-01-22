@@ -7,6 +7,7 @@ use Plasticode\Controllers\AuthController;
 use Plasticode\Core\AppContext;
 use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Services\AuthService;
 use Psr\Container\ContainerInterface;
 
 class AuthControllerFactory
