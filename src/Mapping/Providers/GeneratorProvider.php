@@ -38,12 +38,7 @@ class GeneratorProvider extends MappingProvider
                     $c->get(ViewInterface::class),
                     $c->get(AccessMiddlewareFactory::class)
                 ),
-        ];
-    }
 
-    public function getGenerators(): array
-    {
-        return [
             MenuGenerator::class =>
                 fn (ContainerInterface $c) => new MenuGenerator(
                     $c->get(GeneratorContext::class),

@@ -18,8 +18,6 @@ interface MappingProviderInterface
      */
     function getAliases(): array;
 
-    function getGenerators(): array;
-
     /**
      * @return callable[]
      */

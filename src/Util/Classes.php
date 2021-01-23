@@ -2,11 +2,14 @@
 
 namespace Plasticode\Util;
 
+use ReflectionClass;
+use ReflectionMethod;
+
 class Classes
 {
-    public static function shortName(string $class)
+    public static function shortName(string $className)
     {
-        return Strings::lastChunk($class, '\\');
+        return Strings::lastChunk($className, '\\');
     }
 
     /**
@@ -14,26 +17,22 @@ class Classes
      *
      * @param string[]|null $exclude
      */
-    public static function getPublicMethods(string $class, array $exclude = null) : array
+    public static function getPublicMethods(string $className, array $exclude = null) : array
     {
-        $class = new \ReflectionClass($class);
-        $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
+        $class = new ReflectionClass($className);
+        $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
 
         $exclude = $exclude ?? [];
         $exclude[] = '__construct';
 
         $methodNames = array_map(
-            function (\ReflectionMethod $method) {
-                return $method->name;
-            },
+            fn (ReflectionMethod $method) => $method->name,
             $methods
         );
 
         $methodNames = array_filter(
             $methodNames,
-            function (string $methodName) use ($exclude) {
-                return !in_array($methodName, $exclude);
-            }
+            fn (string $methodName) => !in_array($methodName, $exclude)
         );
 
         return array_values($methodNames);

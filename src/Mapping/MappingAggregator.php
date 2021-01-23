@@ -58,9 +58,6 @@ abstract class MappingAggregator
             $mappings[$alias] = fn (ContainerInterface $c) => $c->get($key);
         }
 
-        // add generators
-        $mappings = array_merge($mappings, $this->mergeGenerators());
-
         return $mappings;
     }
 
@@ -99,13 +96,6 @@ abstract class MappingAggregator
     {
         return $this->mergeArrays(
             fn (MappingProviderInterface $p) => $p->getAliases()
-        );
-    }
-
-    private function mergeGenerators(): array
-    {
-        return $this->mergeArrays(
-            fn (MappingProviderInterface $p) => $p->getGenerators()
         );
     }
 

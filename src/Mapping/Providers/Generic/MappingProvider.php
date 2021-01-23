@@ -23,11 +23,6 @@ abstract class MappingProvider implements MappingProviderInterface
         return [];
     }
 
-    public function getGenerators(): array
-    {
-        return [];
-    }
-
     public function getEventHandlers(): array
     {
         return [];
