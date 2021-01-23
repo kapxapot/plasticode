@@ -11,9 +11,9 @@ final class FileTest extends TestCase
      * @dataProvider combineProvider
      */
     public function testCombine(
-        string $part1,
-        string $part2,
-        string $expected
+        ?string $part1,
+        ?string $part2,
+        ?string $expected
     ) : void
     {
         $this->assertEquals(
@@ -28,38 +28,43 @@ final class FileTest extends TestCase
             'winRelativeSlash' => [
                 'C:\\xampp\\src',
                 '\\..\\logs\\app.log',
-                'C:/xampp/src/../logs/app.log'
+                'C:/xampp/src/../logs/app.log',
             ],
             'winRelativeNoSlash' => [
                 'C:\\xampp\\src',
                 '..\\logs\\app.log',
-                'C:/xampp/src/../logs/app.log'
+                'C:/xampp/src/../logs/app.log',
             ],
             'unixRelativeSlash' => [
                 '/xampp/src',
                 '/../logs/app.log',
-                '/xampp/src/../logs/app.log'
+                '/xampp/src/../logs/app.log',
             ],
             'unixRelativeNoSlash' => [
                 '/xampp/src',
                 '../logs/app.log',
-                '/xampp/src/../logs/app.log'
+                '/xampp/src/../logs/app.log',
             ],
             'mixedRelativeSlash' => [
                 'C:\\xampp\\src',
                 '/../logs/app.log',
-                'C:/xampp/src/../logs/app.log'
+                'C:/xampp/src/../logs/app.log',
             ],
             'mixedRelativeNoSlash' => [
                 'C:\\xampp\\src',
                 '../logs/app.log',
-                'C:/xampp/src/../logs/app.log'
+                'C:/xampp/src/../logs/app.log',
             ],
             'strangeBug' => [
                 'C:\\xampp\\src/..',
                 '/logs/app.log',
-                'C:/xampp/src/../logs/app.log'
-            ]
+                'C:/xampp/src/../logs/app.log',
+            ],
+            'nulls' => [
+                null,
+                null,
+                null,
+            ],
         ];
     }
 

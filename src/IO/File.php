@@ -3,7 +3,7 @@
 namespace Plasticode\IO;
 
 use Plasticode\Exceptions\IoException;
-use Plasticode\Util\Strings;
+use Plasticode\Util\Arrays;
 
 class File
 {
@@ -12,7 +12,7 @@ class File
      */
     private const SEPARATOR = '/';
 
-    public static function load(string $file) : string
+    public static function load(string $file): string
     {
         $content = @file_get_contents($file);
 
@@ -26,7 +26,7 @@ class File
     /**
      * Saves file.
      */
-    public static function save(string $file, string $data) : void
+    public static function save(string $file, string $data): void
     {
         $dir = dirname($file);
 
@@ -40,7 +40,7 @@ class File
     /**
      * Deletes file.
      */
-    public static function delete(string $file) : void
+    public static function delete(string $file): void
     {
         if (file_exists($file)) {
             unlink($file);
@@ -50,7 +50,7 @@ class File
     /**
      * Deletes all files matching the mask.
      */
-    public static function cleanUp(string $mask, string $except = null) : void
+    public static function cleanUp(string $mask, string $except = null): void
     {
         foreach (glob($mask) as $toDel) {
             if (!is_dir($toDel) && $toDel != $except) {
@@ -62,7 +62,7 @@ class File
     /**
      * Returns file's extension. If there's none, returns null.
      */
-    public static function getExtension(string $path) : ?string
+    public static function getExtension(string $path): ?string
     {
         $chunk = strrchr($path, ".");
         return $chunk ? substr($chunk, 1) : null;
@@ -71,7 +71,7 @@ class File
     /**
      * Returns file name without extension.
      */
-    public static function getName(string $path) : string
+    public static function getName(string $path): string
     {
         $path = basename($path);
         $pos = strrpos($path, '.');
@@ -80,7 +80,7 @@ class File
             : $path;
     }
 
-    public static function exists(string $path) : bool
+    public static function exists(string $path): bool
     {
         return file_exists($path);
     }
@@ -88,10 +88,12 @@ class File
     /**
      * Combines file/directory path parts.
      */
-    public static function combine(string ...$parts) : ?string
+    public static function combine(?string ...$parts): ?string
     {
         $sep = self::SEPARATOR;
         $path = null;
+
+        $parts = Arrays::clean($parts);
 
         foreach ($parts as $part) {
             $part = self::normalizePath($part);
@@ -114,7 +116,7 @@ class File
     public static function absolutePath(
         string $baseDir,
         ?string $relativePath
-    ) : ?string
+    ): ?string
     {
         if (!preg_match('/^(\\\\|\/)?\.\./', $relativePath)) {
             return $relativePath;
@@ -126,7 +128,7 @@ class File
     /**
      * Normalizes all slashes to '/'.
      */
-    public static function normalizePath(string $path) : string
+    public static function normalizePath(string $path): string
     {
         return str_replace('\\', self::SEPARATOR, $path);
     }
