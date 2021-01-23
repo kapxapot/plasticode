@@ -26,7 +26,7 @@ class EventLoggerFactory
         );
 
         $path = $settingsProvider->get('event_logger.path');
-        $path = File::absolutePath($config->rootDir(), $path);
+        $path = File::combine($config->rootDir(), $path);
 
         $handler = new StreamHandler(
             $path ?? '',
