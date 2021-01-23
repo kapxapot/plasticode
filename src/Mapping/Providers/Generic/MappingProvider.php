@@ -36,13 +36,13 @@ abstract class MappingProvider implements MappingProviderInterface
         $this->registerEventHandlers($container);
     }
 
-    private function registerEventHandlers(ContainerInterface $c): void
+    private function registerEventHandlers(ContainerInterface $container): void
     {
         /** @var EventDispatcher */
-        $dispatcher = $c->get(EventDispatcher::class);
+        $dispatcher = $container->get(EventDispatcher::class);
 
         $dispatcher->addHandlers(
-            ...$this->getEventHandlers()
+            ...$this->getEventHandlers($container)
         );
     }
 }
