@@ -55,6 +55,11 @@ final class FileTest extends TestCase
                 '../logs/app.log',
                 'C:/xampp/src/../logs/app.log'
             ],
+            'strangeBug' => [
+                'C:\\xampp\\src/..',
+                '/logs/app.log',
+                'C:/xampp/src/../logs/app.log'
+            ]
         ];
     }
 
