@@ -23,7 +23,7 @@ abstract class MappingProvider implements MappingProviderInterface
         return [];
     }
 
-    public function getEventHandlers(): array
+    public function getEventHandlers(ContainerInterface $container): array
     {
         return [];
     }

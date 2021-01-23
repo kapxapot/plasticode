@@ -18,10 +18,7 @@ interface MappingProviderInterface
      */
     function getAliases(): array;
 
-    /**
-     * @return callable[]
-     */
-    function getEventHandlers(): array;
+    function getEventHandlers(ContainerInterface $container): array;
 
     function boot(ContainerInterface $container): void;
 }
