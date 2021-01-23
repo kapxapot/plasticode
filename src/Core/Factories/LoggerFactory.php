@@ -48,12 +48,14 @@ class LoggerFactory
         );
 
         $path = $settingsProvider->get('logger.path');
+
+        if (strlen($path) == 0) {
+            return $logger;
+        }
+
         $path = File::combine($config->rootDir(), $path);
 
-        $handler = new StreamHandler(
-            $path ?? '',
-            $path ? Logger::DEBUG : 999
-        );
+        $handler = new StreamHandler($path, Logger::DEBUG);
 
         $formatter = new LineFormatter(
             null, null, false, true
