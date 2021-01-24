@@ -11,9 +11,9 @@ class TagsConfig implements TagsConfigInterface
      */
     private array $map;
 
-    public function __construct(array $map = [])
+    public function __construct(?array $map = null)
     {
-        $this->map = $map;
+        $this->map = $map ?? [];
     }
 
     public function getTab(string $class): ?string

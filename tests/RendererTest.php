@@ -9,7 +9,7 @@ use Plasticode\ViewModels\UrlViewModel;
 
 final class RendererTest extends BaseRenderTestCase
 {
-    public function testPrev() : void
+    public function testPrev(): void
     {
         $this->assertEquals(
             '<i class="glyphicon glyphicon-chevron-left" aria-hidden="true"></i>',
@@ -17,7 +17,7 @@ final class RendererTest extends BaseRenderTestCase
         );
     }
 
-    public function testNext() : void
+    public function testNext(): void
     {
         $this->assertEquals(
             '<i class="glyphicon glyphicon-chevron-right" aria-hidden="true"></i>',
@@ -25,7 +25,7 @@ final class RendererTest extends BaseRenderTestCase
         );
     }
 
-    public function testContents() : void
+    public function testContents(): void
     {
         $contents = new ContentsViewModel(
             [
@@ -40,7 +40,7 @@ final class RendererTest extends BaseRenderTestCase
         );
     }
 
-    public function testQuoteExtended() : void
+    public function testQuoteExtended(): void
     {
         $model = new QuoteViewModel('quote text', 'Blizzard', null, [], 'some-style');
 
@@ -50,7 +50,7 @@ final class RendererTest extends BaseRenderTestCase
         );
     }
 
-    public function testUrl() : void
+    public function testUrl(): void
     {
         $model = new UrlViewModel('http://warcry.ru', 'Warcry.ru', 'Best of the best', 'cool_style', 'no-follow', ['id' => 123]);
 
@@ -60,7 +60,7 @@ final class RendererTest extends BaseRenderTestCase
         );
     }
 
-    public function testNoUrl() : void
+    public function testNoUrl(): void
     {
         $this->assertEquals(
             '<span class="no-url" data-toggle="tooltip" title="Best of the best">Warcry.ru</span>',

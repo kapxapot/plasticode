@@ -10,14 +10,14 @@ abstract class BaseRenderTestCase extends TestCase
 {
     protected RendererInterface $renderer;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->renderer = RendererFactory::make();
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         unset($this->renderer);
 
