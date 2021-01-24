@@ -100,7 +100,5 @@ class AutowiringTest extends TestCase
         $this->assertTrue(
             $container->has(RepositoryContext::class)
         );
-
-        var_dump($container);
     }
 }
