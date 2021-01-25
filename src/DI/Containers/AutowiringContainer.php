@@ -2,10 +2,13 @@
 
 namespace Plasticode\DI\Containers;
 
+use Exception;
 use Plasticode\DI\Autowirer;
 use Plasticode\Exceptions\DI\ContainerException;
+use Plasticode\Exceptions\DI\NotFoundException;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class AutowiringContainer extends ArrayContainer
 {
@@ -64,24 +67,48 @@ class AutowiringContainer extends ArrayContainer
         return parent::has($id) || $this->autowirer->canAutowire($this, $id);
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     */
     public function transform(object $value): object
     {
-        foreach ($this->transformations as $transformation) {
-            $value = ($transformation)($this, $value);
-        }
+        try {
+            foreach ($this->transformations as $transformation) {
+                $value = ($transformation)($this, $value);
+            }
 
-        return $value;
+            return $value;
+        } catch (Exception $ex) {
+            throw new ContainerException(
+                'Error while transforming an object of the class' . get_class($value),
+                0,
+                $ex
+            );
+        }
     }
 
     /**
      * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     protected function autowire(string $className)
     {
         try {
-            return $this->autowirer->autowire($this, $className);
+            return $this
+                ->autowirer
+                ->autowire($this, $className);
         } catch (InvalidConfigurationException $ex) {
-            throw new ContainerException('Failed to autowire ' . $className, 0, $ex);
+            throw new NotFoundException(
+                'Failed to autowire ' . $className,
+                0,
+                $ex
+            );
+        } catch (Exception $ex) {
+            throw new ContainerException(
+                'Error while autowiring ' . $className,
+                0,
+                $ex
+            );
         }
     }
 }
