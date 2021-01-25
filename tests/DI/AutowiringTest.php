@@ -13,21 +13,45 @@ use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\SessionInterface;
 use Plasticode\Core\Linker;
-use Plasticode\DI\Containers\AutowiredContainer;
+use Plasticode\DI\Containers\AutowiringContainer;
+use Plasticode\Exceptions\InvalidConfigurationException;
 use Plasticode\Repositories\Idiorm\Core\RepositoryContext;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Settings\SettingsProvider;
+use Psr\Container\ContainerInterface;
 use Slim\Interfaces\RouterInterface;
 use Slim\Router;
 
 class AutowiringTest extends TestCase
 {
+    private function createContainer(array $map): ContainerInterface
+    {
+        return new AutowiringContainer($map);
+    }
+
+    public function testAutowireFails(): void
+    {
+        $container = $this->createContainer([]);
+
+        $this->assertFalse(
+            $container->has(SettingsProviderInterface::class)
+        );
+
+        $this->expectException(InvalidConfigurationException::class);
+
+        $container->get(SettingsProviderInterface::class);
+    }
+
     public function testAutowireSettingsProvider(): void
     {
-        $container = new AutowiredContainer(
+        $container = $this->createContainer(
             [
                 SettingsProviderInterface::class => SettingsProvider::class,
             ]
+        );
+
+        $this->assertTrue(
+            $container->has(SettingsProviderInterface::class)
         );
 
         $settingsProvider = $container->get(
@@ -40,13 +64,17 @@ class AutowiringTest extends TestCase
 
     public function testAutowireLinker(): void
     {
-        $container = new AutowiredContainer(
+        $container = $this->createContainer(
             [
                 LinkerInterface::class => Linker::class,
                 RouterInterface::class => Router::class,
                 SettingsProviderInterface::class => SettingsProvider::class,
                 TagsConfigInterface::class => TagsConfig::class,
             ]
+        );
+
+        $this->assertTrue(
+            $container->has(LinkerInterface::class)
         );
 
         $linker = $container->get(
@@ -80,7 +108,7 @@ class AutowiringTest extends TestCase
 
     public function testAutowireRepositoryContext(): void
     {
-        $container = new AutowiredContainer(
+        $container = $this->createContainer(
             [
                 AuthInterface::class => Auth::class,
                 CacheInterface::class => Cache::class,
@@ -89,7 +117,7 @@ class AutowiringTest extends TestCase
             ]
         );
 
-        $this->assertFalse(
+        $this->assertTrue(
             $container->has(RepositoryContext::class)
         );
 

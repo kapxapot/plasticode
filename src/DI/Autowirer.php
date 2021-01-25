@@ -7,36 +7,82 @@ use Plasticode\Exceptions\InvalidConfigurationException;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionNamedType;
+use Webmozart\Assert\Assert;
 
 /**
  * Automatic object creator using container.
  */
 class Autowirer
 {
-    private ContainerInterface $container;
-
-    public function __construct(
-        ContainerInterface $container
-    )
-    {
-        $this->container = $container;
-    }
-
     /**
-     * Creates an object based on container definitions and registers it in container is case of success.
+     * Creates an object based on container definitions.
      * 
      * In case of failure throws {@see InvalidConfigurationException}.
      * 
-     * @return mixed
      * @throws InvalidConfigurationException
      */
-    public function autowire(string $className)
+    public function autowire(
+        ContainerInterface $container,
+        string $className
+    ): object
     {
+        /** @var object */
+        $result = $this->autowirePass(true, $container, $className);
+
+        Assert::object($result);
+
+        return $result;
+    }
+
+    /**
+     * Checks if an object can be created based on container definitions.
+     */
+    public function canAutowire(
+        ContainerInterface $container,
+        string $className
+    ): bool
+    {
+        /** @var boolean */
+        $result = $this->autowirePass(false, $container, $className);
+
+        Assert::boolean($result);
+
+        return $result;
+    }
+
+    /**
+     * Inner implementation of autowire that allows to run the algorithm with
+     * the object instantiation or without it (test run that checks the possibility of object creation).
+     * 
+     * @return object|boolean
+     * 
+     * @throws InvalidConfigurationException
+     */
+    private function autowirePass(
+        bool $instantiate,
+        ContainerInterface $container,
+        string $className
+    )
+    {
+        if (!class_exists($className)) {
+            if (!$instantiate) {
+                return false;
+            }
+
+            throw new InvalidConfigurationException(
+                'Class ' . $className . ' doesn\'t exist and can\'t be autowired.'
+            );
+        }
+
         $class = new ReflectionClass($className);
 
         // check for interface & abstract class
         // they can't be instantiated
         if ($class->isAbstract() || $class->isInterface()) {
+            if (!$instantiate) {
+                return false;
+            }
+
             throw new InvalidConfigurationException(
                 'Can\'t autowire class ' . $className . ', ' .
                 'because it\'s an interface or an abstract class and is not defined in the container.'
@@ -47,7 +93,9 @@ class Autowirer
 
         // no constructor, just create an object
         if (is_null($constructor)) {
-            return $class->newInstanceWithoutConstructor();
+            return $instantiate
+                ? $class->newInstanceWithoutConstructor()
+                : true;
         }
 
         $params = $constructor->getParameters();
@@ -67,6 +115,10 @@ class Autowirer
                     continue;
                 }
 
+                if (!$instantiate) {
+                    return false;
+                }
+
                 throw new InvalidConfigurationException(
                     'Can\'t autowire parameter [' . $param->getPosition() . '] ' .
                     '"' . $param->getName() . '" for class ' . $className . ', ' .
@@ -77,17 +129,17 @@ class Autowirer
             $paramClassName = $paramType->getName();
 
             // try get the param from the container
-            try {
-                $args[] = $this->container->get($paramClassName);
+            if ($container->has($paramClassName)) {
+                $args[] = $container->get($paramClassName);
                 continue;
-            } catch (Exception $ex) {
+            } elseif ($paramType->allowsNull()) {
                 // or set it to null if it's nullable
-                if ($paramType->allowsNull()) {
-                    $args[] = null;
-                    continue;
-                }
+                $args[] = null;
+                continue;
+            }
 
-                throw $ex;
+            if (!$instantiate) {
+                return false;
             }
 
             throw new InvalidConfigurationException(
@@ -97,6 +149,8 @@ class Autowirer
             );
         }
 
-        return $class->newInstanceArgs($args);
+        return $instantiate
+            ? $class->newInstanceArgs($args)
+            : true;
     }
 }

@@ -6,7 +6,7 @@ use Plasticode\DI\Autowirer;
 use Plasticode\DI\Interfaces\ContainerFactoryInterface;
 use Plasticode\Exceptions\InvalidConfigurationException;
 
-class AutowiredContainer extends ArrayContainer
+class AutowiringContainer extends ArrayContainer
 {
     private Autowirer $autowirer;
 
@@ -14,7 +14,7 @@ class AutowiredContainer extends ArrayContainer
     {
         parent::__construct($map);
 
-        $this->autowirer = new Autowirer($this);
+        $this->autowirer = new Autowirer();
     }
 
     /**
@@ -22,7 +22,7 @@ class AutowiredContainer extends ArrayContainer
      */
     public function get($id)
     {
-        if (!$this->has($id)) {
+        if (!parent::has($id)) {
             // no mapping, trying autowire
             return $this->autowire($id);
         }
@@ -36,6 +36,11 @@ class AutowiredContainer extends ArrayContainer
             : $value;
     }
 
+    public function has($id)
+    {
+        return parent::has($id) || $this->autowirer->canAutowire($this, $id);
+    }
+
     /**
      * @return mixed
      * 
@@ -43,7 +48,7 @@ class AutowiredContainer extends ArrayContainer
      */
     protected function autowire(string $className)
     {
-        $object = $this->autowirer->autowire($className);
+        $object = $this->autowirer->autowire($this, $className);
 
         if ($object instanceof ContainerFactoryInterface) {
             $object = ($object)($this);
