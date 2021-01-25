@@ -2,10 +2,8 @@
 
 namespace Plasticode\DI\Containers;
 
-use Exception;
-use InvalidArgumentException;
 use Plasticode\DI\Interfaces\ArrayContainerInterface;
-use Webmozart\Assert\Assert;
+use Plasticode\Exceptions\DI\NotFoundException;
 
 class ArrayContainer implements ArrayContainerInterface
 {
@@ -20,18 +18,24 @@ class ArrayContainer implements ArrayContainerInterface
         $this->map = $map ?? [];
     }
 
+    /**
+     * @param mixed $value
+     */
+    public function set(string $id, $value): void
+    {
+        $this->map[$id] = $value;
+    }
+
     // ContainerInterface
 
     /**
      * @param string $id
      * @return mixed
-     * 
-     * @throws Exception
      */
     public function get($id)
     {
         if (!$this->has($id)) {
-            throw new Exception('Mapping for ' . $id . ' is not defined.');
+            throw new NotFoundException('Mapping for ' . $id . ' is not defined.');
         }
 
         return $this->map[$id];
@@ -40,13 +44,9 @@ class ArrayContainer implements ArrayContainerInterface
     /**
      * @param string $id
      * @return bool
-     * 
-     * @throws InvalidArgumentException
      */
     public function has($id)
     {
-        Assert::notNull($id);
-
         return isset($this->map[$id]);
     }
 
@@ -54,10 +54,7 @@ class ArrayContainer implements ArrayContainerInterface
 
     public function offsetSet($offset, $value)
     {
-        Assert::notNull($offset);
-        Assert::notNull($value);
-
-        $this->map[$offset] = $value;
+        $this->set($offset, $value);
     }
 
     public function offsetExists($offset)

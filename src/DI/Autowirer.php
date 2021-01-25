@@ -2,7 +2,6 @@
 
 namespace Plasticode\DI;
 
-use Exception;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
@@ -10,7 +9,7 @@ use ReflectionNamedType;
 use Webmozart\Assert\Assert;
 
 /**
- * Automatic object creator using container.
+ * Automatic object creator using container (aka "abstract factory").
  */
 class Autowirer
 {

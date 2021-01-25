@@ -14,10 +14,11 @@ use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\SessionInterface;
 use Plasticode\Core\Linker;
 use Plasticode\DI\Containers\AutowiringContainer;
-use Plasticode\Exceptions\InvalidConfigurationException;
+use Plasticode\DI\Transformations\FactoryResolver;
 use Plasticode\Repositories\Idiorm\Core\RepositoryContext;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Settings\SettingsProvider;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Slim\Interfaces\RouterInterface;
 use Slim\Router;
@@ -26,7 +27,8 @@ class AutowiringTest extends TestCase
 {
     private function createContainer(array $map): ContainerInterface
     {
-        return new AutowiringContainer($map);
+        return (new AutowiringContainer($map))
+            ->withTransformation(new FactoryResolver());
     }
 
     public function testAutowireFails(): void
@@ -37,7 +39,7 @@ class AutowiringTest extends TestCase
             $container->has(SettingsProviderInterface::class)
         );
 
-        $this->expectException(InvalidConfigurationException::class);
+        $this->expectException(ContainerExceptionInterface::class);
 
         $container->get(SettingsProviderInterface::class);
     }

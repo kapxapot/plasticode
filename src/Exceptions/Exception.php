@@ -2,6 +2,8 @@
 
 namespace Plasticode\Exceptions;
 
-abstract class Exception extends \Exception
+use Exception as GlobalException;
+
+abstract class Exception extends GlobalException
 {
 }
