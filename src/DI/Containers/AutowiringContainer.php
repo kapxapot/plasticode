@@ -40,26 +40,44 @@ class AutowiringContainer extends ArrayContainer
     public function get($id)
     {
         if (!parent::has($id)) {
-            // no mapping, trying autowire
+            // not resolved yet, trying autowire
+            // this works only for classes (!)
             $object = $this->autowire($id);
             $this->set($id, $object);
 
             return $object;
         }
 
+        // already resolved or an alias/factory mapping...
         $value = parent::get($id);
 
-        // if value is string, it is an alias
-        // (interface => interface, interface => class, interface => factory, class => factory)
-        if (is_string($value)) {
-            $object = $this->autowire($value);
-            $object = $this->transform($object);
-            $this->set($id, $object);
-
-            return $object;
+        if (!is_string($value)) {
+            // already resolved, just return
+            return $value;
         }
 
-        return $value;
+        // if value is a string, it is an alias or a factory:
+        // 
+        // - interface => interface (alias)
+        // - interface => class
+        // - interface => factory
+        // - class => interface (this is weird, but viable)
+        // - class => class (alias)
+        // - class => factory
+
+        if (parent::has($value)) {
+            // already resolved, just return
+            return $this->get($value);
+        }
+
+        // not resolved yet, trying autowire
+        // this works only for classes (!)
+        // also, performs transformations (e.g., from factory to instance)
+        $object = $this->autowire($value);
+        $object = $this->transform($object);
+        $this->set($id, $object);
+
+        return $object;
     }
 
     public function has($id)
@@ -79,11 +97,11 @@ class AutowiringContainer extends ArrayContainer
 
             return $value;
         } catch (Exception $ex) {
-            throw new ContainerException(
-                'Error while transforming an object of the class' . get_class($value),
-                0,
-                $ex
-            );
+            $message =
+                'Error while transforming an object of the class' .
+                get_class($value);
+
+            throw new ContainerException($message, 0, $ex);
         }
     }
 
@@ -94,21 +112,13 @@ class AutowiringContainer extends ArrayContainer
     protected function autowire(string $className)
     {
         try {
-            return $this
-                ->autowirer
-                ->autowire($this, $className);
-        } catch (InvalidConfigurationException $ex) {
-            throw new NotFoundException(
-                'Failed to autowire ' . $className,
-                0,
-                $ex
-            );
-        } catch (Exception $ex) {
-            throw new ContainerException(
-                'Error while autowiring ' . $className,
-                0,
-                $ex
-            );
+            return $this->autowirer->autowire($this, $className);
+        }
+        catch (InvalidConfigurationException $ex) {
+            throw new NotFoundException('Failed to autowire ' . $className, 0, $ex);
+        }
+        catch (Exception $ex) {
+            throw new ContainerException('Error while autowiring ' . $className, 0, $ex);
         }
     }
 }
