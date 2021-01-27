@@ -4,6 +4,7 @@ namespace Plasticode\DI\Containers;
 
 use Exception;
 use Plasticode\DI\Autowirer;
+use Plasticode\DI\Interfaces\ParamResolverInterface;
 use Plasticode\DI\Transformations\CallableResolver;
 use Plasticode\Exceptions\DI\ContainerException;
 use Plasticode\Exceptions\DI\NotFoundException;
@@ -45,6 +46,16 @@ class AutowiringContainer extends AggregatingContainer
     public function withTransformation(callable $transformation): self
     {
         $this->transformations[] = $transformation;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function withUntypedParamResolver(ParamResolverInterface $resolver): self
+    {
+        $this->autowirer->withUntypedParamResolver($resolver);
 
         return $this;
     }

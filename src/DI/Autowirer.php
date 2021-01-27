@@ -3,6 +3,7 @@
 namespace Plasticode\DI;
 
 use Exception;
+use Plasticode\DI\Interfaces\ParamResolverInterface;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
@@ -21,6 +22,19 @@ use Webmozart\Assert\Assert;
  */
 class Autowirer
 {
+    /** @var ParamResolverInterface[] */
+    protected array $untypedParamResolvers = [];
+
+    /**
+     * @return $this
+     */
+    public function withUntypedParamResolver(ParamResolverInterface $resolver): self
+    {
+        $this->untypedParamResolvers[] = $resolver;
+
+        return $this;
+    }
+
     /**
      * Creates an object based on the container's definitions.
      * 
@@ -150,6 +164,12 @@ class Autowirer
         // no typehint => such a param can't be autowired
         // if it's nullable, set null, otherwise throw an exception
         if (is_null($paramType)) {
+            $object = $this->tryResolveUntypedParam($container, $param);
+
+            if ($object !== null) {
+                return $object;
+            }
+
             if ($param->allowsNull()) {
                 return null;
             }
@@ -184,5 +204,21 @@ class Autowirer
             '"' . $param->getName() . '" of class "' . $paramClassName . '", ' .
             'it can\'t be found in the container and is not nullable (add it to the container or make nullable).'
         );
+    }
+
+    protected function tryResolveUntypedParam(
+        ContainerInterface $container,
+        ReflectionParameter $param
+    ): ?object
+    {
+        foreach ($this->untypedParamResolvers as $resolver) {
+            $object = ($resolver)($container, $param);
+
+            if ($object !== null) {
+                return $object;
+            }
+        }
+
+        return null;
     }
 }
