@@ -7,6 +7,7 @@ use Plasticode\Exceptions\InvalidConfigurationException;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionNamedType;
+use ReflectionParameter;
 use Webmozart\Assert\Assert;
 
 /**
@@ -95,53 +96,7 @@ class Autowirer
         }
 
         $params = $constructor->getParameters();
-
-        $args = [];
-
-        foreach ($params as $param) {
-            /** @var ReflectionNamedType */
-            $paramType = $param->getType();
-
-            // no typehint => such a param can't be autowired
-            // if it's nullable, set null, otherwise throw an exception
-            if (is_null($paramType)) {
-                if ($param->allowsNull()) {
-                    $args[] = null;
-                    continue;
-                }
-
-                throw new InvalidConfigurationException(
-                    'Can\'t autowire parameter [' . $param->getPosition() . '] ' .
-                    '"' . $param->getName() . '" for class "' . $className . '", ' .
-                    'provide a typehint or make it nullable.'
-                );
-            }
-
-            $paramClassName = $paramType->getName();
-
-            // check if the container is able to provide the param
-            if ($container->has($paramClassName)) {
-                $args[] = function (ContainerInterface $c) use ($paramClassName) {
-                    $arg = $c->get($paramClassName);
-
-                    Assert::isInstanceOf($arg, $paramClassName);
-
-                    return $arg;
-                };
-
-                continue;
-            } elseif ($paramType->allowsNull()) {
-                // or set it to null if it's nullable
-                $args[] = null;
-                continue;
-            }
-
-            throw new InvalidConfigurationException(
-                'Can\'t autowire parameter [' . $param->getPosition() . '] ' .
-                '"' . $param->getName() . '" for class "' . $className . '", ' .
-                'it can\'t be found in the container and is not nullable (add it to the container or make nullable).'
-            );
-        }
+        $args = $this->autoParamFactories($container, $params);
 
         return fn (ContainerInterface $c) =>
             $class->newInstanceArgs(
@@ -150,5 +105,84 @@ class Autowirer
                     $args
                 )
             );
+    }
+
+    /**
+     * @param ReflectionParameter[] $params
+     * @return object[]
+     */
+    public function autowireParams(ContainerInterface $container, array $params): array
+    {
+        return array_map(
+            fn (callable $paramFactory) => $paramFactory
+                ? ($paramFactory)($container)
+                : null,
+            $this->autoParamFactories($container, $params)
+        );
+    }
+
+    /**
+     * Resolves the params list based on the container's definitions as callables.
+     * 
+     * @param ReflectionParameter[] $params
+     * @return callable[]
+     */
+    public function autoParamFactories(ContainerInterface $container, array $params): array
+    {
+        return array_map(
+            fn (ReflectionParameter $param) =>
+                $this->autoParamFactory($container, $param),
+            $params
+        );
+    }
+
+    /**
+     * @throws InvalidConfigurationException
+     */
+    public function autoParamFactory(
+        ContainerInterface $container,
+        ReflectionParameter $param
+    ): ?callable
+    {
+        /** @var ReflectionNamedType */
+        $paramType = $param->getType();
+
+        // no typehint => such a param can't be autowired
+        // if it's nullable, set null, otherwise throw an exception
+        if (is_null($paramType)) {
+            if ($param->allowsNull()) {
+                return null;
+            }
+
+            throw new InvalidConfigurationException(
+                'Can\'t autowire parameter [' . $param->getPosition() . '] ' .
+                '"' . $param->getName() . '", ' .
+                'provide a typehint or make it nullable.'
+            );
+        }
+
+        $paramClassName = $paramType->getName();
+
+        // check if the container is able to provide the param
+        if ($container->has($paramClassName)) {
+            return function (ContainerInterface $c) use ($paramClassName) {
+                $arg = $c->get($paramClassName);
+
+                Assert::isInstanceOf($arg, $paramClassName);
+
+                return $arg;
+            };
+        }
+
+        if ($paramType->allowsNull()) {
+            // or set it to null if it's nullable
+            return null;
+        }
+
+        throw new InvalidConfigurationException(
+            'Can\'t autowire parameter [' . $param->getPosition() . '] ' .
+            '"' . $param->getName() . '" of class "' . $paramClassName . '", ' .
+            'it can\'t be found in the container and is not nullable (add it to the container or make nullable).'
+        );
     }
 }

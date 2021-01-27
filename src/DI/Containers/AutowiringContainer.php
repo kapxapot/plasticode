@@ -4,11 +4,12 @@ namespace Plasticode\DI\Containers;
 
 use Exception;
 use Plasticode\DI\Autowirer;
-use Plasticode\DI\Transformations\ContainerCallableResolver;
+use Plasticode\DI\Transformations\CallableResolver;
 use Plasticode\Exceptions\DI\ContainerException;
 use Plasticode\Exceptions\DI\NotFoundException;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class AutowiringContainer extends AggregatingContainer
@@ -25,11 +26,14 @@ class AutowiringContainer extends AggregatingContainer
     {
         parent::__construct($map);
 
-        $this->resolved = [];
+        $this->resolved = [
+            ContainerInterface::class => $this
+        ];
+
         $this->autowirer = new Autowirer();
 
         $this->transformations = [
-            new ContainerCallableResolver()
+            new CallableResolver()
         ];
     }
 
@@ -48,6 +52,7 @@ class AutowiringContainer extends AggregatingContainer
     /**
      * Can get:
      * 
+     * - [this] -> return this
      * - [resolved] -> return resolved
      * - [undefined] -> try autowire, save to resolved
      * - [defined] => [object] -> save to resolved
