@@ -114,7 +114,7 @@ class Autowirer
     public function autowireParams(ContainerInterface $container, array $params): array
     {
         return array_map(
-            fn (callable $paramFactory) => $paramFactory
+            fn (?callable $paramFactory) => $paramFactory
                 ? ($paramFactory)($container)
                 : null,
             $this->autoParamFactories($container, $params)
