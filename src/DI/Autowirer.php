@@ -7,6 +7,7 @@ use Plasticode\Exceptions\InvalidConfigurationException;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionNamedType;
+use Webmozart\Assert\Assert;
 
 /**
  * The automatic object creator (aka "the abstract factory") that uses the container's definitions.
@@ -70,7 +71,7 @@ class Autowirer
     {
         if (!class_exists($className)) {
             throw new InvalidConfigurationException(
-                'Class ' . $className . ' doesn\'t exist and can\'t be autowired.'
+                'Class "' . $className . '" doesn\'t exist and can\'t be autowired.'
             );
         }
 
@@ -80,7 +81,7 @@ class Autowirer
         // they can't be instantiated
         if ($class->isAbstract() || $class->isInterface()) {
             throw new InvalidConfigurationException(
-                'Can\'t autowire class ' . $className . ', ' .
+                'Can\'t autowire class "' . $className . '", ' .
                 'because it\'s an interface or an abstract class and is not defined in the container.'
             );
         }
@@ -111,7 +112,7 @@ class Autowirer
 
                 throw new InvalidConfigurationException(
                     'Can\'t autowire parameter [' . $param->getPosition() . '] ' .
-                    '"' . $param->getName() . '" for class ' . $className . ', ' .
+                    '"' . $param->getName() . '" for class "' . $className . '", ' .
                     'provide a typehint or make it nullable.'
                 );
             }
@@ -120,7 +121,14 @@ class Autowirer
 
             // check if the container is able to provide the param
             if ($container->has($paramClassName)) {
-                $args[] = fn (ContainerInterface $c) => $c->get($paramClassName);
+                $args[] = function (ContainerInterface $c) use ($paramClassName) {
+                    $arg = $c->get($paramClassName);
+
+                    Assert::isInstanceOf($arg, $paramClassName);
+
+                    return $arg;
+                };
+
                 continue;
             } elseif ($paramType->allowsNull()) {
                 // or set it to null if it's nullable
@@ -130,7 +138,7 @@ class Autowirer
 
             throw new InvalidConfigurationException(
                 'Can\'t autowire parameter [' . $param->getPosition() . '] ' .
-                '"' . $param->getName() . '" for class ' . $className . ', ' .
+                '"' . $param->getName() . '" for class "' . $className . '", ' .
                 'it can\'t be found in the container and is not nullable (add it to the container or make nullable).'
             );
         }

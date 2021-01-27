@@ -27,8 +27,7 @@ class AutowiringTest extends TestCase
 {
     private function createContainer(array $map): ContainerInterface
     {
-        return (new AutowiringContainer($map))
-            ->withTransformation(new FactoryResolver());
+        return new AutowiringContainer($map);
     }
 
     public function testAutowireFails(): void

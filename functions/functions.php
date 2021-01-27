@@ -6,7 +6,7 @@ if (!function_exists('dd')) {
      *
      * @param mixed $var
      */
-    function dd($var) : void
+    function dd($var): void
     {
         var_dump($var);
         die();
@@ -20,7 +20,7 @@ if (!function_exists('isCallable')) {
      *
      * @param mixed $func
      */
-    function isCallable($func) : bool
+    function isCallable($func): bool
     {
         return is_callable($func) && !is_string($func);
     }
@@ -32,7 +32,7 @@ if (!function_exists('isScalar')) {
      *
      * @param mixed $var
      */
-    function isScalar($var) : bool
+    function isScalar($var): bool
     {
         return is_scalar($var) || is_null($var);
     }

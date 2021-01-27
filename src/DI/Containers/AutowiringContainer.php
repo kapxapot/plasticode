@@ -4,14 +4,18 @@ namespace Plasticode\DI\Containers;
 
 use Exception;
 use Plasticode\DI\Autowirer;
+use Plasticode\DI\Transformations\ContainerCallableResolver;
 use Plasticode\Exceptions\DI\ContainerException;
 use Plasticode\Exceptions\DI\NotFoundException;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class AutowiringContainer extends ArrayContainer
+class AutowiringContainer extends AggregatingContainer
 {
+    /** @var array<string, object> */
+    private array $resolved;
+
     private Autowirer $autowirer;
 
     /** @var callable[] */
@@ -21,8 +25,12 @@ class AutowiringContainer extends ArrayContainer
     {
         parent::__construct($map);
 
+        $this->resolved = [];
         $this->autowirer = new Autowirer();
-        $this->transformations = [];
+
+        $this->transformations = [
+            new ContainerCallableResolver()
+        ];
     }
 
     /**
@@ -37,69 +45,79 @@ class AutowiringContainer extends ArrayContainer
         return $this;
     }
 
+    /**
+     * Can get:
+     * 
+     * - [resolved] -> return resolved
+     * - [undefined] -> try autowire, save to resolved
+     * - [defined] => [object] -> save to resolved
+     * - [defined] => [string] -> get(value), save to resolved
+     */
     public function get($id)
     {
-        if (!parent::has($id)) {
-            // not resolved yet, trying autowire
-            // this works only for classes (!)
-            $object = $this->autowire($id);
-            $this->set($id, $object);
-
-            return $object;
+        // [resolved] -> return resolved
+        if ($this->isResolved($id)) {
+            return $this->getResolved($id);
         }
 
-        // already resolved or an alias/factory mapping...
-        $value = parent::get($id);
+        // [defined] => ...
+        if (parent::has($id)) {
+            $value = parent::get($id);
 
-        if (!is_string($value)) {
-            // already resolved, just return
-            return $value;
+            // - [defined] => [object] -> save to resolved
+            if (!is_string($value)) {
+                return $this->setResolved($id, $value);
+            }
+
+            // - [defined] => [string] -> get(value), save to resolved
+            return $this->setResolved($id, $this->get($value));
         }
 
-        // if value is a string, it is an alias or a factory:
-        // 
-        // - interface => interface (alias)
-        // - interface => class
-        // - interface => factory
-        // - class => interface (this is weird, but viable)
-        // - class => class (alias)
-        // - class => factory
-
-        if (parent::has($value)) {
-            // already resolved, just return
-            return $this->get($value);
-        }
-
-        // not resolved yet, trying autowire
-        // this works only for classes (!)
-        // also, performs transformations (e.g., from factory to instance)
-        $object = $this->autowire($value);
-        $object = $this->transform($object);
-        $this->set($id, $object);
-
-        return $object;
+        // [undefined] -> try autowire, save to resolved
+        return $this->setResolved($id, $this->autowire($id));
     }
 
     public function has($id)
     {
-        return parent::has($id) || $this->autowirer->canAutowire($this, $id);
+        return parent::has($id)
+            || $this->isResolved($id)
+            || $this->autowirer->canAutowire($this, $id);
+    }
+
+    protected function isResolved(string $id): bool
+    {
+        return array_key_exists($id, $this->resolved);
+    }
+
+    protected function getResolved(string $id): object
+    {
+        return $this->resolved[$id];
+    }
+
+    protected function setResolved(string $id, object $object): object
+    {
+        $object = $this->transform($object);
+
+        $this->resolved[$id] = $object;
+
+        return $object;
     }
 
     /**
      * @throws ContainerExceptionInterface
      */
-    public function transform(object $value): object
+    public function transform(object $object): object
     {
         try {
             foreach ($this->transformations as $transformation) {
-                $value = ($transformation)($this, $value);
+                $object = ($transformation)($this, $object);
             }
 
-            return $value;
+            return $object;
         } catch (Exception $ex) {
             $message =
                 'Error while transforming an object of the class' .
-                get_class($value);
+                get_class($object);
 
             throw new ContainerException($message, 0, $ex);
         }
@@ -109,7 +127,7 @@ class AutowiringContainer extends ArrayContainer
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    protected function autowire(string $className)
+    protected function autowire(string $className): object
     {
         try {
             return $this->autowirer->autowire($this, $className);

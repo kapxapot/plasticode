@@ -35,7 +35,7 @@ class ArrayContainer implements ArrayContainerInterface
     public function get($id)
     {
         if (!$this->has($id)) {
-            throw new NotFoundException('Mapping for ' . $id . ' is not defined.');
+            throw new NotFoundException('Mapping for "' . $id . '" is not defined.');
         }
 
         return $this->map[$id];
