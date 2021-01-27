@@ -36,7 +36,7 @@ class AutowiringContainer extends AggregatingContainer
     /**
      * @param callable $transformation fn (ContainerInterface, object): object
      * 
-     * @return $this
+     * @return static
      */
     public function withTransformation(callable $transformation): self
     {
