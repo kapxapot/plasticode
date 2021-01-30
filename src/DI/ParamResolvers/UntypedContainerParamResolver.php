@@ -2,22 +2,23 @@
 
 namespace Plasticode\DI\ParamResolvers;
 
-use Plasticode\DI\Interfaces\ParamResolverInterface;
+use Plasticode\DI\Interfaces\ParamFactoryResolverInterface;
 use Psr\Container\ContainerInterface;
 use ReflectionParameter;
 
 /**
- * Resolves untyped `$container` parameter to {@see ContainerInterface}.
+ * Checks the parameter's name and if it's `container`, then returns a factory
+ * for it's resolution to {@see ContainerInterface}.
  */
-class UntypedContainerParamResolver implements ParamResolverInterface
+class UntypedContainerParamResolver implements ParamFactoryResolverInterface
 {
     public function __invoke(
         ContainerInterface $container,
         ReflectionParameter $param
-    ): ?object
+    ): ?callable
     {
         if ($param->getName() === 'container') {
-            return $container;
+            return fn () => $container;
         }
 
         return null;

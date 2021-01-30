@@ -4,12 +4,13 @@ namespace Plasticode\Events;
 
 use Closure;
 use Exception;
+use Plasticode\Traits\LoggerAwareTrait;
 use ReflectionFunction;
+use ReflectionNamedType;
 
 class EventDispatcher
 {
-    /** @var callable|null */
-    private $logger;
+    use LoggerAwareTrait;
 
     /**
      * @var array<string, callable[]> Event class -> handlers mapping.
@@ -26,15 +27,10 @@ class EventDispatcher
      */
     private bool $processing = false;
 
-    public function __construct(?callable $logger = null)
-    {
-        $this->logger = $logger;
-    }
-
     /**
      * Adds many handlers.
      */
-    public function addHandlers(callable ...$handlers) : void
+    public function addHandlers(callable ...$handlers): void
     {
         foreach ($handlers as $handler) {
             $this->addHandler($handler);
@@ -44,7 +40,7 @@ class EventDispatcher
     /**
      * Examines the handler and maps it to event class.
      */
-    public function addHandler(callable $handler) : void
+    public function addHandler(callable $handler): void
     {
         $paramClass = $this->getHandlerParamClass($handler);
 
@@ -54,17 +50,10 @@ class EventDispatcher
         $this->log(get_class($handler) . ' mapped to ' . $paramClass);
     }
 
-    private function log(string $msg) : void
-    {
-        if ($this->logger) {
-            ($this->logger)($msg);
-        }
-    }
-
     /**
      * Adds event to queue.
      */
-    private function enqueue(Event $event) : void
+    private function enqueue(Event $event): void
     {
         if ($event->isLooped()) {
             $this->log('[!] Loop found, enqueue aborted for ' . $event);
@@ -79,7 +68,7 @@ class EventDispatcher
     /**
      * Tries to take event from event queue.
      */
-    private function dequeue() : ?Event
+    private function dequeue(): ?Event
     {
         return array_shift($this->queue);
     }
@@ -87,7 +76,7 @@ class EventDispatcher
     /**
      * Registers event and starts its handling.
      */
-    public function dispatch(Event $event) : void
+    public function dispatch(Event $event): void
     {
         $this->enqueue($event);
 
@@ -99,7 +88,7 @@ class EventDispatcher
     /**
      * Process next event in event queue.
      */
-    private function processNext() : void
+    private function processNext(): void
     {
         $event = $this->dequeue();
 
@@ -108,7 +97,7 @@ class EventDispatcher
         }
     }
 
-    private function processEvent(Event $event) : void
+    private function processEvent(Event $event): void
     {
         if ($this->processing) {
             throw new Exception('Already processing an event!');
@@ -123,12 +112,12 @@ class EventDispatcher
         $handlers = $this->map[$eventClass] ?? [];
 
         if (empty($handlers)) {
-            $this->log('   no handlers found');
+            $this->log('...no handlers found');
         }
 
         /** @var callable */
         foreach ($handlers as $handler) {
-            $this->log('   invoking ' . get_class($handler));
+            $this->log('...invoking ' . get_class($handler));
 
             try {
                 $handler($event);
@@ -139,7 +128,7 @@ class EventDispatcher
         }
 
         $this->log(
-            '   finished, queue size = ' . count($this->queue)
+            '...finished, queue size = ' . count($this->queue)
         );
 
         $this->log('');
@@ -149,20 +138,23 @@ class EventDispatcher
         $this->processNext();
     }
 
-    private function getHandlerParamClass(callable $handler) : ?string
+    private function getHandlerParamClass(callable $handler): ?string
     {
         $closure = Closure::fromCallable($handler);
-
-        $rf = new ReflectionFunction($closure);
-
-        $params = $rf->getParameters();
+        $function = new ReflectionFunction($closure);
+        $params = $function->getParameters();
 
         if (empty($params)) {
             return null;
         }
 
-        $rp = $params[0];
+        $param = $params[0];
 
-        return $rp->getClass()->name;
+        /** @var ReflectionNamedType|null $paramType */
+        $paramType = $param->getType();
+
+        return $paramType !== null
+            ? $paramType->getName()
+            : null;
     }
 }

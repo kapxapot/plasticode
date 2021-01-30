@@ -126,9 +126,10 @@ class CoreProvider extends MappingProvider
                 ),
 
             EventDispatcher::class =>
-                fn (ContainerInterface $c) => new EventDispatcher(
-                    fn (string $msg) => $c->get('eventLogger')->info($msg)
-                ),
+                fn (ContainerInterface $c) => (new EventDispatcher())
+                    ->withLogger(
+                        $c->get('eventLogger')
+                    ),
 
             LinkerInterface::class =>
                 fn (ContainerInterface $c) => new Linker(

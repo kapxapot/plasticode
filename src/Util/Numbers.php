@@ -134,7 +134,7 @@ class Numbers
             return 'ноль';
         }
 
-        $result = '';		
+        $result = '';
         $offset = 0;
 
         while ($num > 0) {
@@ -157,12 +157,11 @@ class Numbers
             
             if ($d2 == 1) {
                 $parts[] = str_replace('$', 'надцать', self::$tens[$d21 - 10]);
-            }
-            else {
+            } else {
                 if ($d2 >= 2) {
                     $parts[] = self::$decades[$d2 - 2];
                 }
-    
+
                 if ($d1 > 0) {
                     $genderDigits = self::$digits[($offset == 3) ? 'f' : 'm'];
                     $parts[] = isset($genderDigits[$d1 - 1])
@@ -178,19 +177,16 @@ class Numbers
                 if ($d2 != 1) {
                     if ($d1 == 1) {
                         $appendix .= 'а';
-                    }
-                    elseif ($d1 >= 2 && $d1 <= 4) {
+                    } elseif ($d1 >= 2 && $d1 <= 4) {
                         $appendix .= 'и';
                     }
                 }
-            }
-            elseif ($offset > 3) {
+            } elseif ($offset > 3) {
                 $end = 'ов';
                 if ($d2 != 1) {
                     if ($d1 == 1) {
                         $end = '';
-                    }
-                    elseif ($d1 >= 2 && $d1 <= 4) {
+                    } elseif ($d1 >= 2 && $d1 <= 4) {
                         $end = 'а';
                     }
                 }

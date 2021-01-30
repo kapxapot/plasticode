@@ -96,7 +96,7 @@ class Pagination
             }
 
             for ($i = 1; $i <= $totalPages; $i++) {
-                $pages[] = $this->page($baseUrl , $i, $i == $page);
+                $pages[] = $this->page($baseUrl, $i, $i == $page);
             }
 
             if ($page < $totalPages) {

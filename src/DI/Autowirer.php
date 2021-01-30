@@ -2,11 +2,13 @@
 
 namespace Plasticode\DI;
 
+use Closure;
 use Exception;
-use Plasticode\DI\Interfaces\ParamResolverInterface;
+use Plasticode\DI\Interfaces\ParamFactoryResolverInterface;
 use Plasticode\Exceptions\InvalidConfigurationException;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
+use ReflectionFunction;
 use ReflectionNamedType;
 use ReflectionParameter;
 use Webmozart\Assert\Assert;
@@ -22,13 +24,13 @@ use Webmozart\Assert\Assert;
  */
 class Autowirer
 {
-    /** @var ParamResolverInterface[] */
+    /** @var ParamFactoryResolverInterface[] */
     protected array $untypedParamResolvers = [];
 
     /**
      * @return $this
      */
-    public function withUntypedParamResolver(ParamResolverInterface $resolver): self
+    public function withUntypedParamResolver(ParamFactoryResolverInterface $resolver): self
     {
         $this->untypedParamResolvers[] = $resolver;
 
@@ -110,7 +112,7 @@ class Autowirer
         }
 
         $params = $constructor->getParameters();
-        $args = $this->autoParamFactories($container, $params);
+        $args = $this->paramAutoFactories($container, $params);
 
         return fn (ContainerInterface $c) =>
             $class->newInstanceArgs(
@@ -131,7 +133,7 @@ class Autowirer
             fn (?callable $paramFactory) => $paramFactory
                 ? ($paramFactory)($container)
                 : null,
-            $this->autoParamFactories($container, $params)
+            $this->paramAutoFactories($container, $params)
         );
     }
 
@@ -141,11 +143,11 @@ class Autowirer
      * @param ReflectionParameter[] $params
      * @return callable[]
      */
-    public function autoParamFactories(ContainerInterface $container, array $params): array
+    public function paramAutoFactories(ContainerInterface $container, array $params): array
     {
         return array_map(
             fn (ReflectionParameter $param) =>
-                $this->autoParamFactory($container, $param),
+                $this->paramAutoFactory($container, $param),
             $params
         );
     }
@@ -153,21 +155,21 @@ class Autowirer
     /**
      * @throws InvalidConfigurationException
      */
-    public function autoParamFactory(
+    public function paramAutoFactory(
         ContainerInterface $container,
         ReflectionParameter $param
     ): ?callable
     {
-        /** @var ReflectionNamedType */
+        /** @var ReflectionNamedType|null $paramType */
         $paramType = $param->getType();
 
         // no typehint => such a param can't be autowired
         // if it's nullable, set null, otherwise throw an exception
         if (is_null($paramType)) {
-            $object = $this->tryResolveUntypedParam($container, $param);
+            $factory = $this->untypedParamAutoFactory($container, $param);
 
-            if ($object !== null) {
-                return $object;
+            if ($factory !== null) {
+                return $factory;
             }
 
             if ($param->allowsNull()) {
@@ -206,16 +208,30 @@ class Autowirer
         );
     }
 
-    protected function tryResolveUntypedParam(
+    /**
+     * @return mixed
+     */
+    public function autowireCallable(ContainerInterface $container, callable $callable)
+    {
+        $closure = Closure::fromCallable($callable);
+        $function = new ReflectionFunction($closure);
+        $params = $function->getParameters();
+
+        $args = $this->autowireParams($container, $params);
+
+        return ($callable)(...$args);
+    }
+
+    protected function untypedParamAutoFactory(
         ContainerInterface $container,
         ReflectionParameter $param
-    ): ?object
+    ): ?callable
     {
         foreach ($this->untypedParamResolvers as $resolver) {
-            $object = ($resolver)($container, $param);
+            $factory = ($resolver)($container, $param);
 
-            if ($object !== null) {
-                return $object;
+            if ($factory !== null) {
+                return $factory;
             }
         }
 

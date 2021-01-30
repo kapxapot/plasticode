@@ -4,17 +4,19 @@ namespace Plasticode\DI\Containers;
 
 use Exception;
 use Plasticode\DI\Autowirer;
-use Plasticode\DI\Interfaces\ParamResolverInterface;
 use Plasticode\DI\Transformations\CallableResolver;
 use Plasticode\Exceptions\DI\ContainerException;
 use Plasticode\Exceptions\DI\NotFoundException;
 use Plasticode\Exceptions\InvalidConfigurationException;
+use Plasticode\Traits\LoggerAwareTrait;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 class AutowiringContainer extends AggregatingContainer
 {
+    use LoggerAwareTrait;
+
     /** @var array<string, object> */
     private array $resolved;
 
@@ -23,7 +25,10 @@ class AutowiringContainer extends AggregatingContainer
     /** @var callable[] */
     private array $transformations;
 
-    public function __construct(?array $map = null)
+    public function __construct(
+        Autowirer $autowirer,
+        ?array $map = null
+    )
     {
         parent::__construct($map);
 
@@ -31,10 +36,10 @@ class AutowiringContainer extends AggregatingContainer
             ContainerInterface::class => $this
         ];
 
-        $this->autowirer = new Autowirer();
+        $this->autowirer = $autowirer;
 
         $this->transformations = [
-            new CallableResolver()
+            new CallableResolver($this->autowirer)
         ];
     }
 
@@ -46,16 +51,6 @@ class AutowiringContainer extends AggregatingContainer
     public function withTransformation(callable $transformation): self
     {
         $this->transformations[] = $transformation;
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function withUntypedParamResolver(ParamResolverInterface $resolver): self
-    {
-        $this->autowirer->withUntypedParamResolver($resolver);
 
         return $this;
     }
@@ -73,21 +68,33 @@ class AutowiringContainer extends AggregatingContainer
     {
         // [resolved] -> return resolved
         if ($this->isResolved($id)) {
+            $this->log($id . ' resolved');
+
             return $this->getResolved($id);
         }
 
+        $this->log($id . ' not resolved');
+
         // [defined] => ...
         if (parent::has($id)) {
+            $this->log($id . ' parent has');
+
             $value = parent::get($id);
 
             // - [defined] => [object] -> save to resolved
             if (!is_string($value)) {
+                $this->log($id . ' not string');
+
                 return $this->setResolved($id, $value);
             }
+
+            $this->log($id . ' string');
 
             // - [defined] => [string] -> get(value), save to resolved
             return $this->setResolved($id, $this->get($value));
         }
+
+        $this->log($id . ' parent doesn\'t have');
 
         // [undefined] -> try autowire, save to resolved
         return $this->setResolved($id, $this->autowire($id));
@@ -112,11 +119,15 @@ class AutowiringContainer extends AggregatingContainer
 
     protected function setResolved(string $id, object $object): object
     {
-        $object = $this->transform($object);
+        $this->log($id . ' trying to transform ' . get_class($object));
 
-        $this->resolved[$id] = $object;
+        $newObject = $this->transform($object);
 
-        return $object;
+        $this->log($id . ' transformed ' . get_class($object) . ' to ' . get_class($newObject));
+
+        $this->resolved[$id] = $newObject;
+
+        return $newObject;
     }
 
     /**
@@ -132,7 +143,7 @@ class AutowiringContainer extends AggregatingContainer
             return $object;
         } catch (Exception $ex) {
             $message =
-                'Error while transforming an object of the class' .
+                'Error while transforming an object of the class ' .
                 get_class($object);
 
             throw new ContainerException($message, 0, $ex);

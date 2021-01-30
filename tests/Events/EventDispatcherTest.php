@@ -17,17 +17,12 @@ final class EventDispatcherTest extends TestCase
     public function testHandlers() : void
     {
         $output = [];
-        $log = [];
 
         $writer = function ($entry) use (&$output) {
             $output[] = $entry;
         };
 
-        $logger = function (string $msg) use (&$log) {
-            $log[] = $msg;
-        };
-
-        $dispatcher = new EventDispatcher($logger);
+        $dispatcher = new EventDispatcher();
 
         $dispatcher->addHandlers(
             new EmptyEventHandler($writer),
@@ -59,20 +54,13 @@ final class EventDispatcherTest extends TestCase
             ],
             $output
         );
-
-        $this->assertCount(18, $log);
     }
 
     public function testClosures() : void
     {
         $output = [];
-        $log = [];
 
-        $logger = function (string $msg) use (&$log) {
-            $log[] = $msg;
-        };
-
-        $dispatcher = new EventDispatcher($logger);
+        $dispatcher = new EventDispatcher();
 
         $dispatcher->addHandlers(
             function (EmptyEvent $event) use (&$output) {
@@ -116,20 +104,13 @@ final class EventDispatcherTest extends TestCase
             ],
             $output
         );
-
-        $this->assertCount(18, $log);
     }
 
     public function testChainedEvents() : void
     {
         $output = [];
-        $log = [];
 
-        $logger = function (string $msg) use (&$log) {
-            $log[] = $msg;
-        };
-
-        $dispatcher = new EventDispatcher($logger);
+        $dispatcher = new EventDispatcher();
 
         $dispatcher->addHandler(
             function (DataEvent $event) use (&$output, $dispatcher) {
@@ -158,37 +139,13 @@ final class EventDispatcherTest extends TestCase
             ],
             $output
         );
-
-        $this->assertCount(11, $log);
-    }
-
-    public function testUnhandledEvent() : void
-    {
-        $log = [];
-
-        $logger = function (string $msg) use (&$log) {
-            $log[] = $msg;
-        };
-
-        $dispatcher = new EventDispatcher($logger);
-
-        $dispatcher->dispatch(
-            new DataEvent('original')
-        );
-
-        $this->assertCount(5, $log);
     }
 
     public function testLoop() : void
     {
         $output = [];
-        $log = [];
 
-        $logger = function (string $msg) use (&$log) {
-            $log[] = $msg;
-        };
-
-        $dispatcher = new EventDispatcher($logger);
+        $dispatcher = new EventDispatcher();
 
         $dispatcher->addHandler(
             function (DataEvent $event) use (&$output, $dispatcher) {
@@ -224,7 +181,5 @@ final class EventDispatcherTest extends TestCase
             ],
             $output
         );
-
-        $this->assertCount(12, $log);
     }
 }

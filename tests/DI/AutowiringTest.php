@@ -2,6 +2,9 @@
 
 namespace Plasticode\Tests\DI;
 
+use Exception;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Auth\Auth;
 use Plasticode\Auth\Interfaces\AuthInterface;
@@ -13,7 +16,9 @@ use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\SessionInterface;
 use Plasticode\Core\Linker;
+use Plasticode\DI\Autowirer;
 use Plasticode\DI\Containers\AutowiringContainer;
+use Plasticode\DI\ParamResolvers\UntypedContainerParamResolver;
 use Plasticode\DI\Transformations\FactoryResolver;
 use Plasticode\Repositories\Idiorm\Core\RepositoryContext;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
@@ -25,14 +30,19 @@ use Slim\Router;
 
 class AutowiringTest extends TestCase
 {
-    private function createContainer(array $map): ContainerInterface
+    private function createContainer(
+        Autowirer $autowirer,
+        ?array $map = null
+    ): AutowiringContainer
     {
-        return new AutowiringContainer($map);
+        return new AutowiringContainer($autowirer, $map ?? []);
     }
 
     public function testAutowireFails(): void
     {
-        $container = $this->createContainer([]);
+        $container = $this->createContainer(
+            new Autowirer()
+        );
 
         $this->assertFalse(
             $container->has(SettingsProviderInterface::class)
@@ -46,6 +56,7 @@ class AutowiringTest extends TestCase
     public function testAutowireSettingsProvider(): void
     {
         $container = $this->createContainer(
+            new Autowirer(),
             [
                 SettingsProviderInterface::class => SettingsProvider::class,
             ]
@@ -66,6 +77,7 @@ class AutowiringTest extends TestCase
     public function testAutowireLinker(): void
     {
         $container = $this->createContainer(
+            new Autowirer(),
             [
                 LinkerInterface::class => Linker::class,
                 RouterInterface::class => Router::class,
@@ -110,6 +122,7 @@ class AutowiringTest extends TestCase
     public function testAutowireRepositoryContext(): void
     {
         $container = $this->createContainer(
+            new Autowirer(),
             [
                 AuthInterface::class => Auth::class,
                 CacheInterface::class => Cache::class,
@@ -129,5 +142,53 @@ class AutowiringTest extends TestCase
         $this->assertTrue(
             $container->has(RepositoryContext::class)
         );
+    }
+
+    public function testAutowireCallable(): void
+    {
+        $autowirer = (new Autowirer())->withUntypedParamResolver(
+            new UntypedContainerParamResolver()
+        );
+
+        $container = $this->createContainer(
+            $autowirer,
+            [
+                'aaa' => SettingsProvider::class,
+            ]
+        );
+
+        $callable = function ($container) {
+            return $container->get('aaa');
+        };
+
+        $ccc = $autowirer->autowireCallable($container, $callable);
+
+        $this->assertInstanceOf(SettingsProvider::class, $ccc);
+    }
+
+    public function testUntypedContainerResolution(): void
+    {
+        $autowirer = (new Autowirer())->withUntypedParamResolver(
+            new UntypedContainerParamResolver()
+        );
+
+        $container = $this->createContainer(
+            $autowirer,
+            [
+                'aaa' => SettingsProvider::class,
+                'ccc' => function ($container) {
+                    return $container->get('aaa');
+                },
+            ]
+        );
+
+        // $container->withLogger(
+        //     (new Logger('console'))
+        //         ->pushHandler(new StreamHandler('php://stdout'))
+        // );
+
+        $ccc = $container->get('ccc');
+
+        $this->assertInstanceOf(SettingsProvider::class, $ccc);
     }
 }
