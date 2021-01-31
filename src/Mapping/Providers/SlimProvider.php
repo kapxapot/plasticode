@@ -11,6 +11,7 @@ use Plasticode\Handlers\NotAllowedHandler;
 use Plasticode\Handlers\NotFoundHandler;
 use Plasticode\Mapping\Providers\Generic\MappingProvider;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Slim\Interfaces\RouterInterface;
 
 /**
@@ -45,6 +46,7 @@ class SlimProvider extends MappingProvider
             NotAllowedHandlerInterface::class => 'notAllowedHandler',
             NotFoundHandlerInterface::class => 'notFoundHandler',
             RouterInterface::class => 'router',
+            ServerRequestInterface::class => 'request',
         ];
     }
 }

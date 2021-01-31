@@ -1,15 +1,29 @@
 <?php
 
-namespace Plasticode\Mapping;
+namespace Plasticode\Mapping\Aggregators;
 
 use Plasticode\Collections\MappingProviderCollection;
 use Plasticode\Mapping\Interfaces\MappingProviderInterface;
 use Psr\Container\ContainerInterface;
 
-abstract class MappingAggregator
+abstract class AbstractMappingAggregator
 {
+    private ContainerInterface $container;
+
     /** @var MappingProviderInterface[] */
     protected array $mappingProviders = [];
+
+    public function __construct(
+        ContainerInterface $container
+    )
+    {
+        $this->container = $container;
+    }
+
+    protected function getContainer(): ContainerInterface
+    {
+        return $this->container;
+    }
 
     /**
      * Registers mapping provider collections.
@@ -64,19 +78,21 @@ abstract class MappingAggregator
     /**
      * Wires up the container and boots all providers.
      */
-    public function boot(ContainerInterface $container): void
+    public function boot(): void
     {
-        $this->wireUpContainer($container);
+        $this->wireUpContainer();
 
         foreach ($this->mappingProviders as $provider) {
-            $provider->boot($container);
+            $provider->boot(
+                $this->getContainer()
+            );
         }
     }
 
     /**
      * Get mappings and add them to container.
      */
-    abstract protected function wireUpContainer(ContainerInterface $container): void;
+    abstract protected function wireUpContainer(): void;
 
     private function mergeMappings(): array
     {

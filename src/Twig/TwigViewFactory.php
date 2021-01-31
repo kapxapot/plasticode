@@ -16,6 +16,7 @@ use Plasticode\Twig\Extensions\AccessRightsExtension;
 use Plasticode\Twig\Extensions\TranslatorExtension;
 use Plasticode\Twig\TwigView;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Slim\Interfaces\RouterInterface;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
@@ -67,7 +68,7 @@ class TwigViewFactory
         $view->addExtension(
             new TwigExtension(
                 $container->get(RouterInterface::class),
-                $container->get('request')->getUri()
+                $container->get(ServerRequestInterface::class)->getUri()
             )
         );
 

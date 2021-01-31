@@ -67,15 +67,8 @@ class CoreProvider extends MappingProvider
     {
         return [
             Access::class =>
-                fn (ContainerInterface $c) => new Access(
-                    $c->get(Config::class)->accessSettings()
-                ),
-
-            AccessMiddlewareFactory::class =>
-                fn (ContainerInterface $c) => new AccessMiddlewareFactory(
-                    $c->get(Access::class),
-                    $c->get(AuthInterface::class),
-                    $c->get(RouterInterface::class)
+                fn (Config $config) => new Access(
+                    $config->accessSettings()
                 ),
 
             ApiInterface::class =>
@@ -102,7 +95,7 @@ class CoreProvider extends MappingProvider
                     $c->get(SessionInterface::class)
                 ),
 
-            CacheInterface::class => fn (ContainerInterface $c) => new Cache(),
+            CacheInterface::class => Cache::class,
 
             CaptchaConfigInterface::class =>
                 fn (ContainerInterface $c) => new CaptchaConfig(),
@@ -114,11 +107,6 @@ class CoreProvider extends MappingProvider
                 ),
 
             Cases::class => fn (ContainerInterface $c) => new Cases(),
-
-            Config::class =>
-                fn (ContainerInterface $c) => new Config(
-                    $c->get(SettingsProviderInterface::class)
-                ),
 
             DbMetadata::class =>
                 fn (ContainerInterface $c) => new DbMetadata(
@@ -153,12 +141,11 @@ class CoreProvider extends MappingProvider
                 ),
 
             SettingsProviderInterface::class =>
-                fn (ContainerInterface $c) => new SettingsProvider(
+                fn () => new SettingsProvider(
                     $this->settings
                 ),
 
-            TagsConfigInterface::class =>
-                fn (ContainerInterface $c) => new TagsConfig(),
+            TagsConfigInterface::class => TagsConfig::class,
         ];
     }
 

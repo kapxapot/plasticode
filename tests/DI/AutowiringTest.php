@@ -2,9 +2,6 @@
 
 namespace Plasticode\Tests\DI;
 
-use Exception;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 use Plasticode\Auth\Auth;
 use Plasticode\Auth\Interfaces\AuthInterface;
@@ -19,7 +16,6 @@ use Plasticode\Core\Linker;
 use Plasticode\DI\Autowirer;
 use Plasticode\DI\Containers\AutowiringContainer;
 use Plasticode\DI\ParamResolvers\UntypedContainerParamResolver;
-use Plasticode\DI\Transformations\FactoryResolver;
 use Plasticode\Repositories\Idiorm\Core\RepositoryContext;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Settings\SettingsProvider;
@@ -29,7 +25,7 @@ use Slim\Interfaces\RouterInterface;
 use Slim\Router;
 use stdClass;
 
-class AutowiringTest extends TestCase
+final class AutowiringTest extends TestCase
 {
     private function createContainer(
         Autowirer $autowirer,
