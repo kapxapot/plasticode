@@ -14,15 +14,6 @@ use Plasticode\Config\Interfaces\LocalizationConfigInterface;
 use Plasticode\Config\Interfaces\TagsConfigInterface;
 use Plasticode\Config\LocalizationConfig;
 use Plasticode\Config\TagsConfig;
-use Plasticode\Controllers\Factories\AuthControllerFactory;
-use Plasticode\Controllers\Factories\ParserControllerFactory;
-use Plasticode\Controllers\Factories\PasswordControllerFactory;
-use Plasticode\Controllers\AuthController;
-use Plasticode\Controllers\CaptchaController;
-use Plasticode\Controllers\Factories\CaptchaControllerFactory;
-use Plasticode\Controllers\ParserController;
-use Plasticode\Controllers\PasswordController;
-use Plasticode\Core\AppContext;
 use Plasticode\Core\Cache;
 use Plasticode\Core\Factories\LoggerFactory;
 use Plasticode\Core\Factories\SessionFactory;
@@ -34,25 +25,17 @@ use Plasticode\Core\Interfaces\SessionInterface;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Core\Linker;
-use Plasticode\Core\Pagination;
 use Plasticode\Core\Renderer;
-use Plasticode\Data\DbMetadata;
 use Plasticode\Data\Idiorm\Api;
 use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Events\EventDispatcher;
 use Plasticode\Events\Factories\EventLoggerFactory;
 use Plasticode\Mapping\Providers\Generic\MappingProvider;
-use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
-use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
-use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Settings\SettingsProvider;
 use Plasticode\Twig\TwigViewFactory;
-use Plasticode\Util\Cases;
-use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Slim\Interfaces\RouterInterface;
 
 class CoreProvider extends MappingProvider
 {
@@ -71,74 +54,23 @@ class CoreProvider extends MappingProvider
                     $config->accessSettings()
                 ),
 
-            ApiInterface::class =>
-                fn (ContainerInterface $c) => new Api(
-                    $c->get(Access::class),
-                    $c->get(AuthInterface::class),
-                    $c->get(DbMetadata::class),
-                    $c->get(LoggerInterface::class),
-                    $c->get(UserRepositoryInterface::class)
-                ),
-
-            AppContext::class =>
-                fn (ContainerInterface $c) => new AppContext(
-                    $c->get(SettingsProviderInterface::class),
-                    $c->get(TranslatorInterface::class),
-                    $c->get(ValidatorInterface::class),
-                    $c->get(ViewInterface::class),
-                    $c->get(LoggerInterface::class),
-                    $c->get(MenuRepositoryInterface::class)
-                ),
-
-            AuthInterface::class =>
-                fn (ContainerInterface $c) => new Auth(
-                    $c->get(SessionInterface::class)
-                ),
-
+            ApiInterface::class => Api::class,
+            AuthInterface::class => Auth::class,
             CacheInterface::class => Cache::class,
-
-            CaptchaConfigInterface::class =>
-                fn (ContainerInterface $c) => new CaptchaConfig(),
-
-            CaptchaInterface::class =>
-                fn (ContainerInterface $c) => new Captcha(
-                    $c->get(SessionInterface::class),
-                    $c->get(CaptchaConfigInterface::class)
-                ),
-
-            Cases::class => fn (ContainerInterface $c) => new Cases(),
-
-            DbMetadata::class =>
-                fn (ContainerInterface $c) => new DbMetadata(
-                    $c->get(Config::class)
-                ),
+            CaptchaConfigInterface::class => CaptchaConfig::class,
+            CaptchaInterface::class => Captcha::class,
 
             EventDispatcher::class =>
-                fn (ContainerInterface $c) => (new EventDispatcher())
-                    ->withLogger(
-                        $c->get('eventLogger')
+                fn (ContainerInterface $c, EventLoggerFactory $f) =>
+                    (new EventDispatcher())->withLogger(
+                        ($f)($c)
                     ),
 
-            LinkerInterface::class =>
-                fn (ContainerInterface $c) => new Linker(
-                    $c->get(SettingsProviderInterface::class),
-                    $c->get(RouterInterface::class),
-                    $c->get(TagsConfigInterface::class)
-                ),
-
-            LocalizationConfigInterface::class =>
-                fn (ContainerInterface $c) => new LocalizationConfig(),
-
-            Pagination::class =>
-                fn (ContainerInterface $c) => new Pagination(
-                    $c->get(LinkerInterface::class),
-                    $c->get(RendererInterface::class)
-                ),
-
-            RendererInterface::class =>
-                fn (ContainerInterface $c) => new Renderer(
-                    $c->get(ViewInterface::class)
-                ),
+            LinkerInterface::class => Linker::class,
+            LocalizationConfigInterface::class => LocalizationConfig::class,
+            LoggerInterface::class => LoggerFactory::class,
+            RendererInterface::class => Renderer::class,
+            SessionInterface::class => SessionFactory::class,
 
             SettingsProviderInterface::class =>
                 fn () => new SettingsProvider(
@@ -146,28 +78,8 @@ class CoreProvider extends MappingProvider
                 ),
 
             TagsConfigInterface::class => TagsConfig::class,
-        ];
-    }
-
-    public function getFactories(): array
-    {
-        return [
-            // core factories
-
-            LoggerInterface::class => LoggerFactory::class,
-            SessionInterface::class => SessionFactory::class,
             TranslatorInterface::class => TranslatorFactory::class,
             ViewInterface::class => TwigViewFactory::class,
-
-            // todo: DI for duplicate interface instances (logger + eventLogger)
-            'eventLogger' => EventLoggerFactory::class,
-
-            // controller factories
-
-            AuthController::class => AuthControllerFactory::class,
-            CaptchaController::class => CaptchaControllerFactory::class,
-            ParserController::class => ParserControllerFactory::class,
-            PasswordController::class => PasswordControllerFactory::class,
         ];
     }
 }

@@ -121,7 +121,7 @@ class AutowiringContainer extends AggregatingContainer
     {
         $this->log($id . ' trying to transform ' . get_class($object));
 
-        $newObject = $this->transform($object);
+        $newObject = $this->transform($object, $id);
 
         $this->log($id . ' transformed ' . get_class($object) . ' to ' . get_class($newObject));
 
@@ -133,11 +133,24 @@ class AutowiringContainer extends AggregatingContainer
     /**
      * @throws ContainerExceptionInterface
      */
-    public function transform(object $object): object
+    public function transform(object $object, ?string $targetClass = null): object
     {
+        $isTargetReached =
+            fn () =>
+                strlen($targetClass) > 0
+                && $object instanceof $targetClass;
+        
+        if ($isTargetReached()) {
+            return $object;
+        }
+
         try {
             foreach ($this->transformations as $transformation) {
                 $object = ($transformation)($this, $object);
+
+                if ($isTargetReached()) {
+                    break;
+                }
             }
 
             return $object;
