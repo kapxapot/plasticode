@@ -27,6 +27,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Slim\Interfaces\RouterInterface;
 use Slim\Router;
+use stdClass;
 
 class AutowiringTest extends TestCase
 {
@@ -182,13 +183,27 @@ class AutowiringTest extends TestCase
             ]
         );
 
-        // $container->withLogger(
-        //     (new Logger('console'))
-        //         ->pushHandler(new StreamHandler('php://stdout'))
-        // );
-
         $ccc = $container->get('ccc');
 
         $this->assertInstanceOf(SettingsProvider::class, $ccc);
+    }
+
+    public function testAliasAndRedirect(): void
+    {
+        $container = $this->createContainer(
+            new Autowirer(),
+            [
+                'aaa' => 'bbb',
+                'bbb' => new stdClass(),
+                'ccc' => fn (ContainerInterface $c) => $c->get('bbb'),
+            ]
+        );
+
+        $ccc = $container->get('ccc');
+        $bbb = $container->get('bbb');
+        $aaa = $container->get('aaa');
+
+        $this->assertEquals($aaa, $bbb);
+        $this->assertEquals($ccc, $bbb);
     }
 }
