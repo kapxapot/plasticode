@@ -5,15 +5,13 @@ namespace Plasticode\Core\Factories;
 use Plasticode\Core\Interfaces\SessionInterface;
 use Plasticode\Core\Session;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
-use Psr\Container\ContainerInterface;
 
 class SessionFactory
 {
-    public function __invoke(ContainerInterface $container): SessionInterface
+    public function __invoke(
+        SettingsProviderInterface $settingsProvider
+    ): SessionInterface
     {
-        /** @var SettingsProviderInterface */
-        $settingsProvider = $container->get(SettingsProviderInterface::class);
-
         $root = $settingsProvider->get('root');
         $name = 'sessionContainer' . $root;
 

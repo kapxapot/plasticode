@@ -9,22 +9,16 @@ use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Config\Config;
 use Plasticode\IO\File;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
-use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 class LoggerFactory
 {
-    public function __invoke(ContainerInterface $container): LoggerInterface
+    public function __invoke(
+        AuthInterface $auth,
+        Config $config,
+        SettingsProviderInterface $settingsProvider
+    ): LoggerInterface
     {
-        /** @var SettingsProviderInterface */
-        $settingsProvider = $container->get(SettingsProviderInterface::class);
-
-        /** @var AuthInterface */
-        $auth = $container->get(AuthInterface::class);
-
-        /** @var Config */
-        $config = $container->get(Config::class);
-
         $logger = new Logger(
             $settingsProvider->get('logger.name', 'plasticode')
         );
