@@ -3,7 +3,6 @@
 namespace Plasticode\Tests\Mapping;
 
 use Monolog\Logger;
-use PHPUnit\Framework\TestCase;
 use Plasticode\Auth\Access;
 use Plasticode\Auth\Auth;
 use Plasticode\Auth\Captcha;
@@ -23,6 +22,7 @@ use Plasticode\Controllers\PasswordController;
 use Plasticode\Core\AppContext;
 use Plasticode\Core\Cache;
 use Plasticode\Core\Env;
+use Plasticode\Core\Factories\ConsoleLoggerFactory;
 use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
@@ -37,10 +37,8 @@ use Plasticode\Core\Translator;
 use Plasticode\Data\DbMetadata;
 use Plasticode\Data\Idiorm\Api;
 use Plasticode\Data\Interfaces\ApiInterface;
-use Plasticode\DI\Autowirer;
-use Plasticode\DI\Containers\AutowiringContainer;
 use Plasticode\Events\EventDispatcher;
-use Plasticode\Mapping\Aggregators\WritableMappingAggregator;
+use Plasticode\Mapping\Interfaces\MappingProviderInterface;
 use Plasticode\Mapping\Providers\CoreProvider;
 use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
 use Plasticode\Parsing\Interfaces\ParserInterface;
@@ -53,80 +51,47 @@ use Plasticode\Settings\SettingsProvider;
 use Plasticode\Twig\TwigView;
 use Plasticode\Util\Cases;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
-use Prophecy\PhpUnit\ProphecyTrait;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Interfaces\RouterInterface;
 
-final class CoreProviderTest extends TestCase
+final class CoreProviderTest extends AbstractProviderTest
 {
-    use ProphecyTrait;
-
-    private ContainerInterface $container;
-
-    public function setUp(): void
+    protected function getOuterDependencies(): array
     {
-        parent::setUp();
+        return [
+            Env::class,
+            RouterInterface::class,
+            ServerRequestInterface::class,
+            CutParser::class,
+            ParserInterface::class,
+            ValidatorInterface::class,
 
-        $this->container = new AutowiringContainer(
-            new Autowirer(),
-            [
-                Env::class =>
-                    fn () => $this->prophesize(Env::class)->reveal(),
-
-                RouterInterface::class =>
-                    fn () => $this->prophesize(RouterInterface::class)->reveal(),
-
-                ServerRequestInterface::class =>
-                    fn () => $this->prophesize(ServerRequestInterface::class)->reveal(),
-
-                CutParser::class =>
-                    fn () => $this->prophesize(CutParser::class)->reveal(),
-
-                ParserInterface::class =>
-                    fn () => $this->prophesize(ParserInterface::class)->reveal(),
-
-                ValidatorInterface::class =>
-                    fn () => $this->prophesize(ValidatorInterface::class)->reveal(),
-
-                AuthTokenRepositoryInterface::class =>
-                    fn () => $this->prophesize(AuthTokenRepositoryInterface::class)->reveal(),
-
-                MenuRepositoryInterface::class =>
-                    fn () => $this->prophesize(MenuRepositoryInterface::class)->reveal(),
-
-                UserRepositoryInterface::class =>
-                    fn () => $this->prophesize(UserRepositoryInterface::class)->reveal(),
-            ]
-        );
-
-        $bootstrap = new WritableMappingAggregator($this->container);
-
-        $bootstrap->register(
-            new CoreProvider(
-                [
-                    'root_dir' => '',
-                    'view' => [
-                        'templates_path' => '',
-                        'cache_path' => '',
-                    ]
-                ]
-            )
-        );
-
-        $bootstrap->boot();
+            AuthTokenRepositoryInterface::class,
+            MenuRepositoryInterface::class,
+            UserRepositoryInterface::class,
+        ];
     }
 
-    public function tearDown(): void
+    protected function getProvider(): MappingProviderInterface
     {
-        unset($this->container);
-
-        parent::tearDown();
+        return new CoreProvider(
+            [
+                'root_dir' => '',
+                'view' => [
+                    'templates_path' => '',
+                    'cache_path' => '',
+                ]
+            ]
+        );
     }
 
     public function testWiring(): void
     {
+        // $this->container->withLogger(
+        //     (new ConsoleLoggerFactory())()
+        // );
+
         $this->check(Access::class);
         $this->check(AccessMiddlewareFactory::class);
         $this->check(ApiInterface::class, Api::class);
@@ -156,10 +121,5 @@ final class CoreProviderTest extends TestCase
         $this->check(CaptchaController::class);
         $this->check(ParserController::class);
         $this->check(PasswordController::class);
-    }
-
-    protected function check(string $from, ?string $to = null): void
-    {
-        $this->assertInstanceOf($to ?? $from, $this->container->get($from));
     }
 }

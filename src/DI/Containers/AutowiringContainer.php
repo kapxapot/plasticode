@@ -2,9 +2,9 @@
 
 namespace Plasticode\DI\Containers;
 
+use Closure;
 use Exception;
 use Plasticode\DI\Autowirer;
-use Plasticode\DI\Transformations\CallableResolver;
 use Plasticode\Exceptions\DI\ContainerException;
 use Plasticode\Exceptions\DI\NotFoundException;
 use Plasticode\Exceptions\InvalidConfigurationException;
@@ -22,9 +22,6 @@ class AutowiringContainer extends AggregatingContainer
 
     private Autowirer $autowirer;
 
-    /** @var callable[] */
-    private array $transformations;
-
     public function __construct(
         Autowirer $autowirer,
         ?array $map = null
@@ -37,10 +34,6 @@ class AutowiringContainer extends AggregatingContainer
         ];
 
         $this->autowirer = $autowirer;
-
-        $this->transformations = [
-            new CallableResolver($this->autowirer)
-        ];
     }
 
     /**
@@ -119,45 +112,47 @@ class AutowiringContainer extends AggregatingContainer
 
     protected function setResolved(string $id, object $object): object
     {
-        $this->log($id . ' trying to transform ' . get_class($object));
+        $resultObject = $object;
 
-        $newObject = $this->transform($object, $id);
+        if (is_callable($object)) {
+            $objectClass = get_class($object);
+            $this->log($id . ' trying to resolve callable ' . $objectClass);
 
-        $this->log($id . ' transformed ' . get_class($object) . ' to ' . get_class($newObject));
+            $resultObject = $this->resolveCallable($id, $object);
 
-        $this->resolved[$id] = $newObject;
+            $resultObjectClass = get_class($resultObject);
 
-        return $newObject;
+            $this->log(
+                $objectClass === $resultObjectClass
+                    ? $id . ' left as is'
+                    : $id . ' resolved ' . $objectClass . ' to ' . $resultObjectClass
+            );
+        }
+
+        $this->resolved[$id] = $resultObject;
+
+        return $resultObject;
     }
 
     /**
      * @throws ContainerExceptionInterface
      */
-    public function transform(object $object, ?string $targetClass = null): object
+    public function resolveCallable(string $id, callable $object): object
     {
-        $isTargetReached =
-            fn () =>
-                strlen($targetClass) > 0
-                && $object instanceof $targetClass;
-        
-        if ($isTargetReached()) {
-            return $object;
+        if (!interface_exists($id) && !class_exists($id)) {
+            return $object instanceof Closure
+                ? $this->autowirer->autowireCallable($this, $object)
+                : $object;
         }
 
         try {
-            foreach ($this->transformations as $transformation) {
-                $object = ($transformation)($this, $object);
-
-                if ($isTargetReached()) {
-                    break;
-                }
+            while (!($object instanceof $id) && is_callable($object)) {
+                $object = $this->autowirer->autowireCallable($this, $object);
             }
 
             return $object;
         } catch (Exception $ex) {
-            $message =
-                'Error while transforming an object of the class ' .
-                get_class($object);
+            $message = 'Error while resolving callable ' . get_class($object);
 
             throw new ContainerException($message, 0, $ex);
         }
