@@ -2,7 +2,7 @@
 
 namespace Plasticode\Parsing\Parsers;
 
-use Plasticode\Parsing\Interfaces\LinkMapperSourceInterface;
+use Plasticode\Config\Parsing\DoubleBracketsConfig;
 use Plasticode\Parsing\Interfaces\LinkRendererInterface;
 use Plasticode\Parsing\LinkMappers\Generic\SlugLinkMapper;
 use Plasticode\Parsing\ParsingContext;
@@ -23,13 +23,12 @@ use Plasticode\Util\Arrays;
  */
 class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
 {
-    private const Pattern = '/\[\[(.+)\]\]/U';
-    private const ChunkDelimiterPattern = '/\|/';
+    private const PATTERN = '/\[\[(.+)\]\]/U';
+    private const CHUNK_DELIMITER_PATTERN = '/\|/';
 
-    /** @var LinkMapperSourceInterface */
-    private $config;
+    private DoubleBracketsConfig $config;
 
-    public function __construct(LinkMapperSourceInterface $config)
+    public function __construct(DoubleBracketsConfig $config)
     {
         $this->config = $config;
     }
@@ -39,7 +38,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
         $context = clone $context;
 
         $context->text = preg_replace_callback(
-            self::Pattern,
+            self::PATTERN,
             function ($matches) {
                 [$original, $match] = $matches;
                 
@@ -55,7 +54,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
 
     private function parseDoubleBracketsMatch(?string $match): ?string
     {
-        $chunks = preg_split(self::ChunkDelimiterPattern, $match);
+        $chunks = preg_split(self::CHUNK_DELIMITER_PATTERN, $match);
         $chunks = Arrays::trim($chunks);
 
         if (empty($chunks)) {

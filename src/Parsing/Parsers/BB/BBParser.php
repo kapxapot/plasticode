@@ -2,8 +2,8 @@
 
 namespace Plasticode\Parsing\Parsers\BB;
 
+use Plasticode\Config\Parsing\BBParserConfig;
 use Plasticode\Core\Interfaces\RendererInterface;
-use Plasticode\Parsing\Interfaces\TagMapperSourceInterface;
 use Plasticode\Parsing\Parsers\BB\Nodes\TagNode;
 use Plasticode\Parsing\Parsers\BB\Traits\BBAttributeParser;
 use Plasticode\Parsing\ParsingContext;
@@ -16,10 +16,13 @@ class BBParser extends BaseStep
 {
     use BBAttributeParser;
 
-    private TagMapperSourceInterface $config;
+    private BBParserConfig $config;
     private RendererInterface $renderer;
 
-    public function __construct(TagMapperSourceInterface $config, RendererInterface $renderer)
+    public function __construct(
+        BBParserConfig $config,
+        RendererInterface $renderer
+    )
     {
         $this->config = $config;
         $this->renderer = $renderer;

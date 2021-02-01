@@ -2,16 +2,16 @@
 
 namespace Plasticode\Testing\Factories;
 
+use Plasticode\Config\Parsing\DoubleBracketsConfig;
 use Plasticode\Core\Interfaces\RendererInterface;
 use Plasticode\Parsing\LinkMappers\NewsLinkMapper;
 use Plasticode\Parsing\LinkMappers\TagLinkMapper;
-use Plasticode\Parsing\LinkMapperSource;
 use Plasticode\Testing\Mocks\LinkerMock;
 use Plasticode\Testing\Mocks\LinkMappers\GenericLinkMapperMock;
 
-class LinkMapperSourceFactory
+class DoubleBracketsConfigFactory
 {
-    public static function make(RendererInterface $renderer): LinkMapperSource
+    public static function make(RendererInterface $renderer): DoubleBracketsConfig
     {
         $linker = new LinkerMock();
 
@@ -23,7 +23,7 @@ class LinkMapperSourceFactory
             $tagLinkMapper
         );
 
-        return (new LinkMapperSource())
+        return (new DoubleBracketsConfig())
             ->setDefaultMapper($pageLinkMapper)
             ->registerTaggedMappers(
                 new NewsLinkMapper($renderer, $linker),

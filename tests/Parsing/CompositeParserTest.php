@@ -6,7 +6,7 @@ use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Parsing\Parsers\DoubleBracketsParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Testing\Dummies\PageDummy;
-use Plasticode\Testing\Factories\LinkMapperSourceFactory;
+use Plasticode\Testing\Factories\DoubleBracketsConfigFactory;
 use Plasticode\Testing\Mocks\LinkerMock;
 use Plasticode\Tests\BaseRenderTestCase;
 use Plasticode\Util\Text;
@@ -16,7 +16,7 @@ final class CompositeParserTest extends BaseRenderTestCase
     public function testRenderLinks() : void
     {
         $linker = new LinkerMock();
-        $config = LinkMapperSourceFactory::make($this->renderer);
+        $config = DoubleBracketsConfigFactory::make($this->renderer);
 
         $parser = new CompositeParser(
             new DoubleBracketsParser($config)

@@ -11,8 +11,7 @@ use Webmozart\Assert\Assert;
 
 class BBTreeRenderer
 {
-    /** @var RendererInterface */
-    private $renderer;
+    private RendererInterface $renderer;
 
     public function __construct(RendererInterface $renderer)
     {
@@ -23,10 +22,8 @@ class BBTreeRenderer
      * Renders container tree.
      * 
      * @param Node[] $tree
-     * @param TagMapperSourceInterface $mapperSource
-     * @return string
      */
-    public function render(array $tree, TagMapperSourceInterface $mapperSource) : string
+    public function render(array $tree, TagMapperSourceInterface $mapperSource): string
     {
         $parts = [];
 
@@ -46,7 +43,10 @@ class BBTreeRenderer
         return implode(Text::BR_BR, $parts);
     }
 
-    private function renderNode(TagNode $node, TagMapperSourceInterface $mapperSource) : string
+    private function renderNode(
+        TagNode $node,
+        TagMapperSourceInterface $mapperSource
+    ): string
     {
         $tag = $node->tag();
         $componentName = $mapperSource->getComponentName($tag);

@@ -5,18 +5,15 @@ namespace Plasticode\Tests\Parsing;
 use Plasticode\Parsing\Parsers\DoubleBracketsParser;
 use Plasticode\Parsing\ParsingContext;
 use Plasticode\Testing\Dummies\PageDummy;
-use Plasticode\Testing\Factories\LinkMapperSourceFactory;
+use Plasticode\Testing\Factories\DoubleBracketsConfigFactory;
 use Plasticode\Testing\Mocks\LinkerMock;
 use Plasticode\Tests\BaseRenderTestCase;
 use Plasticode\Util\Text;
 
 final class DoubleBracketsParserTest extends BaseRenderTestCase
 {
-    /** @var LinkerMock */
-    private $linker;
-
-    /** @var DoubleBracketsParser */
-    private $parser;
+    private LinkerMock $linker;
+    private DoubleBracketsParser $parser;
 
     protected function setUp() : void
     {
@@ -24,7 +21,7 @@ final class DoubleBracketsParserTest extends BaseRenderTestCase
 
         $this->linker = new LinkerMock();
 
-        $config = LinkMapperSourceFactory::make($this->renderer);
+        $config = DoubleBracketsConfigFactory::make($this->renderer);
         $this->parser = new DoubleBracketsParser($config);
     }
 

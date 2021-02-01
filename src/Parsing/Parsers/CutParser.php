@@ -2,8 +2,8 @@
 
 namespace Plasticode\Parsing\Parsers;
 
-use Plasticode\Parsing\Interfaces\ParsingStepInterface;
 use Plasticode\Util\Text;
+use Webmozart\Assert\Assert;
 
 /**
  * Parses [cut] tag in already parsed text,
@@ -11,16 +11,24 @@ use Plasticode\Util\Text;
  */
 class CutParser
 {
-    private ParsingStepInterface $cleanupParser;
+    private CleanupParser $cleanupParser;
     private string $tag = '[cut]';
 
-    public function __construct(ParsingStepInterface $cleanupParser, string $tag = null)
+    public function __construct(CleanupParser $cleanupParser)
     {
         $this->cleanupParser = $cleanupParser;
+    }
 
-        if (!is_null($tag)) {
-            $this->tag = $tag;
-        }
+    /**
+     * @return $this
+     */
+    public function withTag(string $tag): self
+    {
+        Assert::stringNotEmpty($tag);
+
+        $this->tag = $tag;
+
+        return $this;
     }
 
     /**

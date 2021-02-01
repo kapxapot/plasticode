@@ -8,11 +8,8 @@ use Plasticode\Parsing\Parsers\CutParser;
 
 final class CutParserTest extends BaseParsingRenderTestCase
 {
-    /** @var ParsingStepInterface */
-    private $cleanupParser;
-
-    /** @var CutParser */
-    private $parser;
+    private ParsingStepInterface $cleanupParser;
+    private CutParser $parser;
 
     protected function setUp() : void
     {
@@ -36,7 +33,11 @@ final class CutParserTest extends BaseParsingRenderTestCase
     /**
      * @dataProvider parseWithCutProvider
      */
-    public function testParseWithCut(string $text, string $fullExpected, string $shortExpected) : void
+    public function testParseWithCut(
+        string $text,
+        string $fullExpected,
+        string $shortExpected
+    ) : void
     {
         $this->assertEquals(
             $fullExpected,
@@ -94,7 +95,8 @@ final class CutParserTest extends BaseParsingRenderTestCase
 
     public function testParseAlternativeTag() : void
     {
-        $parser = new CutParser($this->cleanupParser, '<!-- cut -->');
+        $parser = (new CutParser($this->cleanupParser))
+            ->withTag('<!-- cut -->');
 
         $text = '<p>Some text</p><p>with cut</p><!-- cut --><p>hehe</p>';
 
