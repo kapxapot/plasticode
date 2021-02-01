@@ -92,10 +92,6 @@ final class CoreProviderTest extends AbstractProviderTest
 
     public function testWiring(): void
     {
-        // $this->container->withLogger(
-        //     (new ConsoleLoggerFactory())()
-        // );
-
         $this->check(Access::class);
         $this->check(AccessMiddlewareFactory::class);
         $this->check(ApiInterface::class, Api::class);

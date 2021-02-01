@@ -19,10 +19,6 @@ final class ExternalProviderTest extends AbstractProviderTest
 
     public function testWiring(): void
     {
-        // $this->container->withLogger(
-        //     (new ConsoleLoggerFactory())()
-        // );
-
         $this->check(Gravatar::class);
         $this->check(Telegram::class);
         $this->check(Twitch::class);

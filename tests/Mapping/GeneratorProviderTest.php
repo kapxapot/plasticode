@@ -37,10 +37,6 @@ final class GeneratorProviderTest extends AbstractProviderTest
 
     public function testWiring(): void
     {
-        // $this->container->withLogger(
-        //     (new ConsoleLoggerFactory())()
-        // );
-
         $this->check(GeneratorContext::class);
         $this->check(MenuGenerator::class);
         $this->check(MenuItemGenerator::class);

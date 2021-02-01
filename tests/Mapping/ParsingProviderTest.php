@@ -37,10 +37,6 @@ final class ParsingProviderTest extends AbstractProviderTest
 
     public function testWiring(): void
     {
-        // $this->container->withLogger(
-        //     (new ConsoleLoggerFactory())()
-        // );
-
         $this->check(ReplacesConfigInterface::class, ReplacesConfig::class);
         $this->check(BBParserConfig::class);
         $this->check(DoubleBracketsConfig::class);

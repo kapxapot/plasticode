@@ -2,11 +2,7 @@
 
 namespace Plasticode\Data\Idiorm\Providers;
 
-use Plasticode\Auth\Access;
-use Plasticode\Auth\Interfaces\AuthInterface;
-use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\Data\DbMetadata;
 use Plasticode\External\Gravatar;
 use Plasticode\Hydrators\AuthTokenHydrator;
 use Plasticode\Hydrators\MenuHydrator;
@@ -35,16 +31,6 @@ class RepositoryProvider extends MappingProvider
     public function getMappings(): array
     {
         return [
-            RepositoryContext::class =>
-                fn (ContainerInterface $c) => new RepositoryContext(
-                    $c->get(Access::class),
-                    $c->get(AuthInterface::class),
-                    $c->get(CacheInterface::class),
-                    $c->get(DbMetadata::class)
-                ),
-
-            // repositories
-
             AuthTokenRepositoryInterface::class =>
                 fn (ContainerInterface $c) => new AuthTokenRepository(
                     $c->get(RepositoryContext::class),

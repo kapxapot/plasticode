@@ -41,10 +41,6 @@ final class SlimProviderTest extends AbstractProviderTest
 
     public function testWiring(): void
     {
-        // $this->container->withLogger(
-        //     (new ConsoleLoggerFactory())()
-        // );
-
         $this->check('errorHandler', ErrorHandler::class);
         $this->check(ErrorHandlerInterface::class, ErrorHandler::class);
 

@@ -3,6 +3,7 @@
 namespace Plasticode\Tests\Mapping;
 
 use PHPUnit\Framework\TestCase;
+use Plasticode\Core\Factories\ConsoleLoggerFactory;
 use Plasticode\DI\Autowirer;
 use Plasticode\DI\Containers\AutowiringContainer;
 use Plasticode\Mapping\Aggregators\WritableMappingAggregator;
@@ -14,6 +15,7 @@ abstract class AbstractProviderTest extends TestCase
     use ProphecyTrait;
 
     protected AutowiringContainer $container;
+    protected bool $withLogger = false;
 
     public function setUp(): void
     {
@@ -22,6 +24,14 @@ abstract class AbstractProviderTest extends TestCase
         $this->container = new AutowiringContainer(
             new Autowirer()
         );
+
+        if ($this->withLogger) {
+            $factory = new ConsoleLoggerFactory();
+
+            $this->container->withLogger(
+                ($factory)()
+            );
+        }
 
         $dependencies = $this->getOuterDependencies();
 
