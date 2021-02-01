@@ -47,6 +47,7 @@ use Plasticode\Parsing\Parsers\CutParser;
 use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Services\AuthService;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Settings\SettingsProvider;
 use Plasticode\Twig\TwigView;
@@ -100,6 +101,7 @@ final class CoreProviderTest extends AbstractProviderTest
         $this->check(ApiInterface::class, Api::class);
         $this->check(AppContext::class);
         $this->check(AuthInterface::class, Auth::class);
+        $this->check(AuthService::class);
         $this->check(CacheInterface::class, Cache::class);
         $this->check(CaptchaConfigInterface::class, CaptchaConfig::class);
         $this->check(CaptchaInterface::class, Captcha::class);

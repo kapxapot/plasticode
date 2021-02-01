@@ -8,19 +8,15 @@ use Monolog\Logger;
 use Plasticode\Config\Config;
 use Plasticode\IO\File;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
-use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 class EventLoggerFactory
 {
-    public function __invoke(ContainerInterface $container): LoggerInterface
+    public function __invoke(
+        SettingsProviderInterface $settingsProvider,
+        Config $config
+    ): LoggerInterface
     {
-        /** @var SettingsProviderInterface */
-        $settingsProvider = $container->get(SettingsProviderInterface::class);
-
-        /** @var Config */
-        $config = $container->get(Config::class);
-
         $logger = new Logger(
             $settingsProvider->get('event_logger.name', 'events')
         );

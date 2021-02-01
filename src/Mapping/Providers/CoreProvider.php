@@ -36,7 +36,6 @@ use Plasticode\Settings\SettingsProvider;
 use Plasticode\Twig\TwigViewFactory;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Plasticode\Validation\Validator;
-use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 class CoreProvider extends MappingProvider
@@ -63,9 +62,9 @@ class CoreProvider extends MappingProvider
             CaptchaInterface::class => Captcha::class,
 
             EventDispatcher::class =>
-                fn (ContainerInterface $c, EventLoggerFactory $f) =>
+                fn (SettingsProviderInterface $settingsProvider, Config $config, EventLoggerFactory $factory) =>
                     (new EventDispatcher())->withLogger(
-                        ($f)($c)
+                        ($factory)($settingsProvider, $config)
                     ),
 
             LinkerInterface::class => Linker::class,
@@ -75,9 +74,7 @@ class CoreProvider extends MappingProvider
             SessionInterface::class => SessionFactory::class,
 
             SettingsProviderInterface::class =>
-                fn () => new SettingsProvider(
-                    $this->settings
-                ),
+                fn () => new SettingsProvider($this->settings),
 
             TagsConfigInterface::class => TagsConfig::class,
             TranslatorInterface::class => TranslatorFactory::class,
