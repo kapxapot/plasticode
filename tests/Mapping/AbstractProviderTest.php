@@ -33,9 +33,11 @@ abstract class AbstractProviderTest extends TestCase
 
         $bootstrap = new WritableMappingAggregator($this->container);
 
-        $bootstrap->register(
-            $this->getProvider()
-        );
+        $provider = $this->getProvider();
+
+        if ($provider !== null) {
+            $bootstrap->register($provider);
+        }
 
         $bootstrap->boot();
     }
@@ -55,7 +57,10 @@ abstract class AbstractProviderTest extends TestCase
         return [];
     }
 
-    abstract protected function getProvider(): MappingProviderInterface;
+    protected function getProvider(): ?MappingProviderInterface
+    {
+        return null;
+    }
 
     abstract public function testWiring(): void;
 

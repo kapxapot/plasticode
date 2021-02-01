@@ -2,24 +2,35 @@
 
 namespace Plasticode\External;
 
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
+
+/**
+ * @deprecated
+ */
 class Telegram
 {
-    private $settings;
+    private SettingsProviderInterface $settingsProvider;
 
-    public function __construct(array $settings)
+    public function __construct(
+        SettingsProviderInterface $settingsProvider
+    )
     {
-        $this->settings = $settings;
+        $this->settingsProvider = $settingsProvider;
     }
 
-    public function sendMessage(string $channelId, string $message) : void
+    public function sendMessage(string $channelId, string $message): void
     {
-        $botToken = $this->settings['bot_token'];
-        $channel = $this->settings['channels'][$channelId];
+        $botToken = $this->settingsProvider->get('telegram.bot_token');
+        $channel = $this->settingsProvider->get('telegram.channels.' . $channelId);
 
         $this->curlSendMessage($botToken, $channel, $message);
     }
 
-    private function curlSendMessage(string $botToken, string $chatId, string $message)
+    private function curlSendMessage(
+        string $botToken,
+        string $chatId,
+        string $message
+    ): string
     {
         $url = 'https://api.telegram.org/bot' . $botToken . '/sendMessage';
 

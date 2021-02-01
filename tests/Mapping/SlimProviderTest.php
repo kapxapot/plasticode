@@ -2,7 +2,6 @@
 
 namespace Plasticode\Tests\Mapping;
 
-use Plasticode\Core\Factories\ConsoleLoggerFactory;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Handlers\ErrorHandler;
@@ -35,7 +34,7 @@ final class SlimProviderTest extends AbstractProviderTest
         ];
     }
 
-    protected function getProvider(): MappingProviderInterface
+    protected function getProvider(): ?MappingProviderInterface
     {
         return new SlimProvider();
     }
@@ -58,7 +57,7 @@ final class SlimProviderTest extends AbstractProviderTest
         $this->container->set('router', $this->prophesize(RouterInterface::class)->reveal());
         $this->container->set('request', $this->prophesize(ServerRequestInterface::class)->reveal());
 
-        $this->check(RouterInterface::class, RouterInterface::class);
-        $this->check(ServerRequestInterface::class, ServerRequestInterface::class);
+        $this->check(RouterInterface::class);
+        $this->check(ServerRequestInterface::class);
     }
 }

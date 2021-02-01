@@ -4,7 +4,6 @@ namespace Plasticode\Mapping;
 
 use Plasticode\Collections\MappingProviderCollection;
 use Plasticode\Mapping\Providers\CoreProvider;
-use Plasticode\Mapping\Providers\ExternalProvider;
 use Plasticode\Mapping\Providers\GeneratorProvider;
 use Plasticode\Mapping\Providers\ParsingProvider;
 use Plasticode\Mapping\Providers\ServiceProvider;
@@ -22,8 +21,7 @@ class Providers extends MappingProviderCollection
                 new GeneratorProvider(),
                 new ValidationProvider(),
                 new ParsingProvider(),
-                new ServiceProvider(),
-                new ExternalProvider()
+                new ServiceProvider()
             ]
         );
     }

@@ -22,7 +22,6 @@ use Plasticode\Controllers\PasswordController;
 use Plasticode\Core\AppContext;
 use Plasticode\Core\Cache;
 use Plasticode\Core\Env;
-use Plasticode\Core\Factories\ConsoleLoggerFactory;
 use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Core\Interfaces\RendererInterface;
@@ -73,7 +72,7 @@ final class CoreProviderTest extends AbstractProviderTest
         ];
     }
 
-    protected function getProvider(): MappingProviderInterface
+    protected function getProvider(): ?MappingProviderInterface
     {
         return new CoreProvider(
             [

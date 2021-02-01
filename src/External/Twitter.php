@@ -3,27 +3,29 @@
 namespace Plasticode\External;
 
 use Codebird\Codebird;
+use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 
 class Twitter
 {
-    /** @var \Codebird\Codebird */
-    private $codebird;
-    
-    public function __construct(array $settings)
+    private Codebird $codebird;
+
+    public function __construct(
+        SettingsProviderInterface $settingsProvider
+    )
     {
         Codebird::setConsumerKey(
-            $settings['consumer_key'],
-            $settings['consumer_secret']
+            $settingsProvider->get('twitter.consumer_key'),
+            $settingsProvider->get('twitter.consumer_secret')
         );
-    
+
         $this->codebird = Codebird::getInstance();
 
         $this->codebird->setToken(
-            $settings['access_token'],
-            $settings['access_key']
+            $settingsProvider->get('twitter.access_token'),
+            $settingsProvider->get('twitter.access_key')
         );
     }
-    
+
     public function tweet(string $message)
     {
         return $this->codebird->statuses_update(
