@@ -50,6 +50,7 @@ use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Services\AuthService;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Settings\SettingsProvider;
+use Plasticode\Testing\AbstractProviderTest;
 use Plasticode\Twig\TwigView;
 use Plasticode\Util\Cases;
 use Plasticode\Validation\Interfaces\ValidatorInterface;

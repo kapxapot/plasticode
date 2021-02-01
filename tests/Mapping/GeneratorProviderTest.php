@@ -14,6 +14,7 @@ use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
+use Plasticode\Testing\AbstractProviderTest;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Slim\Interfaces\RouterInterface;
 

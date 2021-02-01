@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Tests\Mapping;
+namespace Plasticode\Testing;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Core\Factories\ConsoleLoggerFactory;

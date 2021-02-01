@@ -7,6 +7,7 @@ use Plasticode\External\Telegram;
 use Plasticode\External\Twitch;
 use Plasticode\External\Twitter;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
+use Plasticode\Testing\AbstractProviderTest;
 
 final class ExternalProviderTest extends AbstractProviderTest
 {

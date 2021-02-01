@@ -14,6 +14,7 @@ use Plasticode\Mapping\Interfaces\MappingProviderInterface;
 use Plasticode\Mapping\Providers\SlimProvider;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
+use Plasticode\Testing\AbstractProviderTest;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;

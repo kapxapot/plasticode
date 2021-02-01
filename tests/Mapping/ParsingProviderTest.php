@@ -19,6 +19,7 @@ use Plasticode\Parsing\Parsers\CompositeParser;
 use Plasticode\Parsing\Parsers\CutParser;
 use Plasticode\Parsing\Parsers\DoubleBracketsParser;
 use Plasticode\Parsing\Parsers\LineParser;
+use Plasticode\Testing\AbstractProviderTest;
 
 final class ParsingProviderTest extends AbstractProviderTest
 {

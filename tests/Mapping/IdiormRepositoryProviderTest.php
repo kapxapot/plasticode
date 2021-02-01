@@ -22,6 +22,7 @@ use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Testing\AbstractProviderTest;
 
 final class IdiormRepositoryProviderTest extends AbstractProviderTest
 {
