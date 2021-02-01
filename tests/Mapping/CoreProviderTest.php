@@ -40,6 +40,8 @@ use Plasticode\Events\EventDispatcher;
 use Plasticode\Mapping\Interfaces\MappingProviderInterface;
 use Plasticode\Mapping\Providers\CoreProvider;
 use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
+use Plasticode\Models\Validation\PasswordValidation;
+use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Parsing\Interfaces\ParserInterface;
 use Plasticode\Parsing\Parsers\CutParser;
 use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
@@ -50,6 +52,8 @@ use Plasticode\Settings\SettingsProvider;
 use Plasticode\Twig\TwigView;
 use Plasticode\Util\Cases;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
+use Plasticode\Validation\ValidationRules;
+use Plasticode\Validation\Validator;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Interfaces\RouterInterface;
@@ -120,5 +124,12 @@ final class CoreProviderTest extends AbstractProviderTest
         $this->check(CaptchaController::class);
         $this->check(ParserController::class);
         $this->check(PasswordController::class);
+
+        // validation
+
+        $this->check(PasswordValidation::class);
+        $this->check(UserValidation::class);
+        $this->check(ValidationRules::class);
+        $this->check(ValidatorInterface::class, Validator::class);
     }
 }

@@ -7,7 +7,6 @@ use Plasticode\Mapping\Providers\CoreProvider;
 use Plasticode\Mapping\Providers\ParsingProvider;
 use Plasticode\Mapping\Providers\ServiceProvider;
 use Plasticode\Mapping\Providers\SlimProvider;
-use Plasticode\Mapping\Providers\ValidationProvider;
 
 class Providers extends MappingProviderCollection
 {
@@ -17,7 +16,6 @@ class Providers extends MappingProviderCollection
             [
                 new SlimProvider(),
                 new CoreProvider($settings),
-                new ValidationProvider(),
                 new ParsingProvider(),
                 new ServiceProvider()
             ]

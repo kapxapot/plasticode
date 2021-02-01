@@ -34,6 +34,8 @@ use Plasticode\Mapping\Providers\Generic\MappingProvider;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Settings\SettingsProvider;
 use Plasticode\Twig\TwigViewFactory;
+use Plasticode\Validation\Interfaces\ValidatorInterface;
+use Plasticode\Validation\Validator;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -79,6 +81,7 @@ class CoreProvider extends MappingProvider
 
             TagsConfigInterface::class => TagsConfig::class,
             TranslatorInterface::class => TranslatorFactory::class,
+            ValidatorInterface::class => Validator::class,
             ViewInterface::class => TwigViewFactory::class,
         ];
     }
