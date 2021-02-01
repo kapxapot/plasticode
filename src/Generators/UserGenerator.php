@@ -6,18 +6,18 @@ use Plasticode\Core\Security;
 use Plasticode\Generators\Core\GeneratorContext;
 use Plasticode\Generators\Generic\ChangingEntityGenerator;
 use Plasticode\Models\User;
+use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
-use Plasticode\Validation\Interfaces\ValidationInterface;
 
 class UserGenerator extends ChangingEntityGenerator
 {
     private UserRepositoryInterface $userRepository;
-    private ValidationInterface $userValidation;
+    private UserValidation $userValidation;
 
     public function __construct(
         GeneratorContext $context,
         UserRepositoryInterface $userRepository,
-        ValidationInterface $userValidation
+        UserValidation $userValidation
     )
     {
         parent::__construct($context);
