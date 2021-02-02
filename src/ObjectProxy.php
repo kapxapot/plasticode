@@ -5,15 +5,18 @@ namespace Plasticode;
 class ObjectProxy
 {
     private $object = null;
-    private \Closure $initializer;
+
+    /** @var callable */
+    private $initializer;
+
     private bool $initialized = false;
 
-    public function __construct(\Closure $initializer)
+    public function __construct(callable $initializer)
     {
         $this->initializer = $initializer;
     }
 
-    private function initialize() : void
+    private function initialize(): void
     {
         if ($this->initialized) {
             return;
