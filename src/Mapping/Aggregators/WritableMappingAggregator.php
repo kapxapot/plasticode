@@ -22,7 +22,7 @@ class WritableMappingAggregator extends AbstractMappingAggregator
     {
         $container = $this->getContainer();
 
-        foreach ($this->getMappings() as $key => $value) {
+        foreach ($this->mergeMappings() as $key => $value) {
             $container[$key] = $value;
         }
     }

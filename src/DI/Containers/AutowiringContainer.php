@@ -30,7 +30,8 @@ class AutowiringContainer extends AggregatingContainer
         parent::__construct($map);
 
         $this->resolved = [
-            ContainerInterface::class => $this
+            ContainerInterface::class => $this,
+            Autowirer::class => $autowirer,
         ];
 
         $this->autowirer = $autowirer;

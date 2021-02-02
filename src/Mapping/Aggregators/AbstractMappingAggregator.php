@@ -56,26 +56,6 @@ abstract class AbstractMappingAggregator
     }
 
     /**
-     * Returns aggregated mappings from all providers.
-     */
-    public function getMappings(): array
-    {
-        $mappings = $this->mergeMappings();
-
-        // resolve factories
-        foreach ($this->mergeFactories() as $class => $factoryClass) {
-            $mappings[$class] = new $factoryClass();
-        }
-
-        // convert aliases to mappings
-        foreach ($this->mergeAliases() as $alias => $key) {
-            $mappings[$alias] = fn (ContainerInterface $c) => $c->get($key);
-        }
-
-        return $mappings;
-    }
-
-    /**
      * Wires up the container and boots all providers.
      */
     public function boot(): void
@@ -94,24 +74,13 @@ abstract class AbstractMappingAggregator
      */
     abstract protected function wireUpContainer(): void;
 
-    private function mergeMappings(): array
+    /**
+     * Returns aggregated mappings from all providers.
+     */
+    protected function mergeMappings(): array
     {
         return $this->mergeArrays(
             fn (MappingProviderInterface $p) => $p->getMappings()
-        );
-    }
-
-    private function mergeFactories(): array
-    {
-        return $this->mergeArrays(
-            fn (MappingProviderInterface $p) => $p->getFactories()
-        );
-    }
-
-    private function mergeAliases(): array
-    {
-        return $this->mergeArrays(
-            fn (MappingProviderInterface $p) => $p->getAliases()
         );
     }
 

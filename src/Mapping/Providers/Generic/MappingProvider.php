@@ -13,16 +13,6 @@ abstract class MappingProvider implements MappingProviderInterface
         return [];
     }
 
-    public function getFactories(): array
-    {
-        return [];
-    }
-
-    public function getAliases(): array
-    {
-        return [];
-    }
-
     public function getEventHandlers(ContainerInterface $container): array
     {
         return [];
