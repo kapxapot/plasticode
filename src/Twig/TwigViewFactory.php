@@ -15,7 +15,6 @@ use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Twig\Extensions\AccessRightsExtension;
 use Plasticode\Twig\Extensions\TranslatorExtension;
 use Plasticode\Twig\TwigView;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Interfaces\RouterInterface;
 use Slim\Views\Twig;
@@ -24,23 +23,18 @@ use Twig\Extension\DebugExtension;
 
 class TwigViewFactory
 {
-    public function __invoke(ContainerInterface $container): ViewInterface
+    public function __invoke(
+        Access $access,
+        AuthInterface $auth,
+        AuthService $authService,
+        Config $config,
+        LinkerInterface $linker,
+        RouterInterface $router,
+        ServerRequestInterface $request,
+        SettingsProviderInterface $settingsProvider,
+        TranslatorInterface $translator
+    ): ViewInterface
     {
-        /** @var SettingsProviderInterface */
-        $settingsProvider = $container->get(SettingsProviderInterface::class);
-
-        /** @var Config */
-        $config = $container->get(Config::class);
-
-        /** @var AuthInterface */
-        $auth = $container->get(AuthInterface::class);
-
-        /** @var AuthService */
-        $authService = $container->get(AuthService::class);
-
-        /** @var LinkerInterface */
-        $linker = $container->get(LinkerInterface::class);
-
         $tws = $settingsProvider->get('view');
 
         $path = $tws['templates_path'];
@@ -66,23 +60,15 @@ class TwigViewFactory
         );
 
         $view->addExtension(
-            new TwigExtension(
-                $container->get(RouterInterface::class),
-                $container->get(ServerRequestInterface::class)->getUri()
-            )
+            new TwigExtension($router, $request->getUri())
         );
 
         $view->addExtension(
-            new AccessRightsExtension(
-                $container->get(Access::class),
-                $auth
-            )
+            new AccessRightsExtension($access, $auth)
         );
 
         $view->addExtension(
-            new TranslatorExtension(
-                $container->get(TranslatorInterface::class)
-            )
+            new TranslatorExtension($translator)
         );
 
         $view->addExtension(new DebugExtension());
@@ -116,6 +102,7 @@ class TwigViewFactory
         }
 
         /** @var Twig $view */
+
         return new TwigView($view);
     }
 }
