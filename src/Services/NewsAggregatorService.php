@@ -28,23 +28,29 @@ class NewsAggregatorService
         $this->linker = $linker;
     }
 
-    public function registerStrictSource(
-        SrcRepoInterface $source
-    ) : void
+    /**
+     * @return $this
+     */
+    public function registerStrictSource(SrcRepoInterface $source): self
     {
-        $this->registerSource($source, true);
+        return $this->registerSource($source, true);
     }
 
+    /**
+     * @return $this
+     */
     public function registerSource(
         SrcRepoInterface $source,
         bool $strict = false
-    ): void
+    ): self
     {
         $this->sources[] = $source;
 
         if ($strict) {
             $this->strictSources[] = $source;
         }
+
+        return $this;
     }
 
     /**
