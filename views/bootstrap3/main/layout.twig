@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 {% set lang = lang ?? 'ru' %}
-{% set font_awesome_css = font_awesome_css ?? true %}
 <html lang="{{ lang }}">
     <head>
         <meta charset="utf-8" />
@@ -64,9 +63,7 @@
         {% endif %}
 
         {# Font Awesome #}
-        {% if font_awesome_css %}
-            <script src="https://kit.fontawesome.com/c7c8269336.js" crossorigin="anonymous"></script>
-        {% endif %}
+        <script src="https://kit.fontawesome.com/c7c8269336.js" crossorigin="anonymous"></script>
 
         <!-- Lozad.js -->
         <script type="text/javascript" src="//cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
@@ -208,11 +205,6 @@
         
         {% if with_colorbox %}
             <script src="{{ folders.global }}colorbox/colorbox.js"></script>
-        {% endif %}
-        
-        {# Font Awesome #}
-        {% if not font_awesome_css %}
-            <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
         {% endif %}
 
         {% include 'main/includes/js.twig' %}
