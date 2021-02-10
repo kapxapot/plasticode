@@ -2,6 +2,7 @@
 
 namespace Plasticode\Core;
 
+use Plasticode\Config\Interfaces\LocalizationConfigInterface;
 use Plasticode\Core\Interfaces\TranslatorInterface;
 
 /**
@@ -9,16 +10,24 @@ use Plasticode\Core\Interfaces\TranslatorInterface;
  */
 class Translator implements TranslatorInterface
 {
-    /** @var array<string, string> */
-    private array $dictionary;
+    private LocalizationConfigInterface $config;
+    private string $defaultLangCode;
 
-    public function __construct(?array $dictionary)
+    public function __construct(
+        LocalizationConfigInterface $config,
+        string $defaultLangCode
+    )
     {
-        $this->dictionary = $dictionary ?? [];
+        $this->config = $config;
+        $this->defaultLangCode = $defaultLangCode;
     }
 
-    public function translate(string $value): string
+    public function translate(string $value, ?string $langCode = null): string
     {
-        return $this->dictionary[$value] ?? $value;
+        $dictionary = $this->config->get(
+            $langCode ?? $this->defaultLangCode
+        );
+
+        return $dictionary[$value] ?? $value;
     }
 }
