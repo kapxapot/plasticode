@@ -28,7 +28,7 @@ class CaptchaController extends Controller
     ): ResponseInterface
     {
         $captcha = $this->captcha->generate(
-            $this->settingsProvider->get('captcha_digits', 2),
+            $this->getSettings('captcha_digits', 2),
             true
         );
 
