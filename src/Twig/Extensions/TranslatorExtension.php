@@ -17,20 +17,20 @@ class TranslatorExtension extends AbstractExtension
         $this->translator = $translator;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return 'translator';
     }
 
-    public function getFunctions() : array
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('translate', [$this, 'translate']),
         ];
     }
 
-    public function translate(string $value) : string
+    public function translate(string $value, ?string $langCode = null): string
     {
-        return $this->translator->translate($value);
+        return $this->translator->translate($value, $langCode);
     }
 }
