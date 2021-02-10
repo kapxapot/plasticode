@@ -441,6 +441,16 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
             ->flatten();
     }
 
+    /**
+     * Shortcut for map()->clean().
+     */
+    public function cleanMap(callable $func): Collection
+    {
+        return $this
+            ->map($func)
+            ->clean();
+    }
+
     public function map(callable $func): Collection
     {
         $data = array_map($func, $this->data);
