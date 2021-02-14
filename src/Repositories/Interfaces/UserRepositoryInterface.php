@@ -4,8 +4,9 @@ namespace Plasticode\Repositories\Interfaces;
 
 use Plasticode\Models\User;
 use Plasticode\Repositories\Interfaces\Generic\ChangingRepositoryInterface;
+use Plasticode\Repositories\Interfaces\Generic\FieldValidatingRepositoryInterface;
 
-interface UserRepositoryInterface extends ChangingRepositoryInterface
+interface UserRepositoryInterface extends ChangingRepositoryInterface, FieldValidatingRepositoryInterface
 {
     function get(?int $id): ?User;
     function create(array $data): User;

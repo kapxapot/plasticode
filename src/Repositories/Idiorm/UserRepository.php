@@ -4,10 +4,13 @@ namespace Plasticode\Repositories\Idiorm;
 
 use Plasticode\Models\User;
 use Plasticode\Repositories\Idiorm\Generic\IdiormRepository;
+use Plasticode\Repositories\Idiorm\Traits\FieldValidatingRepository;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 
 class UserRepository extends IdiormRepository implements UserRepositoryInterface
 {
+    use FieldValidatingRepository;
+
     protected function entityClass(): string
     {
         return User::class;
