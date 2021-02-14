@@ -14,6 +14,8 @@ use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Traits\EntityRelated;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
 use Plasticode\Validation\ValidationRules;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Validator;
 use Slim\App;
 use Slim\Http\Request;
@@ -253,9 +255,22 @@ abstract class EntityGenerator implements EntityGeneratorInterface
 
     public function generateAdminPageRoute(App $app): void
     {
+        $container = $app->getContainer();
+        $generator = $this;
+
         $app->get(
             '/' . $this->getAdminPageUri(),
-            fn (AdminPageControllerFactory $factory) => ($factory)($this)
+            function (
+                ServerRequestInterface $request,
+                ResponseInterface $response,
+                array $args
+            ) use ($container, $generator) {
+                /** @var AdminPageControllerFactory $factory */
+                $factory = $container->get(AdminPageControllerFactory::class);
+                $controller = ($factory)($generator);
+
+                return ($controller)($request, $response, $args);
+            }
         )->add(
             $this->accessMiddlewareFactory->make(
                 $this->getEntity(),
