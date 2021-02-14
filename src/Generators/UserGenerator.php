@@ -40,7 +40,7 @@ class UserGenerator extends ChangingEntityGenerator
     {
         return array_merge(
             parent::getRules($data, $id),
-            $this->userValidation->getRules($data, $id)
+            $this->userValidation->withOptionalPassword()->getRules($data, $id)
         );
     }
 
