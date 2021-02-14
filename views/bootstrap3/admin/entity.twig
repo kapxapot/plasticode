@@ -447,7 +447,7 @@
         //console.log(obj);
         var itemId = $scope.itemId;
         //delay(function() {
-        $scope.ajax({
+        $scope.modalAjax({
             method: ($scope.itemId == 0) ? 'post' : 'put',
             url: '{{ api }}{{ alias }}' + (($scope.itemId == 0) ? '' : '/' + $scope.itemId),
             data: obj,
