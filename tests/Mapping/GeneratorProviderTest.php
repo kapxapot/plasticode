@@ -2,6 +2,7 @@
 
 namespace Plasticode\Tests\Mapping;
 
+use Plasticode\Controllers\Admin\AdminPageControllerFactory;
 use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Generators\Core\GeneratorContext;
@@ -43,5 +44,7 @@ final class GeneratorProviderTest extends AbstractProviderTest
         $this->check(MenuItemGenerator::class);
         $this->check(RoleGenerator::class);
         $this->check(UserGenerator::class);
+
+        $this->check(AdminPageControllerFactory::class);
     }
 }

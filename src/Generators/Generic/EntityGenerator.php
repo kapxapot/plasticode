@@ -3,6 +3,7 @@
 namespace Plasticode\Generators\Generic;
 
 use Plasticode\Config\Config;
+use Plasticode\Controllers\Admin\AdminPageControllerFactory;
 use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Data\Rights;
@@ -28,7 +29,6 @@ abstract class EntityGenerator implements EntityGeneratorInterface
     protected ApiInterface $api;
     protected ValidatorInterface $validator;
     protected ValidationRules $rules;
-    protected ViewInterface $view;
     protected AccessMiddlewareFactory $accessMiddlewareFactory;
 
     public function __construct(
@@ -41,7 +41,6 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         $this->api = $context->api();
         $this->validator = $context->validator();
         $this->rules = $context->validationRules();
-        $this->view = $context->view();
         $this->accessMiddlewareFactory = $context->accessMiddlewareFactory();
     }
 
@@ -79,7 +78,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
             ->throwOnFail();
     }
 
-    protected function getOptions(): array
+    public function getOptions(): array
     {
         return [];
     }
@@ -100,18 +99,6 @@ abstract class EntityGenerator implements EntityGeneratorInterface
 
     public function afterDelete(array $item): void
     {
-    }
-
-    protected function getAdminParams(array $args): array
-    {
-        $params = $this
-            ->config
-            ->entitySettings()
-            ->get($this->getEntity());
-
-        $params['base'] = $this->router->pathFor('admin.index');
-
-        return $params;
     }
 
     public function generateAPIRoutes(App $app): void
@@ -266,42 +253,9 @@ abstract class EntityGenerator implements EntityGeneratorInterface
 
     public function generateAdminPageRoute(App $app): void
     {
-        $options = $this->getOptions();
-        $generator = $this;
-        $view = $this->view;
-
-        $uri = $options['admin_uri'] ?? $options['uri'] ?? $this->getEntity();
-        $adminArgs = $options['admin_args'] ?? null;
-
         $app->get(
-            '/' . $uri,
-            function ($request, $response, $args) use ($generator, $view, $options, $adminArgs) {
-                $templateName = isset($options['admin_template'])
-                    ? 'entities/' . $options['admin_template']
-                    : 'entity';
-
-                $params = $generator->getAdminParams($args);
-
-                $action = $request->getQueryParam('action', null);
-                $id = $request->getQueryParam('id', null);
-
-                if ($action) {
-                    $params['action_onload'] = [
-                        'action' => $action,
-                        'id' => $id,
-                    ];
-                }
-
-                if ($adminArgs) {
-                    $params['args'] = $adminArgs;
-                }
-
-                return $view->render(
-                    $response,
-                    'admin/' . $templateName . '.twig',
-                    $params
-                );
-            }
+            '/' . $this->getAdminPageUri(),
+            fn (AdminPageControllerFactory $factory) => ($factory)($this)
         )->add(
             $this->accessMiddlewareFactory->make(
                 $this->getEntity(),
@@ -309,5 +263,41 @@ abstract class EntityGenerator implements EntityGeneratorInterface
                 'admin.index'
             )
         )->setName('admin.entities.' . $this->getEntity());
+    }
+
+    public function getAdminPageUri(): string
+    {
+        $options = $this->getOptions();
+
+        return $options['admin_uri'] ?? $options['uri'] ?? $this->getEntity();
+    }
+
+    /**
+     * Returns params for the view.
+     */
+    public function getAdminParams(array $args): array
+    {
+        $params = $this
+            ->config
+            ->entitySettings()
+            ->get($this->getEntity());
+
+        $params['base'] = $this->router->pathFor('admin.index');
+
+        return $params;
+    }
+
+    public function getAdminArgs(): ?array
+    {
+        return $this->getOptions()['admin_args'] ?? null;
+    }
+
+    public function getAdminTemplateName(): string
+    {
+        $options = $this->getOptions();
+
+        return isset($options['admin_template'])
+            ? 'entities/' . $options['admin_template']
+            : 'entity';
     }
 }

@@ -19,7 +19,6 @@ class GeneratorContext
     private ApiInterface $api;
     private ValidatorInterface $validator;
     private ValidationRules $validationRules;
-    private ViewInterface $view;
     private AccessMiddlewareFactory $accessMiddlewareFactory;
 
     public function __construct(
@@ -29,7 +28,6 @@ class GeneratorContext
         ApiInterface $api,
         ValidatorInterface $validator,
         ValidationRules $validationRules,
-        ViewInterface $view,
         AccessMiddlewareFactory $accessMiddlewareFactory
     )
     {
@@ -39,7 +37,6 @@ class GeneratorContext
         $this->api = $api;
         $this->validator = $validator;
         $this->validationRules = $validationRules;
-        $this->view = $view;
         $this->accessMiddlewareFactory = $accessMiddlewareFactory;
     }
 
@@ -71,11 +68,6 @@ class GeneratorContext
     public function validationRules(): ValidationRules
     {
         return $this->validationRules;
-    }
-
-    public function view(): ViewInterface
-    {
-        return $this->view;
     }
 
     public function accessMiddlewareFactory(): AccessMiddlewareFactory

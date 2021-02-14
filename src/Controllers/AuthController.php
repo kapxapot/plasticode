@@ -114,6 +114,7 @@ class AuthController extends Controller
     ) : ResponseInterface
     {
         $this->authService->logout();
+
         return $response;
     }
 }
