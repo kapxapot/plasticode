@@ -2,6 +2,7 @@
 
 namespace Plasticode\Core;
 
+use Exception;
 use ORM;
 use Plasticode\Exceptions\ValidationException;
 use Plasticode\Exceptions\Interfaces\HttpExceptionInterface;
@@ -76,7 +77,7 @@ class Response
         AppContext $appContext,
         ServerRequestInterface $request,
         ResponseInterface $response,
-        \Exception $ex
+        Exception $ex
     ) : ResponseInterface
     {
         $settingsProvider = $appContext->settingsProvider();

@@ -19,7 +19,7 @@ use Webmozart\Assert\Assert;
  */
 abstract class Controller
 {
-    private AppContext $appContext;
+    protected AppContext $appContext;
 
     private SettingsProviderInterface $settingsProvider;
     private TranslatorInterface $translator;
