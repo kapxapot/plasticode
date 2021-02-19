@@ -91,7 +91,7 @@ class Strings
         $str = self::fromSpaces($str, $space);
         $str = preg_replace('#(' . $space . '){2,}#', $space, $str);
         $str = trim($str, $space);
-        
+
         return $str;
     }
 
