@@ -268,7 +268,10 @@ class Api implements ApiInterface
 
             if (isset($item['created_by'])) {
                 $created = $this->userRepository->get($item['created_by']);
-                $creator = $created->login ?? $item['created_by'];
+
+                $creator = ($created !== null)
+                    ? $created->displayName()
+                    : $item['created_by'];
             }
 
             $item['created_by_name'] = $creator;
@@ -279,7 +282,10 @@ class Api implements ApiInterface
 
             if (isset($item['updated_by'])) {
                 $updated = $this->userRepository->get($item['updated_by']);
-                $updater = $updated->login ?? $item['updated_by'];
+
+                $updater = ($updated !== null)
+                    ? $updated->displayName()
+                    : $item['updated_by'];
             }
 
             $item['updated_by_name'] = $updater;
