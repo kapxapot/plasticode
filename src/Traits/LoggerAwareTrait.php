@@ -32,7 +32,7 @@ trait LoggerAwareTrait
     protected function logEx(Exception $ex): void
     {
         $this->log(
-            json_encode(
+            $ex->getMessage() . ' ' . json_encode(
                 Debug::exceptionTrace($ex)
             )
         );
