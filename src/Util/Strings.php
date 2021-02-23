@@ -4,8 +4,7 @@ namespace Plasticode\Util;
 
 class Strings
 {
-    const SPACE_CHAR = '_';
-
+    public const SPACE_CHAR = '_';
     private const TAG_PARTS_DELIMITER = '|';
 
     /**
@@ -20,7 +19,7 @@ class Strings
     public static function toSpaces(
         string $str = null,
         string $space = self::SPACE_CHAR
-    ) : string
+    ): string
     {
         $str = stripslashes($str);
         return preg_replace('/' . $space . '/', ' ', $str);
@@ -37,7 +36,7 @@ class Strings
     public static function fromSpaces(
         string $str = null,
         string $space = self::SPACE_CHAR
-    ) : string
+    ): string
     {
         return preg_replace('/\s+/u', $space, $str);
     }
@@ -45,7 +44,7 @@ class Strings
     /**
      * Converts 'snake_case'/'Snake_Case'/'SnakeCase' to 'snakeCase'.
      */
-    public static function toCamelCase(string $str) : string
+    public static function toCamelCase(string $str): string
     {
         return lcfirst(self::toPascalCase($str));
     }
@@ -53,7 +52,7 @@ class Strings
     /**
      * Converts 'snake_case' to 'SnakeCase'.
      */
-    public static function toPascalCase(string $str) : string
+    public static function toPascalCase(string $str): string
     {
         return str_replace('_', '', ucwords($str, '_'));
     }
@@ -61,7 +60,7 @@ class Strings
     /**
      * Converts 'PascalCase'/'camelCase' to 'pascal_case'/'camel_case'.
      */
-    public static function toSnakeCase(string $str) : string
+    public static function toSnakeCase(string $str): string
     {
         return ltrim(
             mb_strtolower(
@@ -79,7 +78,7 @@ class Strings
     public static function normalize(
         ?string $str,
         ?string $space = null
-    ) : ?string
+    ): ?string
     {
         if (strlen($str) == 0) {
             return $str;
@@ -103,7 +102,7 @@ class Strings
      *
      * @return string[]
      */
-    public static function toTags(?string $str) : array
+    public static function toTags(?string $str): array
     {
         if (strlen($str) == 0) {
             return [];
@@ -122,7 +121,7 @@ class Strings
      * 
      * @return string[]
      */
-    public static function explode(?string $str, ?string $delimiter = null) : array
+    public static function explode(?string $str, ?string $delimiter = null): array
     {
         if (strlen($str) == 0) {
             return [];
@@ -142,7 +141,7 @@ class Strings
      *
      * @return string[]
      */
-    public static function toWords(string $str) : array
+    public static function toWords(string $str): array
     {
         return Arrays::trim(preg_split("/\s/", $str));
     }
@@ -150,7 +149,7 @@ class Strings
     /**
      * Explodes string by $delimiter and returns last chunk.
      */
-    public static function lastChunk(string $str, string $delimiter) : string
+    public static function lastChunk(string $str, string $delimiter): string
     {
         $chunks = explode($delimiter, $str);
         
@@ -161,7 +160,7 @@ class Strings
      * Strips HTML tags using static::stripTags(),
      * then truncates string to (limit) Unicode characters.
      */
-    public static function stripTrunc(string $str, int $limit) : string
+    public static function stripTrunc(string $str, int $limit): string
     {
         $str = self::stripTags($str);
 
@@ -171,7 +170,7 @@ class Strings
     /**
      * Strips HTML tags inserting spaces instead of them and trims the string.
      */
-    public static function stripTags(string $str) : string
+    public static function stripTags(string $str): string
     {
         $str = str_replace('<', ' <', $str);
         $str = strip_tags($str);
@@ -183,7 +182,7 @@ class Strings
     /**
      * Truncates string to (limit) Unicode characters.
      */
-    public static function trunc(string $str, int $limit) : string
+    public static function trunc(string $str, int $limit): string
     {
         return mb_substr($str, 0, $limit);
     }
@@ -191,7 +190,7 @@ class Strings
     /**
      * Returns first char.
      */
-    public static function first(string $str) : string
+    public static function first(string $str): string
     {
         return mb_substr($str, 0, 1);
     }
@@ -199,7 +198,7 @@ class Strings
     /**
      * Returns last char.
      */
-    public static function last(string $str) : string
+    public static function last(string $str): string
     {
         return mb_substr($str, -1);
     }
@@ -212,7 +211,7 @@ class Strings
      * @param string[] $tags Array of tags
      * @return string Hashed tags string
      */
-    public static function hashTags(array $tags) : string
+    public static function hashTags(array $tags): string
     {
         return implode(
             ' ',
@@ -228,7 +227,7 @@ class Strings
     /**
      * Checks if string starts with 'http'.
      */
-    public static function isUrl(?string $str) : bool
+    public static function isUrl(?string $str): bool
     {
         return self::startsWith($str, 'http');
     }
@@ -236,7 +235,7 @@ class Strings
     /**
      * Checks if string starts with 'http' or '/'.
      */
-    public static function isUrlOrRelative(?string $str) : bool
+    public static function isUrlOrRelative(?string $str): bool
     {
         return self::isUrl($str) || self::startsWith($str, '/');
     }
@@ -248,7 +247,7 @@ class Strings
      * @param string[] $masks Array of string masks
      * @return bool True, if matches
      */
-    public static function startsWithAny(?string $str, array $masks) : bool
+    public static function startsWithAny(?string $str, array $masks): bool
     {
         if (strlen($str) == 0 || empty($masks)) {
             return false;
@@ -273,7 +272,7 @@ class Strings
      * @param string $mask String mask
      * @return bool True, if matches
      */
-    public static function startsWith(?string $str, string $mask) : bool
+    public static function startsWith(?string $str, string $mask): bool
     {
         if (strlen($str) == 0) {
             return false;
@@ -289,7 +288,7 @@ class Strings
      * @param string $mask String mask
      * @return bool True, if matches
      */
-    public static function endsWith(?string $str, string $mask) : bool
+    public static function endsWith(?string $str, string $mask): bool
     {
         if (strlen($str) == 0) {
             return false;
@@ -303,7 +302,7 @@ class Strings
      *
      * @return integer > 0, if str1 is bigger, < 0 if str2, 0 if equal
      */
-    public static function compare(string $str1, string $str2) : int
+    public static function compare(string $str1, string $str2): int
     {
         return strcasecmp($str1, $str2);
     }
@@ -311,7 +310,7 @@ class Strings
     /**
      * Removes all symbols from a string except letters, digits and '_'.
      */
-    public static function toAlphaNum(?string $str) : ?string
+    public static function toAlphaNum(?string $str): ?string
     {
         return preg_replace('/[^\w]/u', '', $str);
     }
@@ -322,7 +321,7 @@ class Strings
     public static function doubleBracketsTag(
         ?string $prefix,
         string ...$parts
-    ) : string
+    ): string
     {
         $prefixPart = $prefix ? $prefix . ':' : '';
         $codePart = self::joinTagParts($parts);
@@ -335,7 +334,7 @@ class Strings
      *
      * @param string[] $parts
      */
-    public static function joinTagParts(array $parts) : string
+    public static function joinTagParts(array $parts): string
     {
         return implode(self::TAG_PARTS_DELIMITER, $parts);
     }
@@ -345,7 +344,7 @@ class Strings
      *
      * @param boolean $control Remove control characters? True by default.
      */
-    public static function toUtf8(?string $string, bool $control = true) : ?string
+    public static function toUtf8(?string $string, bool $control = true): ?string
     {
         $string = iconv('UTF-8', 'UTF-8//IGNORE', $string);
 
@@ -365,7 +364,7 @@ class Strings
         string $request,
         string $name,
         $value
-    ) : string
+    ): string
     {
         $delim = strpos($request, '?') !== false ? '&' : '?';
         return $request . $delim . $name . '=' . $value;
@@ -375,7 +374,7 @@ class Strings
      * Converts string to slug, that allows only [a-z0-9\-]
      * and must start from alphanumeric character.
      */
-    public static function toSlug(string $rawSlug) : ?string
+    public static function toSlug(string $rawSlug): ?string
     {
         // remove invalid characters
         $slug = preg_replace('/[^a-zA-Z0-9-\s]/', '', $rawSlug);
@@ -389,7 +388,7 @@ class Strings
     /**
      * Removes start from the string.
      */
-    public static function trimStart(string $str, string $start) : string
+    public static function trimStart(string $str, string $start): string
     {
         return self::startsWith($str, $start)
             ? mb_substr($str, strlen($start))
@@ -399,7 +398,7 @@ class Strings
     /**
      * Removes end from the string.
      */
-    public static function trimEnd(string $str, string $end) : string
+    public static function trimEnd(string $str, string $end): string
     {
         return self::endsWith($str, $end)
             ? mb_substr($str, 0, strlen($str) - strlen($end))
@@ -409,12 +408,36 @@ class Strings
     /**
      * Checks if the string contains the mask.
      */
-    public static function contains(?string $str, string $mask) : bool
+    public static function contains(?string $str, string $mask): bool
     {
         if (is_null($str)) {
             return false;
         }
 
         return strpos($str, $mask) !== false;
+    }
+
+    /**
+     * Makes unicode string's first character upper-case.
+     */
+    public static function upperCaseFirst(?string $str): ?string
+    {
+        if (strlen($str) === 0) {
+            return $str;
+        }
+
+        return mb_strtoupper(mb_substr($str, 0, 1)) . mb_substr($str, 1);
+    }
+
+    /**
+     * Makes unicode string's first character lower-case.
+     */
+    public static function lowerCaseFirst(?string $str): ?string
+    {
+        if (strlen($str) === 0) {
+            return $str;
+        }
+
+        return mb_strtolower(mb_substr($str, 0, 1)) . mb_substr($str, 1);
     }
 }
