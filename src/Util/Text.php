@@ -19,7 +19,7 @@ class Text
      * 
      * @return string[]
      */
-    public static function toLines(?string $text) : array
+    public static function toLines(?string $text): array
     {
         $newLines = implode('|', self::NEW_LINES);
 
@@ -33,7 +33,7 @@ class Text
      * 
      * @param string[] $lines
      */
-    public static function join(array $lines, ?string $delimiter = null) : string
+    public static function join(array $lines, ?string $delimiter = null): string
     {
         return implode($delimiter ?? PHP_EOL, $lines);
     }
@@ -43,7 +43,7 @@ class Text
      * 
      * @param string[] $lines
      */
-    public static function sparseJoin(array $lines) : string
+    public static function sparseJoin(array $lines): string
     {
         return implode(PHP_EOL . PHP_EOL, $lines);
     }
@@ -54,7 +54,7 @@ class Text
      * @param string[] $lines
      * @return string[]
      */
-    public static function trimEmptyLines(array $lines) : array
+    public static function trimEmptyLines(array $lines): array
     {
         while (count($lines) > 0 && strlen($lines[0]) == 0) {
             array_shift($lines);
@@ -70,7 +70,7 @@ class Text
     /**
      * Trims <br/>s from start and end of text.
      */
-    public static function trimBrs(string $text) : string
+    public static function trimBrs(string $text): string
     {
         return self::trimPattern(self::BR_PATTERN, $text);
     }
@@ -78,7 +78,7 @@ class Text
     /**
      * Trims <br/>s and new line symbols from start and end of text.
      */
-    public static function trimNewLinesAndBrs(string $text) : string
+    public static function trimNewLinesAndBrs(string $text): string
     {
         $patterns = self::NEW_LINES;
         $patterns[] = self::BR_PATTERN;
@@ -91,7 +91,7 @@ class Text
      *
      * @param string[] $patterns
      */
-    public static function trimMultiPattern(array $patterns, string $text) : string
+    public static function trimMultiPattern(array $patterns, string $text): string
     {
         $pattern = implode('|', $patterns);
 
@@ -101,7 +101,7 @@ class Text
     /**
      * Trims the string both from start & end using regex pattern.
      */
-    public static function trimPattern(string $pattern, string $text) : string
+    public static function trimPattern(string $pattern, string $text): string
     {
         $text = preg_replace("/^(" . $pattern . ")*/s", '', $text);
         $text = preg_replace("/(" . $pattern . ")*$/s", '', $text);
@@ -112,7 +112,7 @@ class Text
     /**
      * ~\n -> <br/>.
      */
-    public static function newLinesToBrs(string $text) : string
+    public static function newLinesToBrs(string $text): string
     {
         return str_replace(self::NEW_LINES, self::BR, $text);
     }
@@ -120,7 +120,7 @@ class Text
     /**
      * <br/>{3,} -> <br/><br/>.
      */
-    public static function squishBrs(string $text) : string
+    public static function squishBrs(string $text): string
     {
         return preg_replace(
             '/(' . self::BR_PATTERN . '){3,}/',
@@ -132,7 +132,7 @@ class Text
     /**
      * Changes <br/>{2,} to </p><p>. Also ensures that text is wrapped in <p>...</p>.
      */
-    public static function brsToPs(string $text) : string
+    public static function brsToPs(string $text): string
     {
         $text = self::squishBrs($text);
 
@@ -152,7 +152,7 @@ class Text
     /**
      * Makes <a href=""></a> tag links absolute from relative.
      */
-    public static function toAbsoluteUrls(string $text, string $baseUrl) : string
+    public static function toAbsoluteUrls(string $text, string $baseUrl): string
     {
         $baseUrl = rtrim($baseUrl, '/') . '/';
 
@@ -167,7 +167,7 @@ class Text
      *
      * @param array $replaces Key/value pair of replaces from/to
      */
-    public static function applyRegexReplaces(string $text, array $replaces) : string
+    public static function applyRegexReplaces(string $text, array $replaces): string
     {
         foreach ($replaces as $key => $value) {
             $text = preg_replace('/(' . $key . ')/', $value, $text);
