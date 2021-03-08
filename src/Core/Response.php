@@ -37,7 +37,7 @@ class Response
         } elseif ($data instanceof ORM) {
             $data = $data->asArray();
         }
-        
+
         Assert::isArray(
             $data,
             'Response::json expects an array, ArrayableInterface or \ORM.'
@@ -50,7 +50,7 @@ class Response
             if ($format == 'dt') {
                 $wrapper = new stdClass;
                 $wrapper->data = $data;
-                
+
                 $data = $wrapper;
             }
         }
