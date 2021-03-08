@@ -458,12 +458,11 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Breaks the search string into words
-     * and applies where() with each of them
+     * Breaks the search string into words and applies where() with each of them
      * using AND.
      *
-     * @param string $searchStr One or several words
-     * @param integer $paramCount How many times every word must be passed to where()
+     * @param string $searchStr One or several words.
+     * @param integer $paramCount How many times every word must be passed to where().
      */
     public function search(
         string $searchStr,
