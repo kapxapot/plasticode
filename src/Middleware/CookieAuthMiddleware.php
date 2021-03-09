@@ -4,7 +4,7 @@ namespace Plasticode\Middleware;
 
 use Plasticode\Services\AuthService;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 class CookieAuthMiddleware
 {
@@ -18,12 +18,12 @@ class CookieAuthMiddleware
     }
     
     public function __invoke(
-        Request $request,
+        ServerRequestInterface $request,
         ResponseInterface $response,
         $next
     ) : ResponseInterface
     {
-        $token = $request->getCookieParam($this->tokenKey);
+        $token = $request->getCookieParams()[$this->tokenKey] ?? null;
 
         $this->authService->validateCookie($token);
 

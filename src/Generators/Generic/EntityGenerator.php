@@ -4,7 +4,6 @@ namespace Plasticode\Generators\Generic;
 
 use Plasticode\Config\Config;
 use Plasticode\Controllers\Admin\AdminPageControllerFactory;
-use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Data\Rights;
 use Plasticode\Generators\Core\GeneratorContext;
@@ -18,7 +17,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Validator;
 use Slim\App;
-use Slim\Http\Request;
 use Slim\Interfaces\RouterInterface;
 
 abstract class EntityGenerator implements EntityGeneratorInterface
@@ -67,7 +65,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
     }
 
     public function validate(
-        Request $request,
+        ServerRequestInterface $request,
         array $data,
         $id = null
     ): void

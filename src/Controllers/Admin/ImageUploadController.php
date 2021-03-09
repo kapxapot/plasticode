@@ -7,17 +7,17 @@ use Plasticode\Controllers\Controller;
 use Plasticode\Exceptions\Http\BadRequestException;
 use Plasticode\IO\Image;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 use ZipArchive;
 
 abstract class ImageUploadController extends Controller
 {
     public function __invoke(
-        Request $request,
+        ServerRequestInterface $request,
         ResponseInterface $response
     ) : ResponseInterface
     {
-        $context = $request->getParam('context', null);
+        $context = $request->getParsedBody()['context'] ?? null;
         $files = $request->getUploadedFiles()['files'] ?? null;
 
         if (empty($files)) {

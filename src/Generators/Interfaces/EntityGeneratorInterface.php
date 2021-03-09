@@ -3,8 +3,8 @@
 namespace Plasticode\Generators\Interfaces;
 
 use Plasticode\Interfaces\EntityRelatedInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Slim\Http\Request;
 
 interface EntityGeneratorInterface extends EntityRelatedInterface
 {
@@ -13,7 +13,7 @@ interface EntityGeneratorInterface extends EntityRelatedInterface
      */
     function getEntity(): string;
 
-    function validate(Request $request, array $data, $id = null): void;
+    function validate(ServerRequestInterface $request, array $data, $id = null): void;
 
     function afterLoad(array $item): array;
     function beforeSave(array $data, $id = null): array;

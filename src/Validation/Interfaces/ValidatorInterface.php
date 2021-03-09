@@ -3,10 +3,10 @@
 namespace Plasticode\Validation\Interfaces;
 
 use Plasticode\Validation\ValidationResult;
-use Slim\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 interface ValidatorInterface
 {
     function validateArray(array $data, array $rules) : ValidationResult;
-    function validateRequest(Request $request, array $rules) : ValidationResult;
+    function validateRequest(ServerRequestInterface $request, array $rules) : ValidationResult;
 }

@@ -9,7 +9,7 @@ use Plasticode\Core\Security;
 use Plasticode\Models\Validation\PasswordValidation;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Slim\Http\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 class PasswordController extends Controller
 {
@@ -32,7 +32,7 @@ class PasswordController extends Controller
     }
 
     public function __invoke(
-        Request $request,
+        ServerRequestInterface $request,
         ResponseInterface $response
     ): ResponseInterface
     {
@@ -43,7 +43,7 @@ class PasswordController extends Controller
         $rules = $this->passwordValidation->getRules($data);
         $this->validate($request, $rules);
 
-        $password = $request->getParam('password');
+        $password = $request->getParsedBody()['password'] ?? null;
 
         $user->password = Security::encodePassword($password);
 

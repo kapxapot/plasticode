@@ -12,7 +12,6 @@ use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Services\AuthService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Http\Request;
 use Webmozart\Assert\Assert;
 
 class AuthController extends Controller
@@ -80,13 +79,15 @@ class AuthController extends Controller
     }
 
     public function signIn(
-        Request $request,
+        ServerRequestInterface $request,
         ResponseInterface $response
     ) : ResponseInterface
     {
+        $data = $request->getParsedBody();
+
         $token = $this->authService->attempt(
-            $request->getParam('login'),
-            $request->getParam('password')
+            $data['login'] ?? null,
+            $data['password'] ?? null
         );
         
         if (!$token) {

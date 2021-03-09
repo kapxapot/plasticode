@@ -103,7 +103,7 @@
             </script>
         {% endif %}
     </head>
-    
+
     {% set angular_app = angular.app ?? 'pcApp' %}
     {% set angular_ctrl = angular.ctrl ?? 'pcCtrl' %}
 
@@ -114,7 +114,7 @@
     <body ng-app="{{ angular_app }}" ng-controller="{{ angular_ctrl }}"{% if body_styles %} class="{{ body_styles }}"{% endif %}>
         <!-- nav bar -->
         {% include 'main/includes/nav.twig' %}
-        
+
         <div class="container">
             {% if with_auth %}
                 {% if auth.user %}
@@ -130,42 +130,42 @@
                 <!-- main -->
                 <div id="main" class="{% if not one_column %}col-md-9 {% endif %}col-xs-12">
                     {% block content %}{% endblock %}
-        
+
                     {% if not no_social %}
                         <div id="social-share">
                             {% include 'main/includes/share.twig' %}
                         </div>
                     {% endif %}
-        
+
                     {% if not no_disqus %}
                         <div id="comments">
                             {% include 'main/includes/comments.twig' %}
                         </div>
                     {% endif %}
-                    
+
                     <div class="ad visible-sm-block visible-lg-block">
                         {% include 'main/includes/banners/bottom_sm_lg.twig' %}
                     </div>
-                    
+
                     <div class="ad visible-md-block">
                         {% include 'main/includes/banners/bottom_md.twig' %}
                     </div>
-            
+
                     <div class="ad visible-xs-block">
                         {% include 'main/includes/banners/bottom_xs.twig' %}
                     </div>
                 </div>
 
                 {% include 'angular.twig' with { 'with_auth': with_auth, 'lang': lang } %}
-                
+
                 <!-- SIDEBAR -->
                 <div id="sidebar" class="{% if not one_column %}col-md-3 {% endif %}col-xs-12">
-                    {% if sidebar %}		
+                    {% if sidebar %}
                         <div id="sidebar-panels">
                             {% include 'main/includes/sidebar.twig' %}
                         </div>
                     {% endif %}
-                    
+
                     {% if not one_column %}
                         <div class="ad visible-lg-block">
                             {% include 'main/includes/banners/sidebar_lg.twig' %}
@@ -182,7 +182,7 @@
                                 {% include 'main/includes/vk.twig' %}
                             </div>
                         {% endif %}
-                    
+
                         {% if vk_widget.with_chat %}
                             {% include 'main/includes/vk_chat.twig' %}
                         {% endif %}
@@ -202,7 +202,7 @@
 
         <!-- scripts -->
         <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-        
+
         {% if with_colorbox %}
             <script src="{{ folders.global }}colorbox/colorbox.js"></script>
         {% endif %}
@@ -222,7 +222,7 @@
         {% if with_charts %}
             <script src="{{ folders.global }}js/colors.js"></script>
         {% endif %}
-        
-           {% block more_js %}{% endblock %}
+
+        {% block more_js %}{% endblock %}
     </body>
 </html>

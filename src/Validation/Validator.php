@@ -4,8 +4,8 @@ namespace Plasticode\Validation;
 
 use Plasticode\Core\Interfaces\TranslatorInterface;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Respect\Validation\Exceptions\NestedValidationException;
-use Slim\Http\Request;
 
 /**
  * Validator with the optional translation of messages.
@@ -21,7 +21,7 @@ class Validator implements ValidatorInterface
         $this->translator = $translator;
     }
 
-    private function validate(callable $getField, array $rules) : ValidationResult
+    private function validate(callable $getField, array $rules): ValidationResult
     {
         $errors = [];
 
@@ -46,18 +46,22 @@ class Validator implements ValidatorInterface
         return new ValidationResult($errors);
     }
 
-    public function validateArray(array $data, array $rules) : ValidationResult
+    public function validateRequest(
+        ServerRequestInterface $request,
+        array $rules
+    ): ValidationResult
+    {
+        $params = $request->getMethod() === 'POST'
+            ? $request->getParsedBody()
+            : $request->getQueryParams();
+
+        return $this->validateArray($params, $rules);
+    }
+
+    public function validateArray(array $data, array $rules): ValidationResult
     {
         return $this->validate(
             fn ($field) => $data[$field] ?? null,
-            $rules
-        );
-    }
-
-    public function validateRequest(Request $request, array $rules) : ValidationResult
-    {
-        return $this->validate(
-            fn ($field) => $request->getParam($field),
             $rules
         );
     }

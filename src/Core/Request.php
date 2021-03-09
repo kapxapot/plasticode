@@ -8,13 +8,23 @@ class Request
 {
     /**
      * Is it a JSON request?
-     *
-     * @param ServerRequestInterface $request
-     * @return boolean
      */
     public static function isJson(ServerRequestInterface $request) : bool
     {
-        $contentType = $request->getContentType();
-        return (strpos($contentType, 'application/json') !== false);
+        return in_array(
+            'application/json',
+            $request->getHeader('content-type')
+        );
+    }
+
+    /**
+     * Does the request accept JSON?
+     */
+    public static function acceptsJson(ServerRequestInterface $request) : bool
+    {
+        return in_array(
+            'application/json',
+            $request->getHeader('accept')
+        );
     }
 }
