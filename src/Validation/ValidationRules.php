@@ -24,7 +24,7 @@ class ValidationRules
      */
     private function buildRules(
         SettingsProviderInterface $settingsProvider
-    ) : array
+    ): array
     {
         $notEmpty = fn () => Validator::notEmpty();
         $solid = fn () => $notEmpty()->noWhitespace();
@@ -49,7 +49,7 @@ class ValidationRules
         ];
     }
 
-    public function get(string $name, bool $optional = false) : Validator
+    public function get(string $name, bool $optional = false): Validator
     {
         $rule = $this->rules[$name] ?? null;
 
@@ -64,17 +64,17 @@ class ValidationRules
             : $rule();
     }
 
-    public function lat(string $add = '') : string
+    public function lat(string $add = ''): string
     {
         return "/^[\w {$add}]+$/";
     }
     
-    public function cyr(string $add = '') : string
+    public function cyr(string $add = ''): string
     {
         return "/^[\w\p{Cyrillic} {$add}]+$/u";
     }
     
-    public function optional(Validatable $rule) : Validator
+    public function optional(Validatable $rule): Validator
     {
         return Validator::optional($rule);
     }
