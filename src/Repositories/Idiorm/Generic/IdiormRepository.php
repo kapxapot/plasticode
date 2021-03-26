@@ -134,7 +134,7 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
             return null;
         }
 
-        /** @var DbModel */
+        /** @var DbModel|null $entity */
         $entity = null;
 
         if (!$ignoreCache) {
