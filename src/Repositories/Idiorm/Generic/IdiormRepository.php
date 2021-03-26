@@ -141,12 +141,7 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
             $entity = $this->getCachedEntity($id);
         }
 
-        $entity ??= $this
-            ->baseQuery()
-            ->apply(
-                fn (Query $q) => $this->filterById($q, $id)
-            )
-            ->one();
+        $entity ??= $this->byIdQuery($id)->one();
 
         if (is_null($entity)) {
             $this->deleteCachedEntity($id);
@@ -261,6 +256,24 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
     }
 
     /**
+     * Deletes entity and removes it from the cache.
+     */
+    protected function deleteEntity(DbModel $entity): bool
+    {
+        $id = $entity->getId();
+
+        $result = $this->byIdQuery($id)->delete();
+
+        if ($result !== true) {
+            return false;
+        }
+
+        $this->deleteCachedEntity($id);
+
+        return true;
+    }
+
+    /**
      * Converts {@see ORM} object to entity.
      * 
      * If the object is present in cache and
@@ -356,6 +369,17 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
         return (strlen($this->table) > 0)
             ? $this->table
             : $this->pluralAlias();
+    }
+
+    // queries
+
+    protected function byIdQuery(int $id): Query
+    {
+        return $this
+            ->baseQuery()
+            ->apply(
+                fn (Query $q) => $this->filterById($q, $id)
+            );
     }
 
     // filters
