@@ -3,7 +3,6 @@
 namespace Plasticode\Generators\Core;
 
 use Plasticode\Config\Config;
-use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
