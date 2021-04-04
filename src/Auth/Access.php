@@ -39,11 +39,11 @@ class Access
     )
     {
         $this->actionData = $this->flattenActionData(
-            $settingsProvider->get('actions', [])
+            $settingsProvider->get('actions') ?? []
         );
 
-        $this->rightsTemplates = $settingsProvider->get('templates', []);
-        $this->rightsSettings = $settingsProvider->get('rights', []);
+        $this->rightsTemplates = $settingsProvider->get('templates') ?? [];
+        $this->rightsSettings = $settingsProvider->get('rights') ?? [];
     }
 
     /**
