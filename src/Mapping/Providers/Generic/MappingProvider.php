@@ -4,6 +4,7 @@ namespace Plasticode\Mapping\Providers\Generic;
 
 use Plasticode\Events\EventDispatcher;
 use Plasticode\Mapping\Interfaces\MappingProviderInterface;
+use Plasticode\ObjectProxy;
 use Psr\Container\ContainerInterface;
 
 abstract class MappingProvider implements MappingProviderInterface
@@ -24,6 +25,16 @@ abstract class MappingProvider implements MappingProviderInterface
     public function boot(ContainerInterface $container): void
     {
         $this->registerEventHandlers($container);
+    }
+
+    /**
+     * Builds {@see ObjectProxy} for the provided `$className` retrieved from the container.
+     */
+    protected function proxy(ContainerInterface $container, string $className): ObjectProxy
+    {
+        return new ObjectProxy(
+            fn () => $container->get($className)
+        );
     }
 
     private function registerEventHandlers(ContainerInterface $container): void

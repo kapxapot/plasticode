@@ -8,6 +8,11 @@ use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Data\DbMetadata;
 use Plasticode\Data\Idiorm\Providers\RepositoryProvider;
+use Plasticode\Hydrators\AuthTokenHydrator;
+use Plasticode\Hydrators\MenuHydrator;
+use Plasticode\Hydrators\MenuItemHydrator;
+use Plasticode\Hydrators\TagHydrator;
+use Plasticode\Hydrators\UserHydrator;
 use Plasticode\Mapping\Interfaces\MappingProviderInterface;
 use Plasticode\Repositories\Idiorm\AuthTokenRepository;
 use Plasticode\Repositories\Idiorm\Core\RepositoryContext;
@@ -45,6 +50,12 @@ final class IdiormRepositoryProviderTest extends AbstractProviderTest
     public function testWiring(): void
     {
         $this->check(RepositoryContext::class);
+
+        $this->check(AuthTokenHydrator::class);
+        $this->check(MenuItemHydrator::class);
+        $this->check(MenuHydrator::class);
+        $this->check(TagHydrator::class);
+        $this->check(UserHydrator::class);
 
         $this->check(AuthTokenRepositoryInterface::class, AuthTokenRepository::class);
         $this->check(MenuItemRepositoryInterface::class, MenuItemRepository::class);

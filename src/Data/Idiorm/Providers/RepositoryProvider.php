@@ -2,15 +2,12 @@
 
 namespace Plasticode\Data\Idiorm\Providers;
 
-use Plasticode\Core\Interfaces\LinkerInterface;
-use Plasticode\External\Gravatar;
 use Plasticode\Hydrators\AuthTokenHydrator;
 use Plasticode\Hydrators\MenuHydrator;
 use Plasticode\Hydrators\MenuItemHydrator;
 use Plasticode\Hydrators\TagHydrator;
 use Plasticode\Hydrators\UserHydrator;
 use Plasticode\Mapping\Providers\Generic\MappingProvider;
-use Plasticode\ObjectProxy;
 use Plasticode\Repositories\Idiorm\AuthTokenRepository;
 use Plasticode\Repositories\Idiorm\Core\RepositoryContext;
 use Plasticode\Repositories\Idiorm\MenuItemRepository;
@@ -34,30 +31,19 @@ class RepositoryProvider extends MappingProvider
             AuthTokenRepositoryInterface::class =>
                 fn (ContainerInterface $c) => new AuthTokenRepository(
                     $c->get(RepositoryContext::class),
-                    new ObjectProxy(
-                        fn () => new AuthTokenHydrator(
-                            $c->get(UserRepositoryInterface::class)
-                        )
-                    )
+                    $this->proxy($c, AuthTokenHydrator::class)
                 ),
 
             MenuItemRepositoryInterface::class =>
                 fn (ContainerInterface $c) => new MenuItemRepository(
                     $c->get(RepositoryContext::class),
-                    new MenuItemHydrator(
-                        $c->get(LinkerInterface::class)
-                    )
+                    $c->get(MenuItemHydrator::class)
                 ),
 
             MenuRepositoryInterface::class =>
                 fn (ContainerInterface $c) => new MenuRepository(
                     $c->get(RepositoryContext::class),
-                    new ObjectProxy(
-                        fn () => new MenuHydrator(
-                            $c->get(MenuItemRepositoryInterface::class),
-                            $c->get(LinkerInterface::class)
-                        )
-                    )
+                    $this->proxy($c, MenuHydrator::class)
                 ),
 
             RoleRepositoryInterface::class =>
@@ -68,21 +54,13 @@ class RepositoryProvider extends MappingProvider
             TagRepositoryInterface::class =>
                 fn (ContainerInterface $c) => new TagRepository(
                     $c->get(RepositoryContext::class),
-                    new TagHydrator(
-                        $c->get(LinkerInterface::class)
-                    )
+                    $c->get(TagHydrator::class)
                 ),
 
             UserRepositoryInterface::class =>
                 fn (ContainerInterface $c) => new UserRepository(
                     $c->get(RepositoryContext::class),
-                    new ObjectProxy(
-                        fn () => new UserHydrator(
-                            $c->get(RoleRepositoryInterface::class),
-                            $c->get(LinkerInterface::class),
-                            $c->get(Gravatar::class)
-                        )
-                    )
+                    $this->proxy($c, UserHydrator::class)
                 ),
         ];
     }
