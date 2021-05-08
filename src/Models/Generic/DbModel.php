@@ -5,6 +5,7 @@ namespace Plasticode\Models\Generic;
 use BadMethodCallException;
 use Plasticode\Hydrators\Interfaces\HydratorInterface;
 use Plasticode\Models\Interfaces\DbModelInterface;
+use Plasticode\Models\Interfaces\EquatableInterface;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\ObjectProxy;
 use Plasticode\Util\Classes;
@@ -195,17 +196,17 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     }
 
     /**
-     * Checks if two objects are equal.
-     * 
-     * Equal means:
+     * Checks if two objects are equal:
      *  - Same class.
      *  - Same id.
+     * 
+     * @param self|null $obj
      */
-    public function equals(?DbModelInterface $model): bool
+    public function equals(?EquatableInterface $obj): bool
     {
-        return !is_null($model)
-            && ($model->getId() === $this->getId())
-            && (get_class($model) == static::class);
+        return $obj !== null
+            && $obj instanceof self
+            && $this->getId() === $obj->getId();
     }
 
     public function serialize(): array

@@ -4,7 +4,7 @@ namespace Plasticode\Models\Interfaces;
 
 use Plasticode\Interfaces\ArrayableInterface;
 
-interface DbModelInterface extends ArrayableInterface
+interface DbModelInterface extends ArrayableInterface, EquatableInterface
 {
     /**
      * Returns the id of the model.
@@ -12,21 +12,12 @@ interface DbModelInterface extends ArrayableInterface
      * Use getId() instead of id when $idField is custom.
      * It is recommended to use getId() always for safer code.
      */
-    function getId() : ?int;
+    public function getId(): ?int;
 
-    static function pluralAlias() : string;
-
-    /**
-     * Checks if two objects are equal.
-     * 
-     * Equal means:
-     *  - Same class.
-     *  - Same id.
-     */
-    function equals(?DbModelInterface $model) : bool;
+    public static function pluralAlias(): string;
 
     /**
      * Was model saved or not.
      */
-    function isPersisted() : bool;
+    public function isPersisted(): bool;
 }

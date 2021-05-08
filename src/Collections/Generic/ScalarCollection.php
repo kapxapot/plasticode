@@ -17,7 +17,7 @@ class ScalarCollection extends Collection
 
     /**
      * Checks if the collection contains the provided value.
-     *
+     * 
      * @param mixed $value
      */
     public function contains($value): bool

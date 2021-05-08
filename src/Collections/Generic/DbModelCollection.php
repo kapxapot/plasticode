@@ -4,7 +4,7 @@ namespace Plasticode\Collections\Generic;
 
 use Plasticode\Models\Interfaces\DbModelInterface;
 
-class DbModelCollection extends TypedCollection
+class DbModelCollection extends EquatableCollection
 {
     protected string $class = DbModelInterface::class;
 
@@ -44,12 +44,5 @@ class DbModelCollection extends TypedCollection
             ->numerize(
                 fn (DbModelInterface $m) => $m->getId()
             );
-    }
-
-    public function contains(DbModelInterface $model): bool
-    {
-        return $this->anyFirst(
-            fn (DbModelInterface $m) => $m->equals($model)
-        );
     }
 }
