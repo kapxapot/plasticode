@@ -7,7 +7,7 @@ use Webmozart\Assert\Assert;
 /**
  * {@see ScalarCollection}, storing numeric values.
  * 
- * Also, provides aggregate operations such as max() & sum().
+ * Also, provides aggregate operations such as `max()` & `sum()`.
  */
 class NumericCollection extends ScalarCollection
 {
