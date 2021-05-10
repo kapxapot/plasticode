@@ -9,10 +9,10 @@ namespace Plasticode\Models\Interfaces;
  */
 interface CreatedAtInterface extends DbModelInterface
 {
-    function createdAtIso() : string;
+    function createdAtIso(): string;
 
     /**
      * @param string|DateTime $date
      */
-    function isNewerThan($date) : bool;
+    function isNewerThan($date): bool;
 }
