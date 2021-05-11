@@ -46,10 +46,7 @@ class RepositoryProvider extends MappingProvider
                     $this->proxy($c, MenuHydrator::class)
                 ),
 
-            RoleRepositoryInterface::class =>
-                fn (ContainerInterface $c) => new RoleRepository(
-                    $c->get(RepositoryContext::class)
-                ),
+            RoleRepositoryInterface::class => RoleRepository::class,
 
             TagRepositoryInterface::class =>
                 fn (ContainerInterface $c) => new TagRepository(
