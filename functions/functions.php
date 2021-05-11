@@ -16,7 +16,7 @@ if (!function_exists('dd')) {
 if (!function_exists('isCallable')) {
     /**
      * Checks if the variable is callable and not a string
-     * that represents a function such as 'date'.
+     * that represents a function such as `date`.
      *
      * @param mixed $func
      */

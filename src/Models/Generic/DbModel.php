@@ -61,8 +61,8 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     /**
      * Returns the id of the model.
      * 
-     * Use getId() instead of id when $idField is custom.
-     * It is recommended to use getId() always for safer code.
+     * - Use `getId()` instead of just `id` when `$idField` is custom.
+     * - It's recommended to use `getId()` always for safer code.
      */
     public function getId(): ?int
     {
@@ -71,19 +71,19 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
         return $this->{$idField};
     }
 
-    public function hasId(): bool
-    {
-        return $this->getId() > 0;
-    }
-
+    /**
+     * Returns `true` if the entity is saved to DB.
+     * 
+     * Alias for `hasId()`.
+     */
     public function isPersisted(): bool
     {
         return $this->hasId();
     }
 
-    public function isNotHydrated(): bool
+    public function hasId(): bool
     {
-        return $this->hydratedState == self::NOT_HYDRATED;
+        return $this->getId() > 0;
     }
 
     /**
@@ -107,9 +107,14 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
         return $this;
     }
 
+    public function isNotHydrated(): bool
+    {
+        return $this->hydratedState == self::NOT_HYDRATED;
+    }
+
     /**
-     * Add required x() as 'x' method names that must be initialized
-     * with withX() before calling.
+     * Add required `x()` as 'x' method names that must be initialized
+     * with `withX()` before calling.
      *
      * @return string[]
      */
@@ -136,7 +141,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     }
 
     /**
-     * Sets value for property 'x()' (use it in 'withX($x)' methods).
+     * Sets value for property `x()` (use it in `withX($x)` methods).
      *
      * @param mixed $value
      * @return $this
@@ -149,18 +154,18 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     }
 
     /**
-     * Returns property 'x()' set up as 'withX($x)'.
+     * Returns property `x()` previously initialized by `withX($x)`.
      *
      * @return mixed
      */
     protected function getWithProperty(string $name, bool $required = false)
     {
         if (array_key_exists($name, $this->with)) {
-            $withName = $this->with[$name];
+            $withValue = $this->with[$name];
 
-            return isCallable($withName)
-                ? $withName()
-                : $withName;
+            return isCallable($withValue)
+                ? $withValue()
+                : $withValue;
         }
 
         $required = $required
@@ -197,8 +202,9 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
 
     /**
      * Checks if two objects are equal:
-     *  - Same class.
-     *  - Same id.
+     * 
+     * - Same class.
+     * - Same id.
      * 
      * @param self|null $obj
      */
