@@ -9,5 +9,5 @@ use Plasticode\Models\Interfaces\UpdatedAtInterface;
  */
 interface ChangingRepositoryInterface extends GetRepositoryInterface
 {
-    function get(?int $id): ?UpdatedAtInterface;
+    public function get(?int $id): ?UpdatedAtInterface;
 }

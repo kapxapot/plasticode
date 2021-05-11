@@ -10,5 +10,5 @@ interface EntityRelatedInterface
     /**
      * Returns the related entity class name.
      */
-    function getEntityClass(): string;
+    public function getEntityClass(): string;
 }

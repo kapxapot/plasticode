@@ -9,5 +9,5 @@ use Plasticode\Models\Interfaces\DbModelInterface;
  */
 interface GetRepositoryInterface extends RepositoryInterface
 {
-    function get(?int $id): ?DbModelInterface;
+    public function get(?int $id): ?DbModelInterface;
 }
