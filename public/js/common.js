@@ -6,8 +6,10 @@ var delay = (function() {
     };
 })();
 
-const lozadObserver = lozad(); // lazy loads elements with default selector as '.lozad'
-lozadObserver.observe();
+if (typeof lozad !== 'undefined') {
+    const lozadObserver = lozad(); // lazy loads elements with default selector as '.lozad'
+    lozadObserver.observe();
+}
 
 function updateUi() {
     // colorbox
