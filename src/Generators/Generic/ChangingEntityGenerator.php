@@ -9,7 +9,7 @@ abstract class ChangingEntityGenerator extends EntityGenerator
 {
     abstract protected function getRepository(): ChangingRepositoryInterface;
 
-    protected function getRules(array $data, $id = null) : array
+    protected function getRules(array $data, $id = null): array
     {
         $rules = parent::getRules($data, $id);
 
