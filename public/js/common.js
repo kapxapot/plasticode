@@ -6,8 +6,12 @@ var delay = (function() {
     };
 })();
 
-if (typeof lozad !== 'undefined') {
-    const lozadObserver = lozad(); // lazy loads elements with default selector as '.lozad'
+// lazy loads elements with default selector as '.lozad'
+const lozadObserver = (typeof lozad !== 'undefined')
+    ? lozad()
+    : null;
+
+if (lozadObserver) {
     lozadObserver.observe();
 }
 
