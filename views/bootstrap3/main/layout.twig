@@ -65,11 +65,15 @@
         {# Font Awesome #}
         <script src="https://kit.fontawesome.com/c7c8269336.js" crossorigin="anonymous"></script>
 
-        <!-- Lozad.js -->
-        <script type="text/javascript" src="//cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+        {% if with_lozad %}
+            <!-- Lozad.js -->
+            <script type="text/javascript" src="//cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+        {% endif %}
 
-        <!-- Hammer.js -->
-        <script src="https://hammerjs.github.io/dist/hammer.js"></script>
+        {% if with_hammer %}
+            <!-- Hammer.js -->
+            <script src="https://hammerjs.github.io/dist/hammer.js"></script>
+        {% endif %}
 
         {% block head_appendix %}{% endblock %}
 
