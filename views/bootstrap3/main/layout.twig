@@ -65,6 +65,11 @@
         {# Font Awesome #}
         <script src="https://kit.fontawesome.com/c7c8269336.js" crossorigin="anonymous"></script>
 
+        {# lookup #}
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+        <script src="{{ folders.global }}bootstrap-select/angular-bootstrap-select.js"></script>
+
         {% if with_lozad %}
             <!-- Lozad.js -->
             <script type="text/javascript" src="//cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
@@ -110,6 +115,7 @@
 
     {% set angular_app = angular.app ?? 'pcApp' %}
     {% set angular_ctrl = angular.ctrl ?? 'pcCtrl' %}
+    {% set angular_modules %}'angular-bootstrap-select', 'angular-bootstrap-select.extra'{% endset %}
 
     {% if fullscreen %}
         {% set body_styles = 'fullscreen' %}
