@@ -20,21 +20,21 @@
             <meta charset="utf-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-        
+
             <title>{% if title %}{{ title }} - {% endif %}{{ admin_title }} - {{ site_name }}</title>
 
             <!-- coded by Sergey Atroshchenko (kapxapot) / gmail / com (c) {{ years_str }} -->
-        
+
             <base href="{{ base }}/">
-        
+
             <link rel="shortcut icon" href="{{ fav_icon ?? '/favicon.ico' }}" />
-            
+
             {% if touch_icon %}
                 <link rel="apple-touch-icon" href="{{ touch_icon }}">
             {% endif %}
-        
+
             <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-            
+
             {% if with_colorbox %}
                 <link href="{{ folders.global }}colorbox/colorbox.css" rel="stylesheet" />
             {% endif %}
@@ -43,10 +43,10 @@
             <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
             <script>var API_ENDPOINT = '{{ api }}';</script>
             <script src="{{ angular.adminApp ? folders.local : folders.global }}js/{{angular_admin_app_kebab}}/dist/{{angular_admin_app_kebab}}.min.js"></script>
-            
+
             {# Font Awesome #}
             <script src="https://kit.fontawesome.com/c7c8269336.js" crossorigin="anonymous"></script>
-            
+
             {# lookup #}
             <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
             <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
@@ -61,7 +61,7 @@
             <link href="{{ angular.adminApp ? folders.local : folders.global }}js/{{angular_admin_app_kebab}}/dist/main.css" rel="stylesheet" />
             <link href="{{ folders.global }}css/bootstrap3/common.css" rel="stylesheet" />
             <link href="{{ folders.global }}css/bootstrap3/admin.css" rel="stylesheet">
-        
+
             {# local Plasticode css #}
             {% include 'admin/includes/css.twig' %}
         {% endblock %}
@@ -90,14 +90,14 @@
                 <a href="javascript:void()" class="close" data-hide="alert" aria-label="close">&times;</a>
                 {{ '{{alertSuccess}}' }}
             </div>
-            
+
             {% if auth.user %}
                 {% include 'modals/auth/password/change.twig' %}
             {% else %}
                 {% include 'modals/auth/signup.twig' %}
                 {% include 'modals/auth/signin.twig' %}
             {% endif %}
-            
+
             {{ more_modals }}
         </div>
 
@@ -120,13 +120,13 @@
 
         {% block js %}
             <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-            
+
             {% if with_colorbox %}
                 <script src="{{ folders.global }}colorbox/colorbox.js"></script>
             {% endif %}
 
             {% block js_appendix %}{% endblock %}
-        
+
             <script src="{{ folders.global }}js/common.js"></script>
             <script src="{{ folders.global }}js/admin.js"></script>
 
