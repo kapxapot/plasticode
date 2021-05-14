@@ -65,10 +65,12 @@
         {# Font Awesome #}
         <script src="https://kit.fontawesome.com/c7c8269336.js" crossorigin="anonymous"></script>
 
-        {# lookup #}
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
-        <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
-        <script src="{{ folders.global }}bootstrap-select/angular-bootstrap-select.js"></script>
+        {% if with_bootstrap_select %}
+            {# lookup #}
+            <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+            <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+            <script src="{{ folders.global }}bootstrap-select/angular-bootstrap-select.js"></script>
+        {% endif %}
 
         {% if with_lozad %}
             <!-- Lozad.js -->
@@ -93,8 +95,6 @@
             <link rel="alternate" type="application/rss+xml" title="{{ site_name }} RSS" href="{{ rss_feed }}" />
         {% endif %}
 
-        {#<link rel="search" href="/search.xml" type="application/opensearchdescription+xml" title="{{ site_name }}"/>#}
-
         {% if rel_prev %}<link rel="prev" href="{{ rel_prev }}" />{% endif %}
         {% if rel_next %}<link rel="next" href="{{ rel_next }}" />{% endif %}
 
@@ -115,7 +115,10 @@
 
     {% set angular_app = angular.app ?? 'pcApp' %}
     {% set angular_ctrl = angular.ctrl ?? 'pcCtrl' %}
-    {% set angular_modules %}'angular-bootstrap-select', 'angular-bootstrap-select.extra'{% endset %}
+
+    {% if with_bootstrap_select %}
+        {% set angular_modules %}'angular-bootstrap-select', 'angular-bootstrap-select.extra'{% endset %}
+    {% endif %}
 
     {% if fullscreen %}
         {% set body_styles = 'fullscreen' %}
