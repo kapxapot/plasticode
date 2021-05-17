@@ -494,6 +494,11 @@ a.gray:hover {
     margin-bottom: 0;
 }
 
+.vcenter,
+.vmiddle {
+    vertical-align: middle;
+}
+
 .spoiler {
     padding-top: 10px;
     padding-bottom: 10px;
