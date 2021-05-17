@@ -496,7 +496,7 @@ a.gray:hover {
 
 .vcenter,
 .vmiddle {
-    vertical-align: middle;
+    vertical-align: middle !important;
 }
 
 .spoiler {
