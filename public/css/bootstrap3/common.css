@@ -241,6 +241,10 @@ textarea.form-control {
     visibility: hidden;
 }
 
+.modal-button--compact {
+    padding: 3px 6px;
+}
+
 /* article */
 
 .article ul {
