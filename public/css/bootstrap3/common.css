@@ -243,6 +243,7 @@ textarea.form-control {
 
 .modal-button--compact {
     padding: 3px 6px;
+    min-width: 28px;
 }
 
 /* article */
