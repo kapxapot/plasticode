@@ -129,6 +129,11 @@
         {% include 'main/includes/nav.twig' %}
 
         <div class="container">
+            <div class="alert alert-success alert-dismissable alert-corner fade in" ng-cloak>
+                <a href="javascript:void()" class="close" data-hide="alert" aria-label="close">&times;</a>
+                {{ '{{alertSuccess}}' }}
+            </div>
+
             {% if with_auth %}
                 {% if auth.user %}
                     {% include 'modals/auth/password/change.twig' %}
