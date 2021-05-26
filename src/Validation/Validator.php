@@ -51,7 +51,7 @@ class Validator implements ValidatorInterface
         array $rules
     ): ValidationResult
     {
-        $params = $request->getMethod() === 'POST'
+        $params = in_array($request->getMethod(), ['POST', 'PUT', 'PATCH'])
             ? $request->getParsedBody()
             : $request->getQueryParams();
 
