@@ -409,13 +409,13 @@ function mutateUrlToFullscreen(url) {
     if (fullscreenMode) {
         url += '?full';
     }
-    
+
     return url;
 }
 
 function navigateToPrev() {
     const links = getRelLinks();
-    
+
     if (links.prev) {
         location.href = mutateUrlToFullscreen(links.prev.href);
     }
@@ -423,7 +423,7 @@ function navigateToPrev() {
 
 function navigateToNext() {
     const links = getRelLinks();
-    
+
     if (links.next) {
         location.href = mutateUrlToFullscreen(links.next.href);
     }
@@ -443,9 +443,9 @@ function getQueryParam(name) {
 
 function setUrl(path = null, params = null, hash = null) {
     path = path ? path : getUrl().pathname;
-    
+
     const paramsStr = paramsToString(params);
-    
+
     if (paramsStr.length > 0) {
         path += '?' + paramsStr;
     }
@@ -453,24 +453,24 @@ function setUrl(path = null, params = null, hash = null) {
     if (hash) {
         path += '#' + hash.replace(/^#/, '');
     }
-    
+
     window.history.replaceState({}, '', path);
 }
 
 function paramsToString(params) {
     let str = '';
-    
+
     for (var p of params) {
         const name = p[0];
         const value = p[1];
-        
+
         str += name;
-        
+
         if (value && value.length > 0) {
             str += '=' + value;
         }
     }
-    
+
     return str;
 }
 
@@ -482,14 +482,14 @@ function setQueryParams(params) {
 function setQueryParam(name, value) {
     const params = getQueryParams();
     params.set(name, value);
-    
+
     setQueryParams(params);
 }
 
 function removeQueryParam(name) {
     const params = getQueryParams();
     params.delete(name);
-    
+
     setQueryParams(params);
 }
 
