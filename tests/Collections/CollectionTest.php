@@ -464,4 +464,16 @@ final class CollectionTest extends TestCase
             $func(...$col)
         );
     }
+
+    public function testDestructuring(): void
+    {
+        $col = Collection::collect(1, 2, 3, 4);
+
+        [$a, $b, $c, $d] = $col;
+
+        $this->assertEquals(1, $a);
+        $this->assertEquals(2, $b);
+        $this->assertEquals(3, $c);
+        $this->assertEquals(4, $d);
+    }
 }
