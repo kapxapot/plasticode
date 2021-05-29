@@ -87,7 +87,8 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
     {
         return new Query(
             $this->getDbQuery(),
-            fn (ORM $obj) => $this->ormObjToEntity($obj)
+            fn (ORM $obj, bool $ignoreCache = false) =>
+                $this->ormObjToEntity($obj, $ignoreCache)
         );
     }
 
@@ -280,19 +281,19 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
      * Converts {@see ORM} object to entity.
      * 
      * If the object is present in cache and
-     * $updateCache !== true, it is loaded from cache.
+     * `$ignoreCache !== true`, it is loaded from cache.
      * 
      * Otherwise, the new entity is created, cached and hydrated.
      */
-    private function ormObjToEntity(ORM $ormObj, bool $updateCache = false): DbModel
+    private function ormObjToEntity(ORM $ormObj, bool $ignoreCache = false): DbModel
     {
         $id = $ormObj[$this->idField()];
         $entity = $this->getCachedEntity($id);
 
         if ($entity) {
-            // if the entity is cached and doesn't need to be updated,
+            // if the entity is cached and doesn't need to be reloaded,
             // just return it
-            if (!$updateCache) {
+            if (!$ignoreCache) {
                 return $entity;
             }
 

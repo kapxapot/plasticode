@@ -118,7 +118,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
      * "Select all".
      * In case of empty Query returns empty collection.
      */
-    public function all(): DbModelCollection
+    public function all(bool $ignoreCache = false): DbModelCollection
     {
         if ($this->isEmpty()) {
             return DbModelCollection::empty();
@@ -130,7 +130,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
             $objs = $query->findMany();
 
             $all = array_map(
-                fn (ORM $obj) => ($this->toModel)($obj),
+                fn (ORM $obj) => ($this->toModel)($obj, $ignoreCache),
                 $objs ?? []
             );
 
@@ -163,7 +163,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
      * "Select one".
      * In case of empty query returns null.
      */
-    public function one(): ?DbModel
+    public function one(bool $ignoreCache = false): ?DbModel
     {
         if ($this->isEmpty()) {
             return null;
@@ -172,7 +172,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
         $obj = $this->getSortedQuery()->findOne();
 
         return $obj
-            ? ($this->toModel)($obj)
+            ? ($this->toModel)($obj, $ignoreCache)
             : null;
     }
 
