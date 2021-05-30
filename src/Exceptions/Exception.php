@@ -2,8 +2,8 @@
 
 namespace Plasticode\Exceptions;
 
-use Exception as GlobalException;
+use Exception as BaseException;
 
-abstract class Exception extends GlobalException
+abstract class Exception extends BaseException
 {
 }

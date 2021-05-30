@@ -21,9 +21,9 @@ abstract class Controller
 {
     protected AppContext $appContext;
 
-    private SettingsProviderInterface $settingsProvider;
-    private TranslatorInterface $translator;
-    private ViewInterface $view;
+    protected SettingsProviderInterface $settingsProvider;
+    protected TranslatorInterface $translator;
+    protected ViewInterface $view;
 
     protected ValidatorInterface $validator;
     protected LoggerInterface $logger;
