@@ -5,9 +5,10 @@ namespace Plasticode\Testing\Mocks\Repositories;
 use Plasticode\Collections\UserCollection;
 use Plasticode\Models\User;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
+use Plasticode\Testing\Mocks\Repositories\Generic\RepositoryMock;
 use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 
-class UserRepositoryMock implements UserRepositoryInterface
+class UserRepositoryMock extends RepositoryMock implements UserRepositoryInterface
 {
     private UserCollection $users;
 

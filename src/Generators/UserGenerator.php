@@ -31,7 +31,7 @@ class UserGenerator extends ChangingEntityGenerator
         return User::class;
     }
 
-    protected function getRepository(): UserRepositoryInterface
+    public function getRepository(): UserRepositoryInterface
     {
         return $this->userRepository;
     }

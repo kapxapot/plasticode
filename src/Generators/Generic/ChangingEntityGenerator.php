@@ -7,7 +7,7 @@ use Respect\Validation\Validator;
 
 abstract class ChangingEntityGenerator extends EntityGenerator
 {
-    abstract protected function getRepository(): ChangingRepositoryInterface;
+    abstract public function getRepository(): ChangingRepositoryInterface;
 
     protected function getRules(array $data, $id = null): array
     {

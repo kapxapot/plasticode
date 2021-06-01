@@ -176,7 +176,7 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
     /**
      * Remove entity from repository cache.
      */
-    protected function deleteCachedEntity(int $id): void
+    public function deleteCachedEntity(int $id): void
     {
         $key = $this->entityCacheKey($id);
 

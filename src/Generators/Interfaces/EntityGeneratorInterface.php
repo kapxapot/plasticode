@@ -3,6 +3,7 @@
 namespace Plasticode\Generators\Interfaces;
 
 use Plasticode\Interfaces\EntityRelatedInterface;
+use Plasticode\Repositories\Interfaces\Generic\RepositoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 
@@ -11,22 +12,27 @@ interface EntityGeneratorInterface extends EntityRelatedInterface
     /**
      * Get entity name (plural form in snake case like 'auth_tokens').
      */
-    function getEntity(): string;
+    public function getEntity(): string;
 
-    function validate(ServerRequestInterface $request, array $data, $id = null): void;
+    public function getRepository(): RepositoryInterface;
 
-    function afterLoad(array $item): array;
-    function beforeSave(array $data, $id = null): array;
-    function afterSave(array $item, array $data): void;
-    function afterDelete(array $item): void;
+    public function validate(ServerRequestInterface $request, array $data, $id = null): void;
+
+    public function afterLoad(array $item): array;
+
+    public function beforeSave(array $data, $id = null): array;
+
+    public function afterSave(array $item, array $data): void;
+
+    public function afterDelete(array $item): void;
 
     /**
      * Generates API routes based on settings.
      */
-    function generateAPIRoutes(App $app): void;
+    public function generateAPIRoutes(App $app): void;
 
     /**
      * Generates admin page route.
      */
-    function generateAdminPageRoute(App $app): void;
+    public function generateAdminPageRoute(App $app): void;
 }

@@ -13,6 +13,7 @@ use Plasticode\Generators\UserGenerator;
 use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
 use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
+use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Testing\AbstractProviderTest;
@@ -33,6 +34,7 @@ final class GeneratorProviderTest extends AbstractProviderTest
 
             MenuItemRepositoryInterface::class,
             MenuRepositoryInterface::class,
+            RoleRepositoryInterface::class,
             UserRepositoryInterface::class,
         ];
     }

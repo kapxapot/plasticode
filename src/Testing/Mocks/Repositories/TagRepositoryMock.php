@@ -6,9 +6,10 @@ use Plasticode\Collections\Generic\NumericCollection;
 use Plasticode\Collections\TagCollection;
 use Plasticode\Models\Tag;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
+use Plasticode\Testing\Mocks\Repositories\Generic\RepositoryMock;
 use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 
-class TagRepositoryMock implements TagRepositoryInterface
+class TagRepositoryMock extends RepositoryMock implements TagRepositoryInterface
 {
     private TagCollection $tags;
 

@@ -5,9 +5,10 @@ namespace Plasticode\Testing\Mocks\Repositories;
 use Plasticode\Collections\PageCollection;
 use Plasticode\Models\Interfaces\PageInterface;
 use Plasticode\Repositories\Interfaces\PageRepositoryInterface;
+use Plasticode\Testing\Mocks\Repositories\Generic\RepositoryMock;
 use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 
-class PageRepositoryMock implements PageRepositoryInterface
+class PageRepositoryMock extends RepositoryMock implements PageRepositoryInterface
 {
     private PageCollection $pages;
 

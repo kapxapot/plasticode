@@ -26,7 +26,7 @@ class MenuGenerator extends ChangingEntityGenerator
         return Menu::class;
     }
 
-    protected function getRepository(): MenuRepositoryInterface
+    public function getRepository(): MenuRepositoryInterface
     {
         return $this->menuRepository;
     }

@@ -170,9 +170,9 @@ class Api implements ApiInterface
         $entity = $this->forTable($table)->create($data);
         $entity->save();
 
-        $generator->afterSave($entity->asArray(), $original);
-
         $this->logger->info('Created ' . $table . ': ' . $entity->id);
+
+        $generator->afterSave($entity->asArray(), $original);
 
         return $this
             ->get($response, $entity->id, $generator)
@@ -215,11 +215,14 @@ class Api implements ApiInterface
         $entity->set($data);
         $entity->save();
 
-        $generator->afterSave($entity->asArray(), $original);
-
         $this->logger->info(
             'Updated ' . $table . ': ' . $entity->id
         );
+
+        $repository = $generator->getRepository();
+        $repository->deleteCachedEntity($entity->id);
+
+        $generator->afterSave($entity->asArray(), $original);
 
         return $this->get($response, $entity->id, $generator);
     }
@@ -249,11 +252,14 @@ class Api implements ApiInterface
 
         $entity->delete();
 
-        $generator->afterDelete($entity->asArray());
-
         $this->logger->info(
             'Deleted ' . $table . ': ' . $entity->id
         );
+
+        $repository = $generator->getRepository();
+        $repository->deleteCachedEntity($entity->id);
+
+        $generator->afterDelete($entity->asArray());
 
         return $response->withStatus(204);
     }

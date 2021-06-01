@@ -5,9 +5,10 @@ namespace Plasticode\Testing\Mocks\Repositories;
 use Plasticode\Collections\RoleCollection;
 use Plasticode\Models\Role;
 use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
+use Plasticode\Testing\Mocks\Repositories\Generic\RepositoryMock;
 use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 
-class RoleRepositoryMock implements RoleRepositoryInterface
+class RoleRepositoryMock extends RepositoryMock implements RoleRepositoryInterface
 {
     private RoleCollection $roles;
 

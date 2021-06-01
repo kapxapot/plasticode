@@ -7,4 +7,8 @@ namespace Plasticode\Repositories\Interfaces\Generic;
  */
 interface RepositoryInterface
 {
+    /**
+     * Remove entity from repository cache.
+     */
+    public function deleteCachedEntity(int $id): void;
 }
