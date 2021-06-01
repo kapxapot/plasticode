@@ -5,7 +5,6 @@ namespace Plasticode\Generators;
 use Plasticode\Generators\Core\GeneratorContext;
 use Plasticode\Generators\Generic\EntityGenerator;
 use Plasticode\Models\Role;
-use Plasticode\Repositories\Interfaces\Generic\RepositoryInterface;
 use Plasticode\Repositories\Interfaces\RoleRepositoryInterface;
 
 class RoleGenerator extends EntityGenerator
@@ -27,7 +26,7 @@ class RoleGenerator extends EntityGenerator
         return Role::class;
     }
 
-    public function getRepository(): RepositoryInterface
+    public function getRepository(): RoleRepositoryInterface
     {
         return $this->roleRepository;
     }
