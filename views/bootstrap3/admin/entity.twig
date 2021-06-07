@@ -73,10 +73,10 @@
     {% endif %}
 
     var formControls = $('#entityForm').find('.form-control');
-    
+
     $('#entityView').on('shown.bs.modal', function() {
         formControls.trigger('change');
-        
+
         var initCroppie = function() {
             if ($scope.croppie) {
                 var i = $scope.item;
@@ -102,9 +102,9 @@
             }
         };
         initCroppie();
-    })
+    });
 
-    $('#entityView').on('show.bs.modal', function() {
+    $('#entityView').on('shown.bs.modal', function() {
         var initMdes = function() {
             {% if mde %}
                     var buttons = angular.copy(mdEditorService.defaultButtons);
@@ -357,13 +357,13 @@
     $scope.onChange = function() {
         {% include 'admin/includes/on_change.twig' %}
     };
-    
+
     formControls.change($scope.onChange);
 
     $scope.createItem = function() {
         resetForm('entity');
         //$('#entityForm')[0].reset();
-        
+
         var newItem = {};
 
         {% for col, value in columns %}
@@ -410,7 +410,7 @@
             {% endif %}
         {% endfor %}
     };
-    
+
     $scope.editItem = function(i) {
         $scope.setItem(i);
 
@@ -426,12 +426,12 @@
 
         showModal('entity');
     };
-    
+
     $scope.refresh = function(data) {
         $scope.setItem(data);
         $scope.table.ajax.reload(null, false);
     };
-    
+
     $scope.deleteItem = function(i) {
         if (confirm('Действительно удалить {{ name_accus }}{{ delete_extra_message|raw }}?')) {
             $scope.ajax({
@@ -442,7 +442,7 @@
             });
         }
     };
-    
+
     $scope.submitData = function(obj, persist) {
         //console.log(obj);
         var itemId = $scope.itemId;
@@ -462,7 +462,7 @@
         });
         //}, 100000);
     };
-    
+
     $scope.isPreview = false;
     $scope.textSync = function(text, editor, col) {
         $scope.item[col] = text;
@@ -475,7 +475,7 @@
             }, 1000);
         }
     }
-    
+
     $scope.togglePreview = function(isPreview, editor, col) {
         if (isPreview !== $scope.isPreview) {
             $scope.isPreview = isPreview;
@@ -485,22 +485,22 @@
             });
         }
     }
-    
+
     $scope.search = function(text) {
         return plDataService.getMdeSearchHints(text).then(function (results) {
             return results;
         });
     }
-    
+
     $('#entityForm').submit(function(e) {
         $scope.prePost(e);
 
         var obj = {};
-        
+
         if ($scope.item && $scope.item.id > 0) {
             obj.updated_at = $scope.item.updated_at;
         }
-        
+
         {% for col, value in columns if ((value.readonly is null or value.on_form == true) and (not value.access or can(alias, value.access))) %}
             {% if value.type == 'bool' %}
                 obj['{{ col }}'] = $('#entityForm').find('#{{ col }}').is(':checked') ? 1 : 0;
@@ -515,17 +515,17 @@
         {% for col in hidden|keys %}
             obj['{{ col }}'] = $('#entityForm').find('#{{ col }}').val();
         {% endfor %}
-        
+
         var persist = $('#entityForm').find('#persist').is(':checked');
-        
+
         if ($scope.croppie) {
             $scope.croppieGetThumb(function(thumb) {
                 if ($scope.originalPicture != -1) {
                     obj['picture'] = $scope.originalPicture;
                 }
-                
+
                 obj['thumb'] = thumb;
-                
+
                 var croppieInfo = $('#croppie-upload').croppie('get');
                 obj['points'] = croppieInfo.points;
 
@@ -536,7 +536,7 @@
             $scope.submitData(obj, persist);
         }
     });
-    
+
     $scope.tableInitComplete = function(settings, json) {
         {% if action_onload %}
             {% if action_onload.action == 'create' and can_create %}
@@ -553,7 +553,7 @@
     Promise.all(promises).then(function(results) {
         $scope.initTable();
     });
-    
+
     {{ entity_more_angular }}
 {% endset %}
 
