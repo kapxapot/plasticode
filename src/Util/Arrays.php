@@ -191,7 +191,7 @@ class Arrays
 
         $values = array_filter(
             array_unique($values),
-            fn ($item) => !is_null($item)
+            fn ($item) => $item !== null
         );
 
         return array_values($values);

@@ -321,6 +321,14 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     }
 
     /**
+     * Alias for `extract()`.
+     */
+    public function pluck(string $column): Collection
+    {
+        return $this->extract($column);
+    }
+
+    /**
      * Extracts non-null column/property values from collection.
      */
     public function extract(string $column): Collection
