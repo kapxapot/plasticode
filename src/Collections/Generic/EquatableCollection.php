@@ -2,11 +2,22 @@
 
 namespace Plasticode\Collections\Generic;
 
+use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\Interfaces\EquatableInterface;
 
 class EquatableCollection extends TypedCollection
 {
     protected string $class = EquatableInterface::class;
+
+    /**
+     * Shortcut for from()->distinct().
+     * 
+     * @return static
+     */
+    public static function fromDistinct(ArrayableInterface $arrayable): self
+    {
+        return static::from($arrayable)->distinct();
+    }
 
     /**
      * Returns distinct elements using `contains()` function.
