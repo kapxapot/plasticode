@@ -54,13 +54,28 @@ class EquatableCollection extends TypedCollection
         );
     }
 
+    /**
+     * Finds an intersection between two collections.
+     *
+     * @param static $other
+     * @return static
+     */
+    public function intersect(self $other): self
+    {
+        return static::from(
+            $other->where(
+                fn (EquatableInterface $e) => $this->contains($e)
+            )
+        );
+    }
+
     public function contains(?EquatableInterface $element): bool
     {
         if ($element === null) {
             return false;
         }
 
-        return $this->anyFirst(
+        return $this->any(
             fn (EquatableInterface $eq) => $eq->equals($element)
         );
     }

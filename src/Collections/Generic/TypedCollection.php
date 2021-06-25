@@ -18,4 +18,10 @@ abstract class TypedCollection extends Collection
 
         parent::__construct($data);
     }
+
+    public function any($selector = null, $value = null): bool
+    {
+        // anyFirst() can be used since typed collection doesn't contain nulls
+        return $this->anyFirst($selector, $value);
+    }
 }

@@ -2,7 +2,9 @@
 
 namespace Plasticode\Testing\Dummies;
 
-class ModelDummy
+use Plasticode\Models\Interfaces\EquatableInterface;
+
+class ModelDummy implements EquatableInterface
 {
     public int $id;
     public string $name;
@@ -30,5 +32,12 @@ class ModelDummy
     public function getName() : string
     {
         return $this->name;
+    }
+
+    public function equals(?EquatableInterface $obj): bool
+    {
+        return $obj !== null
+            && $obj instanceof self
+            && $this->id == $obj->id;
     }
 }
