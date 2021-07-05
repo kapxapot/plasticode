@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Repositories\Traits;
+namespace Plasticode\Repositories\Idiorm\Traits;
 
 use Plasticode\Search\SearchParams;
 use Plasticode\Data\Query;
