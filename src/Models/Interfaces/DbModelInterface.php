@@ -4,7 +4,7 @@ namespace Plasticode\Models\Interfaces;
 
 use Plasticode\Interfaces\ArrayableInterface;
 
-interface DbModelInterface extends ArrayableInterface, EquatableInterface
+interface DbModelInterface extends ArrayableInterface, EquatableInterface, SerializableInterface
 {
     /**
      * Returns the id of the model.

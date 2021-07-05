@@ -3,8 +3,9 @@
 namespace Plasticode\Collections\Generic;
 
 use Plasticode\Models\Interfaces\DbModelInterface;
+use Plasticode\Models\Interfaces\SerializableInterface;
 
-class DbModelCollection extends EquatableCollection
+class DbModelCollection extends EquatableCollection implements SerializableInterface
 {
     protected string $class = DbModelInterface::class;
 
@@ -44,5 +45,14 @@ class DbModelCollection extends EquatableCollection
             ->numerize(
                 fn (DbModelInterface $m) => $m->getId()
             );
+    }
+
+    public function serialize(): array
+    {
+        return $this
+            ->map(
+                fn (DbModelInterface $m) => $m->serialize()
+            )
+            ->toArray();
     }
 }

@@ -2,16 +2,17 @@
 
 namespace Plasticode\Search;
 
-use Plasticode\Collections\Generic\Collection;
+use JsonSerializable;
+use Plasticode\Collections\Generic\DbModelCollection;
 
-class SearchResult
+class SearchResult implements JsonSerializable
 {
-    private Collection $data;
+    private DbModelCollection $data;
     private int $totalCount;
     private int $filteredCount;
 
     public function __construct(
-        Collection $data,
+        DbModelCollection $data,
         int $totalCount,
         ?int $filteredCount = null
     )
@@ -21,7 +22,7 @@ class SearchResult
         $this->filteredCount = $filteredCount ?? $totalCount;
     }
 
-    public function data(): Collection
+    public function data(): DbModelCollection
     {
         return $this->data;
     }
@@ -34,5 +35,19 @@ class SearchResult
     public function filteredCount(): int
     {
         return $this->filteredCount;
+    }
+
+    // JsonSerializable
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'data' => $this->data()->serialize(),
+            'recordsTotal' => $this->totalCount(),
+            'recordsFiltered' => $this->filteredCount(),
+        ];
     }
 }
