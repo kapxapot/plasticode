@@ -8,6 +8,7 @@ use Plasticode\Models\Tag;
 use Plasticode\Data\Query;
 use Plasticode\Repositories\Idiorm\Generic\IdiormRepository;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
+use Plasticode\Search\SearchParams;
 
 class TagRepository extends IdiormRepository implements TagRepositoryInterface
 {
@@ -50,12 +51,12 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface
             ->delete();
     }
 
-    public function search(string $searchQuery): TagCollection
+    public function search(SearchParams $searchParams): TagCollection
     {
         return TagCollection::from(
             $this
                 ->query()
-                ->search($searchQuery, '(tag like ?)')
+                ->search($searchParams->filter(), '(tag like ?)')
                 ->orderByAsc('tag')
         );
     }

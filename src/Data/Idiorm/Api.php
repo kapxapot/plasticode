@@ -86,6 +86,7 @@ class Api implements ApiInterface
     }
 
     public function getMany(
+        ServerRequestInterface $request,
         ResponseInterface $response,
         EntityGeneratorInterface $generator,
         array $options = []

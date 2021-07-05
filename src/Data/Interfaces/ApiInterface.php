@@ -11,7 +11,7 @@ interface ApiInterface
     /**
      * Returns entity by id.
      */
-    function get(
+    public function get(
         ResponseInterface $response,
         int $id,
         EntityGeneratorInterface $generator
@@ -20,7 +20,8 @@ interface ApiInterface
     /**
      * Returns many entities.
      */
-    function getMany(
+    public function getMany(
+        ServerRequestInterface $request,
         ResponseInterface $response,
         EntityGeneratorInterface $generator,
         array $options = []
@@ -29,7 +30,7 @@ interface ApiInterface
     /**
      * Creates entity.
      */
-    function create(
+    public function create(
         ServerRequestInterface $request,
         ResponseInterface $response,
         EntityGeneratorInterface $generator
@@ -38,7 +39,7 @@ interface ApiInterface
     /**
      * Updates entity.
      */
-    function update(
+    public function update(
         ServerRequestInterface $request,
         ResponseInterface $response,
         int $id,
@@ -48,7 +49,7 @@ interface ApiInterface
     /**
      * Deletes entity.
      */
-    function delete(
+    public function delete(
         ResponseInterface $response,
         int $id,
         EntityGeneratorInterface $generator

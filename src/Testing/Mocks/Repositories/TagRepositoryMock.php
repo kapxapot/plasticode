@@ -6,6 +6,7 @@ use Plasticode\Collections\Generic\NumericCollection;
 use Plasticode\Collections\TagCollection;
 use Plasticode\Models\Tag;
 use Plasticode\Repositories\Interfaces\TagRepositoryInterface;
+use Plasticode\Search\SearchParams;
 use Plasticode\Testing\Mocks\Repositories\Generic\RepositoryMock;
 use Plasticode\Testing\Seeders\Interfaces\ArraySeederInterface;
 
@@ -63,9 +64,9 @@ class TagRepositoryMock extends RepositoryMock implements TagRepositoryInterface
         return true;
     }
 
-    public function search(string $searchQuery): TagCollection
+    public function search(SearchParams $searchParams): TagCollection
     {
         // placeholder
-        return $this->getAllByTag($searchQuery);
+        return $this->getAllByTag($searchParams->filter());
     }
 }

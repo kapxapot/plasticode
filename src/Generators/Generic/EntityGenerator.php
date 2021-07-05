@@ -157,6 +157,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
                 ->get(
                     '/' . $endPoint['uri'],
                     fn ($request, $response, $args) => $api->getMany(
+                        $request,
                         $response,
                         $generator,
                         array_merge(
