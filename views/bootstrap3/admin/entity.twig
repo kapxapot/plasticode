@@ -306,7 +306,7 @@
                             render: function(data, type, row) {
                                 {% set type = value.display_type ?? value.type %}
                                 {% if value.template %}
-                                    {{ m.column_template(value.template, col) }}
+                                    {{ m.column_template(value.template) }}
                                 {% elseif value.entity %}
                                     {{ m.column_entity(_context, col) }}
                                 {% elseif type == 'bool' %}

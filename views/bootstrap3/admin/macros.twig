@@ -144,11 +144,17 @@
 {% endmacro %}
 
 {% macro column_date(name) %}
+    const value = row.{{ name }};
+
+    if (!value) {
+        return null;
+    }
+
     const format = (type === 'display' || type === 'filter')
         ? 'DD.MM.Y HH:mm'
         : 'X';
 
-    return moment(row.{{ name }}).format(format);
+    return moment(value).format(format);
 {% endmacro %}
 
 {% macro column_entity(context, name) %}
@@ -158,10 +164,6 @@
     return entity ? entity.{{ m.entity_field(context, col) }} : null;
 {% endmacro %}
 
-{% macro column_template(template, name) %}
-    if (type === 'display') {
-        return {{ template|raw }};
-    }
-
-    return row.{{ name }};
+{% macro column_template(template) %}
+    return {{ template|raw }};
 {% endmacro %}
