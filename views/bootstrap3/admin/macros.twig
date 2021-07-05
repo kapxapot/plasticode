@@ -124,36 +124,44 @@
 
 {# table columns #}
 {% macro column(name) %}
-    {#<td>{{ '{{i.' ~ name ~ '}}' }}</td>#}
     return row.{{ name }};
 {% endmacro %}
 
 {% macro column_bool(name) %}
-    {#<td>{{ '{{i.' ~ name ~ " == 1 ? 'Да' : 'Нет'}}" }}</td>#}
-    {#<td><span class="glyphicon glyphicon-ok" ng-show="{{ '{{i.' ~ name ~ '}}' }}" title="Да"></span></td>#}
-    return row.{{ name }} == 1 ? '<span class="glyphicon glyphicon-ok" title="Да"></span>' : null;
+    if (type === 'display') {
+        return row.{{ name }} == 1 ? '<span class="glyphicon glyphicon-ok" title="Да"></span>' : null;
+    }
+
+    return row.{{ name }};
 {% endmacro %}
 
 {% macro column_img(name) %}
-    {#{% set item = '{{i.' ~ name ~ '}}' %}
-    <td><img src="{{ item }}" title="{{ item }}" /></td>#}
-    return '<img src="' + row.{{ name }} + '" title="' + row.{{ name }} + '" />';
+    if (type === 'display') {
+        return '<img src="' + row.{{ name }} + '" title="' + row.{{ name }} + '" />';
+    }
+
+    return row.{{ name }};
 {% endmacro %}
 
 {% macro column_date(name) %}
-    {#<td>{{ '{{i.' ~ name ~ "|date:'dd.MM.yyyy'}}" }}</td>#}
-    return row.{{ name }};
+    const format = (type === 'display' || type === 'filter')
+        ? 'DD.MM.Y HH:mm'
+        : 'X';
+
+    return moment(row.{{ name }}).format(format);
 {% endmacro %}
 
 {% macro column_entity(context, name) %}
     {% import _self as m %}
     {% set col = context.columns[name] %}
-    {#<td>{{ '{{(' ~ col.entity ~ '|getById:i.' ~ name ~ ').' ~ m.entity_field(context, col) ~ '}}' }}</td>#}
     var entity = getById($scope.{{ col.entity }}, row.{{ name }});
     return entity ? entity.{{ m.entity_field(context, col) }} : null;
 {% endmacro %}
 
-{% macro column_template(template) %}
-    {#<td>{{ template|raw }}</td>#}
-    return {{ template|raw }};
+{% macro column_template(template, name) %}
+    if (type === 'display') {
+        return {{ template|raw }};
+    }
+
+    return row.{{ name }};
 {% endmacro %}

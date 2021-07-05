@@ -248,8 +248,18 @@
     {% endfor %}
 
     $scope.initTable = function() {
+        {% set tableAlias = alias ~ '-table' %}
+        {% set apiChunk = api ~ (source ?? alias) %}
+
+        {% set columnCount = 0 %}
+        {% for col, value in columns if value.hidden is null %}
+            {% set columnCount = columnCount + 1 %}
+        {% endfor %}
+
         // data tables
-        $scope.table = $('#{{ alias }}-table').DataTable({
+        $scope.tableSpinnerShown = false;
+
+        $scope.table = $('#{{ tableAlias }}').DataTable({
             dom: "<'row'<'col-sm-12'f>><'row'<'col-sm-12'tr>><'row'<'col-sm-6'i><'col-sm-6'l>><'row'<'col-sm-12'p>>", //'ftrilp',
             language: {
                 url: '{{ folders.global }}datatables/ru.json'
@@ -257,20 +267,46 @@
             {% if tables[alias].sort_index >= 0 %}
                 order: [[ {{ tables[alias].sort_index }}, '{{ tables[alias].reverse ? 'desc' : 'asc' }}' ]],
             {% endif %}
-            ajax: '{{ api }}{{ source ?? alias }}?format=dt',
+            {% if tables[alias].server_side %}
+                serverSide: true,
+                orderMulti: false,
+                ajax: {
+                    url: '{{ apiChunk }}',
+                    beforeSend: function() {
+                        if ($scope.tableSpinnerShown) {
+                            return;
+                        }
+
+                        $('#{{ tableAlias }} > tbody').html(
+                            '<tr class="even">' +
+                            '<td valign="top" colspan="{{ columnCount }}" class="dataTables_empty"><i class="fas fa-yin-yang fa-spin fa-2x"></i></td>' +
+                            '</tr>'
+                        );
+
+                        $scope.tableSpinnerShown = true;
+                    }
+                },
+            {% else %}
+                ajax: '{{ apiChunk }}?format=dt',
+            {% endif %}
             rowId: 'id',
             initComplete: $scope.tableInitComplete,
             columns: [
                 {% block table_columns %}
                     {% for col, value in columns if value.hidden is null %}
                         {
+                            name: '{{ col }}',
+                            data: '{{ col }}',
+                            {% if tables[alias].server_side and not value.searchable %}
+                                searchable: false,
+                            {% endif %}
                             {% if value.no_sort %}
                                 orderable: false,
                             {% endif %}
-                            data: function(row, type, val, meta) {
+                            render: function(data, type, row) {
                                 {% set type = value.display_type ?? value.type %}
                                 {% if value.template %}
-                                    {{ m.column_template(value.template) }}
+                                    {{ m.column_template(value.template, col) }}
                                 {% elseif value.entity %}
                                     {{ m.column_entity(_context, col) }}
                                 {% elseif type == 'bool' %}
