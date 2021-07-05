@@ -161,7 +161,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
                 ->get(
                     '/' . $endPoint['uri'],
                     fn ($request, $response, $args) =>
-                        $this->getSearchResult($request, $response)
+                        $generator->getSearchResult($request, $response)
                         ?? $api->getMany(
                             $request,
                             $response,
