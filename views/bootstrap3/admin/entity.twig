@@ -295,15 +295,16 @@
                 {% block table_columns %}
                     {% for col, value in columns if value.hidden is null %}
                         {
-                            name: '{{ col }}',
-                            data: '{{ col }}',
-                            {% if tables[alias].server_side and not value.searchable %}
-                                searchable: false,
+                            {% if tables[alias].server_side %}
+                                name: '{{ col }}',
+                                {% if value.searchable %}
+                                    searchable: false,
+                                {% endif %}
                             {% endif %}
                             {% if value.no_sort %}
                                 orderable: false,
                             {% endif %}
-                            render: function(data, type, row) {
+                            data: function(row, type, val, meta) {
                                 {% set type = value.display_type ?? value.type %}
                                 {% if value.template %}
                                     {{ m.column_template(value.template) }}
