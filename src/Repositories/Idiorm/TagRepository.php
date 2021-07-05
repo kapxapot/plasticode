@@ -51,12 +51,12 @@ class TagRepository extends IdiormRepository implements TagRepositoryInterface
             ->delete();
     }
 
-    public function search(SearchParams $searchParams): TagCollection
+    public function search(string $query): TagCollection
     {
         return TagCollection::from(
             $this
                 ->query()
-                ->search($searchParams->filter(), '(tag like ?)')
+                ->search($query, '(tag like ?)')
                 ->orderByAsc('tag')
         );
     }

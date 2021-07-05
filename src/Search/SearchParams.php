@@ -99,9 +99,4 @@ class SearchParams
 
         return new self($offset, $limit, $filter, $sort);
     }
-
-    public static function fromFilter(?string $filter): self
-    {
-        return new self(null, null, $filter, null);
-    }
 }
