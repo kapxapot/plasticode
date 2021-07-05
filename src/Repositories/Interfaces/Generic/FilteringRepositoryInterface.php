@@ -7,9 +7,5 @@ use Plasticode\Search\SearchResult;
 
 interface FilteringRepositoryInterface extends RepositoryInterface
 {
-    public function getFilteredResult(SearchParams $searchParams): SearchResult;
-
-    public function getTotalCount(): int;
-
-    public function getFilteredCount(SearchParams $searchParams): int;
+    public function getSearchResult(SearchParams $searchParams): SearchResult;
 }
