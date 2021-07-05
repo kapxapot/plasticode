@@ -83,7 +83,7 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
     /**
      * Bare query without sort.
      */
-    private function baseQuery(): Query
+    protected function baseQuery(): Query
     {
         return new Query(
             $this->getDbQuery(),

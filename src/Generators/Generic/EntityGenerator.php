@@ -4,11 +4,15 @@ namespace Plasticode\Generators\Generic;
 
 use Plasticode\Config\Config;
 use Plasticode\Controllers\Admin\AdminPageControllerFactory;
+use Plasticode\Core\Response;
 use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Data\Rights;
 use Plasticode\Generators\Core\GeneratorContext;
 use Plasticode\Generators\Interfaces\EntityGeneratorInterface;
 use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
+use Plasticode\Repositories\Interfaces\Generic\FilteringRepositoryInterface;
+use Plasticode\Search\SearchParams;
+use Plasticode\Search\SearchResult;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Traits\EntityRelated;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
@@ -156,18 +160,20 @@ abstract class EntityGenerator implements EntityGeneratorInterface
             $app
                 ->get(
                     '/' . $endPoint['uri'],
-                    fn ($request, $response, $args) => $api->getMany(
-                        $request,
-                        $response,
-                        $generator,
-                        array_merge(
-                            $endPoint['options'],
-                            [
-                                'args' => $args,
-                                'params' => $request->getParams(),
-                            ]
+                    fn ($request, $response, $args) =>
+                        $this->getSearchResult($request, $response)
+                        ?? $api->getMany(
+                            $request,
+                            $response,
+                            $generator,
+                            array_merge(
+                                $endPoint['options'],
+                                [
+                                    'args' => $args,
+                                    'params' => $request->getParams(),
+                                ]
+                            )
                         )
-                    )
                 )
                 ->add(
                     $this->accessMiddlewareFactory->make(
@@ -176,6 +182,25 @@ abstract class EntityGenerator implements EntityGeneratorInterface
                     )
                 );
         }
+    }
+
+    protected function getSearchResult(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ): ?SearchResult
+    {
+        $repo = $this->getRepository();
+
+        if (!$repo instanceof FilteringRepositoryInterface) {
+            // search is not supported
+            return null;
+        }
+
+        $searchParams = SearchParams::fromRequest($request);
+
+        $searchResult = $repo->getSearchResult($searchParams);
+
+        return Response::json($response, $searchResult);
     }
 
     /**
