@@ -187,7 +187,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
     protected function getSearchResult(
         ServerRequestInterface $request,
         ResponseInterface $response
-    ): ?SearchResult
+    ): ?ResponseInterface
     {
         $repo = $this->getRepository();
 
