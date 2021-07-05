@@ -6,6 +6,7 @@ use Plasticode\Collections\Generic\DbModelCollection;
 use Plasticode\Search\SearchParams;
 use Plasticode\Data\Query;
 use Plasticode\Search\SearchResult;
+use Plasticode\Util\SortStep;
 
 trait SearchRepository
 {
@@ -18,7 +19,18 @@ trait SearchRepository
             )
             ->applyIf(
                 $searchParams->hasSort(),
-                fn (Query $q) => $q->withSort($searchParams->sort())
+                fn (Query $q) => $q->withSort(
+                    array_map(
+                        fn (SortStep $ss) => $ss->isDesc()
+                            ? SortStep::byFieldDesc(
+                                $this->getTable() . '.' . $ss->getField()
+                            )
+                            : SortStep::byField(
+                                $this->getTable() . '.' . $ss->getField()
+                            ),
+                        $searchParams->sort()
+                    )
+                )
             )
             ->applyIf(
                 $searchParams->hasOffset(),
@@ -29,6 +41,8 @@ trait SearchRepository
                 fn (Query $q) => $q->limit($searchParams->limit())
             );
     }
+
+    abstract public function getTable(): string;
 
     abstract protected function applyFilter(Query $query, string $filter): Query;
 
