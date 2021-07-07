@@ -26,7 +26,7 @@
 
 {% macro moment_diff(start, end, unknown_end, format = 'D MMMM Y', short_format = 'D MMMM') %}{% import _self as m %}{{ m.ng_cloak("{{momentDiff('" ~ (start.has_time ? start.iso : start) ~ "', " ~ (end ? "'" ~ (end.has_time ? end.iso : end) ~ "'" : "null") ~ ", " ~ unknown_end ~ (format ? ", '" ~ format ~ "'" : "") ~ (short_format ? ", '" ~ short_format ~ "'" : "") ~ ")}}") }}{% endmacro %}
 
-{% macro moment_short_range(start, end, start_format = 'MMM D, H:mm', end_format = 'H:mm') %}{% import _self as m %}{{ m.moment(start, start_format) }} – {{ m.moment(end, end_format) }}{% endmacro %}
+{% macro moment_short_range(start, end, start_format = 'MMM D, H:mm', end_format = 'H:mm', no_end_placeholder = '?') %}{% import _self as m %}{{ m.moment(start, start_format) }} – {{ end ? m.moment(end, end_format) : no_end_placeholder }}{% endmacro %}
 
 {% macro rgb(rgb) %}rgb({{ rgb.red }}, {{ rgb.green }}, {{ rgb.blue }}){% endmacro %}
 
