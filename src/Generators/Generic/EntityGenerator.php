@@ -309,7 +309,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
                 Rights::READ_OWN,
                 'admin.index'
             )
-        )->setName('admin.entities.' . $this->getEntity());
+        )->setName('admin.entities.' . $this->getSettingsAlias());
     }
 
     public function getAdminPageUri(): string
