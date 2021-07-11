@@ -143,10 +143,16 @@ abstract class EntityGenerator implements EntityGeneratorInterface
             unset($noFilterOptions['filter']);
         }
 
-        $endPoints[] = [
-            'uri' => $this->getEntity(),
-            'options' => $noFilterOptions,
-        ];
+        $endPoints = [];
+
+        $noDefaultUri = $options['no_default_uri'] ?? false;
+
+        if ($noDefaultUri !== true) {
+            $endPoints[] = [
+                'uri' => $this->getEntity(),
+                'options' => $noFilterOptions,
+            ];
+        }
 
         if (isset($options['uri'])) {
             $endPoints[] = [
