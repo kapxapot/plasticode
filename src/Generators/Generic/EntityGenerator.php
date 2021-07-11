@@ -199,8 +199,14 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         $searchParams = SearchParams::fromRequest($request);
 
         $searchResult = $repo->getSearchResult($searchParams);
+        $searchResult = $this->postProcessSearchResult($searchResult);
 
         return Response::json($response, $searchResult);
+    }
+
+    protected function postProcessSearchResult(SearchResult $searchResult): SearchResult
+    {
+        return $searchResult;
     }
 
     /**
