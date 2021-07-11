@@ -109,7 +109,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         $api = $this
             ->config
             ->tableMetadata()
-            ->get($this->getEntity() . '.api');
+            ->get($this->getSettingsAlias() . '.api');
 
         if (strlen($api) == 0) {
             return;
@@ -122,7 +122,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         // read_all: get all
         // read_one: get one
 
-        if ($api === 'full' || $api === 'read') {
+        if ($api !== 'read_one') {
             $this->generateGetAllRoute($app);
         }
 
@@ -327,7 +327,7 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         $params = $this
             ->config
             ->entitySettings()
-            ->get($this->getEntity());
+            ->get($this->getSettingsAlias());
 
         $params['base'] = $this->router->pathFor('admin.index');
 
@@ -346,5 +346,10 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         return isset($options['admin_template'])
             ? 'entities/' . $options['admin_template']
             : 'entity';
+    }
+
+    protected function getSettingsAlias(): string
+    {
+        return $this->getEntity();
     }
 }
