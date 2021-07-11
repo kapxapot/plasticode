@@ -119,13 +119,16 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         //
         // full: CRUD + get all
         // read: get one + get all
+        // read_all: get all
         // read_one: get one
 
-        if ($api == 'full' || $api == 'read') {
+        if ($api === 'full' || $api === 'read') {
             $this->generateGetAllRoute($app);
         }
 
-        $this->generateCRUDRoutes($app, $api == 'full');
+        if ($api !== 'read_all') {
+            $this->generateCRUDRoutes($app, $api === 'full');
+        }
     }
 
     /**
