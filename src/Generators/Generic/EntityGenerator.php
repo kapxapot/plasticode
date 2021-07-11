@@ -12,7 +12,6 @@ use Plasticode\Generators\Interfaces\EntityGeneratorInterface;
 use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
 use Plasticode\Repositories\Interfaces\Generic\FilteringRepositoryInterface;
 use Plasticode\Search\SearchParams;
-use Plasticode\Search\SearchResult;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Traits\EntityRelated;
 use Plasticode\Validation\Interfaces\ValidatorInterface;
@@ -199,14 +198,8 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         $searchParams = SearchParams::fromRequest($request);
 
         $searchResult = $repo->getSearchResult($searchParams);
-        $searchResult = $this->postProcessSearchResult($searchResult);
 
         return Response::json($response, $searchResult);
-    }
-
-    protected function postProcessSearchResult(SearchResult $searchResult): SearchResult
-    {
-        return $searchResult;
     }
 
     /**
