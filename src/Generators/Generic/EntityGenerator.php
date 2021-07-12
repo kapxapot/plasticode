@@ -4,6 +4,7 @@ namespace Plasticode\Generators\Generic;
 
 use Plasticode\Config\Config;
 use Plasticode\Controllers\Admin\AdminPageControllerFactory;
+use Plasticode\Core\Request;
 use Plasticode\Core\Response;
 use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Data\Rights;
@@ -197,6 +198,10 @@ abstract class EntityGenerator implements EntityGeneratorInterface
         ResponseInterface $response
     ): ?ResponseInterface
     {
+        if (!Request::isDataTables($request)) {
+            return null;
+        }
+
         $repo = $this->getRepository();
 
         if (!$repo instanceof FilteringRepositoryInterface) {

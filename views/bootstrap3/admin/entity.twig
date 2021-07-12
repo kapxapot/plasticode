@@ -271,7 +271,7 @@
                 serverSide: true,
                 orderMulti: false,
                 ajax: {
-                    url: '{{ apiChunk }}',
+                    url: '{{ apiChunk }}?format=dt',
                     beforeSend: function() {
                         if ($scope.tableSpinnerShown) {
                             return;
