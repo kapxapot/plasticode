@@ -99,7 +99,7 @@ class Autowirer
         if ($class->isAbstract() || $class->isInterface()) {
             throw new InvalidConfigurationException(
                 'Can\'t autowire class "' . $className . '", ' .
-                'because it\'s an interface or an abstract class and is not defined in the container.'
+                'because it\'s an interface or an abstract class.'
             );
         }
 

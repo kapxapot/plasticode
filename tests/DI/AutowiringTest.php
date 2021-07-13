@@ -8,7 +8,6 @@ use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Config\Interfaces\TagsConfigInterface;
 use Plasticode\Config\TagsConfig;
 use Plasticode\Core\Cache;
-use Plasticode\Core\Factories\ConsoleLoggerFactory;
 use Plasticode\Core\Factories\SessionFactory;
 use Plasticode\Core\Interfaces\CacheInterface;
 use Plasticode\Core\Interfaces\LinkerInterface;

@@ -51,7 +51,7 @@ class AggregatingContainer extends ArrayContainer
 
         throw new NotFoundException(
             'Mapping for "' . $id . '" is not defined neither in the main container ' .
-            'or in any of the sub-containers (' . count($this->subContainers) . ').'
+            'nor in any of the sub-containers (' . count($this->subContainers) . ').'
         );
     }
 
