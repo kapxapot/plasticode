@@ -39,7 +39,7 @@ trait Parented
     }
 
     /**
-     * Checks if the $parentId creates a recursive chain of parents.
+     * Checks if `$parentId` creates a recursive chain of parents.
      */
     public function isRecursiveParent(?int $parentId) : bool
     {
