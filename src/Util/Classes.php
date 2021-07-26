@@ -3,11 +3,12 @@
 namespace Plasticode\Util;
 
 use ReflectionClass;
+use ReflectionClassConstant;
 use ReflectionMethod;
 
 class Classes
 {
-    public static function shortName(string $className)
+    public static function shortName(string $className): string
     {
         return Strings::lastChunk($className, '\\');
     }
@@ -17,7 +18,7 @@ class Classes
      *
      * @param string[]|null $exclude
      */
-    public static function getPublicMethods(string $className, array $exclude = null) : array
+    public static function getPublicMethods(string $className, array $exclude = null): array
     {
         $class = new ReflectionClass($className);
         $methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -36,5 +37,12 @@ class Classes
         );
 
         return array_values($methodNames);
+    }
+
+    public static function getPublicConstants(string $className): array
+    {
+        $class = new ReflectionClass($className);
+
+        return $class->getConstants(ReflectionClassConstant::IS_PUBLIC);
     }
 }
