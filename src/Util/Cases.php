@@ -3,6 +3,7 @@
 namespace Plasticode\Util;
 
 use InvalidArgumentException;
+use Plasticode\Semantics\Gender;
 use Webmozart\Assert\Assert;
 
 /**
@@ -29,15 +30,6 @@ class Cases
     const SINGLE = 1;
     /** Множественное число */
     const PLURAL = 2;
-
-    /** Мужской род */
-    const MAS = 1;
-    /** Женский род */
-    const FEM = 2;
-    /** Средний род */
-    const NEU = 3;
-    /** Множественный род (ножницы, вилы) */
-    const PLU = 4;
 
     /** Инфинитив */
     const INFINITIVE = 1;
@@ -82,19 +74,19 @@ class Cases
      * 'пень' => [ 'base' => 'п', 'index' => 'день' ]
      */
     private array $caseData = [
-        'картинка' => ['base' => 'картин', 'gender' => self::FEM],
-        'выпуск' => ['base' => 'выпуск', 'gender' => self::MAS],
-        'стрим' => ['base' => 'стрим', 'gender' => self::MAS],
-        'день' => ['base' => 'д', 'gender' => self::MAS],
-        'пользователь' => ['base' => 'пользовател', 'gender' => self::MAS],
-        'час' => ['base' => 'час', 'index' => 'стрим', 'gender' => self::MAS],
-        'минута' => ['base' => 'минут', 'gender' => self::FEM],
-        'копия' => ['base' => 'копи', 'gender' => self::FEM],
-        'зритель' => ['base' => 'зрител', 'index' => 'пользователь', 'gender' => self::MAS],
-        'слово' => ['base' => 'слов', 'gender' => self::NEU],
-        'ассоциация' => ['base' => 'ассоциаци', 'index' => 'копия', 'gender' => self::FEM],
-        'ход' => ['base' => 'ход', 'index' => 'стрим', 'gender' => self::MAS],
-        'карта' => ['base' => 'карт', 'index' => 'минута', 'gender' => self::FEM],
+        'картинка' => ['base' => 'картин', 'gender' => Gender::FEM],
+        'выпуск' => ['base' => 'выпуск', 'gender' => Gender::MAS],
+        'стрим' => ['base' => 'стрим', 'gender' => Gender::MAS],
+        'день' => ['base' => 'д', 'gender' => Gender::MAS],
+        'пользователь' => ['base' => 'пользовател', 'gender' => Gender::MAS],
+        'час' => ['base' => 'час', 'index' => 'стрим', 'gender' => Gender::MAS],
+        'минута' => ['base' => 'минут', 'gender' => Gender::FEM],
+        'копия' => ['base' => 'копи', 'gender' => Gender::FEM],
+        'зритель' => ['base' => 'зрител', 'index' => 'пользователь', 'gender' => Gender::MAS],
+        'слово' => ['base' => 'слов', 'gender' => Gender::NEU],
+        'ассоциация' => ['base' => 'ассоциаци', 'index' => 'копия', 'gender' => Gender::FEM],
+        'ход' => ['base' => 'ход', 'index' => 'стрим', 'gender' => Gender::MAS],
+        'карта' => ['base' => 'карт', 'index' => 'минута', 'gender' => Gender::FEM],
     ];
 
     private array $futureConjugationTemplates = [
@@ -182,7 +174,7 @@ class Cases
      *     'word' => '_word_',
      *     'base' => '_base_',
      * 
-     *     'gender' => Cases::MAS|Cases::FEM|Cases::NEU|Cases::PLU,
+     *     'gender' => Gender::MAS|Gender::FEM|Gender::NEU|Gender::PLU,
      *     'forms' => [ [ '%', '%' ] x6 ],
      * 
      *     OR
@@ -194,7 +186,7 @@ class Cases
     {
         $word = $cases['word'] ?? null;
         $base = $cases['base'] ?? null;
-        $gender = $cases['gender'] ?? self::MAS;
+        $gender = $cases['gender'] ?? Gender::MAS;
         $forms = $cases['forms'] ?? null;
         $index = $cases['index'] ?? null;
 
@@ -288,7 +280,7 @@ class Cases
     public function gender(string $word): int
     {
         $data = $this->getCaseData($word);
-        return $data['gender'] ?? Cases::MAS;
+        return $data['gender'] ?? Gender::MAS;
     }
 
     // именительный - кто что (у меня есть...)
@@ -432,10 +424,10 @@ class Cases
         ];
 
         $genders = [
-            'm' => self::MAS,
-            'f' => self::FEM,
-            'n' => self::NEU,
-            'p' => self::PLU
+            'm' => Gender::MAS,
+            'f' => Gender::FEM,
+            'n' => Gender::NEU,
+            'p' => Gender::PLU
         ];
 
         $form = [
@@ -482,7 +474,7 @@ class Cases
         $gender = $form['gender'];
 
         if ($number == self::PLURAL) {
-            $gender = self::PLU;
+            $gender = Gender::PLU;
         }
 
         Assert::notNull($gender, 'Undefined gender.');
