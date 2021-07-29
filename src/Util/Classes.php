@@ -39,10 +39,10 @@ class Classes
         return array_values($methodNames);
     }
 
-    public static function getPublicConstants(string $className): array
+    public static function getConstants(string $className): array
     {
         $class = new ReflectionClass($className);
 
-        return $class->getConstants(ReflectionClassConstant::IS_PUBLIC);
+        return $class->getConstants();
     }
 }
