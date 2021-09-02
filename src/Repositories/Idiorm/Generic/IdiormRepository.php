@@ -208,12 +208,12 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
         $saveResult = $ormObj->save();
 
         if (!$saveResult) {
-            throw new InvalidResultException(
-                'Failed to save the entity.'
-            );
+            throw new InvalidResultException('Failed to save the entity.');
         }
 
-        return $this->ormObjToEntity($ormObj, true);
+        $id = $ormObj[$this->idField()];
+
+        return $this->reloadEntity($id);
     }
 
     protected function entityToOrmObj(DbModel $entity): ORM
