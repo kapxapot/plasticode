@@ -12,6 +12,8 @@ class EventDispatcher
 {
     use LoggerAwareTrait;
 
+    private EventDispatcherOptions $options;
+
     /**
      * @var array<string, callable[]> Event class -> handlers mapping.
      */
@@ -26,6 +28,21 @@ class EventDispatcher
      * Is the event dispatcher processing an event currently.
      */
     private bool $processing = false;
+
+    public function __construct()
+    {
+        $this->options = new EventDispatcherOptions();
+    }
+
+    /**
+     * @return $this
+     */
+    public function withOptions(EventDispatcherOptions $options): self
+    {
+        $this->options = $options;
+
+        return $this;
+    }
 
     /**
      * Adds many handlers.
@@ -47,7 +64,9 @@ class EventDispatcher
         $this->map[$paramClass] ??= [];
         $this->map[$paramClass][] = $handler;
 
-        $this->log(get_class($handler) . ' mapped to ' . $paramClass);
+        if ($this->options->logMappingMessages) {
+            $this->log(get_class($handler) . ' mapped to ' . $paramClass);
+        }
     }
 
     /**
