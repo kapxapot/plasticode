@@ -3,6 +3,7 @@
 namespace Plasticode\Twig\Extensions;
 
 use Plasticode\Core\Interfaces\TranslatorInterface;
+use Plasticode\Util\Classes;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -29,8 +30,19 @@ class TranslatorExtension extends AbstractExtension
         ];
     }
 
-    public function translate(string $value, ?string $langCode = null): string
+    /**
+     * @param string|object $prefix
+     */
+    public function translate(string $value, $prefix = null): string
     {
-        return $this->translator->translate($value, $langCode);
+        if (is_object($prefix)) {
+            $prefix = Classes::shortName(get_class($prefix));
+        }
+
+        if ($prefix !== null) {
+            $value = sprintf('%s:%s', $prefix, $value);
+        }
+
+        return $this->translator->translate($value);
     }
 }
