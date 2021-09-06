@@ -21,8 +21,22 @@ class NumericCollection extends ScalarCollection
     }
 
     /**
+     * Returns min value.
+     *
+     * In case of empty collection returns null.
+     *
+     * @return mixed
+     */
+    public function min()
+    {
+        return $this->isEmpty()
+            ? null
+            : min($this->data);
+    }
+
+    /**
      * Returns max value.
-     * 
+     *
      * In case of empty collection returns null.
      *
      * @return mixed

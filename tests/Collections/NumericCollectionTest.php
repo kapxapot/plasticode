@@ -7,6 +7,20 @@ use Plasticode\Collections\Generic\NumericCollection;
 
 final class NumericCollectionTest extends TestCase
 {
+    public function testMinInt() : void
+    {
+        $col = NumericCollection::collect(1, 2, 3, 5, 7, 2);
+
+        $this->assertEquals(1, $col->min());
+    }
+
+    public function testMinOnEmptyArrayProducesNull() : void
+    {
+        $col = NumericCollection::empty();
+
+        $this->assertNull($col->min());
+    }
+
     public function testMaxInt() : void
     {
         $col = NumericCollection::collect(1, 2, 3, 5, 7, 2);
