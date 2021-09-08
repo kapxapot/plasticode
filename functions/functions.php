@@ -4,11 +4,14 @@ if (!function_exists('dd')) {
     /**
      * var_dump() + die().
      *
-     * @param mixed $var
+     * @param array<mixed> $vars
      */
-    function dd($var): void
+    function dd(...$vars): void
     {
-        var_dump($var);
+        foreach ($vars as $var) {
+            var_dump($var);
+        }
+
         die();
     }
 }
