@@ -706,15 +706,35 @@ figcaption {
 
 /* flex */
 
+.flex-container,
+.flex-wrapper {
+    display: flex;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
 .flex-wrapper,
 .flex-center {
-    display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
 }
 
 .flex-gap-1 {
-    gap: 1rem;
+    gap: var(--space-1);
+}
+
+.flex-gap-2 {
+    gap: var(--space-2);
+}
+
+.flex-gap-3 {
+    gap: var(--space-3);
+}
+
+.flex-gap-4 {
+    gap: var(--space-4);
 }
 
 .flex-item {
