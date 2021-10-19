@@ -23,6 +23,7 @@
     --space-multi: 2;
 
     --space-0: 0;
+    --space-0-5: calc(var(--space-base) * 0.5);
     --space-1: var(--space-base);
     --space-2: calc(var(--space-1) * var(--space-multi));
     --space-3: calc(var(--space-2) * var(--space-multi));
@@ -1232,6 +1233,11 @@ div.dataTables_wrapper div.dataTables_paginate {
     margin-bottom: var(--space-0) !important;
 }
 
+.mb-0-5,
+.vgap-0-5 {
+    margin-bottom: var(--space-0-5) !important;
+}
+
 .mb-1,
 .vgap-1 {
     margin-bottom: var(--space-1) !important;
@@ -1247,6 +1253,7 @@ div.dataTables_wrapper div.dataTables_paginate {
     margin-bottom: var(--space-3);
 }
 
+.vgap-0-5:last-child,
 .vgap-1:last-child,
 .vgap-2:last-child,
 .vgap-3:last-child {
@@ -1255,6 +1262,10 @@ div.dataTables_wrapper div.dataTables_paginate {
 
 .mt-0 {
     margin-top: var(--space-0) !important;
+}
+
+.mt-0-5 {
+    margin-top: var(--space-0-5) !important;
 }
 
 .mt-1 {
@@ -1273,6 +1284,10 @@ div.dataTables_wrapper div.dataTables_paginate {
     margin-left: var(--space-0) !important;
 }
 
+.ml-0-5 {
+    margin-left: var(--space-0-5) !important;
+}
+
 .ml-1 {
     margin-left: var(--space-1);
 }
@@ -1287,6 +1302,11 @@ div.dataTables_wrapper div.dataTables_paginate {
 
 .mr-0 {
     margin-right: var(--space-0) !important;
+}
+
+.mr-0-5,
+.hgap-0-5 {
+    margin-right: var(--space-0-5) !important;
 }
 
 .mr-1,
@@ -1304,6 +1324,7 @@ div.dataTables_wrapper div.dataTables_paginate {
     margin-right: var(--space-3);
 }
 
+.hgap-0-5:last-child,
 .hgap-1:last-child,
 .hgap-2:last-child,
 .hgap-3:last-child {
