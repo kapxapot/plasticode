@@ -712,25 +712,8 @@ figcaption {
 
 /* flex */
 
-.flex-container,
 .flex-wrapper {
     display: flex;
-}
-
-.flex-wrap {
-    flex-wrap: wrap;
-}
-
-.flex-jc-center {
-    justify-content: center;
-}
-
-.flex-jc-around {
-    justify-content: space-around;
-}
-
-.flex-jc-between {
-    justify-content: space-between;
 }
 
 .flex-wrapper,
@@ -1138,6 +1121,23 @@ div.dataTables_wrapper div.dataTables_paginate {
     flex-direction: column;
 }
 
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-jc-center {
+    justify-content: center;
+}
+
+.flex-jc-around {
+    justify-content: space-around;
+}
+
+.flex-jc-between {
+    justify-content: space-between;
+}
+
+.flex-ai-center,
 .flex-align-center {
     align-items: center;
 }
