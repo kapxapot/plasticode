@@ -242,10 +242,10 @@ class Strings
 
     /**
      * Checks if a string starts with any mask from the list.
-     * 
-     * @param string|null $str String to test
-     * @param string[] $masks Array of string masks
-     * @return bool True, if matches
+     *
+     * @param string|null $str String to test.
+     * @param string[] $masks Array of string masks.
+     * @return bool True, if matches.
      */
     public static function startsWithAny(?string $str, array $masks): bool
     {
@@ -253,24 +253,21 @@ class Strings
             return false;
         }
 
-        $matches = false;
-    
         foreach ($masks as $mask) {
             if (self::startsWith($str, $mask)) {
-                $matches = true;
-                break;
+                return true;
             }
         }
-        
-        return $matches;
+
+        return false;
     }
 
     /**
      * Checks if a string starts with a given mask.
      * 
-     * @param string|null $str String to test
-     * @param string $mask String mask
-     * @return bool True, if matches
+     * @param string|null $str String to test.
+     * @param string $mask String mask.
+     * @return bool True, if matches.
      */
     public static function startsWith(?string $str, string $mask): bool
     {
@@ -279,6 +276,28 @@ class Strings
         }
 
         return strpos($str, $mask) === 0;
+    }
+
+    /**
+     * Checks if a string ends with any mask from the list.
+     *
+     * @param string|null $str String to test.
+     * @param string[] $masks Array of string masks.
+     * @return bool True, if matches.
+     */
+    public static function endsWithAny(?string $str, array $masks): bool
+    {
+        if (strlen($str) == 0 || empty($masks)) {
+            return false;
+        }
+
+        foreach ($masks as $mask) {
+            if (self::endsWith($str, $mask)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

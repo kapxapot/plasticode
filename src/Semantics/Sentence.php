@@ -4,10 +4,15 @@ namespace Plasticode\Semantics;
 
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Util\Arrays;
+use Plasticode\Util\Strings;
 
 class Sentence
 {
     const PERIOD = '.';
+    const ELLIPSIS = '...';
+    const EXCLAMATION_MARK = '!';
+    const QUESTION_MARK = '?';
+
     const COMMA_DELIMITER = ', ';
     const AND_DELIMITER = ' и ';
 
@@ -71,10 +76,19 @@ class Sentence
     }
 
     /**
-     * Ensures that the string ends with one (and only one) period ('.').
+     * Ensures that the string ends with one period ('.')
+     * or any other allowed ending characters such as '!', '?', '...'.
      */
-    public static function tailPeriod(string $str): string
+    public static function terminate(string $str): string
     {
+        if (Strings::endsWithAny($str, [self::EXCLAMATION_MARK, self::QUESTION_MARK])) {
+            return $str;
+        }
+
+        if (Strings::endsWith($str, self::ELLIPSIS)) {
+            return trim($str, self::PERIOD) . self::ELLIPSIS;
+        }
+
         return trim($str, self::PERIOD) . self::PERIOD;
     }
 }

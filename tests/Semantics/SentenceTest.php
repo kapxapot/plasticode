@@ -72,4 +72,28 @@ final class SentenceTest extends TestCase
             Sentence::homogeneousJoin(['a', 'b', 'c'], '.', '-')
         );
     }
+
+    /**
+     * @dataProvider terminateProvider
+     */
+    public function testTerminate(string $original, string $expected): void
+    {
+        $this->assertEquals(
+            $expected,
+            Sentence::terminate($original)
+        );
+    }
+
+    public function terminateProvider(): array
+    {
+        return [
+            ['abc', 'abc.'],
+            ['abc.', 'abc.'],
+            ['abc..', 'abc.'],
+            ['abc...', 'abc...'],
+            ['abc....', 'abc...'],
+            ['abc!', 'abc!'],
+            ['abc?', 'abc?'],
+        ];
+    }
 }
