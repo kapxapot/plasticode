@@ -234,4 +234,47 @@ final class MiscTest extends TestCase
             ]
         ];
     }
+
+    /**
+     * @dataProvider containsProvider
+     */
+    public function testContains(array $first, array $second, bool $expected): void
+    {
+        $this->assertEquals(
+            $expected,
+            Arrays::contains($first, $second)
+        );
+    }
+
+    public function containsProvider(): array
+    {
+        return [
+            [[], [], true],
+            [
+                [1, 2, 3],
+                [],
+                true
+            ],
+            [
+                [1, 2, 3],
+                [1],
+                true
+            ],
+            [
+                [1, 2, 3],
+                [1, 2],
+                true
+            ],
+            [
+                [1, 2, 3],
+                [3, 2, 1],
+                true
+            ],
+            [
+                [1, 2, 3],
+                [4],
+                false
+            ],
+        ];
+    }
 }
