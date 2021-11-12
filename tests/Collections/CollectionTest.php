@@ -476,4 +476,11 @@ final class CollectionTest extends TestCase
         $this->assertEquals(3, $c);
         $this->assertEquals(4, $d);
     }
+
+    public function testEmptyFails(): void
+    {
+        $col = Collection::make();
+
+        $this->assertEquals(false, empty($col));
+    }
 }

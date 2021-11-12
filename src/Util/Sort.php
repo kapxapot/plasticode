@@ -31,8 +31,6 @@ class Sort
             return $array;
         }
 
-        Assert::allIsInstanceOf($steps, SortStep::class);
-
         usort(
             $array,
             function ($itemA, $itemB) use ($steps) {

@@ -147,8 +147,8 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Groups collection by selector.
-     * 
-     * @param string|callable|null $selector Column/property name or callable, returning generated column/property name.
+     *
+     * @param string|callable|null $selector Column/property name or callable, returning generated string or numeric value.
      * @return array<string, static>
      */
     public function group($selector = null): array
@@ -521,7 +521,10 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     }
 
     /**
-     * Sorts collection by selector. Ascending by default.
+     * Sorts collection by selector.
+     *
+     * - Ascending by default.
+     * - `Sort::NUMBER` type by default.
      *
      * @param string|callable $selector
      * @return static
