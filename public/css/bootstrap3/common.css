@@ -1216,6 +1216,11 @@ div.dataTables_wrapper div.dataTables_paginate {
     padding-right: var(--space-1) !important;
 }
 
+.pv-0 {
+    padding-top: var(--space-0) !important;
+    padding-bottom: var(--space-0) !important;
+}
+
 .m-1 {
     margin: var(--space-1);
 }
