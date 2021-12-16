@@ -738,6 +738,38 @@ figcaption {
     gap: var(--space-4);
 }
 
+.flex-h-gap-1 {
+    column-gap: var(--space-1);
+}
+
+.flex-h-gap-2 {
+    column-gap: var(--space-2);
+}
+
+.flex-h-gap-3 {
+    column-gap: var(--space-3);
+}
+
+.flex-h-gap-4 {
+    column-gap: var(--space-4);
+}
+
+.flex-v-gap-1 {
+    row-gap: var(--space-1);
+}
+
+.flex-v-gap-2 {
+    row-gap: var(--space-2);
+}
+
+.flex-v-gap-3 {
+    row-gap: var(--space-3);
+}
+
+.flex-v-gap-4 {
+    row-gap: var(--space-4);
+}
+
 .flex-item {
     margin: 10px 5px;
     overflow: hidden;
