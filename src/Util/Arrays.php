@@ -420,7 +420,7 @@ class Arrays
     }
 
     /**
-     * Removes $limit elements from the end of array.
+     * Removes `$limit` elements from the end of array.
      */
     public static function trimTail(array $array, int $limit): array
     {
@@ -502,7 +502,7 @@ class Arrays
 
         Assert::isArray(
             $array,
-            'Error adopting an array: it must be an ArrayableInterface or an array.'
+            'Error adopting an array: must be an ArrayableInterface or an array.'
         );
 
         return $array;
