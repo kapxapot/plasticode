@@ -44,16 +44,14 @@ abstract class NewsSourceHydrator extends ParsingHydrator
             )
             ->withFullText(
                 $this->frozen(
-                    fn () =>
-                    $this->cutParser->full(
+                    fn () => $this->cutParser->full(
                         $entity->parsedText()
                     )
                 )
             )
             ->withShortText(
                 $this->frozen(
-                    fn () =>
-                    $this->cutParser->short(
+                    fn () => $this->cutParser->short(
                         $entity->parsedText()
                     )
                 )
