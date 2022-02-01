@@ -30,7 +30,7 @@ class ObjectProxy
     {
         $this->initialize();
 
-        if (is_null($this->object)) {
+        if ($this->object === null) {
             return null;
         }
 
