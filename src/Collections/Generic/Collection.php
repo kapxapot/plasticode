@@ -403,13 +403,19 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Filters collection by selector.
-     * 
-     * @param string|callable $selector
+     *
+     * In case of `$selector === null` returns the collection itself, not a copy.
+     *
+     * @param string|callable|null $selector
      * @param mixed $value
-     * @return static
+     * @return static|$this
      */
     public function where($selector, $value = null): self
     {
+        if ($selector === null) {
+            return $this;
+        }
+
         $data = Arrays::filter($this->data, $selector, $value);
 
         return static::make($data);
