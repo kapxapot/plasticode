@@ -492,7 +492,7 @@ class Arrays
      */
     public static function adopt($array): ?array
     {
-        if (is_null($array)) {
+        if ($array === null) {
             return null;
         }
 

@@ -96,4 +96,65 @@ final class SentenceTest extends TestCase
             ['abc?', 'abc?'],
         ];
     }
+
+    /**
+     * @dataProvider buildCasedProvider
+     */
+    public function testBuildCased($source, bool $terminate, string $expected): void
+    {
+        $this->assertEquals(
+            $expected,
+            Sentence::buildCased($source, $terminate)
+        );
+    }
+
+    public function buildCasedProvider(): array
+    {
+        return [
+            'null' => [null, false, ''],
+            'null_terminated' => [null, true, ''],
+            'empty' => [[], false, ''],
+            'empty_terminated' => [[], true, ''],
+            'array_one_word' => [
+                ['aaa'],
+                false,
+                'Aaa',
+            ],
+            'array_one_word_terminated' => [
+                ['aaa'],
+                true,
+                'Aaa.',
+            ],
+            'array_many_words' => [
+                ['aaa', 'Bbb', 'Ccc'],
+                false,
+                'Aaabbbccc',
+            ],
+            'array_many_words_terminated' => [
+                ['aaa', 'Bbb', 'Ccc'],
+                true,
+                'Aaabbbccc.',
+            ],
+            'arrayable_one_word' => [
+                Collection::collect('aaa'),
+                false,
+                'Aaa',
+            ],
+            'arrayable_one_word_terminated' => [
+                Collection::collect('aaa'),
+                true,
+                'Aaa.',
+            ],
+            'arrayable_many_words' => [
+                Collection::collect('aaa', 'Bbb', 'Ccc'),
+                false,
+                'Aaabbbccc',
+            ],
+            'arrayable_many_words_terminated' => [
+                Collection::collect('aaa', 'Bbb', 'Ccc'),
+                true,
+                'Aaabbbccc.',
+            ],
+        ];
+    }
 }

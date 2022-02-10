@@ -18,13 +18,13 @@ class Sentence
 
     /**
      * Joins parts into a sentence such as "a, b, c".
-     * 
+     *
      * @param array|ArrayableInterface $array
      */
     public static function join(
         $array,
         ?string $commaDelimiter = null
-    ) : string
+    ): string
     {
         return implode(
             $commaDelimiter ?? self::COMMA_DELIMITER,
@@ -34,14 +34,14 @@ class Sentence
 
     /**
      * Joins homogeneous parts into a sentence such as "a, b и c".
-     * 
+     *
      * @param array|ArrayableInterface $array
      */
     public static function homogeneousJoin(
         $array,
         ?string $commaDelimiter = null,
         ?string $andDelimiter = null
-    ) : string
+    ): string
     {
         $chunks = Arrays::adopt($array);
 
@@ -90,5 +90,40 @@ class Sentence
         }
 
         return trim($str, self::PERIOD) . self::PERIOD;
+    }
+
+    /**
+     * Builds a sentence from the given parts, making the first part upper-case
+     * and all other parts lower-case.
+     *
+     * - Doesn't terminate the sentence by default.
+     * - In case of no parts returns an empty string.
+     *
+     * @param array|ArrayableInterface|null $parts
+     */
+    public static function buildCased($parts, bool $terminate = false): string
+    {
+        $partsArray = Arrays::adopt($parts);
+
+        if (count($partsArray ?? []) == 0) {
+            return '';
+        }
+
+        $firstPart = Arrays::first($partsArray);
+        $otherParts = Arrays::skip($partsArray, 1);
+
+        $newParts = [
+            Strings::upperCaseFirst($firstPart),
+            ...array_map(
+                fn (string $part) => Strings::lowerCaseFirst($part),
+                $otherParts
+            )
+        ];
+
+        $sentence = implode('', $newParts);
+
+        return $terminate
+            ? self::terminate($sentence)
+            : $sentence;
     }
 }
