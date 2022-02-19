@@ -301,8 +301,7 @@ class Arrays
     {
         return self::filter(
             $array,
-            fn ($item) =>
-            in_array(
+            fn ($item) => in_array(
                 self::getProperty($item, $column),
                 $values
             )
@@ -320,8 +319,7 @@ class Arrays
     {
         return self::filter(
             $array,
-            fn ($item) =>
-            !in_array(
+            fn ($item) => !in_array(
                 self::getProperty($item, $column),
                 $values
             )
