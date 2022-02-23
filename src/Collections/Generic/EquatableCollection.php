@@ -11,7 +11,7 @@ class EquatableCollection extends TypedCollection
 
     /**
      * Shortcut for from()->distinct().
-     * 
+     *
      * @return static
      */
     public static function fromDistinct(ArrayableInterface $arrayable): self
@@ -21,14 +21,14 @@ class EquatableCollection extends TypedCollection
 
     /**
      * Returns distinct elements using `contains()` function.
-     * 
+     *
      * @return static
      */
     public function distinct(): self
     {
         $col = static::make();
 
-        /** @var EquatableInterface */
+        /** @var EquatableInterface $item */
         foreach ($this as $item) {
             if ($col->contains($item)) {
                 continue;
@@ -42,15 +42,18 @@ class EquatableCollection extends TypedCollection
 
     /**
      * Returns all elements except the specified.
-     * 
+     *
+     * @param EquatableInterface|static $except
      * @return static
      */
-    public function except(EquatableInterface ...$elements): self
+    public function except($except): self
     {
-        $toExclude = static::make($elements);
+        $other = $except instanceof self
+            ? $except
+            : static::collect($except);
 
         return $this->where(
-            fn (EquatableInterface $eq) => !$toExclude->contains($eq)
+            fn (EquatableInterface $e) => !$other->contains($e)
         );
     }
 
@@ -62,10 +65,8 @@ class EquatableCollection extends TypedCollection
      */
     public function intersect(self $other): self
     {
-        return static::from(
-            $other->where(
-                fn (EquatableInterface $e) => $this->contains($e)
-            )
+        return $this->where(
+            fn (EquatableInterface $e) => $other->contains($e)
         );
     }
 
