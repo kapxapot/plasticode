@@ -60,6 +60,8 @@ abstract class AbstractProviderTest extends TestCase
     }
 
     /**
+     * These dependencies will be prophesized.
+     *
      * @return string[]
      */
     protected function getOuterDependencies(): array
