@@ -279,10 +279,10 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
 
     /**
      * Converts {@see ORM} object to entity.
-     * 
+     *
      * If the object is present in cache and
      * `$ignoreCache !== true`, it is loaded from cache.
-     * 
+     *
      * Otherwise, the new entity is created, cached and hydrated.
      */
     private function ormObjToEntity(ORM $ormObj, bool $ignoreCache = false): DbModel

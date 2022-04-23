@@ -303,7 +303,7 @@ class Api implements ApiInterface
 
     /**
      * Unsets 'published' property if the user has no rights to change it.
-     * 
+     *
      * This is a security check,
      * alternatively ~NotAuthorized() exception can be thrown.
      */
