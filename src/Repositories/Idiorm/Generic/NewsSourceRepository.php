@@ -86,7 +86,7 @@ abstract class NewsSourceRepository extends TaggedRepository implements NewsSour
             $this
                 ->newsSourceQuery()
                 ->whereRaw(
-                    '(year(' . $this->publishedAtField . ') = ?)',
+                    sprintf('(year(%s) = ?)', $this->publishedAtField),
                     [$year]
                 )
         );
