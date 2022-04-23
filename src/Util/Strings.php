@@ -420,7 +420,7 @@ class Strings
     public static function trimEnd(string $str, string $end): string
     {
         return self::endsWith($str, $end)
-            ? mb_substr($str, 0, strlen($str) - strlen($end))
+            ? mb_substr($str, 0, mb_strlen($str) - mb_strlen($end))
             : $str;
     }
 

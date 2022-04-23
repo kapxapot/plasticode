@@ -231,13 +231,18 @@ final class StringsTest extends TestCase
             [
                 'ArticleCategoryRepository',
                 'Repository',
-                'ArticleCategory'
+                'ArticleCategory',
             ],
             [
                 'Article',
                 'Repository',
-                'Article'
+                'Article',
             ],
+            [
+                'текст.',
+                '.',
+                'текст',
+            ]
         ];
     }
 
