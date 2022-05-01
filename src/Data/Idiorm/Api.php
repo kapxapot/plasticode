@@ -383,11 +383,4 @@ class Api implements ApiInterface
 
         return ORM::forTable($tableName);
     }
-
-    public function getQueryCount(): int
-    {
-        return ORM::forTable(null)
-            ->rawQuery('SHOW STATUS LIKE ?', ['Questions'])
-            ->findOne()['Value'];
-    }
 }

@@ -18,7 +18,7 @@ use Webmozart\Assert\Assert;
 
 /**
  * Idiorm ({@see ORM}) wrapper integrated with {@see DbModel}.
- * 
+ *
  * @method self join(string $table, string|array $constraint, ?string $tableAlias = null)
  * @method self leftOuterJoin(string $table, string|array $constraint, ?string $tableAlias = null)
  * @method self rightOuterJoin(string $table, string|array $constraint, ?string $tableAlias = null)
@@ -539,6 +539,16 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
         $offset = ($page - 1) * $limit;
 
         return $this->slice($offset, $limit);
+    }
+
+    /**
+     * Returns query count.
+     */
+    public static function getQueryCount(): int
+    {
+        return ORM::forTable(null)
+            ->rawQuery('SHOW STATUS LIKE ?', ['Questions'])
+            ->findOne()['Value'];
     }
 
     // IteratorAggregate
