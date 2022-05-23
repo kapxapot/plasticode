@@ -150,10 +150,10 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
 
         $query = $this->getSortedQuery();
 
-        self::logQuery($query, 'findMany');
-
         try {
             $objs = $query->findMany();
+
+            self::logQuery($query, 'findMany');
 
             $all = array_map(
                 fn (ORM $obj) => ($this->toModel)($obj, $ignoreCache),
@@ -187,7 +187,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
      * Executes query and returns the first entity if any.
      *
      * "Select one".
-     * In case of empty query returns null.
+     * In case of empty query returns `null`.
      */
     public function one(bool $ignoreCache = false): ?DbModel
     {
@@ -197,9 +197,9 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
 
         $query = $this->getSortedQuery();
 
-        self::logQuery($query, 'findOne');
-
         $obj = $query->findOne();
+
+        self::logQuery($query, 'findOne');
 
         return $obj
             ? ($this->toModel)($obj, $ignoreCache)
@@ -281,10 +281,11 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
         }
 
         $query = $this->query;
+        $count = $query->count();
 
         self::logQuery($query, 'count');
 
-        return $query->count();
+        return $count;
     }
 
     /**
@@ -300,10 +301,11 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
         }
 
         $query = $this->query;
+        $result = $query->deleteMany();
 
         self::logQuery($query, 'deleteMany');
 
-        return $query->deleteMany();
+        return $result;
     }
 
     private static function logQuery(ORM $query, string $description): void
