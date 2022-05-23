@@ -46,7 +46,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
 
     /**
      * Method for conversion of dbObj to model.
-     * 
+     *
      * @var callable|null
      */
     private $toModel = null;
@@ -59,6 +59,15 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     private array $sortOrder = [];
 
     /**
+     * Query log (if enabled).
+     *
+     * @var string[]
+     */
+    private static array $log = [];
+
+    private static bool $logEnabled = false;
+
+    /**
      * @param ORM|null $query The base query. Can be null for an empty query.
      * @param callable|null $toModel Must be provided for non-empty query.
      * @param SortStep[]|null $sortOrder
@@ -69,7 +78,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
         ?array $sortOrder = null
     )
     {
-        if (is_null($query)) {
+        if ($query === null) {
             return;
         }
 
@@ -84,6 +93,21 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
         $this->sortOrder = $sortOrder ?? [];
     }
 
+    public static function enableLog(): void
+    {
+        self::$logEnabled = true;
+    }
+
+    /**
+     * Returns query log.
+     *
+     * @return string[]
+     */
+    public static function getLog(): array
+    {
+        return self::$log;
+    }
+
     /**
      * Get underlying {@see ORM} query.
      */
@@ -94,12 +118,12 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
 
     /**
      * Returns "empty" query (without table and filters).
+     *
+     * @return static
      */
     public static function empty(): self
     {
-        if (is_null(self::$empty)) {
-            self::$empty = new static();
-        }
+        self::$empty ??= new static();
 
         return self::$empty;
     }
@@ -109,12 +133,12 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
      */
     public function isEmpty(): bool
     {
-        return is_null($this->query);
+        return $this->query === null;
     }
 
     /**
      * Executes query and returns all entities.
-     * 
+     *
      * "Select all".
      * In case of empty Query returns empty collection.
      */
@@ -125,6 +149,8 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
         }
 
         $query = $this->getSortedQuery();
+
+        self::logQuery($query, 'findMany');
 
         try {
             $objs = $query->findMany();
@@ -159,7 +185,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
 
     /**
      * Executes query and returns the first entity if any.
-     * 
+     *
      * "Select one".
      * In case of empty query returns null.
      */
@@ -169,7 +195,11 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
             return null;
         }
 
-        $obj = $this->getSortedQuery()->findOne();
+        $query = $this->getSortedQuery();
+
+        self::logQuery($query, 'findOne');
+
+        $obj = $query->findOne();
 
         return $obj
             ? ($this->toModel)($obj, $ignoreCache)
@@ -202,18 +232,17 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     /**
      * Executes query and returns a random record.
      *
-     * In case of an empty query (or no records) returns null.
-     * 
+     * In case of an empty query (or no records) returns `null`.
+     *
      * Note:
-     * 
+     *
      * If the query results are changed during the execution
      * of this function, the function tries to get the first record.
-     * 
+     *
      * This can be when:
-     * 
+     *
      * - There were records on the counting step, but they disappered
      * before getting the random record.
-     * 
      * - The count was 0 but before returning the empty record, some
      * records have appeared.
      */
@@ -232,7 +261,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Executes query and checks if there are any records.
+     * Executes `count()` query and checks if there are any records.
      */
     public function any(): bool
     {
@@ -241,7 +270,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
 
     /**
      * Executes query and returns record count.
-     * 
+     *
      * "Select count(*)".
      * In case of empty query returns 0.
      */
@@ -251,14 +280,18 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
             return 0;
         }
 
-        return $this->query->count();
+        $query = $this->query;
+
+        self::logQuery($query, 'count');
+
+        return $query->count();
     }
 
     /**
      * Deletes records based on the query.
-     * 
+     *
      * "Delete all".
-     * In case of empty query returns null.
+     * Returns the result of the operation. In case of empty query returns `null`.
      */
     public function delete(): ?bool
     {
@@ -266,7 +299,22 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
             return null;
         }
 
-        return $this->query->deleteMany();
+        $query = $this->query;
+
+        self::logQuery($query, 'deleteMany');
+
+        return $query->deleteMany();
+    }
+
+    private static function logQuery(ORM $query, string $description): void
+    {
+        if (!self::$logEnabled) {
+            return;
+        }
+
+        $queryStr = self::queryToString($query);
+
+        self::$log[] = sprintf('%s (%s)', $queryStr, $description);
     }
 
     /**
@@ -317,9 +365,9 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Wrapper method for the underlying whereIn().
-     * 
-     * Allows passing an array or a ArrayableInterface.
+     * Wrapper method for the underlying `whereIn()`.
+     *
+     * Allows passing an array or a {@see ArrayableInterface}.
      * In case of empty array returns empty query!
      *
      * @param array|ArrayableInterface $values
@@ -338,10 +386,10 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Wrapper method for the underlying whereNotIn().
+     * Wrapper method for the underlying `whereNotIn()`.
      *
-     * Allows passing an array or a ArrayableInterface.
-     * 
+     * Allows passing an array or a {@see ArrayableInterface}.
+     *
      * @param array|ArrayableInterface $values
      */
     public function whereNotIn(string $field, $values): self
@@ -358,9 +406,9 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Gets chunk based on offset and limit.
-     * 
-     * Shortcut for offset() + limit().
+     * Gets a chunk based on the offset and the limit.
+     *
+     * Shortcut for `offset()->limit()`.
      */
     public function slice(int $offset, int $limit): self
     {
@@ -370,9 +418,9 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Wrapper method for the underlying offset().
-     * 
-     * Applies only if $offset > 0.
+     * Wrapper method for the underlying `offset()`.
+     *
+     * Applies only if `$offset > 0`.
      */
     public function offset(int $offset): self
     {
@@ -386,9 +434,9 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Wrapper method for the underlying limit().
-     * 
-     * Is applied only if $limit > 0.
+     * Wrapper method for the underlying `limit()`.
+     *
+     * Is applied only if `$limit > 0`.
      */
     public function limit(int $limit): self
     {
@@ -402,7 +450,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Clears sorting and creates ASC sort step.
+     * Clears sorting and creates an ASC sort step.
      */
     public function orderByAsc(string $field): self
     {
@@ -414,7 +462,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Clears sorting and creates DESC sort step.
+     * Clears sorting and creates a DESC sort step.
      */
     public function orderByDesc(string $field): self
     {
@@ -426,7 +474,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Adds ASC sort step.
+     * Adds an ASC sort step.
      */
     public function thenByAsc(string $field): self
     {
@@ -437,7 +485,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Adds DESC sort step.
+     * Adds a DESC sort step.
      */
     public function thenByDesc(string $field): self
     {
@@ -448,7 +496,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Applies sort order as array.
+     * Applies the sort order as an array.
      *
      * @param SortStep[] $sortOrder
      */
@@ -458,11 +506,11 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Breaks the search string into words and applies where() with each of them
+     * Breaks the search string into words and applies `where()` with each of them
      * using AND.
      *
      * @param string $searchStr One or several words.
-     * @param integer $paramCount How many times every word must be passed to where().
+     * @param integer $paramCount How many times every word must be passed to `where()`.
      */
     public function search(
         string $searchStr,
@@ -486,7 +534,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Applies query filters if the condition is true.
+     * Applies query filters if the condition is `true`.
      */
     public function applyIf(bool $condition, callable ...$filters): self
     {
@@ -496,8 +544,8 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     }
 
     /**
-     * Applies first query filter if the condition is true
-     * and second query filter if it's false.
+     * Applies first query filter if the condition is `true`
+     * and second query filter if it's `false`.
      */
     public function applyIfElse(
         bool $condition,
@@ -512,8 +560,8 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
 
     /**
      * Applies query filters.
-     * 
-     * Filter must accept Query and return Query.
+     *
+     * Filter must accept {@see Query} and return {@see Query}.
      */
     public function apply(callable ...$filters): self
     {
