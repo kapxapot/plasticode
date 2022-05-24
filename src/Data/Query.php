@@ -336,12 +336,14 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
             $caller = Arrays::last($callers);
 
             $class = $caller['class'];
+            $function = $caller['function'];
 
             if ($class !== static::class
                 && $class !== IdiormRepository::class
                 && !is_subclass_of($class, IdiormRepository::class)
                 && $class !== Collection::class
                 && !is_subclass_of($class, Collection::class)
+                && !Strings::endsWith($function, '{closure}')
             ) {
                 $outerCaller = $caller;
             }

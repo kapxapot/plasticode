@@ -41,11 +41,11 @@ class AuthService
         $this->userRepository = $userRepository;
     }
 
-    private function getToken() : ?AuthToken
+    private function getToken(): ?AuthToken
     {
         $token = $this->auth->getToken();
 
-        if (is_null($token)) {
+        if ($token === null) {
             $tokenId = $this->auth->getTokenId();
 
             if ($tokenId > 0) {
@@ -60,7 +60,7 @@ class AuthService
     /**
      * Check if there is current user authenticated.
      */
-    public function check() : bool
+    public function check(): bool
     {
         $token = $this->getToken();
 
@@ -70,7 +70,7 @@ class AuthService
     /**
      * Attempt login with login and password.
      */
-    public function attempt(string $login, string $password) : ?AuthToken
+    public function attempt(string $login, string $password): ?AuthToken
     {
         $user = $this->userRepository->getByLogin($login);
 
@@ -105,7 +105,7 @@ class AuthService
     /**
      * Logout the current user.
      */
-    public function logout() : void
+    public function logout(): void
     {
         $this->auth->resetToken();
     }
@@ -113,7 +113,7 @@ class AuthService
     /**
      * Generate expiration time based on settings.
      */
-    private function generateExpirationTime() : string
+    private function generateExpirationTime(): string
     {
         $ttl = $this->settingsProvider->get(
             self::TOKEN_TTL_PATH,
@@ -126,12 +126,11 @@ class AuthService
     /**
      * Tries to validate auth token taken from cookie.
      */
-    public function validateCookie(?string $tokenStr) : void
+    public function validateCookie(?string $tokenStr): void
     {
         try {
             $this->validateToken($tokenStr);
-        }
-        catch (AuthenticationException $authEx) {
+        } catch (AuthenticationException $authEx) {
             // do nothing
         }
     }
@@ -142,14 +141,14 @@ class AuthService
     public function validateToken(
         ?string $tokenStr,
         bool $ignoreExpiration = false
-    ) : AuthToken
+    ): AuthToken
     {
         $token = $this->getToken();
 
-        if (is_null($token) || $token->token != $tokenStr) {
+        if ($token === null || $token->token != $tokenStr) {
             $token = $this->authTokenRepository->getByToken($tokenStr);
 
-            if (is_null($token)) {
+            if ($token === null) {
                 throw new AuthenticationException('Incorrect security token.');
             }
 
