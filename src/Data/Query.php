@@ -339,6 +339,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
 
             if ($class !== static::class
                 && $class !== IdiormRepository::class
+                && !is_subclass_of($class, IdiormRepository::class)
                 && $class !== Collection::class
                 && !is_subclass_of($class, Collection::class)
             ) {
