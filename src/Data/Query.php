@@ -61,7 +61,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     /**
      * Query log (if enabled).
      *
-     * @var string[]
+     * @var QueryInfo[]
      */
     private static array $log = [];
 
@@ -101,7 +101,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
     /**
      * Returns query log.
      *
-     * @return string[]
+     * @return QueryInfo[]
      */
     public static function getLog(): array
     {
@@ -181,6 +181,14 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
         $statement = $method->invoke($query);
 
         return $statement;
+    }
+
+    /**
+     * Returns query params.
+     */
+    private static function getQueryParams(ORM $query): array
+    {
+        return (fn() => $this->_values)->call($query);
     }
 
     /**
@@ -314,9 +322,12 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
             return;
         }
 
-        $queryStr = self::queryToString($query);
+        $info = new QueryInfo();
+        $info->query = self::queryToString($query);
+        $info->description = $description;
+        $info->params = self::getQueryParams($query);
 
-        self::$log[] = sprintf('%s (%s)', $queryStr, $description);
+        self::$log[] = $info;
     }
 
     /**
