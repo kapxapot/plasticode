@@ -344,6 +344,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
                 && $class !== Collection::class
                 && !is_subclass_of($class, Collection::class)
                 && !Strings::endsWith($function, '{closure}')
+                && $class !== DbModel::class
             ) {
                 $outerCaller = $caller;
             }
