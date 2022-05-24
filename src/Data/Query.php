@@ -327,6 +327,24 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
         $info->description = $description;
         $info->params = self::getQueryParams($query);
 
+        $outerCaller = null;
+
+        for ($depth = 3; !$outerCaller; $depth++) {
+            $callers = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $depth);
+            $caller = Arrays::last($callers);
+
+            $class = $caller['class'];
+
+            if ($class !== static::class
+                && $class !== Collection::class
+                && !is_subclass_of($class, Collection::class)
+            ) {
+                $outerCaller = $caller;
+            }
+        }
+
+        $info->caller = $outerCaller;
+
         self::$log[] = $info;
     }
 
