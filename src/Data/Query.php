@@ -6,10 +6,12 @@ use Countable;
 use IteratorAggregate;
 use ORM;
 use PDOException;
+use Plasticode\Collections\Generic\Collection;
 use Plasticode\Collections\Generic\DbModelCollection;
 use Plasticode\Exceptions\SqlException;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\Generic\DbModel;
+use Plasticode\Repositories\Idiorm\Generic\IdiormRepository;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;
@@ -336,6 +338,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
             $class = $caller['class'];
 
             if ($class !== static::class
+                && $class !== IdiormRepository::class
                 && $class !== Collection::class
                 && !is_subclass_of($class, Collection::class)
             ) {
