@@ -335,7 +335,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
             $callers = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $depth);
             $caller = Arrays::last($callers);
 
-            $class = $caller['class'];
+            $class = $caller['class'] ?? null;
             $function = $caller['function'];
 
             if ($class !== static::class
