@@ -116,7 +116,7 @@ class Model implements ArrayableInterface, ArrayAccess, JsonSerializable
         return $this->data;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         Assert::notNull($offset);
 
@@ -128,7 +128,7 @@ class Model implements ArrayableInterface, ArrayAccess, JsonSerializable
         return isset($this->{$offset});
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->{$offset});
     }

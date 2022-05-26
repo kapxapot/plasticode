@@ -3,6 +3,7 @@
 namespace Plasticode\Data;
 
 use Countable;
+use DateTime;
 use IteratorAggregate;
 use ORM;
 use PDOException;
@@ -330,6 +331,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
         $info->query = self::queryToString($query);
         $info->description = $description;
         $info->params = self::getQueryParams($query);
+        $info->time = new DateTime();
 
         $outerCaller = null;
 
