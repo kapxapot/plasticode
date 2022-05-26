@@ -126,12 +126,12 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
     
     /**
      * Returns entity by id.
-     * 
+     *
      * If the entity is cached, returns it from cache by default.
      */
     protected function getEntity(?int $id, bool $ignoreCache = false): ?DbModel
     {
-        if (is_null($id)) {
+        if ($id === null) {
             return null;
         }
 

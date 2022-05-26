@@ -70,6 +70,8 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
 
     private static bool $logEnabled = false;
 
+    private static ?callable $logCallerFilter = null;
+
     /**
      * @param ORM|null $query The base query. Can be null for an empty query.
      * @param callable|null $toModel Must be provided for non-empty query.
@@ -96,9 +98,10 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
         $this->sortOrder = $sortOrder ?? [];
     }
 
-    public static function enableLog(): void
+    public static function enableLog(?callable $logCallerFilter = null): void
     {
         self::$logEnabled = true;
+        self::$logCallerFilter = $logCallerFilter;
     }
 
     /**
@@ -337,16 +340,10 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
             $caller = Arrays::last($callers);
 
             $class = $caller['class'] ?? null;
-            $function = $caller['function'];
 
-            if ($class !== static::class
-                && $class !== IdiormRepository::class
-                && !is_subclass_of($class, IdiormRepository::class)
-                && $class !== Collection::class
-                && !is_subclass_of($class, Collection::class)
-                && !Strings::endsWith($function, '{closure}')
-                && $class !== DbModel::class
-                && $class !== ObjectProxy::class
+            if (
+                $class !== static::class
+                && (self::$logCallerFilter === null || (self::$logCallerFilter)($caller))
             ) {
                 $outerCaller = $caller;
             }

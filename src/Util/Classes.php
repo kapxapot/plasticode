@@ -2,8 +2,8 @@
 
 namespace Plasticode\Util;
 
+use Plasticode\Collections\Generic\StringCollection;
 use ReflectionClass;
-use ReflectionClassConstant;
 use ReflectionMethod;
 
 class Classes
@@ -44,5 +44,14 @@ class Classes
         $class = new ReflectionClass($className);
 
         return $class->getConstants();
+    }
+
+    public static function isOrSubClassOf(string $class, string ...$baseClasses): bool
+    {
+        return StringCollection::make($baseClasses)
+            ->any(
+                fn (string $baseClass) => $class === $baseClass
+                    || is_subclass_of($class, $baseClass)
+            );
     }
 }
