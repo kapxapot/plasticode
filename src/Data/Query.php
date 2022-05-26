@@ -6,13 +6,10 @@ use Countable;
 use IteratorAggregate;
 use ORM;
 use PDOException;
-use Plasticode\Collections\Generic\Collection;
 use Plasticode\Collections\Generic\DbModelCollection;
 use Plasticode\Exceptions\SqlException;
 use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Models\Generic\DbModel;
-use Plasticode\ObjectProxy;
-use Plasticode\Repositories\Idiorm\Generic\IdiormRepository;
 use Plasticode\Util\Arrays;
 use Plasticode\Util\SortStep;
 use Plasticode\Util\Strings;
@@ -70,7 +67,8 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
 
     private static bool $logEnabled = false;
 
-    private static ?callable $logCallerFilter = null;
+    /** @var callable|null */
+    private static $logCallerFilter = null;
 
     /**
      * @param ORM|null $query The base query. Can be null for an empty query.
