@@ -33,6 +33,13 @@ class MenuItemRepository extends IdiormRepository implements MenuItemRepositoryI
         return $this->getEntity($id);
     }
 
+    public function getAll(): MenuItemCollection
+    {
+        return MenuItemCollection::from(
+            $this->query()
+        );
+    }
+
     public function getAllByMenuId(int $menuId): MenuItemCollection
     {
         return MenuItemCollection::from(

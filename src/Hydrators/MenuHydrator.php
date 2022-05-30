@@ -6,19 +6,19 @@ use Plasticode\Core\Interfaces\LinkerInterface;
 use Plasticode\Hydrators\Generic\Hydrator;
 use Plasticode\Models\Generic\DbModel;
 use Plasticode\Models\Menu;
-use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
+use Plasticode\Services\MenuService;
 
 class MenuHydrator extends Hydrator
 {
-    protected MenuItemRepositoryInterface $menuItemRepository;
+    protected MenuService $menuService;
     protected LinkerInterface $linker;
 
     public function __construct(
-        MenuItemRepositoryInterface $menuItemRepository,
+        MenuService $menuService,
         LinkerInterface $linker
     )
     {
-        $this->menuItemRepository = $menuItemRepository;
+        $this->menuService = $menuService;
         $this->linker = $linker;
     }
 
@@ -29,7 +29,7 @@ class MenuHydrator extends Hydrator
     {
         return $entity
             ->withItems(
-                fn () => $this->menuItemRepository->getAllByMenuId($entity->getId())
+                fn () => $this->menuService->getMenuItemsByMenu($entity)
             )
             ->withUrl(
                 fn () => $this->linker->rel($entity->link)

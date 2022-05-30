@@ -8,6 +8,9 @@ use Plasticode\Repositories\Interfaces\Generic\ChangingRepositoryInterface;
 
 interface MenuItemRepositoryInterface extends ChangingRepositoryInterface
 {
-    function get(?int $id): ?MenuItem;
-    function getAllByMenuId(int $menuId): MenuItemCollection;
+    public function get(?int $id): ?MenuItem;
+
+    public function getAll(): MenuItemCollection;
+
+    public function getAllByMenuId(int $menuId): MenuItemCollection;
 }

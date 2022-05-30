@@ -45,9 +45,12 @@ use Plasticode\Models\Validation\UserValidation;
 use Plasticode\Parsing\Interfaces\ParserInterface;
 use Plasticode\Parsing\Parsers\CutParser;
 use Plasticode\Repositories\Interfaces\AuthTokenRepositoryInterface;
+use Plasticode\Repositories\Interfaces\MenuItemRepositoryInterface;
 use Plasticode\Repositories\Interfaces\MenuRepositoryInterface;
 use Plasticode\Repositories\Interfaces\UserRepositoryInterface;
 use Plasticode\Services\AuthService;
+use Plasticode\Services\MenuService;
+use Plasticode\Services\NewsAggregatorService;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Plasticode\Settings\SettingsProvider;
 use Plasticode\Testing\AbstractProviderTest;
@@ -73,6 +76,7 @@ final class CoreProviderTest extends AbstractProviderTest
             ValidatorInterface::class,
 
             AuthTokenRepositoryInterface::class,
+            MenuItemRepositoryInterface::class,
             MenuRepositoryInterface::class,
             UserRepositoryInterface::class,
         ];
@@ -98,7 +102,6 @@ final class CoreProviderTest extends AbstractProviderTest
         $this->check(ApiInterface::class, Api::class);
         $this->check(AppContext::class);
         $this->check(AuthInterface::class, Auth::class);
-        $this->check(AuthService::class);
         $this->check(CacheInterface::class, Cache::class);
         $this->check(CaptchaConfigInterface::class, CaptchaConfig::class);
         $this->check(CaptchaInterface::class, Captcha::class);
@@ -123,6 +126,12 @@ final class CoreProviderTest extends AbstractProviderTest
         $this->check(CaptchaController::class);
         $this->check(ParserController::class);
         $this->check(PasswordController::class);
+
+        // services
+
+        $this->check(AuthService::class);
+        $this->check(MenuService::class);
+        $this->check(NewsAggregatorService::class);
 
         // validation
 
