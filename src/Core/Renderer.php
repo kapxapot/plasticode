@@ -9,17 +9,14 @@ use Plasticode\ViewModels\UrlViewModel;
 
 class Renderer implements RendererInterface
 {
-    /**
-     * @var ViewInterface
-     */
-    protected $view;
-    
+    protected ViewInterface $view;
+
     public function __construct(ViewInterface $view)
     {
         $this->view = $view;
     }
-    
-    public function text(string $text, ?string $style = null, ?string $id = null) : string
+
+    public function text(string $text, ?string $style = null, ?string $id = null): string
     {
         return $this->component(
             'text',
@@ -33,16 +30,13 @@ class Renderer implements RendererInterface
 
     /**
      * Renders url.
-     *
-     * @param UrlViewModel $model
-     * @return string
      */
-    public function url(UrlViewModel $model) : string
+    public function url(UrlViewModel $model): string
     {
         return $this->component('url', $model);
     }
 
-    public function entityUrl(string $url, string $text, ?string $title = null) : string
+    public function entityUrl(string $url, string $text, ?string $title = null): string
     {
         return $this->component(
             'entity_url',
@@ -54,7 +48,7 @@ class Renderer implements RendererInterface
         );
     }
 
-    public function noUrl(string $text, ?string $title = null) : string
+    public function noUrl(string $text, ?string $title = null): string
     {
         return $this->component(
             'no_url',
@@ -65,17 +59,17 @@ class Renderer implements RendererInterface
         );
     }
 
-    public function next() : string
+    public function next(): string
     {
         return $this->component('next');
     }
     
-    public function prev() : string
+    public function prev(): string
     {
         return $this->component('prev');
     }
 
-    public function component(string $name, $data = null) : string
+    public function component(string $name, $data = null): string
     {
         return $this->view->fetch(
             'components/spaceless.twig',
