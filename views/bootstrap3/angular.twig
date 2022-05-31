@@ -13,7 +13,7 @@
 
     {{ angular_filters }}
 
-    app.controller('{{ angular_ctrl }}', ['$scope', '$http', '$timeout', '$injector', function($scope, $http, $timeout, $injector) {
+    app.controller('{{ angular_ctrl }}', ['$scope', '$http', '$timeout', '$injector', '$compile', function($scope, $http, $timeout, $injector, $compile) {
         $scope.views = {};
         $scope.forms = {};
 
@@ -24,6 +24,8 @@
             $scope.momentDiff = (start, end, unknownEnd, format = null) =>
                 momentDiff(start, end, unknownEnd, format);
         }
+
+        $scope.compile = (html) => $compile(html)($scope);
 
         $scope.loading = false;
         $scope.saving = false;

@@ -464,14 +464,28 @@ function paramsToString(params) {
         const name = p[0];
         const value = p[1];
 
+        if (str.length > 0) {
+            str += '&';
+        }
+
         str += name;
 
-        if (value && value.length > 0) {
+        if (value !== '') {
             str += '=' + value;
         }
     }
 
     return str;
+}
+
+function objParamsToString(objParams) {
+    let params = [];
+
+    for (var prop in objParams) {
+        params.push([prop, objParams[prop]]);
+    }
+
+    return paramsToString(params);
 }
 
 function setQueryParams(params) {
