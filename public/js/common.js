@@ -478,14 +478,14 @@ function paramsToString(params) {
     return str;
 }
 
-function objParamsToString(objParams) {
-    let params = [];
+function objToArray(obj) {
+    let array = [];
 
-    for (var prop in objParams) {
-        params.push([prop, objParams[prop]]);
+    for (var prop in obj) {
+        array.push([prop, obj[prop]]);
     }
 
-    return paramsToString(params);
+    return array;
 }
 
 function setQueryParams(params) {
