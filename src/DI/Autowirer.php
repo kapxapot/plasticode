@@ -15,9 +15,9 @@ use Webmozart\Assert\Assert;
 
 /**
  * The automatic object creator (aka "the abstract factory") that uses the container's definitions.
- * 
+ *
  * Can:
- * 
+ *
  * - Return a created object.
  * - Return a callable (a factory) that creates an object.
  * - Check if an object can be created.
@@ -39,10 +39,10 @@ class Autowirer
 
     /**
      * Creates an object based on the container's definitions.
-     * 
+     *
      * - If unable to autowire, throws {@see InvalidConfigurationException}.
      * - If the object's creation fails, throws a generic {@see Exception}.
-     * 
+     *
      * @throws InvalidConfigurationException
      * @throws Exception
      */
@@ -76,9 +76,9 @@ class Autowirer
 
     /**
      * Creates a callable (a factory) that creates an object based on container's definitions.
-     * 
+     *
      * In case of failure throws {@see InvalidConfigurationException}.
-     * 
+     *
      * @throws InvalidConfigurationException
      */
     public function autoFactory(
@@ -106,9 +106,8 @@ class Autowirer
         $constructor = $class->getConstructor();
 
         // no constructor, just create an object
-        if (is_null($constructor)) {
-            return fn (ContainerInterface $c) =>
-                $class->newInstanceWithoutConstructor();
+        if ($constructor === null) {
+            return fn (ContainerInterface $c) => $class->newInstanceWithoutConstructor();
         }
 
         $params = $constructor->getParameters();
@@ -139,15 +138,14 @@ class Autowirer
 
     /**
      * Resolves the params list based on the container's definitions as callables.
-     * 
+     *
      * @param ReflectionParameter[] $params
      * @return callable[]
      */
     public function paramAutoFactories(ContainerInterface $container, array $params): array
     {
         return array_map(
-            fn (ReflectionParameter $param) =>
-                $this->paramAutoFactory($container, $param),
+            fn (ReflectionParameter $param) => $this->paramAutoFactory($container, $param),
             $params
         );
     }
@@ -165,7 +163,7 @@ class Autowirer
 
         // no typehint => such a param can't be autowired
         // if it's nullable, set null, otherwise throw an exception
-        if (is_null($paramType)) {
+        if ($paramType === null) {
             $factory = $this->untypedParamAutoFactory($container, $param);
 
             if ($factory !== null) {

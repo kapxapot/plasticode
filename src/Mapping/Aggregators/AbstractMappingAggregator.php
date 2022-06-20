@@ -27,7 +27,7 @@ abstract class AbstractMappingAggregator
 
     /**
      * Registers mapping provider collections.
-     * 
+     *
      * @return $this
      */
     public function registerMany(
@@ -43,7 +43,7 @@ abstract class AbstractMappingAggregator
 
     /**
      * Registers mapping providers.
-     * 
+     *
      * @return $this
      */
     public function register(MappingProviderInterface ...$mappingProviders): self
