@@ -238,7 +238,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     {
         $count = $this->count();
 
-        if ($count == 0) {
+        if ($count === 0) {
             return null;
         }
 
@@ -262,11 +262,11 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     /**
      * Converts collection to {@see StringCollection}, using $item->__toString() by default.
      * Can be customized by selector.
-     * 
+     *
      * Don't confuse with stringify!
-     * 
+     *
      * In case of non-string values will throw an {@see InvalidArgumentException}.
-     * 
+     *
      * @param string|callable|null $selector Column/property name or callable, that
      * produces a string value.
      * @throws InvalidArgumentException
@@ -283,9 +283,9 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     /**
      * Converts collection to {@see NumericCollection}, optionally
      * mapping (reducing) its values to numeric values.
-     * 
+     *
      * In case of non-numeric values will throw an {@see InvalidArgumentException}.
-     * 
+     *
      * @param string|callable|null $selector Column/property name or callable, that
      * produces a numeric value.
      * @throws InvalidArgumentException
@@ -300,9 +300,9 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     /**
      * Converts collection to {@see ScalarCollection}, optionally
      * mapping (reducing) its values to scalars.
-     * 
+     *
      * In case of non-scalar values will throw an {@see InvalidArgumentException}.
-     * 
+     *
      * @param string|callable|null $selector Column/property name or callable, that
      * produces a scalar value.
      * @throws InvalidArgumentException
@@ -340,9 +340,9 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Is there any value in this collection?
-     * 
-     * Uses 'where' filtering internally.
-     * Suitable for looking for 'null' as well.
+     *
+     * Uses `where` filtering internally.
+     * Suitable for looking for `null` as well.
      *
      * @param string|callable|null $selector
      * @param mixed $value
@@ -355,10 +355,10 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     }
 
     /**
-     * Looks for any first non-null value in collection.
-     * 
-     * Uses 'first' internally, iterating the collection.
-     * Not suitable for looking for 'null'.
+     * Is there any first non-null value in this collection?
+     *
+     * Uses `first()` internally, iterating the collection.
+     * Not suitable for looking for `null`.
      *
      * @param string|callable|null $by
      * @param mixed $value
@@ -370,7 +370,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     public function isEmpty(): bool
     {
-        return $this->count() == 0;
+        return $this->count() === 0;
     }
 
     /**
