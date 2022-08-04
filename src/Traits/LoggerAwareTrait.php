@@ -20,9 +20,14 @@ trait LoggerAwareTrait
         return $this;
     }
 
+    private function hasLogger(): bool
+    {
+        return $this->logger !== null;
+    }
+
     protected function log(string $message, ?array $data = null): void
     {
-        if (is_null($this->logger)) {
+        if (!$this->hasLogger()) {
             return;
         }
 
@@ -32,8 +37,10 @@ trait LoggerAwareTrait
     protected function logEx(Exception $ex): void
     {
         $this->log(
-            $ex->getMessage() . ' ' . json_encode(
-                Debug::exceptionTrace($ex)
+            sprintf(
+                '%s %s',
+                $ex->getMessage(),
+                json_encode(Debug::exceptionTrace($ex))
             )
         );
     }
