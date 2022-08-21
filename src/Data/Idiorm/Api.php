@@ -109,6 +109,7 @@ class Api implements ApiInterface
 
         if (isset($options['filter'])) {
             $args = $options['args'];
+            /** @var ORM */
             $items = $items->where($options['filter'], $args['id']);
         }
 
@@ -120,6 +121,9 @@ class Api implements ApiInterface
             $items = isset($tableMetadata['reverse'])
                 ? $items->orderByDesc($sortBy)
                 : $items->orderByAsc($sortBy);
+        } else {
+            // default sort
+            $items->orderByDesc('id');
         }
 
         // populate array
