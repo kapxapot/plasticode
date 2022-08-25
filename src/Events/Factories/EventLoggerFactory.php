@@ -10,13 +10,22 @@ use Plasticode\IO\File;
 use Plasticode\Settings\Interfaces\SettingsProviderInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * May return `null` if the event logger is disabled.
+ */
 class EventLoggerFactory
 {
     public function __invoke(
         SettingsProviderInterface $settingsProvider,
         Config $config
-    ): LoggerInterface
+    ): ?LoggerInterface
     {
+        $logEnabled = $settingsProvider->get('event_logger.enabled', false);
+
+        if (!$logEnabled) {
+            return null;
+        }
+
         $logger = new Logger(
             $settingsProvider->get('event_logger.name', 'events')
         );

@@ -61,11 +61,21 @@ class CoreProvider extends MappingProvider
             CaptchaConfigInterface::class => CaptchaConfig::class,
             CaptchaInterface::class => Captcha::class,
 
-            EventDispatcher::class =>
-                fn (SettingsProviderInterface $settingsProvider, Config $config, EventLoggerFactory $factory) =>
-                    (new EventDispatcher())->withLogger(
-                        ($factory)($settingsProvider, $config)
-                    ),
+            EventDispatcher::class => function (
+                SettingsProviderInterface $settingsProvider,
+                Config $config,
+                EventLoggerFactory $factory
+            ) {
+                $ed = new EventDispatcher();
+
+                $logger = ($factory)($settingsProvider, $config);
+
+                if ($logger) {
+                    $ed->withLogger($logger);
+                }
+
+                return $ed;
+            },
 
             LinkerInterface::class => Linker::class,
             LocalizationConfigInterface::class => LocalizationConfig::class,
