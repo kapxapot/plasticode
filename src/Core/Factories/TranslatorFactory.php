@@ -14,8 +14,6 @@ class TranslatorFactory
         LocalizationConfigInterface $localizationConfig
     ): TranslatorInterface
     {
-        $langCode = $config->viewGlobals()['lang'] ?? 'ru';
-
-        return new Translator($localizationConfig, $langCode);
+        return new Translator($localizationConfig, $config->langCode());
     }
 }

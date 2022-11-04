@@ -144,7 +144,7 @@ abstract class IdiormRepository implements EntityRelatedInterface, RepositoryInt
 
         $entity ??= $this->byIdQuery($id)->one();
 
-        if (is_null($entity)) {
+        if ($entity === null) {
             $this->deleteCachedEntity($id);
         }
 

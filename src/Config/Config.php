@@ -7,7 +7,10 @@ use Plasticode\Settings\SettingsProvider;
 
 class Config
 {
+    const LANG_CODE_PATH = 'view_globals.lang';
     const ROOT_DIR_PATH = 'root_dir';
+
+    const DEFAULT_LANG_CODE = 'ru';
 
     private SettingsProviderInterface $settingsProvider;
 
@@ -22,6 +25,14 @@ class Config
     public function rootDir(): string
     {
         return $this->get(self::ROOT_DIR_PATH);
+    }
+
+    /**
+     * System language code (for the UI).
+     */
+    public function langCode(): string
+    {
+        return $this->get(self::LANG_CODE_PATH, self::DEFAULT_LANG_CODE);
     }
 
     /**

@@ -182,7 +182,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
 
     /**
      * Returns plural entity type (in snake case) based on the class name.
-     * 
+     *
      * ArticleCategory -> article_categories.
      */
     public static function pluralAlias(): string
@@ -202,10 +202,10 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
 
     /**
      * Checks if two objects are equal:
-     * 
+     *
      * - Same class.
      * - Same id.
-     * 
+     *
      * @param self|null $obj
      */
     public function equals(?EquatableInterface $obj): bool
