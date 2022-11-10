@@ -85,11 +85,11 @@
                         var obj = {
                             url: i.picture,
                         };
-                        
+
                         if (i.points) {
                             obj['points'] = i.points;
                         }
-                        
+
                         $scope.croppieLoading(true);
                         $('#croppie-upload').croppie('bind', obj).then(function() {
                             $scope.croppieLoading(false);
@@ -108,7 +108,7 @@
         var initMdes = function() {
             {% if mde %}
                     var buttons = angular.copy(mdEditorService.defaultButtons);
-                    
+
                     var previewButton = {
                         name: 'previewSideBySide',
                         action: function(editor) {
@@ -118,13 +118,13 @@
                         className: 'fa fa-arrows-alt hidden-xs',
                         title: 'Превью'
                     };
-                    
+
                     var options = {
                         toolbar: buttons
-                    }
-                    
+                    };
+
                     {% include 'admin/includes/mde_buttons.twig' %}
-                    
+
                      if ($scope.itemId == 0) {
                         options.autosave = {
                             enabled: true,
@@ -132,11 +132,11 @@
                             delay: 1000,
                         };
                     }
-                    
+
                     $scope.editorOpts = options;
             {% endif %}
         };
-        
+
         var init = function() {
             initMdes();
         };
@@ -162,32 +162,32 @@
                 });
         }));
     {% endfor %}
-    
+
     {# croppie #}
     {% for col, value in columns if value.type == 'thumb' %}
         $scope.readFile = function(input) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
-                
+
                 reader.onload = function(e) {
                     $scope.originalPicture = e.target.result;
 
                     $scope.croppieShow();
-                    
+
                     $('#croppie-upload').croppie('bind', {
                         url: e.target.result
                     }).then(function() {
                         // ..
                     });
                 }
-                
+
                 reader.readAsDataURL(input.files[0]);
             }
         };
 
         $scope.croppieInit = function() {
             $scope.croppie = true;
-    
+
             $('#croppie-upload').croppie({
                 viewport: {
                     width: 200,
@@ -199,15 +199,15 @@
                 $scope.readFile(this);
             });
         };
-        
+
         $scope.croppieHide = function() {
             $('.croppie-upload').removeClass('ready');
         };
-        
+
         $scope.croppieShow = function() {
             $('.croppie-upload').addClass('ready');
         };
-        
+
         $scope.croppieLoading = function(loading) {
             if (loading) {
                 $('.croppie-upload').addClass('loading');
@@ -222,19 +222,19 @@
                 $scope.$apply();
             });
         };
-        
+
         $scope.croppieReset = function() {
             $scope.croppieHide();
-            
+
             $('#upload').val('');
 
             $('#croppie-upload').croppie('bind', {
                 url: ''
             });
-            
+
             $scope.originalPicture = null;
         };
-        
+
         $scope.croppieGetThumb = function(onComplete) {
             $('#croppie-upload').croppie('result', {
                 size: 'viewport',
@@ -251,7 +251,7 @@
         {% set tableAlias = alias ~ '-table' %}
         {% set apiChunk = api ~ (source ?? alias) %}
 
-        {% set columnCount = 0 %}
+        {% set columnCount = actions ? 1 : 0 %}
         {% for col, value in columns if value.hidden is null %}
             {% set columnCount = columnCount + 1 %}
         {% endfor %}
@@ -329,25 +329,25 @@
                         orderable: false,
                         data: function(row, type, val, meta) {
                             var actions = [];
-                            
+
                             {% if can_edit %}
-                                if (row.access.edit) {
+                                if (row.access && row.access.edit) {
                                     actions.push('<button type="button" class="btn btn-primary btn-pad mr-1" data-id="' + row.id + '" data-action="edit">{{ gm.gi('pencil', 'Редактировать') }}</button>');
                                 }
                             {% endif %}
                             {% if can_delete %}
-                                if (row.access.delete) {
+                                if (row.access && row.access.delete) {
                                     actions.push('<button type="button" class="btn btn-danger btn-pad" data-id="' + row.id + '" data-action="delete">{{ gm.gi('remove', 'Удалить') }}</button>');
                                 }
                             {% endif %}
-                            
+
                             return actions.join(' ');
                         }
                     },
                 {% endif %}
             ]
         });
-        
+
         {% if actions %}
             $('#{{ alias }}-table tbody').on('click', 'button', function() {
                 var tr = $(this).parents('tr');
@@ -355,7 +355,7 @@
                 if (tr.hasClass('child')) {
                     tr = tr.prev();
                 }
-                
+
                 var data = $scope.table.row(tr).data();
 
                 switch (this.dataset.action) {
@@ -366,18 +366,17 @@
                     case 'delete':
                         $scope.deleteItem(data);
                         break;
-                        
+
                     {{ more_table_actions }}
                 }
             });
         {% endif %}
     };
-    
+
     $scope.setItem = function(i) {
         $scope.itemId = (i && i.id > 0) ? i.id : 0;
         $scope.item = i;
-        //console.log($scope.item);
-        
+
         $scope.itemEditLabel = ($scope.item && $scope.item.id > 0) ? 'Редактирование' : 'Создание';
 
         $timeout(function() {
@@ -387,7 +386,7 @@
         if ($scope.item) {
             $scope.fillEntityForm($scope.item);
         }
-        
+
         $scope.forms.entityForm.$setUntouched();
     };
 
@@ -399,7 +398,6 @@
 
     $scope.createItem = function() {
         resetForm('entity');
-        //$('#entityForm')[0].reset();
 
         var newItem = {};
 
@@ -418,7 +416,7 @@
                 {% endif %}
             {% endif %}
         {% endfor %}
-        
+
         $scope.setItem(newItem);
 
         if ($scope.croppie) {
@@ -427,9 +425,8 @@
 
         showModal('entity');
     };
-    
+
     $scope.fillEntityForm = function(i) {
-        //console.log(i);
         {% for col, value in columns %}
             {% if value.readonly is null %}
                 {% if value.type == 'bool' %}
@@ -481,9 +478,8 @@
     };
 
     $scope.submitData = function(obj, persist) {
-        //console.log(obj);
         var itemId = $scope.itemId;
-        //delay(function() {
+
         $scope.modalAjax({
             method: ($scope.itemId == 0) ? 'post' : 'put',
             url: '{{ api }}{{ alias }}' + (($scope.itemId == 0) ? '' : '/' + $scope.itemId),
@@ -497,14 +493,13 @@
                 $localStorage.entitiesSaves['{{alias}}'] = $localStorage.entitiesSaves['{{alias}}'].filter(e => e.id !== 0);
             }
         });
-        //}, 100000);
     };
 
     $scope.isPreview = false;
     $scope.textSync = function(text, editor, col) {
         $scope.item[col] = text;
-        //console.log($scope.item[col]);
-        if($scope.isPreview) {
+
+        if ($scope.isPreview) {
             delay(function() {
                 $scope.parse(text).then(function() {
                     editor.codemirror.refresh();
@@ -517,7 +512,6 @@
         if (isPreview !== $scope.isPreview) {
             $scope.isPreview = isPreview;
             $scope.parse($scope.item[col]).then(function () {
-                //console.log(1);
                 editor.codemirror.refresh();
             });
         }
