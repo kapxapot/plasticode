@@ -226,9 +226,10 @@ abstract class EntityGenerator implements EntityGeneratorInterface
 
         $searchResultSerialized = $searchResult->toArray();
 
-        foreach ($searchResultSerialized['data'] as $item) {
-            $this->enrichRights($item);
-        }
+        $searchResultSerialized['data'] = array_map(
+            fn (array $item) => $this->enrichRights($item),
+            $searchResultSerialized['data']
+        );
 
         return Response::json($response, $searchResultSerialized);
     }
