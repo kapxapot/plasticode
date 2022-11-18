@@ -2,6 +2,7 @@
 
 namespace Plasticode\Tests\Mapping;
 
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Controllers\Admin\AdminPageControllerFactory;
 use Plasticode\Core\Interfaces\ViewInterface;
 use Plasticode\Data\Interfaces\ApiInterface;
@@ -27,6 +28,7 @@ final class GeneratorProviderTest extends AbstractProviderTest
         return [
             AccessMiddlewareFactory::class,
             ApiInterface::class,
+            AuthInterface::class,
             RouterInterface::class,
             SettingsProviderInterface::class,
             ValidatorInterface::class,

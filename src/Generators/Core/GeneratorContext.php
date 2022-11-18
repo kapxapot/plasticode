@@ -2,6 +2,8 @@
 
 namespace Plasticode\Generators\Core;
 
+use Plasticode\Auth\Access;
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Config\Config;
 use Plasticode\Data\Interfaces\ApiInterface;
 use Plasticode\Middleware\Factories\AccessMiddlewareFactory;
@@ -12,36 +14,57 @@ use Slim\Interfaces\RouterInterface;
 
 class GeneratorContext
 {
-    private SettingsProviderInterface $settingsProvider;
+    private Access $access;
+    private AccessMiddlewareFactory $accessMiddlewareFactory;
+    private ApiInterface $api;
+    private AuthInterface $auth;
     private Config $config;
     private RouterInterface $router;
-    private ApiInterface $api;
-    private ValidatorInterface $validator;
+    private SettingsProviderInterface $settingsProvider;
     private ValidationRules $validationRules;
-    private AccessMiddlewareFactory $accessMiddlewareFactory;
+    private ValidatorInterface $validator;
 
     public function __construct(
-        SettingsProviderInterface $settingsProvider,
+        Access $access,
+        AccessMiddlewareFactory $accessMiddlewareFactory,
+        ApiInterface $api,
+        AuthInterface $auth,
         Config $config,
         RouterInterface $router,
-        ApiInterface $api,
-        ValidatorInterface $validator,
+        SettingsProviderInterface $settingsProvider,
         ValidationRules $validationRules,
-        AccessMiddlewareFactory $accessMiddlewareFactory
+        ValidatorInterface $validator
     )
     {
-        $this->settingsProvider = $settingsProvider;
+        $this->access = $access;
+        $this->accessMiddlewareFactory = $accessMiddlewareFactory;
+        $this->api = $api;
+        $this->auth = $auth;
         $this->config = $config;
         $this->router = $router;
-        $this->api = $api;
-        $this->validator = $validator;
+        $this->settingsProvider = $settingsProvider;
         $this->validationRules = $validationRules;
-        $this->accessMiddlewareFactory = $accessMiddlewareFactory;
+        $this->validator = $validator;
     }
 
-    public function settingsProvider(): SettingsProviderInterface
+    public function access(): Access
     {
-        return $this->settingsProvider;
+        return $this->access;
+    }
+
+    public function accessMiddlewareFactory(): AccessMiddlewareFactory
+    {
+        return $this->accessMiddlewareFactory;
+    }
+
+    public function api(): ApiInterface
+    {
+        return $this->api;
+    }
+
+    public function auth(): AuthInterface
+    {
+        return $this->auth;
     }
 
     public function config(): Config
@@ -54,14 +77,9 @@ class GeneratorContext
         return $this->router;
     }
 
-    public function api(): ApiInterface
+    public function settingsProvider(): SettingsProviderInterface
     {
-        return $this->api;
-    }
-
-    public function validator(): ValidatorInterface
-    {
-        return $this->validator;
+        return $this->settingsProvider;
     }
 
     public function validationRules(): ValidationRules
@@ -69,8 +87,8 @@ class GeneratorContext
         return $this->validationRules;
     }
 
-    public function accessMiddlewareFactory(): AccessMiddlewareFactory
+    public function validator(): ValidatorInterface
     {
-        return $this->accessMiddlewareFactory;
+        return $this->validator;
     }
 }

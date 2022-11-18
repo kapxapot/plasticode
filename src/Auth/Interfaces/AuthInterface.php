@@ -11,40 +11,40 @@ interface AuthInterface
     /**
      * Sets the current auth token.
      */
-    function setToken(AuthToken $token): void;
+    public function setToken(AuthToken $token): void;
 
     /**
      * Resets (deletes) the current auth token.
      */
-    function resetToken(): void;
+    public function resetToken(): void;
 
     /**
      * Returns the current auth token's id.
      */
-    function getTokenId(): ?int;
+    public function getTokenId(): ?int;
 
     /**
      * Returns the current auth token.
      */
-    function getToken(): ?AuthToken;
+    public function getToken(): ?AuthToken;
 
     /**
      * Returns the current user's id.
      */
-    function getUserId(): ?int;
+    public function getUserId(): ?int;
 
     /**
      * Returns the current user.
      */
-    function getUser(): ?User;
+    public function getUser(): ?User;
 
     /**
      * Returns the current role's id.
      */
-    function getRoleId(): ?int;
+    public function getRoleId(): ?int;
 
     /**
      * Returns the current role.
      */
-    function getRole(): ?Role;
+    public function getRole(): ?Role;
 }

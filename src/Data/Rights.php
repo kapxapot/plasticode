@@ -54,7 +54,7 @@ class Rights
 
     /**
      * Get access rights for entity.
-     * 
+     *
      * @return array<string, boolean>
      */
     public function forEntity(array $entity) : array

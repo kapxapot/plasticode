@@ -2,6 +2,8 @@
 
 namespace Plasticode\Generators\Generic;
 
+use Plasticode\Auth\Access;
+use Plasticode\Auth\Interfaces\AuthInterface;
 use Plasticode\Config\Config;
 use Plasticode\Controllers\Admin\AdminPageControllerFactory;
 use Plasticode\Core\Request;
@@ -27,25 +29,29 @@ abstract class EntityGenerator implements EntityGeneratorInterface
 {
     use EntityRelated;
 
-    protected SettingsProviderInterface $settingsProvider;
+    protected Access $access;
+    protected AccessMiddlewareFactory $accessMiddlewareFactory;
+    protected ApiInterface $api;
+    protected AuthInterface $auth;
     protected Config $config;
     protected RouterInterface $router;
-    protected ApiInterface $api;
-    protected ValidatorInterface $validator;
+    protected SettingsProviderInterface $settingsProvider;
     protected ValidationRules $rules;
-    protected AccessMiddlewareFactory $accessMiddlewareFactory;
+    protected ValidatorInterface $validator;
 
     public function __construct(
         GeneratorContext $context
     )
     {
-        $this->settingsProvider = $context->settingsProvider();
+        $this->access = $context->access();
+        $this->accessMiddlewareFactory = $context->accessMiddlewareFactory();
+        $this->api = $context->api();
+        $this->auth = $context->auth();
         $this->config = $context->config();
         $this->router = $context->router();
-        $this->api = $context->api();
-        $this->validator = $context->validator();
+        $this->settingsProvider = $context->settingsProvider();
         $this->rules = $context->validationRules();
-        $this->accessMiddlewareFactory = $context->accessMiddlewareFactory();
+        $this->validator = $context->validator();
     }
 
     public function getEntity(): string
@@ -213,7 +219,28 @@ abstract class EntityGenerator implements EntityGeneratorInterface
 
         $searchResult = $repo->getSearchResult($searchParams);
 
-        return Response::json($response, $searchResult);
+        // we need to apply the access rights here
+        // for that we are going to serialize it first,
+        // then aply the access rights
+        // and send it with the response
+
+        $searchResultSerialized = $searchResult->toArray();
+
+        foreach ($searchResultSerialized['data'] as $item) {
+            $this->enrichRights($item);
+        }
+
+        return Response::json($response, $searchResultSerialized);
+    }
+
+    protected function enrichRights(array $data): array
+    {
+        $rights = $this->access->getTableRights(
+            $this->getEntity(),
+            $this->auth->getUser()
+        );
+
+        return $rights->enrichRights($data);
     }
 
     /**
