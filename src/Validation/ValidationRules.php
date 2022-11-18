@@ -53,9 +53,9 @@ class ValidationRules
     {
         $rule = $this->rules[$name] ?? null;
 
-        if (is_null($rule)) {
+        if ($rule === null) {
             throw new InvalidConfigurationException(
-                'Validation rule \'' . $name . '\' not found.'
+                sprintf('Validation rule \'%s\' not found.', $name)
             );
         }
 
