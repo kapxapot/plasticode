@@ -1,6 +1,6 @@
 <?php
 
-namespace Plasticode\Tests;
+namespace Plasticode\Tests\Validation;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Exceptions\ValidationException;

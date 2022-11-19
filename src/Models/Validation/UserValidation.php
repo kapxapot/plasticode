@@ -56,16 +56,22 @@ class UserValidation extends ExtendableValidation
 
     protected function getOwnRules(array $data, $id = null): array
     {
+        $login = $this->rule('login', $this->isLoginOptional);
+
+        if (!$this->isLoginOptional && strlen($data['login'] ?? null) > 0) {
+            $login = $login->loginAvailable($this->userRepository, $id);
+        }
+
+        $email = $this->rule('url', $this->isEmailOptional);
+
+        if (!$this->isEmailOptional && strlen($data['email'] ?? null) > 0) {
+            $email = $email->email()->emailAvailable($this->userRepository, $id);
+        }
+
         return [
-            'login' => $this
-                ->rule('login', $this->isLoginOptional)
-                ->loginAvailable($this->userRepository, $id),
-            'email' => $this
-                ->rule('url', $this->isEmailOptional)
-                ->email()
-                ->emailAvailable($this->userRepository, $id),
-            'password' => $this
-                ->rule('password', $this->isPasswordOptional),
+            'login' => $login,
+            'email' => $email,
+            'password' => $this->rule('password', $this->isPasswordOptional),
         ];
     }
 }
