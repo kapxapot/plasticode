@@ -344,4 +344,9 @@ final class StringsTest extends TestCase
             ['abc', 'b', ['a', 'c']],
         ];
     }
+
+    public function testKillYo(): void
+    {
+        $this->assertEquals('ежик', Strings::killYo('ёжик'));
+    }
 }

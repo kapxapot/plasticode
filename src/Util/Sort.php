@@ -3,7 +3,6 @@
 namespace Plasticode\Util;
 
 use Plasticode\Traits\PropertyAccess;
-use Webmozart\Assert\Assert;
 
 class Sort
 {
@@ -43,12 +42,16 @@ class Sort
 
                     switch ($type) {
                         case self::STRING:
-                            $cmp = strcasecmp($propA, $propB);
+                            $propA = Strings::killYo(mb_strtolower($propA));
+                            $propB = Strings::killYo(mb_strtolower($propB));
+
+                            $cmp = strcmp($propA, $propB);
+
                             break;
 
                         case self::NULL:
-                            $a = is_null($propA);
-                            $b = is_null($propB);
+                            $a = $propA === null;
+                            $b = $propB === null;
 
                             if ($a && $b || !$a && !$b) {
                                 $cmp = 0;

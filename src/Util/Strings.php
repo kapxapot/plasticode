@@ -459,4 +459,16 @@ class Strings
 
         return mb_strtolower(mb_substr($str, 0, 1)) . mb_substr($str, 1);
     }
+
+    /**
+     * Replaces 'ё' with 'е'. Only lower-case!
+     */
+    public static function killYo(?string $str): ?string
+    {
+        if (strlen($str) === 0) {
+            return $str;
+        }
+
+        return preg_replace('/ё/u', 'е', $str);
+    }
 }

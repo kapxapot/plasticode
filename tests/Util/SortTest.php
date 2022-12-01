@@ -456,14 +456,14 @@ final class SortTest extends TestCase
     /**
      * @dataProvider descStrProvider
      */
-    public function testDescStr(array $array, string $field, array $expected) : void
+    public function testDescStr(array $array, string $field, array $expected): void
     {
         $actual = Sort::descStr($array, $field);
 
         $this->assertEquals($expected, $actual);
     }
 
-    public function descStrProvider() : array
+    public function descStrProvider(): array
     {
         $array = [$this->first, $this->second, $this->third];
 
@@ -483,5 +483,13 @@ final class SortTest extends TestCase
                 $this->toObjArray([$this->second, $this->third, $this->first])
             ],
         ];
+    }
+
+    public function testByStrYo(): void
+    {
+        $initial = ['я', 'ё', 'а'];
+        $sorted = ['а', 'ё', 'я'];
+
+        $this->assertEquals($sorted, Sort::ascStr($initial, fn ($v) => $v));
     }
 }
