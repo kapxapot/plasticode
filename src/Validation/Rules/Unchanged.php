@@ -16,11 +16,15 @@ class Unchanged extends AbstractRule
         $this->isUnchanged = function ($input) use ($repository, $id): bool {
             $item = $repository->get($id);
 
+            if ($item === null) {
+                return true;
+            }
+
             $updatedAt = $repository instanceof FilteringRepositoryInterface
                 ? $item->updatedAtIso()
                 : $item->updatedAt;
 
-            return $item === null || $updatedAt === $input;
+            return $updatedAt === $input;
         };
     }
 
