@@ -125,13 +125,11 @@ final class DoubleBracketsParserTest extends BaseRenderTestCase
         $page = new PageDummy(['slug' => 'about-us']);
 
         $this->assertEquals(
-            Text::join(
-                [
-                    '<a href="' . $this->linker->page($page) . '" class="entity-url">about us</a>',
-                    '<a href="' . $this->linker->tag('warcraft') . '" class="entity-url">warcraft</a>',
-                    '<a href="' . $this->linker->news(5) . '" class="entity-url">Some great news!</a>',
-                ]
-            ),
+            Text::join([
+                '<a href="' . $this->linker->page($page) . '" class="entity-url">about us</a>',
+                '<a href="' . $this->linker->tag('warcraft') . '" class="entity-url">warcraft</a>',
+                '<a href="' . $this->linker->news(5) . '" class="entity-url">Some great news!</a>',
+            ]),
             $parsedContext->text
         );
     }

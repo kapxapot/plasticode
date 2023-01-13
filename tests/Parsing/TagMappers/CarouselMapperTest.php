@@ -12,14 +12,12 @@ use Plasticode\ViewModels\CarouselViewModel;
 
 final class CarouselMapperTest extends TestCase
 {
-    public function testMap() : void
+    public function testMap(): void
     {
-        $text = Text::join(
-            [
-                'http://img.ru/1616    Some image',
-                '//some/other/link',
-            ]
-        );
+        $text = Text::join([
+            'http://img.ru/1616    Some image',
+            '//some/other/link',
+        ]);
 
         $parsingContext = ParsingContext::fromText($text);
 
