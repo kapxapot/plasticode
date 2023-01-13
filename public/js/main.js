@@ -10,16 +10,16 @@ $(function() {
             window.location.hash = hash;
         }
     };
-    
+
     $('.nav-tabs a').on('shown.bs.tab', nav);
     $('.nav-pills a').on('shown.bs.tab', nav);
-    
+
     if (document.location.hash.match('#/')) {
         var hash = document.location.hash.replace(/^#\//, '');
         $('.nav-tabs a[href="#' + hash + '"]').tab('show');
         $('.nav-pills a[href="#' + hash + '"]').tab('show');
     }
-    
+
     const clickFunc = function() {
         window.location = $(this).find("a").attr("href");
         return false;

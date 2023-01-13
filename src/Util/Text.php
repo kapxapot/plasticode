@@ -2,6 +2,9 @@
 
 namespace Plasticode\Util;
 
+use Plasticode\Collections\Generic\StringCollection;
+use Plasticode\Interfaces\ArrayableInterface;
+
 class Text
 {
     public const BR = '<br/>';
@@ -30,11 +33,15 @@ class Text
 
     /**
      * Joins array of lines into text using the provided delimiter (PHP_EOL by default).
-     * 
-     * @param string[] $lines
+     *
+     * @param string[]|ArrayableInterface $lines
      */
-    public static function join(array $lines, ?string $delimiter = null): string
+    public static function join($lines, ?string $delimiter = null): string
     {
+        if ($lines instanceof ArrayableInterface) {
+            $lines = $lines->toArray();
+        }
+
         return implode($delimiter ?? PHP_EOL, $lines);
     }
 
