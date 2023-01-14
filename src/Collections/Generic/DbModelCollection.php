@@ -11,7 +11,7 @@ class DbModelCollection extends EquatableCollection implements SerializableInter
 
     /**
      * Returns distinct values by class name and id.
-     * 
+     *
      * @return static
      */
     public function distinct(): self
@@ -23,7 +23,7 @@ class DbModelCollection extends EquatableCollection implements SerializableInter
 
     /**
      * Returns the next id (max id + 1) based on the current items.
-     * 
+     *
      * For repository mocks.
      */
     public function nextId(): int

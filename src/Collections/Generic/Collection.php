@@ -12,10 +12,17 @@ use Plasticode\Util\Arrays;
 use Plasticode\Util\SortStep;
 use Webmozart\Assert\Assert;
 
+/**
+ * @template T
+ */
 class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator, JsonSerializable
 {
+    /** @var T[] $data */
     protected array $data;
 
+    /**
+     * @param T[]|null $data
+     */
     protected function __construct(?array $data)
     {
         $this->data = $data ?? [];
@@ -24,6 +31,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     /**
      * Creates collection from element(s).
      *
+     * @param T[] $items
      * @return static
      */
     public static function collect(...$items): self
@@ -33,7 +41,8 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Creates collection from array.
-     * 
+     *
+     * @param T[]|null $data
      * @return static
      */
     public static function make(?array $data = null): self
@@ -43,7 +52,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Creates collection from arrayable (including other collection).
-     * 
+     *
      * @return static
      */
     public static function from(ArrayableInterface $arrayable): self
@@ -64,6 +73,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     }
 
     /**
+     * @param T[] $items
      * @return static
      */
     public function add(...$items): self
@@ -75,7 +85,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Removes first element by selector.
-     * 
+     *
      * @param string|callable|null $selector
      * @param mixed $value
      * @return static
@@ -89,7 +99,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Concats the other collection of the same type.
-     * 
+     *
      * @param static $other
      * @return static
      */
@@ -102,7 +112,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Merges several collections of the same type.
-     * 
+     *
      * @param static[] $collections
      * @return static
      */
@@ -119,7 +129,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Returns distinct values grouped by selector.
-     * 
+     *
      * @param string|callable $selector Column/property name or callable,
      * returning generated column/property name.
      * @return static
@@ -133,12 +143,12 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Converts collection to associative array by selector.
-     * 
+     *
      * Selector should produce unique results, otherwise only first element is taken,
      * others are discarded.
-     * 
+     *
      * @param string|callable|null $selector Column/property name or callable, returning generated column/property name.
-     * @return array<string, mixed>
+     * @return array<string, T>
      */
     public function toAssoc($selector = null): array
     {
@@ -166,7 +176,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Skips $offset elements from the start and returns the remaining collection.
-     * 
+     *
      * @return static
      */
     public function skip(int $offset): self
@@ -178,7 +188,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Returns first $limit elements.
-     * 
+     *
      * @return static
      */
     public function take(int $limit): self
@@ -191,7 +201,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     /**
      * Skips $offset elements and takes $limit elements.
      * Negative $offset is counted from the end backwards.
-     * 
+     *
      * @return static
      */
     public function slice(int $offset, int $limit): self
@@ -203,7 +213,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Returns last $limit elements.
-     * 
+     *
      * @return static
      */
     public function tail(int $limit): self
@@ -219,7 +229,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Removes $limit elements from the end of collection (backward skip).
-     * 
+     *
      * @return static
      */
     public function trimTail(int $limit): self
@@ -230,9 +240,9 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     }
 
     /**
-     * Returns random item or null if there are none.
+     * Returns random item or `null` if there are none.
      *
-     * @return mixed
+     * @return T|null
      */
     public function random()
     {
@@ -260,10 +270,10 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     }
 
     /**
-     * Converts collection to {@see StringCollection}, using $item->__toString() by default.
+     * Converts the collection to {@see StringCollection}, using `$item->__toString()` by default.
      * Can be customized by selector.
      *
-     * Don't confuse with stringify!
+     * Don't confuse with `stringify`! (just kidding)
      *
      * In case of non-string values will throw an {@see InvalidArgumentException}.
      *
@@ -281,8 +291,8 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     }
 
     /**
-     * Converts collection to {@see NumericCollection}, optionally
-     * mapping (reducing) its values to numeric values.
+     * Converts the collection to {@see NumericCollection}, optionally
+     * mapping its values to numeric values.
      *
      * In case of non-numeric values will throw an {@see InvalidArgumentException}.
      *
@@ -299,7 +309,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Converts collection to {@see ScalarCollection}, optionally
-     * mapping (reducing) its values to scalars.
+     * mapping its values to scalars.
      *
      * In case of non-scalar values will throw an {@see InvalidArgumentException}.
      *
@@ -312,7 +322,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
         $col = $this;
 
         if (is_string($selector)) {
-            $col = $col->extract($selector);
+            $col = $col->pluck($selector);
         } elseif (is_callable($selector)) {
             $col = $col->map($selector);
         }
@@ -378,7 +388,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
      * 
      * @param string|callable|null $selector
      * @param mixed $value
-     * @return mixed
+     * @return T|null
      */
     public function first($selector = null, $value = null)
     {
@@ -392,7 +402,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
      * 
      * @param string|callable|null $selector
      * @param mixed $value
-     * @return mixed
+     * @return T|null
      */
     public function last($selector = null, $value = null)
     {
@@ -446,23 +456,19 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     }
 
     /**
-     * Shortcut for map()->flatten().
+     * Shortcut for `map()->flatten()`.
      */
     public function flatMap(callable $func): Collection
     {
-        return $this
-            ->map($func)
-            ->flatten();
+        return $this->map($func)->flatten();
     }
 
     /**
-     * Shortcut for map()->clean().
+     * Shortcut for `map()->clean()`.
      */
     public function cleanMap(callable $func): Collection
     {
-        return $this
-            ->map($func)
-            ->clean();
+        return $this->map($func)->clean();
     }
 
     public function map(callable $func): Collection
@@ -474,7 +480,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Flattens a collection of elements, arrays and collections one level.
-     * 
+     *
      * Doesn't make collection distinct!
      */
     public function flatten(): Collection
@@ -592,8 +598,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     }
 
     /**
-     * Sorts collection using comparer function
-     * which receives two items to compare.
+     * Sorts collection using comparer function which receives two items to compare.
      *
      * @return static
      */
@@ -681,7 +686,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
         return key($this->data);
     }
 
-    public function next() 
+    public function next()
     {
         return next($this->data);
     }
@@ -701,6 +706,9 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     // JsonSerializable
 
+    /**
+     * @return T[]
+     */
     public function jsonSerialize()
     {
         return $this->toArray();
@@ -708,6 +716,9 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     // ArrayableInterface
 
+    /**
+     * @return T[]
+     */
     public function toArray(): array
     {
         return $this->data;
