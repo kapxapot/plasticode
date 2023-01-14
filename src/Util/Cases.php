@@ -8,7 +8,7 @@ use Webmozart\Assert\Assert;
 
 /**
  * Cases & conjugations support for Russian language.
- * 
+ *
  * Падежи и склонения для русского языка.
  */
 class Cases
@@ -70,7 +70,7 @@ class Cases
     ];
 
     /**
-     * set 'index' if word != index
+     * Set 'index' if word != index
      * 'пень' => [ 'base' => 'п', 'index' => 'день' ]
      */
     private array $caseData = [
@@ -128,9 +128,9 @@ class Cases
 
     /**
      * Returns case data for a word.
-     * 
+     *
      * If the word not found, throws {@see InvalidArgumentException}.
-     * 
+     *
      * @throws InvalidArgumentException
      */
     protected function getCaseData(string $word): array
@@ -146,9 +146,9 @@ class Cases
 
     /**
      * Returns conjugation data for a word.
-     * 
+     *
      * If the word is not found, throws {@see InvalidArgumentException}.
-     * 
+     *
      * @throws InvalidArgumentException
      */
     protected function getConjugationData(string $word): array
@@ -164,10 +164,10 @@ class Cases
 
     /**
      * Adds custom cases.
-     * 
+     *
      * @param array $cases Custom cases settings.
      * @throws InvalidArgumentException
-     * 
+     *
      * Format:
      * 
      * [
@@ -214,26 +214,26 @@ class Cases
 
     /**
      * Adds custom conjugations.
-     * 
+     *
      * @param array $conjugations Custom conjugations settings.
      * @throws InvalidArgumentException
-     * 
+     *
      * Format:
      * 
-     *  [
-     *      'word' => 'писать',
-     *      'base' => 'пи',
-     *      
-     *      'forms' => [
+     * [
+     *     'word' => 'писать',
+     *     'base' => 'пи',
+     * 
+     *     'forms' => [
      *          Cases::INFINITIVE => '%',
      *          Cases::PAST => [ '%' x4 ],
      *          Cases::PRESENT => [ [ '%', '%' ] x3 ]
-     *      ]
+     *     ]
      * 
-     *      OR
+     *     OR
      * 
-     *      'index' => '_index_'
-     *  ]
+     *     'index' => '_index_'
+     * ]
      */
     public function addConjugations(array $conjugations = []): void
     {
@@ -262,7 +262,7 @@ class Cases
 
     /**
      * Определяет (единственное|множественное) число для натурального числа.
-     * 
+     *
      * Например:
      * 
      * 1 ребенок - ед
@@ -338,7 +338,7 @@ class Cases
 
     /**
      * Возвращает форму существительного, соответствующую указанному натуральному числу.
-     * 
+     *
      * @throws InvalidArgumentException
      */
     public function caseForNumber(string $word, int $num, ?int $targetCase = null): string
@@ -405,7 +405,7 @@ class Cases
 
     /**
      * [1..4] time, [1..3] person, [sp] number, [mfnp] gender.
-     * 
+     *
      * @throws InvalidArgumentException
      */
     private function parseConjugationForm(string $str): array
@@ -444,8 +444,8 @@ class Cases
     }
 
     /**
-     * Returns conjugation for word based on form.
-     * 
+     * Returns conjugation for a word based on form.
+     *
      * @param array|string $form Array OR string.
      * @throws InvalidArgumentException
      */
