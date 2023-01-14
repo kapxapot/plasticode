@@ -38,11 +38,10 @@ class Text
      */
     public static function join($lines, ?string $delimiter = null): string
     {
-        if ($lines instanceof ArrayableInterface) {
-            $lines = $lines->toArray();
-        }
-
-        return implode($delimiter ?? PHP_EOL, $lines);
+        return implode(
+            $delimiter ?? PHP_EOL,
+            Arrays::adopt($lines)
+        );
     }
 
     /**
