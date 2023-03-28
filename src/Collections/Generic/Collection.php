@@ -240,7 +240,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     }
 
     /**
-     * Returns random item or `null` if there are none.
+     * Returns a random item or `null` if there is none.
      *
      * @return T|null
      */
