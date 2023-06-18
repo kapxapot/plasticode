@@ -7,5 +7,5 @@ use ReflectionParameter;
 
 interface ParamFactoryResolverInterface
 {
-    function __invoke(ContainerInterface $container, ReflectionParameter $param): ?callable;
+    public function __invoke(ContainerInterface $container, ReflectionParameter $param): ?callable;
 }

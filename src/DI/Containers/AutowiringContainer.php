@@ -39,7 +39,7 @@ class AutowiringContainer extends AggregatingContainer
 
     /**
      * Can get:
-     * 
+     *
      * - [this] -> return this
      * - [resolved] -> return resolved
      * - [undefined] -> try autowire, save to resolved
@@ -141,7 +141,7 @@ class AutowiringContainer extends AggregatingContainer
 
             return $object;
         } catch (Exception $ex) {
-            $message = 'Error while resolving callable ' . get_class($object);
+            $message = 'Error while resolving a callable for ' . $id;
 
             throw new ContainerException($message, 0, $ex);
         }

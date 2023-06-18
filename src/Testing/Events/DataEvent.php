@@ -23,8 +23,8 @@ class DataEvent extends Event
     public function equals(?Event $event) : bool
     {
         return $event
-            && $this->getClass() == $event->getClass()
             && $event instanceof self
+            && $this->getClass() === $event->getClass()
             && $this->data === $event->getData();
     }
 

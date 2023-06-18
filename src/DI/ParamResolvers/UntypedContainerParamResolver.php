@@ -8,7 +8,7 @@ use ReflectionParameter;
 
 /**
  * Checks the parameter's name and if it's `container`, then returns a factory
- * for it's resolution to {@see ContainerInterface}.
+ * for its resolution to {@see ContainerInterface}.
  */
 class UntypedContainerParamResolver implements ParamFactoryResolverInterface
 {

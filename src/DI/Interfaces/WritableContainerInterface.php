@@ -7,5 +7,5 @@ interface WritableContainerInterface
     /**
      * @param mixed $value
      */
-    function set(string $id, $value): void;
+    public function set(string $id, $value): void;
 }

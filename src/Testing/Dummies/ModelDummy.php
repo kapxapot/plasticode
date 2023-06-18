@@ -36,8 +36,6 @@ class ModelDummy implements EquatableInterface
 
     public function equals(?EquatableInterface $obj): bool
     {
-        return $obj !== null
-            && $obj instanceof self
-            && $this->id == $obj->id;
+        return ($obj instanceof self) && $this->id == $obj->id;
     }
 }

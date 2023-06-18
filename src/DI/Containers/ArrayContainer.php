@@ -5,6 +5,10 @@ namespace Plasticode\DI\Containers;
 use Plasticode\DI\Interfaces\ArrayContainerInterface;
 use Plasticode\Exceptions\DI\NotFoundException;
 
+/**
+ * A simple container that uses an array under the hood.
+ * No autowiring here.
+ */
 class ArrayContainer implements ArrayContainerInterface
 {
     /** @var array<string, mixed> */
@@ -52,17 +56,17 @@ class ArrayContainer implements ArrayContainerInterface
 
     // ArrayAccess
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->set($offset, $value);
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->has($offset);
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->map[$offset]);
     }

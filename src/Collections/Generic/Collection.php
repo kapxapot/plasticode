@@ -645,19 +645,19 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     // ArrayAccess
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         Assert::notNull($offset);
 
         $this->data[$offset] = $value;
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->data[$offset]);
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->data[$offset]);
     }
@@ -671,7 +671,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     // Iterator
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->data);
     }
@@ -686,12 +686,12 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
         return key($this->data);
     }
 
-    public function next()
+    public function next(): void
     {
-        return next($this->data);
+        next($this->data);
     }
 
-    public function valid()
+    public function valid(): bool
     {
         $key = key($this->data);
         return ($key !== null && $key !== false);
@@ -699,7 +699,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     // Countable
 
-    public function count()
+    public function count(): int
     {
         return count($this->data);
     }

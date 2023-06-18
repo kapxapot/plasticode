@@ -8,6 +8,7 @@ use Plasticode\Models\Interfaces\DbModelInterface;
 use Plasticode\Models\Interfaces\EquatableInterface;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\ObjectProxy;
+use Plasticode\Traits\GetClass;
 use Plasticode\Util\Classes;
 use Plasticode\Util\Pluralizer;
 use Plasticode\Util\Strings;
@@ -15,6 +16,8 @@ use Webmozart\Assert\Assert;
 
 abstract class DbModel extends Model implements DbModelInterface, SerializableInterface
 {
+    use GetClass; 
+
     private const NOT_HYDRATED = 1;
     private const BEING_HYDRATED = 2;
     private const HYDRATED = 3;
@@ -205,13 +208,11 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
      *
      * - Same class.
      * - Same id.
-     *
-     * @param self|null $obj
      */
     public function equals(?EquatableInterface $obj): bool
     {
-        return $obj !== null
-            && $obj instanceof self
+        return ($obj instanceof self)
+            && $this->getClass() === $obj->getClass()
             && $this->getId() === $obj->getId();
     }
 
