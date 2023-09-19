@@ -18,9 +18,9 @@ class Sort
     const DATE = 'date';
 
     /**
-     * Sorts array by multiple fields.
+     * Sorts the array by multiple fields.
      */
-    public static function byMany(array $array, SortStep ...$steps) : array
+    public static function byMany(array $array, SortStep ...$steps): array
     {
         if (empty($array)) {
             return [];
@@ -103,8 +103,8 @@ class Sort
     }
 
     /**
-     * Sorts array by $field asc/desc.
-     * 
+     * Sorts the array by $field asc/desc.
+     *
      * @param string|callable $by
      * @param string|null $dir Sort::ASC (default) or Sort::DESC
      * @param string|null $type null = Sort::NUMBER
@@ -114,7 +114,7 @@ class Sort
         $by,
         ?string $dir = null,
         ?string $type = null
-    ) : array
+    ): array
     {
         /** @var string|null */
         $field = null;

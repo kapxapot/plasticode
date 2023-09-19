@@ -643,6 +643,18 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
         return implode($delimiter ?? '', $this->data);
     }
 
+    /**
+     * Creates a new collection based on the current one.
+     *
+     * @return static
+     */
+    public function clone(): self
+    {
+        return new static(
+            Arrays::clone($this->data)
+        );
+    }
+
     // ArrayAccess
 
     public function offsetSet($offset, $value): void

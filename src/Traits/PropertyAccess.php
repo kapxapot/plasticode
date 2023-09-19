@@ -8,7 +8,7 @@ trait PropertyAccess
 {
     /**
      * Returns property value.
-     * 
+     *
      * @param array|object $obj
      * @return mixed
      */
@@ -25,10 +25,10 @@ trait PropertyAccess
 
     /**
      * Checks if the array or the object has the property.
-     * 
+     *
      * @param array|object $obj
      */
-    protected static function propertyExists($obj, string $property) : bool
+    protected static function propertyExists($obj, string $property): bool
     {
         if (is_array($obj)) {
             return array_key_exists($property, $obj);

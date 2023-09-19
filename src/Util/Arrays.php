@@ -14,7 +14,7 @@ class Arrays
     private const DOT = '.';
 
     /**
-     * Checks if `$array` is an array or implements {@see \ArrayAccess}.
+     * Checks if `$array` is an array or implements {@see ArrayAccess}.
      *
      * @param array|ArrayAccess $array
      */
@@ -22,7 +22,7 @@ class Arrays
     {
         Assert::true(
             is_array($array) || $array instanceof ArrayAccess,
-            '$array must be an array or implement ArrayAccess.'
+            '$array must be an array or must implement ArrayAccess.'
         );
     }
 
@@ -36,7 +36,7 @@ class Arrays
     {
         self::checkArray($array);
 
-        return !is_null($array[$key] ?? null);
+        return ($array[$key] ?? null) !== null;
     }
 
     /**
@@ -137,9 +137,8 @@ class Arrays
     /**
      * Groups array by column/property or `callable`.
      *
-     * Note:
-     *  If filter is not `callable`, scalar values will go as
-     *  key and value both, `null`s are ignored.
+     * Note: If the filter is not `callable`, scalar values will go as
+     * a key and value both, `null`s are ignored.
      *
      * @param string|callable|null $by Column/property name or `callable`, returning generated column/property name.
      * @return array<mixed, mixed>
@@ -162,7 +161,7 @@ class Arrays
             } else {
                 Assert::notNull(
                     $by,
-                    'Arrays::groupBy: $by can\'t be null for non-scalar.'
+                    "Arrays::groupBy: $by can't be null for non-scalar."
                 );
 
                 $key = self::getProperty($element, $by);
@@ -197,7 +196,7 @@ class Arrays
     }
 
     /**
-     * Filters array by column/property value or `callable`,
+     * Filters the array by column/property value or `callable`,
      * then returns first item or `null`.
      *
      * @param string|callable
@@ -216,7 +215,7 @@ class Arrays
     }
 
     /**
-     * Filters array by column/property value or `callable`,
+     * Filters the array by column/property value or `callable`,
      * then returns last item or `null`.
      *
      * @param string|callable
@@ -239,9 +238,8 @@ class Arrays
     /**
      * Filters array by column/property value or callable.
      *
-     * Warning:
-     *  If the array contains any scalar values or `null`s, only callable can
-     *  be used.
+     * Warning: If the array contains any scalar values or `null`s, only callable can
+     * be used.
      *
      * @param string|callable $by
      * @param mixed $value
@@ -287,11 +285,11 @@ class Arrays
 
         $propValue = self::getProperty($item, $by);
 
-        return (is_null($value) && is_null($propValue)) || $propValue == $value;
+        return ($value === null && $propValue === null) || $propValue == $value;
     }
 
     /**
-     * Filters array by specified column values.
+     * Filters the array by specified column values.
      */
     public static function filterIn(
         array $array,
@@ -309,7 +307,7 @@ class Arrays
     }
 
     /**
-     * Filters array by all column values except specified.
+     * Filters the array by all column values except specified.
      */
     public static function filterNotIn(
         array $array,
@@ -327,7 +325,7 @@ class Arrays
     }
 
     /**
-     * Trims strings in array and removes empty ones (cleans array).
+     * Trims strings in the array and removes empty ones (cleans the array).
      *
      * @param string[] $strArray
      * @return string[]
@@ -343,7 +341,7 @@ class Arrays
     }
 
     /**
-     * Removes empty strings, `null`s and `0`s from array.
+     * Removes empty strings, `null`s and `0`s from the array.
      */
     public static function clean(array $array): array
     {
@@ -351,7 +349,7 @@ class Arrays
     }
 
     /**
-     * Returns first item from array or `null`.
+     * Returns the first item from the array or `null`.
      *
      * @return mixed
      */
@@ -361,7 +359,7 @@ class Arrays
     }
 
     /**
-     * Returns last item from array or `null`.
+     * Returns the last item from the array or `null`.
      *
      * @return mixed
      */
@@ -371,9 +369,9 @@ class Arrays
     }
 
     /**
-     * Filters associative array by provided key set.
+     * Filters the associative array by provided key set.
      *
-     * If key is absent, it is ignored.
+     * If a key is absent, it is ignored.
      */
     public static function filterKeys(array $array, array $keys): array
     {
@@ -399,7 +397,7 @@ class Arrays
     }
 
     /**
-     * Returns first `$limit` elements.
+     * Returns the first `$limit` elements.
      *
      * If the `$limit` is negative, takes all the elements from the start
      * until `|$limit|` from the end.
@@ -418,7 +416,7 @@ class Arrays
     }
 
     /**
-     * Removes `$limit` elements from the end of array.
+     * Removes `$limit` elements from the end of the array.
      */
     public static function trimTail(array $array, int $limit): array
     {
@@ -426,8 +424,8 @@ class Arrays
     }
 
     /**
-     * Orders array items, ascending / numeric by default.
-     * Shortcut for `Sort::by()`.
+     * Orders the array items, ascending / numeric by default.
+     * A shortcut for `Sort::by()`.
      *
      * @param string|callable $by
      */
@@ -442,8 +440,8 @@ class Arrays
     }
 
     /**
-     * Orders array items descending, numeric by default.
-     * Shortcut for Sort::desc().
+     * Orders the array items descending, numeric by default.
+     * A shortcut for Sort::desc().
      *
      * @param string|callable $by
      */
@@ -453,8 +451,8 @@ class Arrays
     }
 
     /**
-     * Orders array items as strings, ascending by default.
-     * Shortcut for Sort::byStr().
+     * Orders the array items as strings, ascending by default.
+     * A shortcut for Sort::byStr().
      *
      * @param string|callable $by
      */
@@ -464,8 +462,8 @@ class Arrays
     }
 
     /**
-     * Orders array items descending as strings.
-     * Shortcut for Sort::descStr().
+     * Orders the array items descending as strings.
+     * A shortcut for Sort::descStr().
      *
      * @param string|callable $by
      */
@@ -475,8 +473,8 @@ class Arrays
     }
 
     /**
-     * Orders array items based on array of sort conditions.
-     * Shortcut for {@see Sort::multi()}.
+     * Orders the array items based on the array of sort conditions.
+     * A shortcut for {@see Sort::multi()}.
      */
     public static function sortBy(array $array, SortStep ...$steps): array
     {
@@ -484,7 +482,7 @@ class Arrays
     }
 
     /**
-     * Adopts array or {@see ArrayableInterface} and converts them to array.
+     * Adopts the array or {@see ArrayableInterface} and converts them to an array.
      *
      * @param array|ArrayableInterface|null $array
      */
@@ -559,5 +557,15 @@ class Arrays
         }
 
         return true;
+    }
+
+    /**
+     * Creates a copy of the array.
+     */
+    public static function clone(array $array): array
+    {
+        $new = $array;
+
+        return $new;
     }
 }
