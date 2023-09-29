@@ -45,8 +45,8 @@ class Text
     }
 
     /**
-     * Joins array of lines into text using double PHP_EOL as a delimiter.
-     * 
+     * Joins the array of lines into a text using double `PHP_EOL` as a delimiter.
+     *
      * @param string[] $lines
      */
     public static function sparseJoin(array $lines): string

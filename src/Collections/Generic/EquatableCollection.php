@@ -72,7 +72,7 @@ class EquatableCollection extends TypedCollection
 
     public function contains(?EquatableInterface $element): bool
     {
-        if ($element === null) {
+        if (!$element) {
             return false;
         }
 
