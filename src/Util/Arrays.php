@@ -568,4 +568,19 @@ class Arrays
 
         return $new;
     }
+
+    /**
+     * @param string|string[]|null $text
+     * @return string[]|null
+     */
+    public static function arraify($text): ?array
+    {
+        if ($text === null) {
+            return null;
+        }
+
+        return is_array($text)
+            ? $text
+            : [$text];
+    }
 }
