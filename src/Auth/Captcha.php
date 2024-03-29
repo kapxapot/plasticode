@@ -12,7 +12,7 @@ class Captcha implements CaptchaInterface
 {
     /**
      * Default time to live in minutes
-     * 
+     *
      * @var integer
      */
     private const DefaultTtl = 10;
@@ -29,7 +29,7 @@ class Captcha implements CaptchaInterface
     
     /**
      * Init this array in constructor, otherwise your captcha will be not scrambled.
-     * 
+     *
      * @var array
      */
     private $replacements = [];
