@@ -193,7 +193,7 @@ class Query implements ArrayableInterface, Countable, IteratorAggregate
      */
     private static function getQueryParams(ORM $query): array
     {
-        return (fn() => $this->_values)->call($query);
+        return (fn () => $this->_values)->call($query);
     }
 
     /**
