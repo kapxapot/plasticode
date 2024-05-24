@@ -113,7 +113,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     /**
      * Merges several collections of the same type.
      *
-     * @param static[] $collections
+     * @param static $collections
      * @return static
      */
     public static function merge(self ...$collections): self
