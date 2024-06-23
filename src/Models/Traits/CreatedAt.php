@@ -6,7 +6,7 @@ use Plasticode\Util\Date;
 
 /**
  * Implements {@see \Plasticode\Models\Interfaces\CreatedAtInterface}.
- * 
+ *
  * @property string|null $createdAt
  */
 trait CreatedAt
