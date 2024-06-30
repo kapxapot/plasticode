@@ -9,12 +9,14 @@ use Plasticode\Interfaces\ArrayableInterface;
 use Plasticode\Traits\Convert\ToBit;
 use Plasticode\Traits\Convert\ToBool;
 use Plasticode\Traits\Convert\ToIso;
+use Plasticode\Traits\GetClass;
 use Plasticode\Traits\PropertyAccess;
 use Plasticode\Util\Strings;
 use Webmozart\Assert\Assert;
 
 class Model implements ArrayableInterface, ArrayAccess, JsonSerializable
 {
+    use GetClass;
     use PropertyAccess;
     use ToBit;
     use ToBool;
@@ -36,12 +38,10 @@ class Model implements ArrayableInterface, ArrayAccess, JsonSerializable
     private function failIfPropertyExists(string $property): void
     {
         if (self::propertyExists($this->data, $property)) {
-            $className = static::class;
-
             throw new InvalidConfigurationException(
                 'Property conflict in model: ' .
                 'method defined over existing property. ' .
-                'Class: ' . $className . ', property: ' . $property
+                'Class: ' . $this->getClass() . ', property: ' . $property
             );
         }
     }
@@ -103,7 +103,7 @@ class Model implements ArrayableInterface, ArrayAccess, JsonSerializable
 
     public function toString(): string
     {
-        return static::class;
+        return $this->getClass();
     }
 
     public function jsonSerialize()

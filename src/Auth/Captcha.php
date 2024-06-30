@@ -28,16 +28,15 @@ class Captcha implements CaptchaInterface
     private $ttl;
     
     /**
-     * Init this array in constructor, otherwise your captcha will be not scrambled.
+     * Init this array in constructor, otherwise your captcha will not be scrambled.
      *
-     * @var array
+     * @var array<string, string[]>
      */
     private $replacements = [];
 
     /**
-     * @param SessionInterface
-     * @param CaptchaConfigInterface $config Your custom replacement config. You should provide it
-     * @param integer $ttl Time to live in minutes
+     * @param CaptchaConfigInterface|null $config Your custom replacement config. You should provide it.
+     * @param integer|null $ttl Time to live in minutes, in case of `null` the default will be used.
      */
     public function __construct(
         SessionInterface $session,
@@ -48,18 +47,15 @@ class Captcha implements CaptchaInterface
         $this->session = $session;
         $this->ttl = $ttl ?? self::DefaultTtl;
 
-        if (!is_null($config)) {
+        if ($config) {
             $this->replacements = $config->getReplaces();
         }
     }
 
     /**
      * Scrambles the string using replacements.
-     *
-     * @param string $str
-     * @return string
      */
-    private function scramble(string $str) : string
+    private function scramble(string $str): string
     {
         foreach ($this->replacements as $key => $reps) {
             $rep = $reps[mt_rand(0, count($reps) - 1)];
@@ -71,16 +67,12 @@ class Captcha implements CaptchaInterface
 
     /**
      * Generates captcha.
-     *
-     * @param integer $length
-     * @param boolean $save
-     * @return array
      */
-    public function generate(int $length, bool $save = false) : array
+    public function generate(int $length, bool $save = false): array
     {
         $num = Numbers::generate($length);
         $string = Numbers::toString($num);
-        
+
         $scrambledString = implode(
             '',
             array_map(
@@ -94,19 +86,16 @@ class Captcha implements CaptchaInterface
             'string' => $string,
             'captcha' => $scrambledString,
         ];
-        
+
         if ($save) {
             $this->save($result);
         }
-        
+
         return $result;
     }
     
     /**
-     * Saves captcha to session.
-     *
-     * @param array $captcha
-     * @return void
+     * Saves captcha to the session.
      */
     private function save(array $captcha)
     {
@@ -116,23 +105,20 @@ class Captcha implements CaptchaInterface
     }
 
     /**
-     * Loads captcha from session and destroys it in session
+     * Loads the captcha from the session and destroys it in the session
      * so the captcha can be validated only once.
-     *
-     * @return array
      */
-    private function load() : array
+    private function load(): array
     {
         return $this->session->getAndDelete('captcha');
     }
-    
+
     /**
      * Validates the provided number against previously generated captcha.
      *
      * @param mixed $number
-     * @return boolean
      */
-    public function validate($number) : bool
+    public function validate($number): bool
     {
         $captcha = $this->load();
 

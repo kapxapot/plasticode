@@ -9,7 +9,7 @@ class Numbers
         'f' => [ 'одна', 'две' ],
         'n' => [ 'одно' ]
     ];
-    
+
     private static $tens = [
         'десять',
         'один$',
@@ -22,7 +22,7 @@ class Numbers
         'восем$',
         'девят$',
     ];
-    
+
     private static $decades = [
         'двадцать',
         'тридцать',
@@ -33,7 +33,7 @@ class Numbers
         'восемьдесят',
         'девяносто',
     ];
-    
+
     private static $hundreds = [
         'сто',
         'двести',
@@ -45,7 +45,7 @@ class Numbers
         'восемьсот',
         'девятьсот',
     ];
-    
+
     private static $lions = [
         'мил$',
         'миллиард',
@@ -62,74 +62,39 @@ class Numbers
     /**
      * Отрицательное число приводится к модулю. Дробная часть числа отбрасывается.
      */
-    private static function normalize($num)
+    private static function normalize(float $num): int
     {
         if (!is_numeric($num)) {
-            throw new \InvalidArgumentException("Number expected, got this: {$num}.");
+            throw new \InvalidArgumentException("Number expected, got: {$num}.");
         }
 
         return floor(abs($num));
     }
     
     /**
-     * Преобразует массив в число. [ 1, 2, 3, 4 ] => 1234.
+     * Преобразует массив в число: [ 1, 2, 3, 4 ] => 1234.
+     *
+     * @param integer[] $a
      */
-    public static function fromArray($a, $reverse = false)
+    public static function fromArray(array $a, bool $reverse = false): int
     {
         if ($reverse) {
             $a = array_reverse($a);
         }
-        
+
         $n = 0;
-        
+
         foreach ($a as $d) {
             $n = $n * 10 + $d;
         }
-        
+
         return $n;
     }
 
-    /**
-     * Преобразует число в массив. 1234 => [ 4, 3, 2, 1 ].
-     */
-    private static function toArray($num, $reverse = false)
+    public static function toString(float $num): string
     {
         $num = self::normalize($num);
 
-        $a = [];
-        
-        while ($num > 0) {
-            $a[] = $num % 10;
-            $num = floor($num / 10);
-        }
-
-        return $reverse ? $a : array_reverse($a);
-    }
-    
-    /*private function chopTriad(&$num) {
-        if (is_array($num)) {
-            $triad = 0;
-            
-            for ($i = 0; $i < 3; $i++) {
-                if (empty($num)) {
-                    break;
-                }
-
-                $triad = $triad * 10 + array_shift($num);
-            }
-        }
-        else {
-            $triad = $num % 1000;
-            $num = floor($num / 1000);
-        }
-        
-        return $triad;
-    }*/
-
-    public static function toString($num)
-    {
-        $num = self::normalize($num);
-        
         if ($num == 0) {
             return 'ноль';
         }
@@ -208,31 +173,29 @@ class Numbers
     }
 
     /**
-     * Generates random number.
-     * 
-     * @param int $digits Number of digits to generate. [1..16]
-     * @param bool $zeroes Are zeroes allowed. Default = false.
-     * 
-     * @return int
+     * Generates a random number.
+     *
+     * @param integer $digits Number of digits to generate [1..16].
+     * @param boolean $zeroes Are zeroes allowed. Default = `false`.
      */
-    public static function generate($digits, $zeroes = false)
+    public static function generate(int $digits, bool $zeroes = false): int
     {
         if ($digits < 1 || $digits > 16) {
             throw new \OutOfRangeException('Number of digits must be from 1 to 16.');
         }
 
         $a = [];
-        
+
         $min = $zeroes ? 0 : 1;
-        
+
         for ($i = 0; $i < $digits; $i++) {
             $a[] = mt_rand($min, 9);
         }
-        
+
         return self::fromArray($a);
     }
-    
-    public static function parseFloat($str)
+
+    public static function parseFloat(string $str): float
     {
         return floatval(str_replace(',', '.', $str));
     }

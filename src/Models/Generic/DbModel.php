@@ -8,7 +8,6 @@ use Plasticode\Models\Interfaces\DbModelInterface;
 use Plasticode\Models\Interfaces\EquatableInterface;
 use Plasticode\Models\Interfaces\SerializableInterface;
 use Plasticode\ObjectProxy;
-use Plasticode\Traits\GetClass;
 use Plasticode\Util\Classes;
 use Plasticode\Util\Pluralizer;
 use Plasticode\Util\Strings;
@@ -16,8 +15,6 @@ use Webmozart\Assert\Assert;
 
 abstract class DbModel extends Model implements DbModelInterface, SerializableInterface
 {
-    use GetClass; 
-
     private const NOT_HYDRATED = 1;
     private const BEING_HYDRATED = 2;
     private const HYDRATED = 3;
@@ -27,9 +24,14 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     protected int $hydratedState = self::NOT_HYDRATED;
 
     /**
+     * If a db model is frozen, all with properties are frozed by default.
+     */
+    protected bool $frozen = false;
+
+    /**
      * Container for hydrated properties.
      * E.g., withUser() <=> user().
-     * 
+     *
      * @var array<string, mixed>
      */
     private array $with = [];
@@ -41,7 +43,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
 
     /**
      * Static alias for new().
-     * 
+     *
      * @return static
      */
     public static function create(?array $data = null): self
@@ -50,7 +52,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     }
 
     /**
-     * Updates data.
+     * Updates the data.
      *
      * @return $this
      */
@@ -63,20 +65,19 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
 
     /**
      * Returns the id of the model.
-     * 
+     *
      * - Use `getId()` instead of just `id` when `$idField` is custom.
-     * - It's recommended to use `getId()` always for safer code.
+     * - It's recommended to use `getId()` always for safety.
      */
     public function getId(): ?int
     {
         $idField = self::idField();
-
         return $this->{$idField};
     }
 
     /**
      * Returns `true` if the entity is saved to DB.
-     * 
+     *
      * Alias for `hasId()`.
      */
     public function isPersisted(): bool
@@ -99,9 +100,8 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
             return $this;
         }
 
-        $this->hydratedState = self::BEING_HYDRATED;
-
         if ($hydrator) {
+            $this->hydratedState = self::BEING_HYDRATED;
             $hydrator->hydrate($this);
         }
 
@@ -112,7 +112,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
 
     public function isNotHydrated(): bool
     {
-        return $this->hydratedState == self::NOT_HYDRATED;
+        return $this->hydratedState === self::NOT_HYDRATED;
     }
 
     /**
@@ -144,7 +144,7 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     }
 
     /**
-     * Sets value for property `x()` (use it in `withX($x)` methods).
+     * Sets a value for the property `x()` (use it in `withX($x)` methods).
      *
      * @param mixed $value
      * @return $this
@@ -152,12 +152,11 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
     protected function setWithProperty(string $name, $value): self
     {
         $this->with[$name] = $value;
-
         return $this;
     }
 
     /**
-     * Returns property `x()` previously initialized by `withX($x)`.
+     * Returns the property `x()` previously initialized by `withX($x)`.
      *
      * @return mixed
      */
@@ -166,18 +165,23 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
         if (array_key_exists($name, $this->with)) {
             $withValue = $this->with[$name];
 
-            return isCallable($withValue)
-                ? $withValue()
-                : $withValue;
+            if (isCallable($withValue)) {
+                $resolvedValue = $withValue();
+
+                if ($this->frozen) {
+                    $this->setWithProperty($name, $resolvedValue);
+                }
+
+                return $resolvedValue;
+            }
+
+            return $withValue;
         }
 
-        $required = $required
-            || in_array($name, $this->requiredWiths());
+        $required = $required || in_array($name, $this->requiredWiths());
 
         if ($required) {
-            throw new BadMethodCallException(
-                'Method is not initialized: ' . $name . '.'
-            );
+            throw new BadMethodCallException("Method is not initialized: {$name}.");
         }
 
         return null;
@@ -223,6 +227,10 @@ abstract class DbModel extends Model implements DbModelInterface, SerializableIn
 
     public function toString(): string
     {
-        return '[' . $this->getId() . '] ' . static::class;
+        return sprintf(
+            '[%s] %s',
+            $this->getId(),
+            parent::toString()
+        );
     }
 }

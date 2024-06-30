@@ -5,9 +5,9 @@ namespace Plasticode\Config\Interfaces;
 interface CaptchaConfigInterface
 {
     /**
-     * Returns replaces for messing the strings.
+     * Returns replaces for string scrambling.
      *
-     * @return array
+     * @return array<string, string[]>
      */
-    public function getReplaces() : array;
+    public function getReplaces(): array;
 }

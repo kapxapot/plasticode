@@ -63,76 +63,89 @@ class Date
      *
      * @param string|DateTime|null $date
      */
-    public static function dt($date = null, ?string $timeZone = null) : DateTime
+    public static function dt($date = null, ?string $timeZone = null): DateTime
     {
-        $tz = (!is_null($timeZone))
+        $tz = $timeZone
             ? new DateTimeZone($timeZone)
             : null;
-        
-        return ($date instanceof DateTime)
-            ? ($tz
+
+        if ($date instanceof DateTime) {
+            return $tz
                 ? self::toTimeZone($date, $tz)
-                : $date)
-            : new DateTime($date, $tz);
+                : $date;
+        }
+
+        return new DateTime($date, $tz);
     }
 
     /**
      * Sets time zone.
      *
-     * @param string|DateTime $date
+     * @param string|DateTime|null $date
      * @param string|DateTimeZone $timeZone
      */
-    public static function toTimeZone($date, $timeZone) : DateTime
+    public static function toTimeZone($date, $timeZone): DateTime
     {
         if (!($timeZone instanceof DateTimeZone)) {
             $timeZone = new DateTimeZone($timeZone);
         }
-        
+
         $copy = clone self::dt($date);
         $copy->setTimezone($timeZone);
-        
+
         return $copy;
     }
 
-    public static function utc($date = null) : DateTime
+    /**
+     * @param string|DateTime|null $date
+     */
+    public static function utc($date = null): DateTime
     {
         return self::dt($date, 'UTC');
     }
 
-    public static function fromUtc($utc) : DateTime
+    /**
+     * @param string|DateTime|null $utc
+     */
+    public static function fromUtc($utc): DateTime
     {
         return self::toTimeZone($utc, date_default_timezone_get());
     }
 
     /**
-     * Formats date as ISO.
+     * Formats date as an ISO string.
      *
      * @param string|DateTime|null $date
      */
-    public static function iso($date = null) : string
+    public static function iso($date = null): string
     {
         return self::formatIso(
             self::dt($date)
         );
     }
 
-    public static function interval($interval) : DateInterval
+    /**
+     * @param string|DateInterval $interval
+     */
+    public static function interval($interval): DateInterval
     {
         return ($interval instanceof DateInterval)
             ? $interval
             : new DateInterval($interval);
     }
 
-    public static function dbNow() : string
+    public static function dbNow(): string
     {
         return self::formatDb(self::dt());
     }
 
     /**
-     * @param string|DateTime $start
-     * @param string|DateTime $end null = now()
+     * Returns an interval between two dates.
+     *
+     * @param string|DateTime|null $start
+     * @param string|DateTime|null $end
      */
-    public static function diff($start, $end = null) : DateInterval
+    public static function diff($start, $end = null): DateInterval
     {
         $startDate = self::dt($start);
         $endDate = self::dt($end);
@@ -140,12 +153,23 @@ class Date
         return $startDate->diff($endDate);
     }
 
-    public static function age($date) : DateInterval
+    /**
+     * Returns an interval elapsed from the $date.
+     *
+     * @param string|DateTime|null $date
+     */
+    public static function age($date): DateInterval
     {
         return self::diff($date);
     }
 
-    public static function exceedsInterval($start, $end, string $interval) : bool
+    /**
+     * Checks if an interval between two dates exceeds the provided interval.
+     *
+     * @param string|DateTime|null $start
+     * @param string|DateTime|null $end
+     */
+    public static function exceedsInterval($start, $end, string $interval): bool
     {
         $startDate = self::dt($start);
         $endDate = self::dt($end);
@@ -163,24 +187,37 @@ class Date
         return $endDate >= $startWithInterval;
     }
 
-    public static function expired($start, string $interval) : bool
+    /**
+     * Checks if an interval elapsed from the $start exceeds the provided interval.
+     *
+     * @param string|DateTime|null $start
+     */
+    public static function expired($start, string $interval): bool
     {
         return self::exceedsInterval($start, null, $interval);
     }
 
-    public static function happened($date) : bool
+    /**
+     * Checks if the date is in the past.
+     *
+     * Unlike many other functions, this one doesn't treat the `null` value as
+     * the current date. In this case it means "no date" that never happened.
+     *
+     * @param string|DateTime|null $date
+     */
+    public static function happened($date): bool
     {
         if (!$date) {
             return false;
         }
-        
+
         $now = self::dt();
         $dt = self::dt($date);
-        
+
         return $now >= $dt;
     }
 
-    public static function to($date) : string
+    public static function to($date): string
     {
         if ($date) {
             $now = self::dt();
@@ -206,69 +243,76 @@ class Date
         return $str ?? 'неизвестно когда';
     }
 
-    public static function toAgo($date, $lang = null) : string
+    public static function toAgo($date, $lang = null): string
     {
-        if ($date) {
-            $now = self::dt();
-            
-            $dayAgo = clone $now;
-            $dayAgo->modify('-1 day');
-            
-            $hourAgo = clone $now;
-            $hourAgo->modify('-1 hour');
+        $en = ($lang === 'en');
 
-            $dt = self::dt($date);
-            $age = self::diff($dt, $now);
-            
-            $cases = new Cases;
-    
-            if ($dt > $hourAgo) {
-                $minutes = $age->i;
-                $str = $minutes . ' ' .
-                    (($lang == 'en')
-                        ? 'minute' . ($minutes > 1 ? 's' : '') . ' ago'
-                        : $cases->caseForNumber('минута', $minutes) . ' назад');
-            } elseif ($dt > $dayAgo) {
-                $hours = $age->h;
-                $str = $hours . ' ' .
-                    (($lang == 'en')
-                        ? 'hour' . ($hours > 1 ? 's' : '') . ' ago'
-                        : $cases->caseForNumber('час', $hours) . ' назад');
-            } else {
-                $days = $age->days;
-                $str = $days . ' ' .
-                    (($lang == 'en')
-                        ? 'day' . ($days > 1 ? 's' : '') . ' ago'
-                        : $cases->caseForNumber('день', $days) . ' назад');
-            }
+        if (!$date) {
+            return $en ? 'never' : 'неизвестно когда';
         }
-        
-        return $str ?? (($lang == 'en') ? 'never' : 'неизвестно когда');
+
+        $now = self::dt();
+
+        $dayAgo = clone $now;
+        $dayAgo->modify('-1 day');
+
+        $hourAgo = clone $now;
+        $hourAgo->modify('-1 hour');
+
+        $dt = self::dt($date);
+        $age = self::diff($dt, $now);
+
+        $cases = new Cases;
+
+        if ($dt > $hourAgo) {
+            $minutes = $age->i;
+
+            return $minutes . ' ' .
+                ($en
+                    ? 'minute' . ($minutes > 1 ? 's' : '') . ' ago'
+                    : $cases->caseForNumber('минута', $minutes) . ' назад');
+        }
+
+        if ($dt > $dayAgo) {
+            $hours = $age->h;
+
+            return $hours . ' ' .
+                ($en
+                    ? 'hour' . ($hours > 1 ? 's' : '') . ' ago'
+                    : $cases->caseForNumber('час', $hours) . ' назад');
+        }
+
+        $days = $age->days;
+
+        return $days . ' ' .
+            ($en
+                ? 'day' . ($days > 1 ? 's' : '') . ' ago'
+                : $cases->caseForNumber('день', $days) . ' назад');
     }
 
-    public static function startOfHour($date) : DateTime
+    public static function startOfHour($date): DateTime
     {
         $copy = clone self::dt($date);
         $hour = self::hour($copy);
         $copy->setTime($hour, 0, 0);
-        
+
         return $copy;
     }
 
-    public static function stripTime($date) : DateTime
+    public static function stripTime($date): DateTime
     {
         $copy = clone self::dt($date);
         $copy->setTime(0, 0, 0);
-        
+
         return $copy;
     }
 
-    public static function startOfDay($date) : DateTime
+    public static function startOfDay($date): DateTime
     {
         return self::stripTime($date);
     }
 
-    public static function endOfDay($date) : DateTime
+    public static function endOfDay($date): DateTime
     {
         $copy = clone self::dt($date);
         $copy->setTime(23, 59, 59);
@@ -276,29 +320,29 @@ class Date
         return $copy;
     }
 
-    public static function format($date, $format = null) : string
+    public static function format($date, $format = null): string
     {
         return self::dt($date)->format($format ?? self::DATE_FORMAT);
     }
 
-    public static function formatDb($date) : string
+    public static function formatDb($date): string
     {
         return self::dt($date)->format(self::DATE_FORMAT);
     }
 
     /**
-     * Formats date in ISO format.
+     * Formats the date in ISO format.
      *
      * @param string|DateTime $date
      */
-    public static function formatIso($date) : string
+    public static function formatIso($date): string
     {
         return ($date instanceof DateTime)
             ? $date->format('c')
             : strftime('%FT%T%z', $date);
     }
 
-    public static function generateExpirationTime($minutes = 60) : string
+    public static function generateExpirationTime(int $minutes = 60): string
     {
         return date(self::DATE_FORMAT, strtotime("+{$minutes} minutes"));
     }
@@ -323,7 +367,7 @@ class Date
         $timeMode = self::TIME_OFF,
         $monthMode = self::MONTH_ON,
         $yearMode = self::YEAR_ON
-    ) : string
+    ): string
     {
         if (!$start || !$end) {
             return self::formatUi(
@@ -367,7 +411,7 @@ class Date
         return $result;
     }
 
-    public static function formatDateUi($date) : string
+    public static function formatDateUi($date): string
     {
         return self::formatUi($date, self::TIME_OFF);
     }
@@ -377,7 +421,7 @@ class Date
         $timeMode = self::TIME_SOFT,
         $monthMode = self::MONTH_ON,
         $yearMode = self::YEAR_ON
-    ) : string
+    ): string
     {
         $dt = self::dt($date);
 
@@ -420,47 +464,47 @@ class Date
         return $result;
     }
 
-    private static function part($date, $part) : int
+    private static function part($date, $part): int
     {
         return intval(self::dt($date)->format($part));
     }
 
-    public static function day($date) : int
+    public static function day($date): int
     {
         return self::part($date, 'd');
     }
 
-    public static function month($date) : int
+    public static function month($date): int
     {
         return self::part($date, 'm');
     }
 
-    public static function year($date) : int
+    public static function year($date): int
     {
         return self::part($date, 'Y');
     }
 
-    public static function hour($date) : int
+    public static function hour($date): int
     {
         return self::part($date, 'H');
     }
 
-    public static function minute($date) : int
+    public static function minute($date): int
     {
         return self::part($date, 'i');
     }
 
-    public static function second($date) : int
+    public static function second($date): int
     {
         return self::part($date, 's');
     }
 
-    public static function hasTime($date) : bool
+    public static function hasTime($date): bool
     {
         return self::hour($date) + self::minute($date) + self::second($date) > 0;
     }
 
-    public static function formatTime($date, $withSeconds = false) : string
+    public static function formatTime($date, bool $withSeconds = false): string
     {
         $format = $withSeconds
             ? self::TIME_FORMAT

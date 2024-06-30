@@ -10,7 +10,7 @@ use Plasticode\ObjectProxy;
 trait Frozen
 {
     /**
-     * Makes sure that the callable executes only once.
+     * Makes sure that the callable is executed only once.
      */
     public function frozen(callable $func): ObjectProxy
     {

@@ -7,7 +7,7 @@ use Webmozart\Assert\Assert;
 trait PropertyAccess
 {
     /**
-     * Returns property value.
+     * Returns a property value.
      *
      * @param array|object $obj
      * @return mixed

@@ -11,7 +11,7 @@ use Plasticode\Util\Date;
  */
 trait CreatedAt
 {
-    public function createdAtIso() : string
+    public function createdAtIso(): string
     {
         return Date::iso($this->createdAt);
     }
@@ -21,6 +21,6 @@ trait CreatedAt
      */
     public function isNewerThan($date) : bool
     {
-        return $this->createdAt !== null && Date::dt($this->createdAt) > Date::dt($date);
+        return $this->createdAt && Date::dt($this->createdAt) > Date::dt($date);
     }
 }

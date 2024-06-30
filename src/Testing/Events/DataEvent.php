@@ -30,6 +30,10 @@ class DataEvent extends Event
 
     public function __toString(): string
     {
-        return parent::__toString() . ' (' . ($this->data ?? 'null') . ')';
+        return sprintf(
+            '%s (%s)',
+            parent::__toString(),
+            $this->data ?? 'null' // does this make sense if data is an object?
+        );
     }
 }

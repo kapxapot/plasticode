@@ -4,6 +4,7 @@ namespace Plasticode\Tests\Models;
 
 use PHPUnit\Framework\TestCase;
 use Plasticode\Testing\Dummies\DbModelDummy;
+use Plasticode\Testing\Dummies\FrozenDbModelDummy;
 use Plasticode\Testing\Dummies\ModelDummy;
 use Plasticode\Traits\Frozen;
 
@@ -13,12 +14,12 @@ final class DbModelTest extends TestCase
 
     private static int $id;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         self::$id = 0;
     }
 
-    public function testWithObj() : void
+    public function testWithObj(): void
     {
         $dummy = (new DbModelDummy())
             ->withDummy(
@@ -35,7 +36,7 @@ final class DbModelTest extends TestCase
         );
     }
 
-    public function testWithCallable() : void
+    public function testWithCallable(): void
     {
         $dummy = (new DbModelDummy())
             ->withDummy(
@@ -60,7 +61,18 @@ final class DbModelTest extends TestCase
         $dummy->dummy();
     }
 
-    public function testOnce() : void
+    public function testDefault_WithIsNotCached() : void
+    {
+        $dummy = (new DbModelDummy())
+            ->withDummy(
+                fn () => new ModelDummy(++self::$id, 'some dummy')
+            );
+
+        $this->assertEquals(1, $dummy->dummy()->id);
+        $this->assertEquals(2, $dummy->dummy()->id);
+    }
+
+    public function testFrozen_WithIsCached() : void
     {
         $dummy = (new DbModelDummy())
             ->withDummy(
@@ -73,18 +85,18 @@ final class DbModelTest extends TestCase
         $this->assertEquals(1, $dummy->dummy()->id);
     }
 
-    public function testTwice() : void
+    public function testFrozenDbModel_WithIsCached() : void
     {
-        $dummy = (new DbModelDummy())
+        $dummy = (new FrozenDbModelDummy())
             ->withDummy(
                 fn () => new ModelDummy(++self::$id, 'some dummy')
             );
 
         $this->assertEquals(1, $dummy->dummy()->id);
-        $this->assertEquals(2, $dummy->dummy()->id);
+        $this->assertEquals(1, $dummy->dummy()->id);
     }
 
-    public function testAlias() : void
+    public function testPluralAlias() : void
     {
         $dummy = new DbModelDummy();
 

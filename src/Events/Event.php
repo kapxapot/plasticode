@@ -9,7 +9,7 @@ abstract class Event
     use GetClass;
 
     /**
-     * Parent event
+     * Parent event.
      */
     private ?self $parent;
 
@@ -20,15 +20,15 @@ abstract class Event
 
     /**
      * Looks for loops in the event hierarchy chain.
-     * 
-     * Looks for the same event using equals() method.
+     *
+     * Looks for the same event using the `equals()` method.
      */
-    public function isLooped() : bool
+    public function isLooped(): bool
     {
         return $this->hasAncestor($this);
     }
 
-    public function hasAncestor(self $event) : bool
+    public function hasAncestor(self $event): bool
     {
         return $this->hasParent() && (
             $this->parent->equals($event)
@@ -36,19 +36,19 @@ abstract class Event
         );
     }
 
-    public function getParent() : ?self
+    public function getParent(): ?self
     {
         return $this->parent;
     }
 
-    public function hasParent() : bool
+    public function hasParent(): bool
     {
-        return $this->parent !== null;
+        return !!$this->parent;
     }
 
-    abstract public function equals(?self $event) : bool;
+    abstract public function equals(?self $event): bool;
 
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->getClass();
     }
