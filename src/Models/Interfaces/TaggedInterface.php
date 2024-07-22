@@ -6,8 +6,8 @@ interface TaggedInterface extends DbModelInterface
 {
     /**
      * Returns tags as an array of TRIMMED strings.
-     * 
+     *
      * @return string[]
      */
-    function getTags() : array;
+    public function getTags(): array;
 }

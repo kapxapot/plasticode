@@ -10,20 +10,20 @@ use Plasticode\Collections\TagLinkCollection;
  */
 interface NewsSourceInterface extends CreatedAtInterface, LinkableInterface, TaggedInterface, UpdatedAtInterface
 {
-    function largeImage() : ?string;
-    function image() : ?string;
-    function video() : ?string;
+    public function largeImage(): ?string;
+    public function image(): ?string;
+    public function video(): ?string;
 
-    function displayTitle() : string;
+    public function displayTitle(): string;
 
-    function hasText() : bool;
+    public function hasText(): bool;
 
-    function fullText() : ?string;
-    function shortText() : ?string;
+    public function fullText(): ?string;
+    public function shortText(): ?string;
 
-    function publishedAtIso() : string;
+    public function publishedAtIso(): string;
 
-    function creator() : ?User;
+    public function creator(): ?User;
 
-    function tagLinks() : TagLinkCollection;
+    public function tagLinks(): TagLinkCollection;
 }

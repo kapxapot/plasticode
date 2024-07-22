@@ -6,7 +6,7 @@ use Plasticode\Models\User;
 
 /**
  * Implements {@see \Plasticode\Models\Interfaces\CreatedInterface}.
- * 
+ *
  * @property integer|null $createdBy
  * @method User|null creator()
  * @method static withCreator(User|callable|null $creator)

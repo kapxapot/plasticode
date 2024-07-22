@@ -10,20 +10,20 @@ interface ParentedInterface extends DbModelInterface
 {
     /**
      * The ultimate parent.
-     * 
+     *
      * @return static
      */
-    function root() : self;
+    public function root(): self;
 
     /**
      * :(
      */
-    function isOrphan() : bool;
+    public function isOrphan(): bool;
 
-    function hasParent() : bool;
+    public function hasParent(): bool;
 
     /**
      * Checks if the $parentId creates a recursive chain of parents.
      */
-    function isRecursiveParent(?int $parentId) : bool;
+    public function isRecursiveParent(?int $parentId): bool;
 }

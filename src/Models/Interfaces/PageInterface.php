@@ -4,6 +4,7 @@ namespace Plasticode\Models\Interfaces;
 
 interface PageInterface extends NewsSourceInterface
 {
-    function isPublished() : bool;
-    function getSlug() : string;
+    public function isPublished(): bool;
+
+    public function getSlug(): string;
 }
