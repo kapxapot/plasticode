@@ -6,5 +6,5 @@ use Plasticode\Models\Generic\DbModel;
 
 interface HydratorInterface
 {
-    function hydrate(DbModel $entity): DbModel;
+    public function hydrate(DbModel $entity): DbModel;
 }
