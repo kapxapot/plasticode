@@ -5,9 +5,7 @@ namespace Plasticode\Exceptions\Interfaces;
 interface HttpExceptionInterface
 {
     /**
-     * Returns HTTP error code
-     *
-     * @return integer
+     * Returns HTTP error code.
      */
-    public function GetErrorCode() : int;
+    public function getErrorCode(): int;
 }

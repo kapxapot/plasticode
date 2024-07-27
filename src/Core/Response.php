@@ -30,7 +30,7 @@ class Response
         SlimResponse $response,
         $data,
         array $options = []
-    ) : ResponseInterface
+    ): ResponseInterface
     {
         if ($data instanceof ArrayableInterface) {
             $data = $data->toArray();
@@ -64,7 +64,7 @@ class Response
     public static function text(
         ResponseInterface $response,
         string $text
-    ) : ResponseInterface
+    ): ResponseInterface
     {
         $response->getBody()->write($text);
         return $response;
@@ -78,7 +78,7 @@ class Response
         ServerRequestInterface $request,
         ResponseInterface $response,
         Exception $ex
-    ) : ResponseInterface
+    ): ResponseInterface
     {
         $settingsProvider = $appContext->settingsProvider();
         $translator = $appContext->translator();
@@ -94,7 +94,7 @@ class Response
         }
 
         $status = ($ex instanceof HttpExceptionInterface)
-            ? $ex->GetErrorCode()
+            ? $ex->getErrorCode()
             : (($ex instanceof ValidationException)
                 ? self::BAD_REQUEST_STATUS
                 : self::DEFAULT_ERROR_STATUS);

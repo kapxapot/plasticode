@@ -32,12 +32,7 @@ abstract class HttpException extends Exception implements HttpExceptionInterface
         parent::__construct($message ?? static::$defaultMessage);
     }
     
-    /**
-     * Returns HTTP error code
-     *
-     * @return integer
-     */
-    public function GetErrorCode() : int
+    public function getErrorCode(): int
     {
         return static::$errorCode;
     }

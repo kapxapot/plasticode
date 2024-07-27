@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface NotFoundHandlerInterface
 {
-    function __invoke(
+    public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response
     ): ResponseInterface;
