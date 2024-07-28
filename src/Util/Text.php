@@ -56,17 +56,17 @@ class Text
 
     /**
      * Removes empty lines from start and end of array.
-     * 
+     *
      * @param string[] $lines
      * @return string[]
      */
     public static function trimEmptyLines(array $lines): array
     {
-        while (count($lines) > 0 && strlen($lines[0]) == 0) {
+        while (count($lines) > 0 && strlen($lines[0]) === 0) {
             array_shift($lines);
         }
 
-        while (count($lines) > 0 && strlen($lines[count($lines) - 1]) == 0) {
+        while (count($lines) > 0 && strlen($lines[count($lines) - 1]) === 0) {
             array_pop($lines);
         }
 
