@@ -13,10 +13,10 @@ interface SettingsProviderInterface
      * @param mixed $default Default value
      * @return mixed
      */
-    function get(string $path, $default = null);
+    public function get(string $path, $default = null);
 
     /**
      * @return array|ArrayAccess
      */
-    function all();
+    public function all();
 }
