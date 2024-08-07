@@ -15,7 +15,7 @@ trait Updated
 
     protected string $updaterPropertyName = 'updater';
 
-    public function isUpdatedBy(User $user) : bool
+    public function isUpdatedBy(User $user): bool
     {
         return $this->updatedBy == $user->getId();
     }

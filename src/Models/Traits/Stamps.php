@@ -13,7 +13,7 @@ trait Stamps
     /**
      * Updates createdBy/updatedBy/updatedAt.
      */
-    public function stamp(?User $user) : void
+    public function stamp(?User $user): void
     {
         if ($user) {
             $this->createdBy ??= $user->getId();
@@ -25,5 +25,5 @@ trait Stamps
         }
     }
 
-    public abstract function isPersisted() : bool;
+    public abstract function isPersisted(): bool;
 }
