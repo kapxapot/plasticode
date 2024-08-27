@@ -12,17 +12,10 @@ use Plasticode\Util\Arrays;
 use Plasticode\Util\SortStep;
 use Webmozart\Assert\Assert;
 
-/**
- * @template T
- */
 class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator, JsonSerializable
 {
-    /** @var T[] $data */
     protected array $data;
 
-    /**
-     * @param T[]|null $data
-     */
     protected function __construct(?array $data)
     {
         $this->data = $data ?? [];
@@ -31,7 +24,6 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     /**
      * Creates collection from element(s).
      *
-     * @param T[] $items
      * @return static
      */
     public static function collect(...$items): self
@@ -42,7 +34,6 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     /**
      * Creates collection from array.
      *
-     * @param T[]|null $data
      * @return static
      */
     public static function make(?array $data = null): self
@@ -73,7 +64,6 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
     }
 
     /**
-     * @param T[] $items
      * @return static
      */
     public function add(...$items): self
@@ -148,7 +138,6 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
      * others are discarded.
      *
      * @param string|callable|null $selector Column/property name or callable, returning generated column/property name.
-     * @return array<string, T>
      */
     public function toAssoc($selector = null): array
     {
@@ -241,8 +230,6 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     /**
      * Returns a random item or `null` if there is none.
-     *
-     * @return T|null
      */
     public function random()
     {
@@ -359,9 +346,11 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
      */
     public function any($selector = null, $value = null): bool
     {
-        return $selector
-            ? $this->where($selector, $value)->any()
-            : !$this->isEmpty();
+        if (!$selector) {
+            return !$this->isEmpty();
+        }
+
+        return $this->where($selector, $value)->any();
     }
 
     /**
@@ -388,7 +377,6 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
      * 
      * @param string|callable|null $selector
      * @param mixed $value
-     * @return T|null
      */
     public function first($selector = null, $value = null)
     {
@@ -402,7 +390,6 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
      * 
      * @param string|callable|null $selector
      * @param mixed $value
-     * @return T|null
      */
     public function last($selector = null, $value = null)
     {
@@ -693,7 +680,7 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
         return current($this->data);
     }
 
-    public function key() 
+    public function key()
     {
         return key($this->data);
     }
@@ -718,9 +705,6 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     // JsonSerializable
 
-    /**
-     * @return T[]
-     */
     public function jsonSerialize()
     {
         return $this->toArray();
@@ -728,9 +712,6 @@ class Collection implements ArrayableInterface, ArrayAccess, Countable, Iterator
 
     // ArrayableInterface
 
-    /**
-     * @return T[]
-     */
     public function toArray(): array
     {
         return $this->data;
