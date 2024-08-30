@@ -47,11 +47,11 @@ class Text
     /**
      * Joins the array of lines into a text using double `PHP_EOL` as a delimiter.
      *
-     * @param string[] $lines
+     * @param string[]|ArrayableInterface $lines
      */
     public static function sparseJoin(array $lines): string
     {
-        return implode(PHP_EOL . PHP_EOL, $lines);
+        return self::join($lines, PHP_EOL . PHP_EOL);
     }
 
     /**
