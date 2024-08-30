@@ -152,7 +152,6 @@ class Strings
     public static function lastChunk(string $str, string $delimiter): string
     {
         $chunks = explode($delimiter, $str);
-        
         return Arrays::last($chunks);
     }
 
@@ -163,7 +162,6 @@ class Strings
     public static function stripTrunc(string $str, int $limit): string
     {
         $str = self::stripTags($str);
-
         return self::trunc($str, $limit);
     }
 
