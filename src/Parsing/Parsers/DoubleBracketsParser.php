@@ -12,13 +12,13 @@ use Plasticode\Util\Arrays;
 /**
  * Parses double brackets tags such as [[about|About]] page
  * or [[news:123|Some cool news]] news links.
- * 
+ *
  * - Default mapper parses [[slug|Content]] links.
  * - Tag mappers parse [[tag:id|Content]] links.
  * - Generic mapper parses all other [[unknown-tag:id|Content]] links.
- * 
+ *
  * If there's no matching mapper, the parser leaves the link unchanged.
- * 
+ *
  * The mappers can be customized via LinkMapperSourceInterface config ('doubleBracketsConfig' in container).
  */
 class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
@@ -41,7 +41,7 @@ class DoubleBracketsParser extends BaseStep implements LinkRendererInterface
             self::PATTERN,
             function ($matches) {
                 [$original, $match] = $matches;
-                
+
                 $parsed = $this->parseDoubleBracketsMatch($match);
 
                 return $parsed ?? $original;
