@@ -144,7 +144,8 @@ final class MiscTest extends TestCase
                     'string',
                     null,
                     [1, 2, 3],
-                    0
+                    0,
+                    '0'
                 ],
                 ['some', 'string', [1, 2, 3]]
             ],

@@ -5,7 +5,7 @@ namespace Plasticode\Collections\Generic;
 use Webmozart\Assert\Assert;
 
 /**
- * {@see ScalarCollection}, storing strings.
+ * {@see ScalarCollection} storing strings.
  */
 class StringCollection extends ScalarCollection
 {
