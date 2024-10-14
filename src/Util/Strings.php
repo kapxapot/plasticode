@@ -273,7 +273,7 @@ class Strings
             return false;
         }
 
-        return strpos($str, $mask) === 0;
+        return mb_strpos($str, $mask) === 0;
     }
 
     /**
